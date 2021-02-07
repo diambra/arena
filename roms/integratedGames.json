@@ -1,0 +1,54 @@
+{ 
+    "doapp": 
+        { 
+            "name": "Dead Or Alive ++", 
+            "id": "doapp",
+            "available": 1,
+            "stealth": 0,
+            "folder": "DOA++-MAME", 
+            "rom_name": "doapp.zip", 
+            "nvramSave": "at28c16",
+            "sha256": "d95855c7d8596a90f0b8ca15725686567d767a9a3f93a8896b489a160e705c4e", 
+            "difficulty": [1, 4, 3],
+            "cfg": {"H": "But6", "P": "But1", "K": "But2"}
+        },
+    "sfiii3n": 
+        {
+            "name": "Street Fighter III",
+            "id": "sfiii3n",
+            "available": 1,
+            "stealth": 0,
+            "folder": "SFIII-MAME",
+            "rom_name": "sfiii3n.zip",
+            "nvramSave": "",
+            "sha256": "7239b5eb005488db22ace477501c574e9420c0ab70aeeb0795dfeb474284d416", 
+            "difficulty": [1, 8, 6],
+            "cfg": {"LP": "But4", "MP": "But1", "HP": "But5", "LK": "But3", "MK": "But2", "HK": "But6"}
+        },
+    "tektagt":
+        {
+            "name": "Tekken Tag Tournament",
+            "id": "tektagt",
+            "available": 1,
+            "stealth": 0,
+            "folder": "TEKTAG-MAME",
+            "rom_name": "tektagt.zip",
+            "nvramSave": "at28c16",
+            "sha256": "57be777eae0ee9e1c035a64da4c0e7cb7112259ccebe64e7e97029ac7f01b168",
+            "difficulty": [1, 9, 7],
+            "cfg": {"LP": "But4", "RP": "But1", "LK": "But3", "RK": "But2", "TAG": "But6"}
+        },
+    "umk3":
+        { 
+            "name": "Ultimate Mortal Kombat 3",
+            "id": "umk3",
+            "available": 1,
+            "stealth": 0,
+            "folder": "UMK3-MAME",
+            "rom_name": "umk3.zip",
+            "nvramSave": "nvram",
+            "sha256": "f48216ad82f78cb86e9c07d2507be347f904f4b5ae354a85ae7c34d969d265af",
+            "difficulty": [1, 5, 4],
+            "cfg": {"HP": "But1", "HK": "But2", "LK": "But3",  "LP": "But4", "RUN": "But5", "BLK": "But6"}
+        }
+}
