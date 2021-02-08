@@ -27,7 +27,7 @@ for _ in range(1000):
 env.close()
 ```
 
-Included in the repo you will find python notebooks showing you in detail how to:
+Included in the repo you find python notebooks showing you in detail how to:
 - Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
 - Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
 - Traing a state of the art Reinforcement Learning algorithm (coming soon)
