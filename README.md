@@ -27,7 +27,7 @@ for _ in range(1000):
 env.close()
 ```
 
-Included in the repo you will find python notebooks showing you in detail how to:
+Included in the repo you find python notebooks showing you in detail how to:
 - Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
 - Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
 - Traing a state of the art Reinforcement Learning algorithm (coming soon)
@@ -81,6 +81,7 @@ Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://vi
 ### General advice
 
 - Make sure you are connected to the Internet when running the environment
+- Extract `mame` binary contained in `mame/mame.zip` archive and place it inside `mame/` folder
 - Rename DIAMBRA Environment library file inside `diambraEnvLib/` folder:
     - Mint 20 / Ubuntu 20.04: rename `libdiambraEnv20.so` to `libdiambraEnv.so`
     - Mint 19 / Ubuntu 18.04: rename `libdiambraEnv18.so` to `libdiambraEnv.so`
