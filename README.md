@@ -63,6 +63,10 @@ This is the list of currenly interfaced games:
 
 `sudo apt-get install libboost1.67-dev libssl-dev libsdl2-ttf-dev`
 
+##### Ubuntu 20.10
+
+`sudo apt-get install libboost1.71-dev libboost-system1.71-dev libssl-dev libsdl2-ttf-dev`
+
 ### Python Packages
 
 `pip install jupyter opencv-python gym`
@@ -83,8 +87,9 @@ Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://vi
 - Make sure you are connected to the Internet when running the environment
 - Extract `mame` binary contained in `mame/mame.zip` archive and place it inside `mame/` folder
 - Rename DIAMBRA Environment library file inside `diambraEnvLib/` folder:
-    - Mint 20 / Ubuntu 20.04: rename `libdiambraEnv20.so` to `libdiambraEnv.so`
-    - Mint 19 / Ubuntu 18.04: rename `libdiambraEnv18.so` to `libdiambraEnv.so`
+    - Ubuntu 20.10: rename `libdiambraEnv20.10.so` to `libdiambraEnv.so`
+    - Mint 20 / Ubuntu 20.04: rename `libdiambraEnv20.04.so` to `libdiambraEnv.so`
+    - Mint 19 / Ubuntu 18.04: rename `libdiambraEnv18.04.so` to `libdiambraEnv.so`
 - Download games roms and place them in a folder of choice
     - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
     - **WARNING #2**: Only a specific rom will work for each game. It is univocally identified by means of it SHA256 sum value. Check it with the specific shell command:
