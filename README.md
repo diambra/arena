@@ -30,7 +30,7 @@ env.close()
 Included in the repo you find python notebooks showing you in detail how to:
 - Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
 - Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
-- Traing a state of the art Reinforcement Learning algorithm (coming soon)
+- Train a state of the art Reinforcement Learning algorithm (coming soon)
 
 In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA website</a> you find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a> providing a step by step guide for a flawless adoption. 
 
@@ -40,7 +40,7 @@ For additional insights and cool stuff about this initiative, follow the live st
 
 ## Interfaced games
 
-This is the list of currenly interfaced games:
+This is the list of currently interfaced games:
 - Dead Or Alive ++
 - Street Fighter III: 3rd Strike (Coming Soon)
 - Tekken Tag Tournament (Coming Soon)
@@ -92,7 +92,7 @@ Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://vi
     - Ubuntu 20.10: rename `libdiambraEnv20.10.so` to `libdiambraEnv.so`
 - Download games roms and place them in a folder of choice
     - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
-    - **WARNING #2**: Only a specific rom will work for each game. It is univocally identified by means of it SHA256 sum value. Check it with the specific shell command:
+    - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
 
        `sha256sum path-to-file`
 
