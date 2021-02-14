@@ -120,7 +120,8 @@ class diambraGym(gym.Env):
         self.diambraEnvThread.start()
 
         # Signal file definition
-        tmpPath = Path(self.pipes_path).joinpath("pipesTmp.log")
+        tmpPathFileName = "pipesTmp" + env_id + ".log"
+        tmpPath = Path(self.pipes_path).joinpath(tmpPathFileName)
 
         # Create Write Pipe
         self.writePipe = Pipe(env_id, "writeToDiambra", "w", self.pipes_path, tmpPath)
