@@ -101,7 +101,7 @@ This is the list of currently interfaced games:
 
 ### Python Packages
 
-A working python environment configuration can be found inside the repository: the file `diambraCondaExport.yml` provides a working conda environment packages list allowing to run every script contained here. Main packages to install are:
+A working python environment configuration can be found inside the repository: the file `diambraCondaExport.yml` provides a working conda environment packages list allowing to run every script included. Main packages to install are:
 
 - `pip install jupyter opencv-python gym`
 -  (*)(**) `pip install stable-baselines[mpi]`
