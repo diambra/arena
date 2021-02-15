@@ -57,7 +57,7 @@ env.close()
 Included in the repo you find python notebooks showing you in detail how to:
 - Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
 - Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
-- Train a state of the art Reinforcement Learning algorithm (coming soon)
+- Train a state of the art Reinforcement Learning algorithm (`DiambraAIAgent.ipynb`)
 
 In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA website</a> you find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a> providing a step by step guide for a flawless adoption. 
 
@@ -75,6 +75,11 @@ This is the list of currently interfaced games:
 
 ## Requirements
 
+### Hardware
+
+- (*) 16 Gb Ram
+- (*) 4 Gb GPU
+
 ### Operating System
 
 - Linux Mint 19 or newer
@@ -90,9 +95,14 @@ This is the list of currently interfaced games:
 
 `sudo apt-get install libboost1.71-dev libboost-system1.71-dev libssl-dev libsdl2-ttf-dev`
 
+##### (*) Mint / Ubuntu
+
+`sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev`
+
 ### Python Packages
 
-`pip install jupyter opencv-python gym`
+- `pip install jupyter opencv-python gym`
+-  (*)(**) `pip install stable-baselines[mpi]`
 
 ### Repository content
 
@@ -102,6 +112,10 @@ SHA256 for each rom are found in the `json` file inside the `roms/` folder
 
 Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html))
 
+
+(*)  Specific for PPO Algorithm (based on Stable Baselines Reinforcement Learning library)
+
+(**) For additional details on Stable Baselines dependencies, visit their documentation [here](https://stable-baselines.readthedocs.io/en/master/guide/install.html).
 
 ## Getting started
 
