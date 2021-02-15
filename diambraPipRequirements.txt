@@ -1,13 +1,13 @@
 absl-py==0.9.0
 altgraph==0.17
-argon2-cffi @ file:///tmp/build/80754af9/argon2-cffi_1596828496740/work
+argon2-cffi==20.1.0
 astor==0.8.1
 atari-py==0.2.6
-attrs @ file:///tmp/build/80754af9/attrs_1600298409949/work
+attrs==20.2.0
 backcall==0.2.0
-bleach @ file:///tmp/build/80754af9/bleach_1600439572647/work
+bleach==3.2.1
 certifi==2020.6.20
-cffi @ file:///tmp/build/80754af9/cffi_1600699165083/work
+cffi==1.14.3
 cftime==1.0.4.2
 cloudpickle==1.3.0
 cycler==0.10.0
@@ -23,18 +23,18 @@ google-pasta==0.2.0
 grpcio==1.28.1
 gym==0.17.1
 h5py==2.10.0
-importlib-metadata @ file:///tmp/build/80754af9/importlib-metadata_1593446433964/work
-ipykernel @ file:///tmp/build/80754af9/ipykernel_1596206602906/work/dist/ipykernel-5.3.4-py3-none-any.whl
-ipython @ file:///tmp/build/80754af9/ipython_1593447367857/work
+importlib-metadata==1.7.0
+ipykernel==5.3.4
+ipython==7.16.1
 ipython-genutils==0.2.0
 ipywidgets==7.5.1
-jedi @ file:///tmp/build/80754af9/jedi_1598371618777/work
+jedi==0.17.2
 Jinja2==2.11.2
 joblib==0.14.1
 jsonschema==3.2.0
 jupyter==1.0.0
-jupyter-client @ file:///tmp/build/80754af9/jupyter_client_1594826976318/work
-jupyter-console @ file:///tmp/build/80754af9/jupyter_console_1598884538475/work
+jupyter-client==6.1.6
+jupyter-console==6.2.0
 jupyter-core==4.6.3
 Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.0
@@ -49,7 +49,7 @@ mpld3==0.5.1
 nbconvert==5.6.1
 nbformat==5.0.7
 netCDF4==1.5.3
-notebook @ file:///tmp/build/80754af9/notebook_1596838602091/work
+notebook==6.1.1
 numpy==1.16.4
 opencv-contrib-python==4.4.0.42
 opencv-python==4.4.0.42
@@ -61,24 +61,25 @@ pathlib==1.0.1
 pexpect==4.8.0
 pickleshare==0.7.5
 Pillow==7.2.0
+pip==20.2.2
 pip-autoremove==0.9.1
 prometheus-client==0.8.0
-prompt-toolkit @ file:///tmp/build/80754af9/prompt-toolkit_1598885458782/work
+prompt-toolkit==3.0.7
 protobuf==3.11.3
-psutil @ file:///tmp/build/80754af9/psutil_1598370257337/work
+psutil==5.7.2
 ptyprocess==0.6.0
 PyAutoGUI==0.9.50
-pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
+pycparser==2.20
 PyGetWindow==0.0.8
 pyglet==1.5.0
-Pygments @ file:///tmp/build/80754af9/pygments_1600458456400/work
+Pygments==2.7.1
 pyinstaller==4.0
 pyinstaller-hooks-contrib==2020.8
 PyMsgBox==1.0.8
 pyparsing==2.4.7
 pyperclip==1.8.0
 PyRect==0.1.4
-pyrsistent @ file:///tmp/build/80754af9/pyrsistent_1600141725711/work
+pyrsistent==0.17.3
 PyScreeze==0.1.26
 python-dateutil==2.8.1
 python-vlc==3.0.11115
@@ -86,11 +87,12 @@ python3-xlib==0.15
 PyTweening==1.0.3
 pytz==2020.1
 pyzmq==19.0.2
-qtconsole @ file:///tmp/build/80754af9/qtconsole_1598374667791/work
+qtconsole==4.7.6
 QtPy==1.9.0
 scipy==1.5.2
 screeninfo==0.6.5
 Send2Trash==1.5.0
+setuptools==45.2.0
 six==1.15.0
 stable-baselines==2.10.0
 tensorboard==1.14.0
@@ -104,9 +106,10 @@ torch==1.4.0
 torchvision==0.5.0
 tornado==6.0.4
 traitlets==4.3.3
-wcwidth @ file:///tmp/build/80754af9/wcwidth_1593447189090/work
+wcwidth==0.2.5
 webencodings==0.5.1
 Werkzeug==1.0.1
+wheel==0.35.1
 widgetsnbextension==3.5.1
 wrapt==1.12.1
 zipp==3.1.0
