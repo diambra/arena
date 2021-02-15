@@ -101,7 +101,22 @@ This is the list of currently interfaced games:
 
 ### Python Packages
 
-A working python environment configuration can be found inside the repository: the file `diambraCondaExport.yml` provides a working conda environment packages list allowing to run every script included. Main packages to install are:
+Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html))
+
+To create a working python environment allowing to successfully execute all examples, first install your virtual environment manager of choice, then execute:
+
+- `virutalenv / pip`
+  ```
+  python3 -m venv env
+  source env/bin/activate
+  pip install -r diambraPipRequirements.txt
+  ```
+- `conda`
+  ```
+  conda create --name envName --file diambraCondaRequirements.txt
+  ```
+
+For a manual python packages installation, you need to install the following packages:
 
 - `pip install jupyter opencv-python gym`
 -  (*)(**) `pip install stable-baselines[mpi]`
@@ -112,7 +127,7 @@ SHA256 for each rom are found in the `json` file inside the `roms/` folder
 
 ### Generic recommendations
 
-Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html))
+
 
 
 (*)  Specific for PPO Algorithm (based on Stable Baselines Reinforcement Learning library)
