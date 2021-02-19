@@ -6,6 +6,7 @@
 - [Interfaced Games](#interfaced-games)
 - [Requirements](#requirements)
 - [Getting Started](#getting-started)
+- [Troubleshoot](#support-and-troubleshoot)
 - [Citation](#citation)
 
 ## What is DIAMBRA
@@ -153,6 +154,14 @@ SHA256 for each rom are found in the `json` file inside the `roms/` folder
 - Paths to `mame/` and `diambraEnvLib/` folders are needed, if you move them from the downloaded archive, make sure to update them accordingly
 - Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
 - Join our <a href="https://discord.gg/YSBjtmvefc" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
+
+## Support and Troubleshoot
+
+The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/YSBjtmvefc" target="_blank">Discord server</a> and use the dedicated channel.
+
+### Common known problems
+
+- If you are receiving the Runtime error "An attempt has been made to start a new process before the current process has finished its bootstrapping phase." when running python scripts extracted from notebooks, you can fix it placing `if __name__ == '__main__':` after modules import in the script.
 
 ## Citation
 ```
