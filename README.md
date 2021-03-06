@@ -59,6 +59,8 @@ Included in the repo you find python notebooks showing you in detail how to:
 - Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
 - Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
 - Train a state of the art Reinforcement Learning algorithm (`DiambraAIAgent.ipynb`)
+- Use DIAMBRA Gym Wrappers to record expert demonstrations for Imitation Learning (`DiambraGymRecTest.ipynb`)
+- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (`DiambraImitationLearningTest.ipynb`)
 
 In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA website</a> you find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a> providing a step by step guide for a flawless adoption. 
 
@@ -126,12 +128,8 @@ For a manual python packages installation, you need to install the following pac
 
 SHA256 for each rom are found in the `json` file inside the `roms/` folder
 
-### Generic recommendations
-
-
-
-
-(*)  Specific for PPO Algorithm (based on Stable Baselines Reinforcement Learning library)
+___
+(*)  Specific for PPO Algorithm and Imitation Learning Gym class (based on Stable Baselines Reinforcement Learning library)
 
 (**) For additional details on Stable Baselines dependencies, visit their documentation [here](https://stable-baselines.readthedocs.io/en/master/guide/install.html).
 
