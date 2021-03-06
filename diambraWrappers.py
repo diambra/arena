@@ -11,6 +11,7 @@ from gym import spaces
 from diambraGym import *
 
 import datetime
+from parallelPickle import parallelPickleWriter
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noop_max=6):
@@ -539,3 +540,105 @@ def additional_obs(env, key_to_add):
        env = AddObs(env, key_to_add)
 
     return env
+
+# Trajectory recorder wrapper
+class TrajectoryRecorder(gym.Wrapper):
+    def __init__(self, env, file_path, user_name, ignore_p2, commitHash, key_to_add):
+        """
+        Record trajectories to use them for imitation learning
+        :param env: (Gym Environment) the environment to wrap
+        :param filePath: (str) file path specifying where to store the trajectory file
+        """
+        gym.Wrapper.__init__(self, env)
+        self.filePath = file_path
+        self.userName = user_name
+        self.ignoreP2 = ignore_p2
+        self.key_to_add = key_to_add
+        self.shp = self.env.observation_space.shape
+        self.commitHash = commitHash
+
+        if self.env.playersNum == "2P":
+            if ((self.env.attackButCombinations[0] != self.env.attackButCombinations[1]) or\
+                (self.env.actionSpace[0] != self.env.actionSpace[1])):
+                raise Exception("Different attack buttons combinations and/or "\
+                                "different action spaces not supported for 2P experience recordings")
+
+        print("Recording trajectories in \"{}\"".format(self.filePath))
+        os.makedirs(self.filePath, exist_ok = True)
+
+    def reset(self, **kwargs):
+        """
+        Reset the environment and add requested info to the observation
+        :return: observation
+        """
+
+        # Items to store
+        self.lastFrameHist = []
+        self.addObsHist = []
+        self.rewardsHist = []
+        self.actionsHist = []
+        self.cumulativeRew = 0
+
+        obs = self.env.reset(**kwargs)
+
+        for idx in range(self.shp[2]-1):
+            self.lastFrameHist.append(obs[:,:,idx])
+
+        self.addObsHist.append(obs[:,:,self.shp[2]-1])
+
+        return obs
+
+    def step(self, action):
+        """
+        Step the environment with the given action
+        and add requested info to the observation
+        :param action: ([int] or [float]) the action
+        :return: new observation, reward, done, information
+        """
+
+        obs, reward, done, info = self.env.step(action)
+
+        self.lastFrameHist.append(obs[:,:,self.shp[2]-2])
+        self.addObsHist.append(obs[:,:,self.shp[2]-1])
+        self.rewardsHist.append(reward)
+        self.actionsHist.append(action)
+        self.cumulativeRew += reward
+
+        if done:
+            to_save = {}
+            to_save["commitHash"]    = self.commitHash
+            to_save["userName"]      = self.userName
+            to_save["playersNum"]    = self.env.playersNum
+            to_save["difficulty"]    = self.env.difficulty
+            to_save["ignoreP2"]      = self.ignoreP2
+            to_save["charNames"]     = self.env.charNames
+            to_save["actBufLen"]     = self.env.actBufLen
+            to_save["nActions"]      = self.env.n_actions[0]
+            to_save["attackButComb"] = self.env.attackButCombinations[0]
+            to_save["actionSpace"]   = self.env.actionSpace[0]
+            to_save["epLen"]         = len(self.rewardsHist)
+            to_save["cumRew"]        = self.cumulativeRew
+            to_save["keyToAdd"]      = self.key_to_add
+            to_save["frames"]        = self.lastFrameHist
+            to_save["addObs"]        = self.addObsHist
+            to_save["rewards"]       = self.rewardsHist
+            to_save["actions"]       = self.actionsHist
+
+            # Characters name
+            chars = ""
+            # If 2P mode
+            if self.env.playersNum == "2P" and self.ignoreP2 == 0:
+                chars += self.env.charNames[info["ownCharacter"]]
+                chars += self.env.charNames[info["oppCharacter"]]
+            # If 1P mode
+            else:
+                chars += self.env.charNames[info["ownCharacter"]]
+
+            savePath = self.filePath + "_mod" + str(self.ignoreP2)  + self.env.playersNum + "_" + chars +\
+                       "_diff" + str(self.env.difficulty)  + "_rew" + str(np.round(self.cumulativeRew, 3)) +\
+                       "_" + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+
+            pickleWriter = parallelPickleWriter(savePath, to_save)
+            pickleWriter.start()
+
+        return obs, reward, done, info
