@@ -2,18 +2,19 @@
 
 ## Summary
 
-- [What is DIAMBRA](#what-is-diambra)
-- [Interfaced Games](#interfaced-games)
-- [Requirements](#requirements)
-- [Getting Started](#getting-started)
-- [Troubleshoot](#support-and-troubleshoot)
-- [Citation](#citation)
+- **[What is DIAMBRA Environment](#what-is-diambra-environment)**
+- **[AI Tournament](#ai-tournament)**
+- **[Interfaced Games](#interfaced-games)**
+- **[Requirements](#requirements)**
+- **[Getting Started](#getting-started)**
+- **[Troubleshoot](#support-and-troubleshoot)**
+- **[Citation](#citation)**
 
-## What is DIAMBRA
+## What is DIAMBRA Environment
 
 ![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
 
-DIAMBRA Environment is a software package that allows you to use famous videogames as Reinforcement Learning tasks. It provides a python interface that follows the standard de-facto in this field, [OpenAI Gym](https://gym.openai.com/), so it is super easy to use, as demonstrated by the following code snippet:
+**DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, as demonstrated by the following code snippet:
 
 ```
 from diambraGym import diambraGym
@@ -55,18 +56,26 @@ for _ in range(100):
 env.close()
 ```
 
-Included in the repo you find python notebooks showing you in detail how to:
+In the repo you find **python notebooks included**, showing in detail how to:
 - Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
 - Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
 - Train a state of the art Reinforcement Learning algorithm (`DiambraAIAgent.ipynb`)
 - Use DIAMBRA Gym Wrappers to record expert demonstrations for Imitation Learning (`DiambraGymRecTest.ipynb`)
 - Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (`DiambraImitationLearningTest.ipynb`)
 
-In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA website</a> you find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a> providing a step by step guide for a flawless adoption. 
+In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA website</a> you **find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a>** providing a step by step guide for a flawless adoption. 
 
 ![diambraGif](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.gif)
 
-For additional insights and cool stuff about this initiative, follow the live stream on our [Twitch channel](https://www.twitch.tv/diambra_at), every Tuesday and Thursday at 10 PM CET = 1 PM PT!
+For additional insights and cool stuff about this initiative, **follow the live stream on our [Twitch channel](https://www.twitch.tv/diambra_at)**, every Tuesday and Thursday at 10 PM CET = 1 PM PT!
+
+## AI Tournament
+
+We are organizing an **international competition** where each participant will **train an AI agent to effectively play Dead Or Alive ++** using the environment contained in this repository.
+
+All validly submitted agents will be evaluated with **gameplays streamed live on our [Twitch channel](https://www.twitch.tv/diambra_at)**, with commentary and a lot of cool stuff. It is gonna be exciting!
+
+**[Register here](https://diambra.artificialtwin.com/aitournament/)**
 
 ## Interfaced games
 
