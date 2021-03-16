@@ -3,7 +3,7 @@ import numpy as np
 from collections import deque
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../utils'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'utils'))
 
 import gym
 from gym import spaces
@@ -371,29 +371,39 @@ class AddObs(gym.Wrapper):
                                             dtype=np.float32)
 
         self.resetInfo = {}
-        self.resetInfo["ownActionsBuf"] = np.concatenate(
+        self.resetInfo["actionsBufP1"] = np.concatenate(
                                            (self.actionsVector([0 for i in range(self.env.actBufLen)],
                                                                self.env.n_actions[0][0]),
                                             self.actionsVector([0 for i in range(self.env.actBufLen)],
                                                                self.env.n_actions[0][1]))
                                                       )
-        self.resetInfo["oppActionsBuf"] = np.concatenate(
+        self.resetInfo["actionsBufP2"] = np.concatenate(
                                            (self.actionsVector([0 for i in range(self.env.actBufLen)],
                                                                self.env.n_actions[1][0]),
                                             self.actionsVector([0 for i in range(self.env.actBufLen)],
                                                                self.env.n_actions[1][1]))
                                                       )
 
-        self.resetInfo["ownHealth"] = [1]
-        self.resetInfo["oppHealth"] = [1]
-        self.resetInfo["ownHealth_1"] = [1]
-        self.resetInfo["ownHealth_2"] = [1]
-        self.resetInfo["oppHealth_1"] = [1]
-        self.resetInfo["oppHealth_2"] = [1]
+        self.resetInfo["ownHealthP1"] = [1]
+        self.resetInfo["oppHealthP1"] = [1]
+        self.resetInfo["ownHealthP2"] = [1]
+        self.resetInfo["oppHealthP2"] = [1]
 
-        self.resetInfo["ownWins"] = [0]
-        self.resetInfo["oppWins"] = [0]
-        self.resetInfo["stage"] = [0.0]
+        self.resetInfo["ownHealth_1P1"] = [1]
+        self.resetInfo["ownHealth_2P1"] = [1]
+        self.resetInfo["oppHealth_1P1"] = [1]
+        self.resetInfo["oppHealth_2P1"] = [1]
+        self.resetInfo["ownHealth_1P2"] = [1]
+        self.resetInfo["ownHealth_2P2"] = [1]
+        self.resetInfo["oppHealth_1P2"] = [1]
+        self.resetInfo["oppHealth_2P2"] = [1]
+
+        self.resetInfo["ownWinsP1"] = [0]
+        self.resetInfo["oppWinsP1"] = [0]
+        self.resetInfo["ownWinsP2"] = [0]
+        self.resetInfo["oppWinsP2"] = [0]
+        self.resetInfo["stageP1"] = [0.0]
+        self.resetInfo["stageP2"] = [0.0]
 
     # Update playing char
     def updatePlayingChar(self, dictToUpdate, info):
@@ -404,7 +414,8 @@ class AddObs(gym.Wrapper):
         if self.env.playersNum == "2P":
             tmpChar2[info["oppCharacter"]] = 1
 
-        dictToUpdate["characters"] = np.concatenate( (tmpChar1, tmpChar2) )
+        dictToUpdate["characterP1"] = tmpChar1
+        dictToUpdate["characterP2"] = tmpChar2
 
         return
 
@@ -434,17 +445,35 @@ class AddObs(gym.Wrapper):
         # Creating the additional channel where to store new info
         obsNewAdd = np.zeros((shp[0], shp[1], 1), dtype=self.env.observation_space.dtype)
 
-        # Adding new info to the additional channel, on a very long line and then reshaping into the obs dim
+        # Adding new info to the additional channel, on a very
+        # long line and then reshaping into the obs dim
         newData = np.zeros((shp[0] * shp[1]))
+
+        # Adding new info for 1P
         counter = 0
         for key in self.key_to_add:
 
-           for addInfo in additionalInfo[key]:
+            for addInfo in additionalInfo[key+"P1"]:
 
-              counter = counter + 1
-              newData[counter] = addInfo
+                counter = counter + 1
+                newData[counter] = addInfo
 
         newData[0] = counter
+
+        # Adding new info for P2 in 2P games
+        if self.playersNum == "2P":
+            halfPosIdx = int((shp[0] * shp[1]) / 2)
+            counter = halfPosIdx
+
+            for key in self.key_to_add:
+
+                for addInfo in additionalInfo[key+"P2"]:
+
+                    counter = counter + 1
+                    newData[counter] = addInfo
+
+            newData[halfPosIdx] = counter - halfPosIdx
+
         newData = np.reshape(newData, (shp[0], -1))
 
         newData = newData * self.boxHighBound
@@ -457,32 +486,49 @@ class AddObs(gym.Wrapper):
     def to_step_info(self, info, action):
 
         step_info = {}
-        step_info["ownActionsBuf"] = np.concatenate(
-                                      (self.actionsVector( info["ownActionsBuf"][0], self.env.n_actions[0][0] ),
-                                       self.actionsVector( info["ownActionsBuf"][1], self.env.n_actions[0][1] ))
+        step_info["actionsBufP1"] = np.concatenate(
+                                      (self.actionsVector( info["actionsBufP1"][0], self.env.n_actions[0][0] ),
+                                       self.actionsVector( info["actionsBufP1"][1], self.env.n_actions[0][1] ))
                                                   )
         if self.playersNum == "2P":
-            step_info["oppActionsBuf"] = np.concatenate(
-                                          (self.actionsVector( info["oppActionsBuf"][0], self.env.n_actions[1][0] ),
-                                           self.actionsVector( info["oppActionsBuf"][1], self.env.n_actions[1][1] ))
+            step_info["actionsBufP2"] = np.concatenate(
+                                          (self.actionsVector( info["actionsBufP2"][0], self.env.n_actions[1][0] ),
+                                           self.actionsVector( info["actionsBufP2"][1], self.env.n_actions[1][1] ))
                                                       )
 
         if "ownHealth_1" not in self.key_to_add:
-            step_info["ownHealth"] = [info["ownHealth"][0] / float(self.env.max_health)]
-            step_info["oppHealth"] = [info["oppHealth"][0] / float(self.env.max_health)]
+            step_info["ownHealthP1"] = [info["ownHealth"][0] / float(self.env.max_health)]
+            step_info["oppHealthP1"] = [info["oppHealth"][0] / float(self.env.max_health)]
         else:
-            step_info["ownHealth_1"] = [info["ownHealth"][0] / float(self.env.max_health)]
-            step_info["ownHealth_2"] = [info["ownHealth"][1] / float(self.env.max_health)]
-            step_info["oppHealth_1"] = [info["oppHealth"][0] / float(self.env.max_health)]
-            step_info["oppHealth_2"] = [info["oppHealth"][1] / float(self.env.max_health)]
+            step_info["ownHealth_1P1"] = [info["ownHealth"][0] / float(self.env.max_health)]
+            step_info["ownHealth_2P1"] = [info["ownHealth"][1] / float(self.env.max_health)]
+            step_info["oppHealth_1P1"] = [info["oppHealth"][0] / float(self.env.max_health)]
+            step_info["oppHealth_2P1"] = [info["oppHealth"][1] / float(self.env.max_health)]
 
-        step_info["ownPosition"] = [info["ownPosition"]]
-        step_info["oppPosition"] = [info["oppPosition"]]
+        step_info["ownPositionP1"] = [info["ownPosition"]]
+        step_info["oppPositionP1"] = [info["oppPosition"]]
 
-        step_info["ownWins"] = [info["ownWins"]]
-        step_info["oppWins"] = [info["oppWins"]]
+        step_info["ownWinsP1"] = [info["ownWins"]]
+        step_info["oppWinsP1"] = [info["oppWins"]]
 
-        step_info["stage"] = [ float(info["stage"] - 1) / float(self.env.max_stage - 1) ]
+        step_info["stageP1"] = [ float(info["stage"] - 1) / float(self.env.max_stage - 1) ]
+
+        if self.playersNum == "2P":
+            if "ownHealth_1" not in self.key_to_add:
+                step_info["ownHealthP2"] = step_info["oppHealthP1"]
+                step_info["oppHealthP2"] = step_info["ownHealthP1"]
+            else:
+                step_info["ownHealth_1P2"] = step_info["oppHealth_1P1"]
+                step_info["ownHealth_2P2"] = step_info["oppHealth_2P1"]
+                step_info["oppHealth_1P2"] = step_info["ownHealth_1P1"]
+                step_info["oppHealth_2P2"] = step_info["ownHealth_2P1"]
+
+            step_info["ownPositionP2"] = [info["oppPosition"]]
+            step_info["oppPositionP2"] = [info["ownPosition"]]
+
+            step_info["ownWinsP2"] = [info["oppWins"]]
+            step_info["oppWinsP2"] = [info["ownWins"]]
+            step_info["stageP2"] = step_info["stageP1"]
 
         self.updatePlayingChar(step_info, info)
 
@@ -498,8 +544,10 @@ class AddObs(gym.Wrapper):
         obs = np.array(obs).astype(np.float32)
 
         info = self.env.envData.read_info()
-        self.resetInfo["ownPosition"] = [info["ownPosition"]]
-        self.resetInfo["oppPosition"] = [info["oppPosition"]]
+        self.resetInfo["ownPositionP1"] = [info["ownPosition"]]
+        self.resetInfo["oppPositionP1"] = [info["oppPosition"]]
+        self.resetInfo["ownPositionP2"] = [info["oppPosition"]]
+        self.resetInfo["oppPositionP2"] = [info["ownPosition"]]
 
         self.updatePlayingChar(self.resetInfo, info)
 

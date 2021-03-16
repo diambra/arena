@@ -24,3 +24,16 @@ class gamepadPolicy(object):
 
     def getActions(self):
         return self.gamePad.getActions()
+
+# Util to copy P2 additional OBS into P1 position on 7th channel
+def P2ToP1AddObsMove(observation):
+
+    shp = observation.shape
+    startIdx = int((shp[0]*shp[1])/2)
+    observation = np.reshape(observation, (-1))
+    numAddParP2 = int(observation[startIdx])
+    addParP2 = observation[startIdx:startIdx+numAddParP2 + 1]
+    observation[0:numAddParP2 + 1] = addParP2
+    observation = np.reshape(observation, (shp[0], -1))
+
+    return observation

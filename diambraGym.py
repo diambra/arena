@@ -4,6 +4,8 @@ import numpy as np
 import gym
 from gym import spaces
 from collections import deque
+from policies import P2ToP1AddObsMove
+
 import threading
 from pipe import *
 import time
@@ -317,6 +319,8 @@ class diambraGym(gym.Env):
                         oppMovAct = action[2]
                         oppAttAct = action[3]
                     else:
+                        if self.p2Brain.id == "rl":
+                            self.lastObs[:,:,-1] = P2ToP1AddObsMove(self.lastObs[:,:,-1])
                         [oppMovAct, oppAttAct], _ = self.p2Brain.act(self.lastObs)
 
                 else: # 2P Discrete Action Space
@@ -324,6 +328,8 @@ class diambraGym(gym.Env):
                     if self.p2Brain == None:
                         oppMovAct, oppAttAct = self.discreteToMultiDiscreteAction(action[2])
                     else:
+                        if self.p2Brain.id == "rl":
+                            self.lastObs[:,:,-1] = P2ToP1AddObsMove(self.lastObs[:,:,-1])
                         brainActions, _ = self.p2Brain.act(self.lastObs)
                         oppMovAct, oppAttAct = self.discreteToMultiDiscreteAction(brainActions)
 
@@ -348,6 +354,8 @@ class diambraGym(gym.Env):
                         oppMovAct = action[1]
                         oppAttAct = action[2]
                     else:
+                        if self.p2Brain.id == "rl":
+                            self.lastObs[:,:,-1] = P2ToP1AddObsMove(self.lastObs[:,:,-1])
                         [oppMovAct, oppAttAct], _ = self.p2Brain.act(self.lastObs)
 
                 else: # 2P Discrete Action Space
@@ -355,6 +363,8 @@ class diambraGym(gym.Env):
                     if self.p2Brain == None:
                         oppMovAct, oppAttAct = self.discreteToMultiDiscreteAction(action[1])
                     else:
+                        if self.p2Brain.id == "rl":
+                            self.lastObs[:,:,-1] = P2ToP1AddObsMove(self.lastObs[:,:,-1])
                         brainActions, _ = self.p2Brain.act(self.lastObs)
                         oppMovAct, oppAttAct = self.discreteToMultiDiscreteAction(brainActions)
 
@@ -365,9 +375,10 @@ class diambraGym(gym.Env):
 
             reward            = data["reward"]
             round_done        = data["round_done"]
-            done              = data["ep_done"]
+            done              = data["game_done"]
             stage_done        = False
             game_done         = done
+            data["ep_done"]   = done
         else:
             self.writePipe.sendComm(diambraEnvComm["step"], ownMovAct, ownAttAct)
             self.readPipe.readFlag()
@@ -381,11 +392,11 @@ class diambraGym(gym.Env):
         # Add the action buffer to the step data
         self.ownMovActBuf.extend([ownMovAct])
         self.ownAttActBuf.extend([ownAttAct])
-        data["ownActionsBuf"] = [self.ownMovActBuf, self.ownAttActBuf]
+        data["actionsBufP1"] = [self.ownMovActBuf, self.ownAttActBuf]
         if self.playersNum == "2P":
             self.oppMovActBuf.extend([oppMovAct])
-            self.oppMovActBuf.extend([oppAttAct])
-            data["oppActionsBuf"] = [self.oppMovActBuf, self.oppAttActBuf]
+            self.oppAttActBuf.extend([oppAttAct])
+            data["actionsBufP2"] = [self.oppMovActBuf, self.oppAttActBuf]
 
         if done:
             if self.showFinal:
