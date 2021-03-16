@@ -89,8 +89,8 @@ This is the list of currently interfaced games:
 
 ### Hardware
 
-- (*) 16 Gb Ram
-- (*) 4 Gb GPU
+- (*) 16 GB Ram
+- (*) 4 GB GPU
 
 ### Operating System
 
@@ -146,6 +146,7 @@ ___
 
 ### General advice
 
+- Make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
 - Make sure you are connected to the Internet when running the environment
 - Extract `mame` binary contained in `mame/mame.zip` archive and place it inside `mame/` folder
 - Rename DIAMBRA Environment library file inside `diambraEnvLib/` folder:
@@ -169,6 +170,8 @@ The fastest way to receive support is by joining DIAMBRA <a href="https://discor
 ### Common known problems
 
 - If you are receiving the Runtime error "An attempt has been made to start a new process before the current process has finished its bootstrapping phase." when running python scripts extracted from notebooks, you can fix it placing `if __name__ == '__main__':` after modules import in the script.
+
+- If the environment is not working and you receive LUA errors in the terminal (typically in between environment initialization and environment reset), make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
 
 ## Citation
 ```
