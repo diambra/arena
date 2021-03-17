@@ -3,7 +3,6 @@ import numpy as np
 from collections import deque
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
-sys.path.append(os.path.join(os.path.dirname(__file__), 'utils'))
 
 import gym
 from gym import spaces
@@ -11,7 +10,7 @@ from gym import spaces
 from diambraGym import *
 
 import datetime
-from parallelPickle import parallelPickleWriter
+from utils.parallelPickle import parallelPickleWriter
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noop_max=6):

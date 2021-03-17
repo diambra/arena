@@ -4,7 +4,7 @@ import numpy as np
 import gym
 from gym import spaces
 from collections import deque
-from policies import P2ToP1AddObsMove
+from utils.policies import P2ToP1AddObsMove
 
 import threading
 from pipe import *

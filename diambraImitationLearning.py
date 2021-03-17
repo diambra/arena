@@ -5,8 +5,7 @@ from gym import spaces
 import pickle, bz2
 import copy
 import cv2
-sys.path.append(os.path.join(os.path.dirname(__file__), 'utils'))
-from policies import P2ToP1AddObsMove
+from utils.policies import P2ToP1AddObsMove
 
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines.common import set_global_seeds
@@ -63,6 +62,10 @@ class diambraImitationLearning(gym.Env):
         # CPU rank for this env instance
         self.rank = rank
         self.totalCpus = totalCpus
+
+        # Check for number of files
+        if self.totalCpus > len(self.trajFilesList):
+            raise Exception("Number of requested CPUs > number of recorded experience available files")
 
         # Idx of trajectory file to read
         self.trajIdx = self.rank
@@ -236,11 +239,11 @@ class diambraImitationLearning(gym.Env):
 
         # Process Additiona Obs for P2 (copy them in P1 position)
         newAddObsList = []
-        
+
         for addObs in self.RLTrajDictP2["addObs"]:
             newAddObs = P2ToP1AddObsMove(addObs)
             newAddObsList.append(newAddObs)
-            
+
         self.RLTrajDictP2["addObs"] = newAddObsList
 
         # For each step, convert P1 into P2 experience
