@@ -101,11 +101,11 @@ This is the list of currently interfaced games:
 
 ##### Mint 19 / Ubuntu 18
 
-`sudo apt-get install libboost1.65-dev libssl-dev libsdl2-ttf-dev`
+`sudo apt-get install libboost1.65-dev libssl-dev libsdl2-ttf-dev xvfb`
 
 ##### Mint 20 / Ubuntu 20
 
-`sudo apt-get install libboost1.71-dev libboost-system1.71-dev libssl-dev libsdl2-ttf-dev`
+`sudo apt-get install libboost1.71-dev libboost-system1.71-dev libssl-dev libsdl2-ttf-dev xvfb`
 
 ##### (*) Mint / Ubuntu
 
