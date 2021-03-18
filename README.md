@@ -14,7 +14,7 @@
 
 ![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
 
-**DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, as demonstrated by the following code snippet:
+**DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, as demonstrated by the following code snippet (that can be found in `diambraGymGist.py`) **also supporting headless mode** for server-side executions:
 
 ```
 from diambraGym import diambraGym
@@ -40,7 +40,7 @@ diambraEnvKwargs["difficulty"]  = 3
 diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]]
 diambraEnvKwargs["charOutfits"] = [2, 2]
 
-env = diambraGym("Test", diambraEnvKwargs)
+env = diambraGym("Test", diambraEnvKwargs, headless=False) # Use `headless=True` for server-side executions
 
 observation = env.reset()
 
