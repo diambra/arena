@@ -18,14 +18,15 @@
 
 ```
 from diambraGym import diambraGym
+import os
 
 base_path = "/home/path-to-repo-root/" # Edit accordingly
 
 diambraEnvKwargs = {}
 diambraEnvKwargs["gameId"]          = "doapp" # Game selection
-diambraEnvKwargs["diambraEnv_path"] = base_path + "diambraEnvLib/"
-diambraEnvKwargs["roms_path"]       = base_path + "roms/" # Absolute path to roms
-diambraEnvKwargs["mame_path"]       = base_path + "mame/" # Absolute path to MAME executable
+diambraEnvKwargs["diambraEnv_path"] = os.path.join(base_path, "diambraEnvLib/")
+diambraEnvKwargs["roms_path"]       = os.path.join(base_path, "roms/") # Absolute path to roms
+diambraEnvKwargs["mame_path"]       = os.path.join(base_path, "mame/") # Absolute path to MAME executable
 
 diambraEnvKwargs["mame_diambra_step_ratio"] = 6
 diambraEnvKwargs["render"]                  = True # Renders the environment, deactivate for speedup
@@ -45,14 +46,14 @@ env = diambraGym("Test", diambraEnvKwargs, headless=False) # Use `headless=True`
 observation = env.reset()
 
 for _ in range(100):
-            
+
     actions = env.action_spaces[0].sample() # Sampling for 1P mode
-              
+
     observation, reward, done, info = env.step(actions)
-    
+
     if done:
         observation = env.reset()
-        
+
 env.close()
 ```
 
@@ -101,11 +102,11 @@ This is the list of currently interfaced games:
 
 ##### Mint 19 / Ubuntu 18
 
-`sudo apt-get install libboost1.65-dev libssl-dev libsdl2-ttf-dev xvfb`
+`sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
 
 ##### Mint 20 / Ubuntu 20
 
-`sudo apt-get install libboost1.71-dev libboost-system1.71-dev libssl-dev libsdl2-ttf-dev xvfb`
+`sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
 
 ##### (*) Mint / Ubuntu
 

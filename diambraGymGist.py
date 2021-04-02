@@ -1,12 +1,13 @@
 from diambraGym import diambraGym
+import os
 
 base_path = "/home/path-to-repo-root/" # Edit accordingly
 
 diambraEnvKwargs = {}
 diambraEnvKwargs["gameId"]          = "doapp" # Game selection
-diambraEnvKwargs["diambraEnv_path"] = base_path + "diambraEnvLib/"
-diambraEnvKwargs["roms_path"]       = base_path + "roms/" # Absolute path to roms
-diambraEnvKwargs["mame_path"]       = base_path + "mame/" # Absolute path to MAME executable
+diambraEnvKwargs["diambraEnv_path"] = os.path.join(base_path, "diambraEnvLib/")
+diambraEnvKwargs["roms_path"]       = os.path.join(base_path, "roms/") # Absolute path to roms
+diambraEnvKwargs["mame_path"]       = os.path.join(base_path, "mame/") # Absolute path to MAME executable
 
 diambraEnvKwargs["mame_diambra_step_ratio"] = 6
 diambraEnvKwargs["render"]                  = True # Renders the environment, deactivate for speedup
