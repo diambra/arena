@@ -1,0 +1,1 @@
+sudo apt-get install libboost1.65-dev libssl-dev libsdl2-ttf-dev xvfb
