@@ -33,7 +33,7 @@ class diambraGym(gym.Env):
         self.playersNum = "1P"
         if diambraEnvKwargs["player"] == "P1P2":
             self.playersNum = "2P"
-        self.pipes_path = "/tmp/DIAMBRA/"
+        self.pipes_path = os.path.join("/tmp", "DIAMBRA")
 
         print("Env_id = {}".format(env_id))
         print("Continue value = {}".format(self.continueGame))
@@ -45,7 +45,7 @@ class diambraGym(gym.Env):
         # Launch diambra env core
         diambraEnvKwargs["diambraEnv_path"]
         # Load library
-        libPath =  diambraEnvKwargs["diambraEnv_path"] + "libdiambraEnv.so"
+        libPath = os.path.join(diambraEnvKwargs["diambraEnv_path"], "libdiambraEnv.so")
 
         if not libPath:
            print("Unable to find the specified library: {}".format(libPath))
