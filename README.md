@@ -102,13 +102,15 @@ This is the list of currently interfaced games:
 
 ### OS Packages
 
+**For both OS (Mint/Ubuntu)** Update your OS with `sudo apt-get update`
+
 ##### Mint 19 / Ubuntu 18
 
-`sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
+`sudo apt-get install python3-pip libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
 
 ##### Mint 20 / Ubuntu 20
 
-`sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
+`sudo apt-get install python3-pip libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
 
 ##### (*) Mint / Ubuntu
 
@@ -120,7 +122,7 @@ Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://vi
 
 To create a working python environment allowing to successfully execute all examples, first install your virtual environment manager of choice, then execute:
 
-- `virutalenv / pip`
+- `virtualenv / pip`
   ```
   python3 -m venv env
   source env/bin/activate
