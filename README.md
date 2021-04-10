@@ -166,11 +166,11 @@ ___
 - Absolute `base_path` inside Jupyter Notebooks has to be updated accordingly to where you extracted/clone the repository
 - Paths to `mame/` and `diambraEnvLib/` folders are needed, if you move them from the downloaded archive, make sure to update them accordingly
 - Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
-- Join our <a href="https://discord.gg/YSBjtmvefc" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
+- Join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
 
 ## Support and Troubleshoot
 
-The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/YSBjtmvefc" target="_blank">Discord server</a> and use the dedicated channel.
+The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> and use the dedicated channel.
 
 ### Common known problems
 
