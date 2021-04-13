@@ -22,7 +22,8 @@ diambraEnvKwargs["difficulty"]  = 3
 diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]]
 diambraEnvKwargs["charOutfits"] = [2, 2]
 
-env = diambraGym("Test", diambraEnvKwargs, headless=False) # Use `headless=True` for server-side executions
+envId = "Test" # This ID must be unique for every instance of the environment when using diambraGym class
+env = diambraGym(envId, diambraEnvKwargs, headless=False) # Use `headless=True` for server-side executions
 
 observation = env.reset()
 
