@@ -58,7 +58,7 @@ for _ in range(100):
 env.close()
 ```
 
-In the repo you find **python notebooks included**, showing in detail how to:
+In the repository you find **python notebooks included**, showing in detail how to:
 - Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
 - Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
 - Train a state of the art Reinforcement Learning algorithm (`DiambraAIAgent.ipynb`)
