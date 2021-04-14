@@ -175,6 +175,8 @@ The fastest way to receive support is by joining DIAMBRA <a href="https://discor
 
 ### Common known problems
 
+- If you are receiving the Runtime error "error: execve failed: Not a directory" in emulator booting up phase, make sure you properly set `base_path` variable in your script/notebook with the absolute path to the repository root folder
+
 - If you are receiving the Runtime error "An attempt has been made to start a new process before the current process has finished its bootstrapping phase." when running python scripts extracted from notebooks, you can fix it placing `if __name__ == '__main__':` after modules import in the script.
 
 - If the environment is not working and you receive LUA errors in the terminal (typically in between environment initialization and environment reset), make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
