@@ -11,7 +11,7 @@ function setupMintUlyssa() {
     cd mame
     unzip mame.zip
     cd ..
-    mv diambra/libdiambraEnv20.so diambra/libdiambraEnv.so
+    mv diambraEnvLib/libdiambraEnv20.so diambraEnvLib/libdiambraEnv.so
 }
 
 function setupMintTessa() {
@@ -25,7 +25,7 @@ function setupMintTessa() {
     cd mame
     unzip mame.zip
     cd ..
-    mv diambra/libdiambraEnv18.so diambra/libdiambraEnv.so
+    mv diambraEnvLib/libdiambraEnv18.so diambraEnvLib/libdiambraEnv.so
 
 }
 
@@ -40,7 +40,7 @@ function setupUbuntuGroovyGorilla() {
     cd mame
     unzip mame.zip
     cd ..
-    mv diambra/libdiambraEnv20.so diambra/libdiambraEnv.so
+    mv diambraEnvLib/libdiambraEnv20.so diambraEnvLib/libdiambraEnv.so
 }
 
 function setupUbuntuBionicBeaver() {
@@ -54,7 +54,7 @@ function setupUbuntuBionicBeaver() {
     cd mame
     unzip mame.zip
     cd ..
-    mv diambra/libdiambraEnv18.so diambra/libdiambraEnv.so
+    mv diambraEnvLib/libdiambraEnv18.so diambraEnvLib/libdiambraEnv.so
 
 }
 
@@ -70,7 +70,7 @@ if [ $distroName == "LinuxMint" ]; then
 	if [ $distroRelease == "20.1" ]; then
 		echo "Mint Ulyssa Detected"
         setupMintUlyssa
-	elif [ $distroRelease == "19.1" ]; then
+	elif [ $distroRelease == "19" ]; then
 		echo "Mint Tessa Detected"
         setupMintTessa
 	fi
