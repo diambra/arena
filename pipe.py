@@ -5,6 +5,8 @@ import threading
 import numpy as np
 import ctypes, ctypes.util
 import time
+import fcntl
+from select import select
 
 # DIAMBRA Env Command Dict
 diambraEnvComm = {}
@@ -106,11 +108,12 @@ class StreamGobbler(threading.Thread):
         self._stop_event = threading.Event()
 
     def run(self):
-        for line in iter(self.pipe.readline, b''):
-            #print(line)
-            self.queue.put(line[:-1])
-            if self._stop_event.is_set():
-                break
+        while not self._stop_event.is_set():
+            # Select permits to check if there is data available in the pipe
+            # 1e-5 is the timeout constant
+            if select([self.pipe.fileno()], [], [], 1e-5)[0]:
+                line = self.pipe.readline()
+                self.queue.put(line[:-1])
 
     def wait_for_cursor(self):
         new_line_count = 0
@@ -171,12 +174,18 @@ class Pipe(object):
 
             if self.mode == "r":
                 self.read_queue = Queue()
-                StreamGobbler(self.fifo, self.read_queue).start()
+                self.gobbler = StreamGobbler(self.fifo, self.read_queue)
+                self.gobbler.start()
         except Exception as e:
             error = "Failed to open pipe '" + str(self.path.absolute()) + "'"
             raise IOError(error)
 
     def close(self):
+        if self.mode == "r":
+            # Stop the gobbler
+            self.gobbler.stop()
+            self.gobbler.join()
+
         self.fifo.close()
 
     def sendComm(self, commType, P1mov=0, P1att=0, P2mov=0, P2att=0):
