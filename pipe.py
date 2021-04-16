@@ -5,7 +5,6 @@ import threading
 import numpy as np
 import ctypes, ctypes.util
 import time
-import fcntl
 from select import select
 
 # DIAMBRA Env Command Dict
