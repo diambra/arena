@@ -67,21 +67,29 @@ read -ra array <<< "$distroRelease"
 distroRelease=${array[1]}
 
 if [ $distroName == "LinuxMint" ]; then
-	if [ $distroRelease == "20.1" ]; then
+	isUlyssa=$(echo $distroRelease" > 20" | bc)
+	isTessa=$(echo $distroRelease" > 19" | bc)
+	if [ $isUlyssa -eq 1 ]; then
 		echo "Mint Ulyssa Detected"
-        setupMintUlyssa
-	elif [ $distroRelease == "19" ]; then
+        	#setupMintUlyssa
+	elif [ $isTessa -eq 1 ]; then
 		echo "Mint Tessa Detected"
-        setupMintTessa
+        	#setupMintTessa
+	else
+		echo "Mint version not supported"
 	fi
 fi
 
 if [ $distroName == "Ubuntu" ]; then
-	if [ $distroRelease == "20.10" ]; then
+	isAtLeastGorilla=$(echo $distroRelease" > 20" | bc)
+	isAtLeastBionicBeaver=$(echo $distroRelease" > 18" | bc)
+	if [ $isAtLeastGorilla -eq 1 ]; then
 		echo "Ubuntu Groovy Gorilla Detected"
-        setupUbuntuGroovyGorilla
-	elif [ $distroRelease == "18.04" ]; then
+        #setupUbuntuGroovyGorilla
+	elif [ $isAtLeastBionicBeaver -eq 1 ]; then
 		echo "Ubuntu Bionic Beaver Detected"
-        setupUbuntuBionicBeaver
+        #setupUbuntuBionicBeaver
+    else
+		echo "Ubuntu version not supported"
 	fi
 fi
