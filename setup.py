@@ -75,6 +75,7 @@ setuptools.setup(
         long_description_content_type="Reinforcement Learning",
         license='GNU Affero GPL',
         install_requires=[
+            'pip>=21',
             'gym>=0.17.1',
             'jupyter>=1.0.0',
             'opencv-contrib-python>=4.4.0.42',
