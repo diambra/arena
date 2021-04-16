@@ -1,6 +1,8 @@
 import distro
 import platform
 import setuptools
+import subprocess
+import sys
 
 from setuptools.command.install import install
 
@@ -21,33 +23,37 @@ class DiambraInstall(install):
         option = self.option
         install.run(self)
 
-platform=platform.platform()
-if(platform!="Linux"):
+platform=platform.system()
+if(platform != "Linux"):
     print("Warning, only Linux platforms are supported for this package")
 
 distro=distro.linux_distribution()
 name=distro[0]
-release=distro[1]
+release=float(distro[1])
 
-if(not(name.contains("Ubuntu")) and not(name.contains("Linux Mint"))):
+if(not(name == "Ubuntu") and not(name == "Linux Mint")):
     print("Warning, only Ubuntu and Mint distros are supported for this package")
-    return
+    sys.exit()
 
-if(name.contains("Ubuntu")):
-    if(not(release.contains("18.04")) and not(release.contains("20.10"))):
+if(name == "Ubuntu"):
+    if(release < 18.04):
         print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
-        return
+        sys.exit()
 
-if(name.contains("Linux Mint")):
-    if(not(release.contains("19")) and not(release.contains("20.1"))):
+if(name == "Linux Mint"):
+    if(release < 19):
         print("Warning, only LSB Tessa and Ulyssa are supported for this package")
-        return
+        sys.exit()
+  
+# execute command
+subprocess.run("setupOS.sh")
 
 with open("README.md", "r") as description:
     long_description = description.read()
 
 setuptools.setup(
         name='diambra',
+        url='https://github.com/diambra/DIAMBRAenvironment',
         version='0.2',
         scripts=['diambra'],
         author="Artificial Twin",
