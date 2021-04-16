@@ -60,18 +60,14 @@ if(name == "Linux Mint"):
     else:
         subprocess.run(aptCmd1.split())
         subprocess.run(aptCmd2_19.split())
-  
-# execute command
-subprocess.run("./setupOS.sh")
 
 with open("README.md", "r") as description:
     long_description = description.read()
 
 setuptools.setup(
-        name='diambra',
+        name='DIAMBRAEnvironment',
         url='https://github.com/diambra/DIAMBRAenvironment',
         version='0.2',
-        scripts=['diambra'],
         author="Artificial Twin",
         author_email="alessandropalmas.mail@gmail.com",
         description="The virtual arena where AI Algorithms fight in video games matches with live technical commentary",
@@ -82,8 +78,8 @@ setuptools.setup(
             'gym>=0.17.1',
             'jupyter>=1.0.0',
             'opencv-contrib-python>=4.4.0.42',
-            'opencv-python>=4.4.0.42',
-            'platform_system=="Linux""'],
+            'opencv-python>=4.4.0.42'],	
+	packages=["diambra"],
         classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
         cmdclass={'install': DiambraInstall}
         )
