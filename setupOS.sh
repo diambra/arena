@@ -2,12 +2,9 @@
 
 function setupMintUlyssa() {
     echo 'Updating APT'
-    sudo apt update
     sudo apt-get update
 
-    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb
-    sudo apt-get install python3-pip
+    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
     cd mame
     unzip mame.zip
     cd ..
@@ -16,12 +13,9 @@ function setupMintUlyssa() {
 
 function setupMintTessa() {
     echo 'Updating APT'
-    sudo apt update
     sudo apt-get update
 
-    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb
-    sudo apt-get install python3-pip
+    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
     cd mame
     unzip mame.zip
     cd ..
@@ -31,12 +25,9 @@ function setupMintTessa() {
 
 function setupUbuntuGroovyGorilla() {
     echo 'Updating APT'
-    sudo apt update
     sudo apt-get update
 
-    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb
-    sudo apt-get install python3-pip
+    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
     cd mame
     unzip mame.zip
     cd ..
@@ -45,12 +36,9 @@ function setupUbuntuGroovyGorilla() {
 
 function setupUbuntuBionicBeaver() {
     echo 'Updating APT'
-    sudo apt update
     sudo apt-get update
 
-    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb
-    sudo apt-get install python3-pip
+    sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
     cd mame
     unzip mame.zip
     cd ..

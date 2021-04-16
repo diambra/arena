@@ -35,18 +35,34 @@ if(not(name == "Ubuntu") and not(name == "Linux Mint")):
     print("Warning, only Ubuntu and Mint distros are supported for this package")
     sys.exit()
 
+aptCmd1="sudo apt-get update"
+aptCmd2_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
+aptCmd2_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
+
 if(name == "Ubuntu"):
     if(release < 18.04):
         print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
         sys.exit()
+    if(release > 20):
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_20.split())
+    else:
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_19.split())
 
 if(name == "Linux Mint"):
     if(release < 19):
         print("Warning, only LSB Tessa and Ulyssa are supported for this package")
         sys.exit()
+    if(release > 20):
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_20.split())
+    else:
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_19.split())
   
 # execute command
-subprocess.run("setupOS.sh")
+subprocess.run("./setupOS.sh")
 
 with open("README.md", "r") as description:
     long_description = description.read()
