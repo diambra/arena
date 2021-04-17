@@ -5,7 +5,6 @@ import threading
 import numpy as np
 import ctypes, ctypes.util
 import time
-from select import select
 
 # DIAMBRA Env Command Dict
 diambraEnvComm = {}
@@ -107,12 +106,11 @@ class StreamGobbler(threading.Thread):
         self._stop_event = threading.Event()
 
     def run(self):
-        while not self._stop_event.is_set():
-            # Select permits to check if there is data available in the pipe
-            # 1e-3 is the timeout constant
-            if select([self.pipe.fileno()], [], [], 1e-3)[0]:
-                line = self.pipe.readline()
-                self.queue.put(line[:-1])
+        for line in iter(self.pipe.readline, b''):
+            #print(line)
+            self.queue.put(line[:-1])
+            if self._stop_event.is_set():
+                break
 
     def wait_for_cursor(self):
         new_line_count = 0
