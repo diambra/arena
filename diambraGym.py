@@ -142,7 +142,7 @@ class diambraGym(gym.Env):
 
         # Open Write Pipe
         self.writePipe.open()
-        # Open Write Pipe
+        # Open Read Pipe
         self.readPipe.open()
 
         # Get Env Info
@@ -467,9 +467,14 @@ class diambraGym(gym.Env):
         pass
 
     # Closing the environment
-    def close (self):
+    def close(self):
         self.first = True
         self.writePipe.sendComm(diambraEnvComm["close"])
+
+        # Close pipes
+        self.writePipe.close()
+        self.readPipe.close()
+
         self.diambraEnvThread.join(timeout=30)
         if self.diambraEnvThread.isAlive():
             error = "Failed to close DIAMBRA Env process"
