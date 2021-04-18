@@ -77,6 +77,9 @@ class diambraImitationLearning(gym.Env):
         # Reset flag
         self.nReset = 0
 
+        # Observations shift counter (for new round/stage/game)
+        self.shiftCounter = 1
+
     # Discrete to multidiscrete action conversion
     def discreteToMultiDiscreteAction(self, action):
 
@@ -91,7 +94,6 @@ class diambraImitationLearning(gym.Env):
             attAct = action - self.n_actions[0] + 1 # For example, for DOA++ this can be 1 - 7
 
         return movAct, attAct
-
 
     # Print Episode summary
     def trajSummary(self):
@@ -109,10 +111,22 @@ class diambraImitationLearning(gym.Env):
     # Step the environment
     def step(self, dummyAction):
 
+        # Done retrieval
+        done = False
+        if self.stepIdx == self.RLTrajDict["epLen"] - 1:
+            done = True
+
+        # Done flags retrieval
+        doneFlags = self.RLTrajDict["doneFlags"][self.stepIdx]
+
+        if (doneFlags[0] or doneFlags[1] or doneFlags[2]) and not done:
+            self.shiftCounter += self.obsNChannels-1
+
         # Observation retrieval
         observation = np.zeros((self.obsH, self.obsW, self.obsNChannels))
         for iFrame in range(self.obsNChannels-1):
-            observation[:,:,iFrame] = self.RLTrajDict["frames"][self.stepIdx + 1 + iFrame]
+            observation[:,:,iFrame] = self.RLTrajDict["frames"][self.stepIdx +
+                                                                self.shiftCounter + iFrame]
         observation[:,:,self.obsNChannels-1] = self.RLTrajDict["addObs"][self.stepIdx + 1]
 
         # Storing last observation for rendering
@@ -120,11 +134,6 @@ class diambraImitationLearning(gym.Env):
 
         # Reward retrieval
         reward = self.RLTrajDict["rewards"][self.stepIdx]
-
-        # Done retrieval
-        done = False
-        if self.stepIdx == self.RLTrajDict["epLen"] - 1:
-            done = True
 
         # Action retrieval
         action = self.RLTrajDict["actions"][self.stepIdx]
@@ -150,6 +159,9 @@ class diambraImitationLearning(gym.Env):
 
         # Reset run step
         self.stepIdx = 0
+
+        # Observations shift counter (for new round/stage/game)
+        self.shiftCounter = 1
 
         # Manage ignoreP2 flag for recorded P1P2 trajectory (e.g. when HUMvsAI)
         if self.nReset != 0 and self.RLTrajDict["ignoreP2"] == 1:

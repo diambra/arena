@@ -177,6 +177,7 @@ class FrameStack(gym.Wrapper):
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
+        # Fill the stack upon reset to avoid black frames
         for _ in range(self.n_frames):
             self.frames.append(obs)
         return self._get_ob()
@@ -184,6 +185,12 @@ class FrameStack(gym.Wrapper):
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         self.frames.append(obs)
+
+        # Add last obs n_frames - 1 times in case of new round / stage / continue_game
+        if (info["round_done"] or info["stage_done"] or info["game_done"]) and not done:
+            for _ in range(self.n_frames - 1):
+                self.frames.append(obs)
+
         return self._get_ob(), reward, done, info
 
     def _get_ob(self):
@@ -220,6 +227,12 @@ class FrameStackDilated(gym.Wrapper):
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         self.frames.append(obs)
+
+        # Add last obs n_frames - 1 times in case of new round / stage / continue_game
+        if (info["round_done"] or info["stage_done"] or info["game_done"]) and not done:
+            for _ in range(self.n_frames*self.dilation - 1):
+                self.frames.append(obs)
+
         return self._get_ob(), reward, done, info
 
     def _get_ob(self):
@@ -624,6 +637,7 @@ class TrajectoryRecorder(gym.Wrapper):
         self.addObsHist = []
         self.rewardsHist = []
         self.actionsHist = []
+        self.flagHist = []
         self.cumulativeRew = 0
 
         obs = self.env.reset(**kwargs)
@@ -646,9 +660,17 @@ class TrajectoryRecorder(gym.Wrapper):
         obs, reward, done, info = self.env.step(action)
 
         self.lastFrameHist.append(obs[:,:,self.shp[2]-2])
+
+        # Add last obs n_frames - 1 times in case of new round / stage / continue_game
+        if (info["round_done"] or info["stage_done"] or info["game_done"]) and not done:
+            for _ in range(self.shp[2]-2):
+                self.lastFrameHist.append(obs[:,:,self.shp[2]-2])
+
         self.addObsHist.append(obs[:,:,self.shp[2]-1])
         self.rewardsHist.append(reward)
         self.actionsHist.append(action)
+        self.flagHist.append([info["round_done"], info["stage_done"],
+                              info["game_done"], info["episode_done"]])
         self.cumulativeRew += reward
 
         if done:
@@ -670,6 +692,7 @@ class TrajectoryRecorder(gym.Wrapper):
             to_save["addObs"]        = self.addObsHist
             to_save["rewards"]       = self.rewardsHist
             to_save["actions"]       = self.actionsHist
+            to_save["doneFlags"]     = self.flagHist
 
             # Characters name
             chars = ""
