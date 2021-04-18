@@ -120,7 +120,7 @@ class diambraImitationLearning(gym.Env):
         doneFlags = self.RLTrajDict["doneFlags"][self.stepIdx]
 
         if (doneFlags[0] or doneFlags[1] or doneFlags[2]) and not done:
-            self.shiftCounter += self.obsNChannels-1
+            self.shiftCounter += self.obsNChannels-2
 
         # Observation retrieval
         observation = np.zeros((self.obsH, self.obsW, self.obsNChannels))
