@@ -393,14 +393,12 @@ class diambraGym(gym.Env):
             stage_done        = data["stage_done"]
             game_done         = data["game_done"]
 
-        # Add the action buffer to the step data
+        # Extend the action buffer
         self.ownMovActBuf.extend([ownMovAct])
         self.ownAttActBuf.extend([ownAttAct])
-        data["actionsBufP1"] = [self.ownMovActBuf, self.ownAttActBuf]
         if self.playersNum == "2P":
             self.oppMovActBuf.extend([oppMovAct])
             self.oppAttActBuf.extend([oppAttAct])
-            data["actionsBufP2"] = [self.oppMovActBuf, self.oppAttActBuf]
 
         if done:
             if self.showFinal:
@@ -426,6 +424,10 @@ class diambraGym(gym.Env):
             if continueFlag:
                 print("Game done, continuing ...")
                 self.writePipe.sendComm(diambraEnvComm["continue_game"])
+                self.readPipe.readFlag()
+                oldRew = data["reward"]
+                observation, data = self.envData.read_data()
+                data["reward"] = oldRew
             else:
                 print("Episode done")
                 data["ep_done"] = True
@@ -434,10 +436,23 @@ class diambraGym(gym.Env):
             print("Stage done")
             self.clearActBuf()
             self.writePipe.sendComm(diambraEnvComm["next_stage"])
+            self.readPipe.readFlag()
+            oldRew = data["reward"]
+            observation, data = self.envData.read_data()
+            data["reward"] = oldRew
         elif round_done:
             print("Round done")
             self.clearActBuf()
             self.writePipe.sendComm(diambraEnvComm["next_round"])
+            self.readPipe.readFlag()
+            oldRew = data["reward"]
+            observation, data = self.envData.read_data()
+            data["reward"] = oldRew
+
+        # Add the action buffer to the step data
+        data["actionsBufP1"] = [self.ownMovActBuf, self.ownAttActBuf]
+        if self.playersNum == "2P":
+            data["actionsBufP2"] = [self.oppMovActBuf, self.oppAttActBuf]
 
         return observation, reward, done, data
 
@@ -454,7 +469,7 @@ class diambraGym(gym.Env):
             self.writePipe.sendComm(diambraEnvComm["new_game"])
 
         self.readPipe.readFlag()
-        observation = self.envData.read_obs()
+        observation, data = self.envData.read_data()
 
         # Deactivating showFinal for 2P Env (Needed to do it here after Env start)
         if self.playersNum == "2P":
