@@ -40,6 +40,9 @@ platform=platform.system()
 if(platform != "Linux"):
     print("Warning, only Linux platforms are supported for this package")
 
+subprocess.run("./setupOS.sh")
+pipmain(['install', 'distro'])
+
 distro=distro.linux_distribution()
 name=distro[0]
 release=float(distro[1])
@@ -50,31 +53,31 @@ if(not(name == "Ubuntu") and not(name == "Linux Mint")):
 
 
 #NOTE This is the python-version of the script setupOS.sh #TODO to substitute with the option on setup (console_entry)
-aptCmd1="sudo apt-get update"
-aptCmd2_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
-aptCmd2_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
-
-if(name == "Ubuntu"):
-    if(release < 18.04):
-        print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
-        sys.exit()
-    if(release > 20):
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_20.split())
-    else:
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_19.split())
-
-if(name == "Linux Mint"):
-    if(release < 19):
-        print("Warning, only LSB Tessa and Ulyssa are supported for this package")
-        sys.exit()
-    if(release > 20):
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_20.split())
-    else:
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_19.split())
+#aptCmd1="sudo apt-get update"
+#aptCmd2_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
+#aptCmd2_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
+#
+#if(name == "Ubuntu"):
+#    if(release < 18.04):
+#        print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
+#        sys.exit()
+#    if(release > 20):
+#        subprocess.run(aptCmd1.split())
+#        subprocess.run(aptCmd2_20.split())
+#    else:
+#        subprocess.run(aptCmd1.split())
+#        subprocess.run(aptCmd2_19.split())
+#
+#if(name == "Linux Mint"):
+#    if(release < 19):
+#        print("Warning, only LSB Tessa and Ulyssa are supported for this package")
+#        sys.exit()
+#    if(release > 20):
+#        subprocess.run(aptCmd1.split())
+#        subprocess.run(aptCmd2_20.split())
+#    else:
+#        subprocess.run(aptCmd1.split())
+#        subprocess.run(aptCmd2_19.split())
 
 #NOTE this part is the manual PIP Installation
 pipmain(['install', 'pip>=21'])
