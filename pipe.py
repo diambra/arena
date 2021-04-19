@@ -171,12 +171,18 @@ class Pipe(object):
 
             if self.mode == "r":
                 self.read_queue = Queue()
-                StreamGobbler(self.fifo, self.read_queue).start()
+                self.gobbler = StreamGobbler(self.fifo, self.read_queue)
+                self.gobbler.start()
         except Exception as e:
             error = "Failed to open pipe '" + str(self.path.absolute()) + "'"
             raise IOError(error)
 
     def close(self):
+        if self.mode == "r":
+            # Stop the gobbler
+            self.gobbler.stop()
+            self.gobbler.join()
+
         self.fifo.close()
 
     def sendComm(self, commType, P1mov=0, P1att=0, P2mov=0, P2att=0):
