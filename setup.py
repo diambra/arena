@@ -1,11 +1,9 @@
-import distro
 import platform
-import setuptools
+#import setuptools
 import subprocess
 import sys
 import getopt
 
-from setuptools.command.install import install
 #TODO this for the PIP install manual
 try:
     from pip import main as pipmain
@@ -13,6 +11,7 @@ except ImportError:
     from pip._internal import main as pipmain
 
 #TODO add packages=["diambra"], depending on the installation and python_requires='>3.6'
+#from setuptools.command.install import install
 #class DiambraInstall(install):
 #    user_options = install.user_options + [
 #        ('stablebaseline', None, 'Core or stablebaseline installation')
@@ -42,6 +41,7 @@ if(platform != "Linux"):
 
 subprocess.run("./setupOS.sh")
 pipmain(['install', 'distro'])
+import distro
 
 distro=distro.linux_distribution()
 name=distro[0]
@@ -80,6 +80,7 @@ if(not(name == "Ubuntu") and not(name == "Linux Mint")):
 #        subprocess.run(aptCmd2_19.split())
 
 #NOTE this part is the manual PIP Installation
+pipmain(['install', 'setuptools'])
 pipmain(['install', 'pip>=21'])
 pipmain(['install', 'gym>=0.17.1'])
 pipmain(['install', 'jupyter>=1.0.0'])

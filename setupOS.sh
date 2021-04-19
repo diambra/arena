@@ -56,13 +56,13 @@ distroRelease=${array[1]}
 
 if [ $distroName == "LinuxMint" ]; then
 	isUlyssa=$(echo $distroRelease" > 20" | bc)
-	isTessa=$(echo $distroRelease" > 19" | bc)
+	isTessa=$(echo $distroRelease" >= 19" | bc)
 	if [ $isUlyssa -eq 1 ]; then
 		echo "Mint Ulyssa Detected"
-        	#setupMintUlyssa
+        	setupMintUlyssa
 	elif [ $isTessa -eq 1 ]; then
 		echo "Mint Tessa Detected"
-        	#setupMintTessa
+        	setupMintTessa
 	else
 		echo "Mint version not supported"
 	fi
@@ -73,10 +73,10 @@ if [ $distroName == "Ubuntu" ]; then
 	isAtLeastBionicBeaver=$(echo $distroRelease" > 18" | bc)
 	if [ $isAtLeastGorilla -eq 1 ]; then
 		echo "Ubuntu Groovy Gorilla Detected"
-        #setupUbuntuGroovyGorilla
+        setupUbuntuGroovyGorilla
 	elif [ $isAtLeastBionicBeaver -eq 1 ]; then
 		echo "Ubuntu Bionic Beaver Detected"
-        #setupUbuntuBionicBeaver
+        setupUbuntuBionicBeaver
     else
 		echo "Ubuntu version not supported"
 	fi
