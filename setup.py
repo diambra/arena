@@ -79,34 +79,29 @@ if(not(name == "Ubuntu") and not(name == "Linux Mint")):
 #        subprocess.run(aptCmd1.split())
 #        subprocess.run(aptCmd2_19.split())
 
-#NOTE this part is the manual PIP Installation
-pipmain(['install', 'setuptools'])
-pipmain(['install', 'pip>=21'])
-pipmain(['install', 'gym>=0.17.1'])
-pipmain(['install', 'jupyter>=1.0.0'])
-pipmain(['install', 'opencv-contrib-python>=4.4.0.42'])
-pipmain(['install', 'opencv-python>=4.4.0.42'])
 
-#with open("README.md", "r") as description:
-#    long_description = description.read()
+with open("README.md", "r") as description:
+    long_description = description.read()
 
 #NOTE This is the true creation of the setup env
-#setuptools.setup(
-#        name='DIAMBRAEnvironment',
-#        url='https://github.com/diambra/DIAMBRAenvironment',
-#        version='0.2',
-#        author="Artificial Twin",
-#        author_email="alessandropalmas.mail@gmail.com",
-#        description="The virtual arena where AI Algorithms fight in video games matches with live technical commentary",
-#        long_description=long_description,
-#        long_description_content_type="Reinforcement Learning",
-#        license='GNU Affero GPL',
-#        install_requires=[
-#            'pip>=21',
-#            'gym>=0.17.1',
-#            'jupyter>=1.0.0',
-#            'opencv-contrib-python>=4.4.0.42',
-#            'opencv-python>=4.4.0.42'],	
-#        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
-#        cmdclass={'install': DiambraInstall}
-#        )
+setuptools.setup(
+        name='DIAMBRAEnvironment',
+        url='https://github.com/diambra/DIAMBRAenvironment',
+        version='0.2',
+        author="Artificial Twin",
+        author_email="diambra@artificialtwin.com",
+        description="DIAMBRA™ | Dueling AI Arena. Built with OpenAI Gym standard, easy to use,\ntransforms famous classic videogames into Reinforcement Learning tasks",
+        long_description=long_description,
+        long_description_content_type="Reinforcement Learning",
+        license='GNU Affero GPL',
+        install_requires=[
+            'pip>=21',
+            'setuptools',
+            'gym>=0.17.1',
+            'jupyter>=1.0.0',
+            'opencv-contrib-python>=4.4.0.42',
+            'opencv-python>=4.4.0.42'],	
+        find_packages(include=['diambra_environment', 'diambra_environment/customPolicies', 'diambra_environment/mame', 'diambra_environment/utils', 'diambra_environment/diambraEnvLib', 'examples', 'img', 'roms']),
+        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
+        cmdclass={'install': DiambraInstall}
+        )
