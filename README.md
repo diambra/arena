@@ -1,5 +1,9 @@
 # DIAMBRA Environment
 
+**🧪 PLEASE NOTE THAT THIS SOFTWARE IS STILL IN ALPHA ⚗️**
+
+**⚠️ BREAKING CHANGES MAY OCCUR ⚠️**
+
 ## Summary
 
 - **[What is DIAMBRA Environment](#what-is-diambra-environment)**
