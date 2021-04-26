@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 from setuptools.command.install import install
+import setuptools
 
 #TODO this for the PIP install manual
 try:
@@ -102,9 +103,9 @@ setuptools.setup(
             'gym>=0.17.1',
             'jupyter>=1.0.0',
             'opencv-contrib-python>=4.4.0.42',
-            'opencv-python>=4.4.0.42'],	
-        packages=find_packages(include=['diambra_environment', 'examples', 'diambra_environment/customPolicies', 'diambra_environment/utils']),
-        package_data={'diambra_environment': ['diambra_environment/mame/mame.zip', 'diambra_environment/diambraEnvLib/*.so', 'img/*', 'roms/integratedGames.json', 'examples/core/*.ipynb', 'examples/stable_baselines/*.ipynb']},
-        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
-        cmdclass={'install': DiambraInstall}
+            'opencv-python>=4.4.0.42'],
+        packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
+        data_files=['aiTournament/aiTournamentSetup.ipynb','aiTournament/submissionExample/agent.py','aiTournament/submissionExample/model.pth','aiTournament/submissionExample/packages.txt','aiTournament/submissionExample/requirements.txt','diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','img/github.gif','img/github.png','img/WideFlyer.jpg','diambra_environment/mame/mame.zip','roms/integratedGames.json','examples/core/diambraGymGist.py','examples/core/DiambraGymRecTest.ipynb','examples/core/DiambraGymTest.ipynb','examples/core/DiambraGymWrapTest.ipynb','examples/core/DiambraImitationLearningTest.ipynb','examples/stable_baselines/DiambraAIAgent.ipynb'],
+        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse']#,
+        #cmdclass={'install': DiambraInstall}
         )
