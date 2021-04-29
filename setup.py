@@ -1,4 +1,6 @@
-from setuptools import setup, find_packages
+from setuptools import setup
+import platform
+import distro
 from setuptools.command.install import install
 import setuptools
 
@@ -11,18 +13,68 @@ except ImportError:
 #TODO add packages=["diambra"], depending on the installation and python_requires='>3.6'
 class DiambraInstall(install):
     user_options = install.user_options + [
-        ('stablebaseline', None, 'Core or stablebaseline installation')
+        ('stable_baselines', None, 'Core or stable_baselines installation')
     ]
 
     def initialize_options(self):
         install.initialize_options(self)
-        self.stablebaseline = 0
+        self.stable_baselines = 0
 
     def finalize_options(self):
+        print("value of engine is", self.stable_baselines)
+        import platform        
+        plat=platform.system()
+        if(plat != "Linux"):
+            print("Warning, only Linux platforms are supported for this package")
+
+        #subprocess.run("./setupOS.sh")
+        pipmain(['install', 'distro'])
+        import distro
+        import subprocess
+
+        distrib=distro.linux_distribution()
+        name=distrib[0]
+        release=float(distrib[1])
+
+        if(not(name == "Ubuntu") and not(name == "Linux Mint")):
+            print("Warning, only Ubuntu and Mint distros are supported for this package")
+            sys.exit()
+
+        print("Distro test ok, testing version of your current flavor")
+        #NOTE This is the python-version of the script setupOS.sh #TODO to substitute with the option on setup (console_entry)
+        aptCmd1="sudo apt-get update"
+        aptCmd2_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
+        aptCmd2_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
+        
+        if(name == "Ubuntu"):
+            if(release < 18.04):
+                print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
+                sys.exit()
+            if(release > 20):
+                print("LSB Groovy Gorilla or higher")
+                subprocess.run(aptCmd1.split())
+                subprocess.run(aptCmd2_20.split())
+            else:
+                print("LSB Bionic Beaver or higher")
+                subprocess.run(aptCmd1.split())
+                subprocess.run(aptCmd2_19.split())
+        
+        if(name == "Linux Mint"):
+            if(release < 19):
+                print("Warning, only LSB Tessa and Ulyssa are supported for this package")
+                sys.exit()
+            if(release > 20):
+                print("Mint Ulyssa")
+                subprocess.run(aptCmd1.split())
+                subprocess.run(aptCmd2_20.split())
+            else:
+                print("Mint Tessa")
+                subprocess.run(aptCmd1.split())
+                subprocess.run(aptCmd2_19.split())
         install.finalize_options(self)
 
     def run(self):
-        stablebaseline = self.stablebaseline
+        stable_baselines = self.stable_baselines
         install.run(self)
 
 #arg=sys.argv[1:]
@@ -30,52 +82,6 @@ class DiambraInstall(install):
 #    if(sys.version_info < (3, 6)):
 #        print("Warning, update your Python version to 3.6 at least to use stablebaseline")
 #        sys.exit()
-
-
-#platform=platform.system()
-#if(platform != "Linux"):
-#    print("Warning, only Linux platforms are supported for this package")
-
-#subprocess.run("./setupOS.sh")
-#pipmain(['install', 'distro'])
-#import distro
-
-#distro=distro.linux_distribution()
-#name=distro[0]
-#release=float(distro[1])
-
-#if(not(name == "Ubuntu") and not(name == "Linux Mint")):
-#    print("Warning, only Ubuntu and Mint distros are supported for this package")
-#    sys.exit()
-
-
-#NOTE This is the python-version of the script setupOS.sh #TODO to substitute with the option on setup (console_entry)
-#aptCmd1="sudo apt-get update"
-#aptCmd2_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
-#aptCmd2_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
-#
-#if(name == "Ubuntu"):
-#    if(release < 18.04):
-#        print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
-#        sys.exit()
-#    if(release > 20):
-#        subprocess.run(aptCmd1.split())
-#        subprocess.run(aptCmd2_20.split())
-#    else:
-#        subprocess.run(aptCmd1.split())
-#        subprocess.run(aptCmd2_19.split())
-#
-#if(name == "Linux Mint"):
-#    if(release < 19):
-#        print("Warning, only LSB Tessa and Ulyssa are supported for this package")
-#        sys.exit()
-#    if(release > 20):
-#        subprocess.run(aptCmd1.split())
-#        subprocess.run(aptCmd2_20.split())
-#    else:
-#        subprocess.run(aptCmd1.split())
-#        subprocess.run(aptCmd2_19.split())
-
 
 with open("README.md", "r") as description:
     long_description = description.read()
@@ -100,12 +106,14 @@ setuptools.setup(
         install_requires=[
             'pip>=21',
             'setuptools',
+            'distro>=1',
             'gym>=0.17.1',
             'jupyter>=1.0.0',
+            'testresources',
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
-        data_files=['aiTournament/aiTournamentSetup.ipynb','aiTournament/submissionExample/agent.py','aiTournament/submissionExample/model.pth','aiTournament/submissionExample/packages.txt','aiTournament/submissionExample/requirements.txt','diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','img/github.gif','img/github.png','img/WideFlyer.jpg','diambra_environment/mame/mame.zip','roms/integratedGames.json','examples/core/diambraGymGist.py','examples/core/DiambraGymRecTest.ipynb','examples/core/DiambraGymTest.ipynb','examples/core/DiambraGymWrapTest.ipynb','examples/core/DiambraImitationLearningTest.ipynb','examples/stable_baselines/DiambraAIAgent.ipynb'],
-        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse']#,
-        #cmdclass={'install': DiambraInstall}
+        data_files=[{'aiTournament/aiTournamentSetup.ipynb': 'diambra_environment/aiTournament'}],#,'aiTournament/submissionExample/agent.py','aiTournament/submissionExample/model.pth','aiTournament/submissionExample/packages.txt','aiTournament/submissionExample/requirements.txt','diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','img/github.gif','img/github.png','img/WideFlyer.jpg','diambra_environment/mame/mame.zip','roms/integratedGames.json','examples/core/diambraGymGist.py','examples/core/DiambraGymRecTest.ipynb','examples/core/DiambraGymTest.ipynb','examples/core/DiambraGymWrapTest.ipynb','examples/core/DiambraImitationLearningTest.ipynb','examples/stable_baselines/DiambraAIAgent.ipynb'],
+        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
+        cmdclass={'install': DiambraInstall}
         )
