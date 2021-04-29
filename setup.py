@@ -12,13 +12,10 @@ except ImportError:
 
 #TODO add packages=["diambra"], depending on the installation and python_requires='>3.6'
 class DiambraInstall(install):
-    user_options = install.user_options + [
-        ('stable_baselines', None, 'Core or stable_baselines installation')
-    ]
+    user_options = install.user_options
 
     def initialize_options(self):
         install.initialize_options(self)
-        self.stable_baselines = 0
 
     def finalize_options(self):
         print("value of engine is", self.stable_baselines)
@@ -74,14 +71,7 @@ class DiambraInstall(install):
         install.finalize_options(self)
 
     def run(self):
-        stable_baselines = self.stable_baselines
         install.run(self)
-
-#arg=sys.argv[1:]
-#if(arg == "stablebaseline"):
-#    if(sys.version_info < (3, 6)):
-#        print("Warning, update your Python version to 3.6 at least to use stablebaseline")
-#        sys.exit()
 
 with open("README.md", "r") as description:
     long_description = description.read()
@@ -115,6 +105,6 @@ setuptools.setup(
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
         data_files=['diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','diambra_environment/mame/mame.zip'],
         extras_require=extras,
-        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse']#,
+        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
         cmdclass={'install': DiambraInstall}
         )
