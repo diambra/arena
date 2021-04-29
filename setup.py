@@ -86,10 +86,10 @@ class DiambraInstall(install):
 with open("README.md", "r") as description:
     long_description = description.read()
 
-#TODO Add a script for Diambra?
-#entry_points={
-#        'console_scripts': ['my-command=exampleproject.example:main']
-#    }
+extras= {
+	'core': [],
+	'stable_baselines': ['python>=3.6']
+	}
 
 #NOTE This is the true creation of the setup env
 #TODO From install add informations on package_data in order to get only stable_baselines info
@@ -113,7 +113,8 @@ setuptools.setup(
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
-        data_files=[{'aiTournament/aiTournamentSetup.ipynb': 'diambra_environment/aiTournament'}],#,'aiTournament/submissionExample/agent.py','aiTournament/submissionExample/model.pth','aiTournament/submissionExample/packages.txt','aiTournament/submissionExample/requirements.txt','diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','img/github.gif','img/github.png','img/WideFlyer.jpg','diambra_environment/mame/mame.zip','roms/integratedGames.json','examples/core/diambraGymGist.py','examples/core/DiambraGymRecTest.ipynb','examples/core/DiambraGymTest.ipynb','examples/core/DiambraGymWrapTest.ipynb','examples/core/DiambraImitationLearningTest.ipynb','examples/stable_baselines/DiambraAIAgent.ipynb'],
-        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
+        data_files=['diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','diambra_environment/mame/mame.zip'],
+        extras_require=extras,
+        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse']#,
         cmdclass={'install': DiambraInstall}
         )
