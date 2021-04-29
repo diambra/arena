@@ -18,7 +18,6 @@ class DiambraInstall(install):
         install.initialize_options(self)
 
     def finalize_options(self):
-        print("value of engine is", self.stable_baselines)
         import platform        
         plat=platform.system()
         if(plat != "Linux"):
