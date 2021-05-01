@@ -41,6 +41,8 @@ class DiambraInstall(install):
         aptCmd1="sudo apt-get update"
         aptCmd2_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
         aptCmd2_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
+        cpLib20="cp diambra_environment/diambraEnvLib/libdiambraEnv20.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
+        cpLib18="cp diambra_environment/diambraEnvLib/libdiambraEnv18.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
         
         if(name == "Ubuntu"):
             if(release < 18.04):
@@ -50,10 +52,12 @@ class DiambraInstall(install):
                 print("LSB Groovy Gorilla or higher")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_20.split())
+                subprocess.run(cpLib20.split())
             else:
                 print("LSB Bionic Beaver or higher")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_19.split())
+                subprocess.run(cpLib18.split())
         
         if(name == "Linux Mint"):
             if(release < 19):
@@ -63,10 +67,12 @@ class DiambraInstall(install):
                 print("Mint Ulyssa")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_20.split())
+                subprocess.run(cpLib20.split())
             else:
                 print("Mint Tessa")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_19.split())
+                subprocess.run(cpLib18.split())
         install.finalize_options(self)
 
     def run(self):
@@ -102,7 +108,9 @@ setuptools.setup(
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
-        data_files=['diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','diambra_environment/mame/mame.zip'],
+        package_data={'diambra_environment' : ['diambra_environment/mame/mame.zip']},
+        include_package_data=True,
+        #data_files=['diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','diambra_environment/mame/mame.zip'],
         extras_require=extras,
         classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
         cmdclass={'install': DiambraInstall}
