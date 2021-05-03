@@ -12,10 +12,11 @@ except ImportError:
 
 #TODO add packages=["diambra"], depending on the installation and python_requires='>3.6'
 class DiambraInstall(install):
-    user_options = install.user_options
+    user_options = install.user_options + [('stable-baselines', None, 'Stable Baseline Reinforcement Learning Additional Requirements')]
 
     def initialize_options(self):
         install.initialize_options(self)
+        self.stable_baselines = ''
 
     def finalize_options(self):
         import platform        
@@ -39,8 +40,13 @@ class DiambraInstall(install):
         print("Distro test ok, testing version of your current flavor")
         #NOTE This is the python-version of the script setupOS.sh #TODO to substitute with the option on setup (console_entry)
         aptCmd1="sudo apt-get update"
-        aptCmd2_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
-        aptCmd2_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
+        #MAIN Packages Required
+        aptCmd2_20="sudo apt-get install libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
+        aptCmd2_19="sudo apt-get install libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
+        #Stable-baselines specific packages
+        aptCmdSb_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
+        aptCmdSb_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
+        #Diambra Lib commands
         cpLib20="cp diambra_environment/diambraEnvLib/libdiambraEnv20.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
         cpLib18="cp diambra_environment/diambraEnvLib/libdiambraEnv18.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
         
@@ -52,11 +58,15 @@ class DiambraInstall(install):
                 print("LSB Groovy Gorilla or higher")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_20.split())
+                if(self.stable_baselines):
+                    subprocess.run(aptCmdSb_20.split())
                 subprocess.run(cpLib20.split())
             else:
                 print("LSB Bionic Beaver or higher")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_19.split())
+                if(self.stable_baselines):
+                    subprocess.run(aptCmdSb_19.split())
                 subprocess.run(cpLib18.split())
         
         if(name == "Linux Mint"):
@@ -67,11 +77,15 @@ class DiambraInstall(install):
                 print("Mint Ulyssa")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_20.split())
+                if(self.stable_baselines):
+                    subprocess.run(aptCmdSb_20.split())
                 subprocess.run(cpLib20.split())
             else:
                 print("Mint Tessa")
                 subprocess.run(aptCmd1.split())
                 subprocess.run(aptCmd2_19.split())
+                if(self.stable_baselines):
+                    subprocess.run(aptCmdSb_19.split())
                 subprocess.run(cpLib18.split())
         install.finalize_options(self)
 
@@ -83,8 +97,13 @@ with open("README.md", "r") as description:
 
 extras= {
 	'core': [],
-	'stable_baselines': ['python>=3.6']
+	'stable-baselines': ['stable-baselines']
 	}
+
+pythonRequires= {
+    'core': '>=2.7',
+	'stable-baselines': '>=3.6'
+}
 
 #NOTE This is the true creation of the setup env
 #TODO From install add informations on package_data in order to get only stable_baselines info
@@ -108,10 +127,10 @@ setuptools.setup(
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
-        package_data={'diambra_environment' : ['diambra_environment/mame/mame.zip']},
+        #package_data={'diambra_environment' : ['diambra_environment/mame/mame.zip','diambra_environment/diambraEnvLib/libdiambraEnv.so']},
         include_package_data=True,
-        #data_files=['diambra_environment/diambraEnvLib/libdiambraEnv18.so','diambra_environment/diambraEnvLib/libdiambraEnv20.so','diambra_environment/mame/mame.zip'],
         extras_require=extras,
+        #python_requires=pythonRequires,
         classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
         cmdclass={'install': DiambraInstall}
         )

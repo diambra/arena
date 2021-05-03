@@ -4,10 +4,10 @@ import numpy as np
 import gym
 from gym import spaces
 from collections import deque
-from utils.policies import P2ToP1AddObsMove
+from diambra_environment.utils.policies import P2ToP1AddObsMove
 
 import threading
-from pipe import *
+from diambra_environment.pipe import *
 import time
 
 # DIAMBRA Env Gym
