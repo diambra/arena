@@ -10,83 +10,86 @@ try:
 except ImportError:
     from pip._internal import main as pipmain
 
+import platform        
+plat=platform.system()
+if(plat != "Linux"):
+    print("Warning, only Linux platforms are supported for this package")
+
+pipmain(['install', 'distro'])
+import distro
+import subprocess
+
+distrib=distro.linux_distribution()
+name=distrib[0]
+release=float(distrib[1])
+
+if(not(name == "Ubuntu") and not(name == "Linux Mint")):
+    print("Warning, only Ubuntu and Mint distros are supported for this package")
+    sys.exit()
+
+print("Distro test ok, testing version of your current flavor")
+aptCmd1="sudo apt-get update"
+#MAIN Packages Required
+aptCmd2_20="sudo apt-get install libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
+aptCmd2_19="sudo apt-get install libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
+#Stable-baselines specific packages
+aptCmdSb_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
+aptCmdSb_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
+#Diambra Lib commands
+cpLib20="cp diambra_environment/diambraEnvLib/libdiambraEnv20.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
+cpLib18="cp diambra_environment/diambraEnvLib/libdiambraEnv18.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
+#MAME Cmd
+unzipMameCmd="unzip diambra_environment/mame/mame.zip -d diambra_environment/mame"
+
+if(name == "Ubuntu"):
+    if(release < 18.04):
+        print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
+        sys.exit()
+    if(release > 20):
+        print("LSB Groovy Gorilla or higher")
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_20.split())
+        if(True):
+            subprocess.run(aptCmdSb_20.split())
+        subprocess.run(cpLib20.split())
+    else:
+        print("LSB Bionic Beaver or higher")
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_19.split())
+        if(True):
+            subprocess.run(aptCmdSb_19.split())
+        subprocess.run(cpLib18.split())
+
+if(name == "Linux Mint"):
+    if(release < 19):
+        print("Warning, only LSB Tessa and Ulyssa are supported for this package")
+        sys.exit()
+    if(release > 20):
+        print("Mint Ulyssa")
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_20.split())
+        if(True):
+            subprocess.run(aptCmdSb_20.split())
+        subprocess.run(cpLib20.split())
+    else:
+        print("Mint Tessa")
+        subprocess.run(aptCmd1.split())
+        subprocess.run(aptCmd2_19.split())
+        if(True):
+            subprocess.run(aptCmdSb_19.split())
+        subprocess.run(cpLib18.split())
+
+subprocess.run(unzipMameCmd.split())
+
 #TODO add packages=["diambra"], depending on the installation and python_requires='>3.6'
 class DiambraInstall(install):
     user_options = install.user_options + [('stable-baselines', None, 'Stable Baseline Reinforcement Learning Additional Requirements')]
 
     def initialize_options(self):
-        install.initialize_options(self)
         self.stable_baselines = ''
+        install.initialize_options(self)
 
     def finalize_options(self):
-        import platform        
-        plat=platform.system()
-        if(plat != "Linux"):
-            print("Warning, only Linux platforms are supported for this package")
-
-        #subprocess.run("./setupOS.sh")
-        pipmain(['install', 'distro'])
-        import distro
-        import subprocess
-
-        distrib=distro.linux_distribution()
-        name=distrib[0]
-        release=float(distrib[1])
-
-        if(not(name == "Ubuntu") and not(name == "Linux Mint")):
-            print("Warning, only Ubuntu and Mint distros are supported for this package")
-            sys.exit()
-
-        print("Distro test ok, testing version of your current flavor")
-        #NOTE This is the python-version of the script setupOS.sh #TODO to substitute with the option on setup (console_entry)
-        aptCmd1="sudo apt-get update"
-        #MAIN Packages Required
-        aptCmd2_20="sudo apt-get install libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
-        aptCmd2_19="sudo apt-get install libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
-        #Stable-baselines specific packages
-        aptCmdSb_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
-        aptCmdSb_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
-        #Diambra Lib commands
-        cpLib20="cp diambra_environment/diambraEnvLib/libdiambraEnv20.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
-        cpLib18="cp diambra_environment/diambraEnvLib/libdiambraEnv18.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
-        
-        if(name == "Ubuntu"):
-            if(release < 18.04):
-                print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
-                sys.exit()
-            if(release > 20):
-                print("LSB Groovy Gorilla or higher")
-                subprocess.run(aptCmd1.split())
-                subprocess.run(aptCmd2_20.split())
-                if(self.stable_baselines):
-                    subprocess.run(aptCmdSb_20.split())
-                subprocess.run(cpLib20.split())
-            else:
-                print("LSB Bionic Beaver or higher")
-                subprocess.run(aptCmd1.split())
-                subprocess.run(aptCmd2_19.split())
-                if(self.stable_baselines):
-                    subprocess.run(aptCmdSb_19.split())
-                subprocess.run(cpLib18.split())
-        
-        if(name == "Linux Mint"):
-            if(release < 19):
-                print("Warning, only LSB Tessa and Ulyssa are supported for this package")
-                sys.exit()
-            if(release > 20):
-                print("Mint Ulyssa")
-                subprocess.run(aptCmd1.split())
-                subprocess.run(aptCmd2_20.split())
-                if(self.stable_baselines):
-                    subprocess.run(aptCmdSb_20.split())
-                subprocess.run(cpLib20.split())
-            else:
-                print("Mint Tessa")
-                subprocess.run(aptCmd1.split())
-                subprocess.run(aptCmd2_19.split())
-                if(self.stable_baselines):
-                    subprocess.run(aptCmdSb_19.split())
-                subprocess.run(cpLib18.split())
         install.finalize_options(self)
 
     def run(self):
@@ -127,10 +130,15 @@ setuptools.setup(
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
-        #package_data={'diambra_environment' : ['diambra_environment/mame/mame.zip','diambra_environment/diambraEnvLib/libdiambraEnv.so']},
         include_package_data=True,
         extras_require=extras,
         #python_requires=pythonRequires,
         classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
         cmdclass={'install': DiambraInstall}
         )
+
+clearLibCmd="rm diambra_environment/diambraEnvLib/libdiambraEnv.so"
+subprocess.run(clearLibCmd.split())
+#MAME Cmd
+clearMameCmd="rm diambra_environment/mame/mame"
+subprocess.run(clearMameCmd.split())
