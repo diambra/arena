@@ -44,7 +44,7 @@ class diambraGym(gym.Env):
 
         # Launch diambra env core
         # Load library
-        libPath = os.path.join(os.path.abspath(__file__), "diambraEnvLib/libdiambraEnv.so")
+        libPath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diambraEnvLib/libdiambraEnv.so")
 
         if not libPath:
            print("Unable to find the specified library: {}".format(libPath))
@@ -101,7 +101,7 @@ class diambraGym(gym.Env):
         diambraEnv.restype = ctypes.c_int
 
         # Mame path
-        mame_path = os.path.join(os.path.abspath(__file__), "mame/")
+        mame_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mame/")
 
         diambraEnvArgs = [env_id, diambraEnvKwargs["gameId"], diambraEnvKwargs["roms_path"],
                    mame_path, diambraEnvKwargs["player"], diambraEnvKwargs["characters"][0][0],

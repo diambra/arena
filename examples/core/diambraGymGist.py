@@ -1,7 +1,7 @@
 from diambra_environment.diambraGym import diambraGym
 import os
 
-repo_base_path = os.path.join(os.path.abspath(__file__), "../../") # Absolute path to your DIAMBRA environment repo
+repo_base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../") # Absolute path to your DIAMBRA environment repo
 
 diambraEnvKwargs = {}
 diambraEnvKwargs["gameId"]          = "doapp" # Game selection
