@@ -21,16 +21,20 @@ class agent(object):
         self.name = name
         self.actionSpace = actionSpace
 
-    # Optional method to initialize variables
-    def initialize(self):
+    # Method called at environment reset. You can use it or not, but it has to be here
+    def reset(self):
         pass
 
     # Action selection performed by the agent policy
-    def act(self, observation):
+    def act(self, observation, info):
 
         # Modify observation as you wish (only if you need to!
         # Keep in mind inference time constraints)
         observationModification(observation)
+
+        # After environment reset info is equal to None
+        if info != None:
+           # Do something here
 
         # Random action selection
         if self.actionSpace == "discrete":
