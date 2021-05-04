@@ -10,15 +10,13 @@ plat=platform.system()
 if(plat != "Linux"):
     print("Warning, only Linux platforms are supported for this package")
 
-pipmain(['install', 'distro'])
-import distro
-pipmain(['install', 'subprocess'])
-import subprocess
 pipmain(['install', 'setuptools'])
 import setuptools
 from setuptools.command.install import install
 from setuptools import setup
-
+import os
+pipmain(['install', 'distro'])
+import distro
 
 distrib=distro.linux_distribution()
 name=distrib[0]
@@ -29,13 +27,13 @@ if(not(name == "Ubuntu") and not(name == "Linux Mint")):
     sys.exit()
 
 print("Distro test ok, testing version of your current flavor")
-aptCmd1="sudo apt-get update"
+aptCmd1="sudo apt-get update --assume-yes"
 #MAIN Packages Required
-aptCmd2_20="sudo apt-get install libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
-aptCmd2_19="sudo apt-get install libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
+aptCmd2_20="sudo apt-get --assume-yes install libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
+aptCmd2_19="sudo apt-get install --assume-yes libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
 #Stable-baselines specific packages
-aptCmdSb_20="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
-aptCmdSb_19="sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev"
+aptCmdSb_20="sudo apt-get install --assume-yes cmake libopenmpi-dev python3-dev zlib1g-dev"
+aptCmdSb_19="sudo apt-get install --assume-yes cmake libopenmpi-dev python3-dev zlib1g-dev"
 #Diambra Lib commands
 cpLib20="cp diambra_environment/diambraEnvLib/libdiambraEnv20.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
 cpLib18="cp diambra_environment/diambraEnvLib/libdiambraEnv18.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
@@ -48,18 +46,18 @@ if(name == "Ubuntu"):
         sys.exit()
     if(release > 20):
         print("LSB Groovy Gorilla or higher")
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_20.split())
+        os.system(aptCmd1)
+        os.system(aptCmd2_20)
         if(True):
-            subprocess.run(aptCmdSb_20.split())
-        subprocess.run(cpLib20.split())
+            os.system(aptCmdSb_20)
+        os.system(cpLib20)
     else:
         print("LSB Bionic Beaver or higher")
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_19.split())
+        os.system(aptCmd1)
+        os.system(aptCmd2_19)
         if(True):
-            subprocess.run(aptCmdSb_19.split())
-        subprocess.run(cpLib18.split())
+            os.system(aptCmdSb_19)
+        os.system(cpLib18)
 
 if(name == "Linux Mint"):
     if(release < 19):
@@ -67,20 +65,20 @@ if(name == "Linux Mint"):
         sys.exit()
     if(release > 20):
         print("Mint Ulyssa")
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_20.split())
+        os.system(aptCmd1)
+        os.system(aptCmd2_20)
         if(True):
-            subprocess.run(aptCmdSb_20.split())
-        subprocess.run(cpLib20.split())
+            os.system(aptCmdSb_20)
+        os.system(cpLib20)
     else:
         print("Mint Tessa")
-        subprocess.run(aptCmd1.split())
-        subprocess.run(aptCmd2_19.split())
+        os.system(aptCmd1)
+        os.system(aptCmd2_19)
         if(True):
-            subprocess.run(aptCmdSb_19.split())
-        subprocess.run(cpLib18.split())
+            os.system(aptCmdSb_19)
+        os.system(cpLib18)
 
-subprocess.run(unzipMameCmd.split())
+os.system(unzipMameCmd)
 
 #NOTE Not useful for now
 #class DiambraInstall(install):
@@ -132,7 +130,7 @@ setuptools.setup(
 
 #DIAMBRA Lib Clear Cmd
 clearLibCmd="rm diambra_environment/diambraEnvLib/libdiambraEnv.so"
-subprocess.run(clearLibCmd.split())
+os.system(clearLibCmd)
 #MAME Clear Cmd
 clearMameCmd="rm diambra_environment/mame/mame"
-subprocess.run(clearMameCmd.split())
+os.system(clearMameCmd)
