@@ -1,8 +1,4 @@
-from setuptools import setup
 import platform
-import distro
-from setuptools.command.install import install
-import setuptools
 
 try:
     from pip import main as pipmain
@@ -16,7 +12,13 @@ if(plat != "Linux"):
 
 pipmain(['install', 'distro'])
 import distro
+pipmain(['install', 'subprocess'])
 import subprocess
+pipmain(['install', 'setuptools'])
+import setuptools
+from setuptools.command.install import install
+from setuptools import setup
+
 
 distrib=distro.linux_distribution()
 name=distrib[0]
