@@ -4,7 +4,6 @@ import distro
 from setuptools.command.install import install
 import setuptools
 
-#TODO this for the PIP install manual
 try:
     from pip import main as pipmain
 except ImportError:
@@ -81,35 +80,29 @@ if(name == "Linux Mint"):
 
 subprocess.run(unzipMameCmd.split())
 
-#TODO add packages=["diambra"], depending on the installation and python_requires='>3.6'
-class DiambraInstall(install):
-    user_options = install.user_options + [('stable-baselines', None, 'Stable Baseline Reinforcement Learning Additional Requirements')]
+#NOTE Not useful for now
+#class DiambraInstall(install):
+#    user_options = install.user_options
 
-    def initialize_options(self):
-        self.stable_baselines = ''
-        install.initialize_options(self)
+#    def initialize_options(self):
+#        install.initialize_options(self)
 
-    def finalize_options(self):
-        install.finalize_options(self)
+#    def finalize_options(self):
+#        install.finalize_options(self)
 
-    def run(self):
-        install.run(self)
+#    def run(self):
+#        install.run(self)
 
 with open("README.md", "r") as description:
     long_description = description.read()
 
 extras= {
 	'core': [],
-	'stable-baselines': ['stable-baselines']
+	'stable-baselines': ['stable-baselines', 'python_version >= "3.6"']
 	}
 
-pythonRequires= {
-    'core': '>=2.7',
-	'stable-baselines': '>=3.6'
-}
+#NOTE Package data is inside MANIFEST.In
 
-#NOTE This is the true creation of the setup env
-#TODO From install add informations on package_data in order to get only stable_baselines info
 setuptools.setup(
         name='DIAMBRAEnvironment',
         url='https://github.com/diambra/DIAMBRAenvironment',
@@ -132,13 +125,12 @@ setuptools.setup(
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
         include_package_data=True,
         extras_require=extras,
-        #python_requires=pythonRequires,
-        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse'],
-        cmdclass={'install': DiambraInstall}
+        classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse']
         )
 
+#DIAMBRA Lib Clear Cmd
 clearLibCmd="rm diambra_environment/diambraEnvLib/libdiambraEnv.so"
 subprocess.run(clearLibCmd.split())
-#MAME Cmd
+#MAME Clear Cmd
 clearMameCmd="rm diambra_environment/mame/mame"
 subprocess.run(clearMameCmd.split())
