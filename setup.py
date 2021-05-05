@@ -46,17 +46,17 @@ if(name == "Ubuntu"):
         sys.exit()
     if(release > 20):
         print("LSB Groovy Gorilla or higher")
-        os.system(aptCmd1)
-        os.system(aptCmd2_20)
-        if(True):
-            os.system(aptCmdSb_20)
+#        os.system(aptCmd1)
+#        os.system(aptCmd2_20)
+#        if(True):
+#            os.system(aptCmdSb_20)
         os.system(cpLib20)
     else:
         print("LSB Bionic Beaver or higher")
-        os.system(aptCmd1)
-        os.system(aptCmd2_19)
-        if(True):
-            os.system(aptCmdSb_19)
+#        os.system(aptCmd1)
+#        os.system(aptCmd2_19)
+#        if(True):
+#            os.system(aptCmdSb_19)
         os.system(cpLib18)
 
 if(name == "Linux Mint"):
@@ -65,17 +65,17 @@ if(name == "Linux Mint"):
         sys.exit()
     if(release > 20):
         print("Mint Ulyssa")
-        os.system(aptCmd1)
-        os.system(aptCmd2_20)
-        if(True):
-            os.system(aptCmdSb_20)
+#        os.system(aptCmd1)
+#        os.system(aptCmd2_20)
+#        if(True):
+#            os.system(aptCmdSb_20)
         os.system(cpLib20)
     else:
         print("Mint Tessa")
-        os.system(aptCmd1)
-        os.system(aptCmd2_19)
-        if(True):
-            os.system(aptCmdSb_19)
+#        os.system(aptCmd1)
+#        os.system(aptCmd2_19)
+#        if(True):
+#            os.system(aptCmdSb_19)
         os.system(cpLib18)
 
 os.system(unzipMameCmd)
