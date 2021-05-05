@@ -40,7 +40,7 @@ function setupMintUlyssa() {
     if [ $stable_baselines -eq 1 ]; then
         sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
     fi
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
+    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
 }
 
 function setupMintTessa() {
@@ -50,7 +50,7 @@ function setupMintTessa() {
     if [ $stable_baselines -eq 1 ]; then
         sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
     fi
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
+    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
 }
 
 function setupUbuntuGroovyGorilla() {
@@ -60,7 +60,7 @@ function setupUbuntuGroovyGorilla() {
     if [ $stable_baselines -eq 1 ]; then
         sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
     fi 
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
+    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
 }
 
 function setupUbuntuBionicBeaver() {
@@ -70,7 +70,7 @@ function setupUbuntuBionicBeaver() {
     if [ $stable_baselines -eq 1 ]; then
         sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
     fi
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip
+    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
 }
 
 distroName=$(cat /etc/*-release | uniq -u | grep DISTRIB_ID)
@@ -108,4 +108,6 @@ if [ $distroName == "Ubuntu" ]; then
 		echo "Ubuntu version not supported"
 	fi
 fi
+
+pip3 install --upgrade pip
 
