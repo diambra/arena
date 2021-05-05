@@ -5,7 +5,7 @@ from gym import spaces
 import pickle, bz2
 import copy
 import cv2
-from utils.policies import P2ToP1AddObsMove
+from diambra_environment.utils.policies import P2ToP1AddObsMove
 
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines.common import set_global_seeds

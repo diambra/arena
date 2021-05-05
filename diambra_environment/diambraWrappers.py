@@ -7,10 +7,10 @@ cv2.ocl.setUseOpenCL(False)
 import gym
 from gym import spaces
 
-from diambraGym import *
+from diambra_environment.diambraGym import *
 
 import datetime
-from utils.parallelPickle import parallelPickleWriter
+from diambra_environment.utils.parallelPickle import parallelPickleWriter
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noop_max=6):
