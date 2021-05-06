@@ -7,8 +7,6 @@ cv2.ocl.setUseOpenCL(False)
 import gym
 from gym import spaces
 
-from diambra_environment.diambraGym import *
-
 import datetime
 from diambra_environment.utils.parallelPickle import parallelPickleWriter
 
@@ -33,7 +31,8 @@ class NoopResetEnv(gym.Wrapper):
         assert noops > 0
         obs = None
         noopAction = [0, 0, 0, 0]
-        if self.env.actionSpace[0] == "discrete" and self.env.playersNum != "2P":
+        if self.env.actionSpace[0] == "discrete" and (self.env.playersNum != "2P" or\
+                                                      self.env.p2Brain != None):
             noopAction = 0
         for _ in range(noops):
             obs, _, done, _ = self.env.step(noopAction)
@@ -566,7 +565,7 @@ class AddObs(gym.Wrapper):
         obsNew = self.observation_mod(obs, self.resetInfo)
 
         # Store last observation
-        self.env.lastObs = obsNew
+        self.env.updateLastObs(obsNew)
 
         return obsNew
 
@@ -584,7 +583,7 @@ class AddObs(gym.Wrapper):
         obsNew = self.observation_mod(obs, stepInfo)
 
         # Store last observation
-        self.env.lastObs = obsNew
+        self.env.updateLastObs(obsNew)
 
         return obsNew, reward, done, info
 

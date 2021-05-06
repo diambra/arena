@@ -1,4 +1,6 @@
+from diambra_environment.diambraGym import diambraGym
 from diambra_environment.diambraWrappers import *
+
 from stable_baselines import logger
 from stable_baselines.bench import Monitor
 from stable_baselines.common.misc_util import set_global_seeds

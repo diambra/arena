@@ -215,9 +215,6 @@ class diambraGym(gym.Env):
         # P2 action logic (for AIvsHUM and AIvsAI training)
         self.p2Brain = P2brain
 
-        # Last obs stored (for AIvsAI training)
-        self.lastObs = None
-
         # Define action and observation space
         # They must be gym.spaces objects
         # We check only first element of self.actionSpace since for now only 1P
@@ -300,6 +297,14 @@ class diambraGym(gym.Env):
 
         return movAct, attAct
 
+    # Save last Observation
+    def updateLastObs(self, obs):
+        self.lastObs = obs
+
+    # Update P2Brain RL policy weights
+    def updateP2BrainWeights(self, weightsPath):
+        self.p2Brain.updateWeights(weightsPath)
+
     # Step the environment
     def step(self, action):
 
@@ -349,17 +354,19 @@ class diambraGym(gym.Env):
 
             else:
 
-                # 1P
-                # Discrete to multidiscrete conversion
-                ownMovAct, ownAttAct = self.discreteToMultiDiscreteAction(action[0])
-
                 # 2P
                 if self.actionSpace[1] == "multiDiscrete": # 2P MultiDiscrete Action Space
 
                     if self.p2Brain == None:
+                        # 1P
+                        # Discrete to multidiscrete conversion
+                        ownMovAct, ownAttAct = self.discreteToMultiDiscreteAction(action[0])
                         oppMovAct = action[1]
                         oppAttAct = action[2]
                     else:
+                        # 1P
+                        # Discrete to multidiscrete conversion
+                        ownMovAct, ownAttAct = self.discreteToMultiDiscreteAction(action)
                         if self.p2Brain.id == "rl":
                             self.lastObs[:,:,-1] = P2ToP1AddObsMove(self.lastObs[:,:,-1])
                         [oppMovAct, oppAttAct], _ = self.p2Brain.act(self.lastObs)
@@ -367,10 +374,17 @@ class diambraGym(gym.Env):
                 else: # 2P Discrete Action Space
 
                     if self.p2Brain == None:
+                        # 1P
+                        # Discrete to multidiscrete conversion
+                        ownMovAct, ownAttAct = self.discreteToMultiDiscreteAction(action[0])
                         oppMovAct, oppAttAct = self.discreteToMultiDiscreteAction(action[1])
                     else:
+                        # 1P
+                        # Discrete to multidiscrete conversion
+                        ownMovAct, ownAttAct = self.discreteToMultiDiscreteAction(action)
                         if self.p2Brain.id == "rl":
                             self.lastObs[:,:,-1] = P2ToP1AddObsMove(self.lastObs[:,:,-1])
+
                         brainActions, _ = self.p2Brain.act(self.lastObs)
                         oppMovAct, oppAttAct = self.discreteToMultiDiscreteAction(brainActions)
 
