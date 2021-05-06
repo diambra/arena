@@ -670,7 +670,7 @@ class TrajectoryRecorder(gym.Wrapper):
         self.rewardsHist.append(reward)
         self.actionsHist.append(action)
         self.flagHist.append([info["round_done"], info["stage_done"],
-                              info["game_done"], info["episode_done"]])
+                              info["game_done"], info["ep_done"]])
         self.cumulativeRew += reward
 
         if done:
