@@ -1,4 +1,3 @@
-from diambra_environment.diambraGym import diambraGym
 from diambra_environment.diambraWrappers import *
 
 from stable_baselines import logger

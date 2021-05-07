@@ -1,5 +1,3 @@
-from diambra_environment.diambraImitationLearning import diambraIL
-
 def make_diambra_imitationLearning_env(diambraIL, diambraIL_kwargs, seed=0,
                                        allow_early_resets=True):
     """
