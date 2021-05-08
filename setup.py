@@ -5,7 +5,7 @@ try:
 except ImportError:
     from pip._internal import main as pipmain
 
-import platform        
+import platform
 plat=platform.system()
 if(plat != "Linux"):
     print("Warning, only Linux platforms are supported for this package")
@@ -96,9 +96,40 @@ os.system(unzipMameCmd)
 with open("README.md", "r") as description:
     long_description = description.read()
 
+# Check tensorflow installation to avoid
+# breaking pre-installed tf gpu
+def find_tf_dependency():
+    install_tf, tf_gpu = False, False
+    try:
+        import tensorflow as tf
+        if tf.__version__ < LooseVersion('1.8.0'):
+            install_tf = True
+            # check if a gpu version is needed
+            tf_gpu = tf.test.is_gpu_available()
+    except ImportError:
+        install_tf = True
+        # Check if a nvidia gpu is present
+        for command in ['nvidia-smi', '/usr/bin/nvidia-smi', 'nvidia-smi.exe']:
+            try:
+                if subprocess.call([command]) == 0:
+                    tf_gpu = True
+                    break
+            except IOError:  # command does not exist / is not executable
+                pass
+        if os.environ.get('USE_GPU') == 'True':  # force GPU even if not auto-detected
+            tf_gpu = True
+
+    tf_dependency = []
+    if install_tf:
+        tf_dependency = ['tensorflow-gpu>=1.8.0,<2.0.0'] if tf_gpu else ['tensorflow>=1.8.0,<2.0.0']
+        if tf_gpu:
+            print("A GPU was detected, tensorflow-gpu will be installed")
+
+    return tf_dependency
+
 extras= {
 	'core': [],
-	'stable-baselines': ['stable-baselines[mpi]', 'inputs', 'python_version >= "3.6"']
+	'stable-baselines': ['stable-baselines[mpi]', 'python_version >= "3.6"'] + find_tf_dependency()
 	}
 
 #NOTE Package data is inside MANIFEST.In
