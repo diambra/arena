@@ -43,7 +43,7 @@ List of currently interfaced games:
 
 ##### (Optional) Python Virtual Environment
 
-We recommend to use a Virtual Environment to manage dependencies, either [VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
+We recommend to use a Virtual Environment to manage dependencies, both [VirtualEnv](https://virtualenv.pypa.io/en/latest/) and [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
 
 ### Core
 
@@ -59,7 +59,10 @@ Execute following commands from inside the repo root
  - Install OS dependencies: `./setupOS.sh -s`
  - Install Python packages: 
    - `pip3 install .[stable-baselines]`
-   - `pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
+   - (*)`pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
+
+
+(*) Python 3.6.x is required. OS like Ubuntu 20.10 requires to install it from [sources](https://www.python.org/downloads/).
 
 ## Getting started
 
@@ -77,8 +80,10 @@ Execute following commands from inside the repo root
 
 ### Examples
 
+Basic usage:
 
 ```
+# Code from /examples/core/diambraGymGist.py
 from diambra_environment.diambraGym import diambraGym
 import os
 
