@@ -7,6 +7,7 @@
 ## Summary
 
 - **[What is DIAMBRA Environment](#what-is-diambra-environment)**
+- **[Installation](#installtion)**
 - **[AI Tournament](#ai-tournament)**
 - **[Interfaced Games](#interfaced-games)**
 - **[Requirements](#requirements)**
@@ -18,7 +19,35 @@
 
 ![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
 
-**DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, as demonstrated by the following code snippet (that can be found in `diambraGymGist.py`) **also supporting headless mode** for server-side executions:
+**DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, and **supports headless mode** for server-side executions too.
+
+## Installation
+
+### Prerequisites
+
+##### Operating System
+
+- Linux Mint 19 or newer
+- Linux Ubuntu 18.04 or newer
+
+### Core Version (to run `examples/core/*`)
+
+Execute following commands from inside the repo root
+
+ - Install OS dependencies: `./setupOS.sh`
+ - Install Python packages: `pip3 install .`
+
+### Stable-Baselines Version (to run `examples/stable-baselines/*`)
+
+Execute following commands from inside the repo root
+
+ - Install OS dependencies: `./setupOS.sh -s`
+ - Install Python packages: 
+   - `pip3 install .[stable-baselines]`
+   - `pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
+
+## Examples
+
 
 ```
 from diambraGym import diambraGym
@@ -95,15 +124,7 @@ This is the list of currently interfaced games:
 
 ## Requirements
 
-### Hardware
 
-- (*) 16 GB Ram
-- (*) 4 GB GPU
-
-### Operating System
-
-- Linux Mint 19 or newer
-- Linux Ubuntu 18.04 or newer
 
 ### OS Packages
 
