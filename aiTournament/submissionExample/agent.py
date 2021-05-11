@@ -26,7 +26,7 @@ class agent(object):
         pass
 
     # Action selection performed by the agent policy
-    def act(self, observation, info):
+    def act(self, observation, info=None):
 
         # Modify observation as you wish (only if you need to!
         # Keep in mind inference time constraints)
@@ -35,6 +35,7 @@ class agent(object):
         # After environment reset info is equal to None
         if info != None:
            # Do something here
+           pass
 
         # Random action selection
         if self.actionSpace == "discrete":
