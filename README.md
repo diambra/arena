@@ -8,7 +8,7 @@
 
 - **[What is DIAMBRA Environment](#what-is-diambra-environment)**
 - **[Interfaced Games](#interfaced-games)**
-- **[Installation](#installtion)**
+- **[Installation](#installation)**
 - **[Getting Started](#getting-started)**
 - **[Examples](#examples)**
 - **[AI Tournament](#ai-tournament)**
@@ -30,7 +30,8 @@ List of currently interfaced games:
 - Ultimate Mortal Kombat III (Coming Soon)
 - Many more in development ...
 
-__
+___
+
 **Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder
 
 ## Installation
@@ -46,14 +47,14 @@ __
 
 We recommend to use a Virtual Environment to manage dependencies, either [VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
 
-### Core (to run `examples/core/*`)
+### Core
 
 Execute following commands from inside the repo root
 
  - Install OS dependencies: `./setupOS.sh`
  - Install Python packages: `pip3 install .`
 
-### Stable-Baselines Additional Support (to run `examples/core/*` and `examples/stable-baselines/*`)
+### Stable-Baselines Additional Support
 
 Execute following commands from inside the repo root
 
@@ -68,7 +69,7 @@ Execute following commands from inside the repo root
     - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://diambra.artificialtwin.com/terms/) and [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
     - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
 
-       `sha256sum path-to-file`
+       `sha256sum path-to-rom-file`
 
 - Make sure you are connected to the Internet when running the environment
 - When you want to run the environment for a long time (e.g. during training) and/or in multiple instances (i.e. parallel execution), make sure you reserve the whole machine for it, avoid running additional tasks, even light ones like browsing the internet
@@ -76,7 +77,7 @@ Execute following commands from inside the repo root
 - Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
 - Join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
 
-##### Examples
+### Examples
 
 
 ```
