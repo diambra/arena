@@ -30,8 +30,6 @@ List of currently interfaced games:
 - Ultimate Mortal Kombat III (Coming Soon)
 - Many more in development ...
 
-___
-
 **Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder
 
 ## Installation
@@ -63,7 +61,7 @@ Execute following commands from inside the repo root
    - `pip3 install .[stable-baselines]`
    - `pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
 
-### Getting started
+## Getting started
 
 - Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
     - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://diambra.artificialtwin.com/terms/) and [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
@@ -81,16 +79,14 @@ Execute following commands from inside the repo root
 
 
 ```
-from diambraGym import diambraGym
+from diambra_environment.diambraGym import diambraGym
 import os
 
-base_path = "/home/path-to-repo-root/" # Edit accordingly
+repo_base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../") # Absolute path to your DIAMBRA environment repo
 
 diambraEnvKwargs = {}
 diambraEnvKwargs["gameId"]          = "doapp" # Game selection
-diambraEnvKwargs["diambraEnv_path"] = os.path.join(base_path, "diambraEnvLib/")
-diambraEnvKwargs["roms_path"]       = os.path.join(base_path, "roms/") # Absolute path to roms
-diambraEnvKwargs["mame_path"]       = os.path.join(base_path, "mame/") # Absolute path to MAME executable
+diambraEnvKwargs["roms_path"]       = os.path.join(repo_base_path, "roms/") # Absolute path to roms
 
 diambraEnvKwargs["mame_diambra_step_ratio"] = 6
 diambraEnvKwargs["render"]                  = True # Renders the environment, deactivate for speedup
@@ -105,7 +101,7 @@ diambraEnvKwargs["difficulty"]  = 3
 diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]]
 diambraEnvKwargs["charOutfits"] = [2, 2]
 
-envId = "Test" # This ID must be unique for every instance of the environment when using diambraGym class
+envId = "TestEnv" # This ID must be unique for every instance of the environment when using diambraGym class
 env = diambraGym(envId, diambraEnvKwargs, headless=False) # Use `headless=True` for server-side executions
 
 observation = env.reset()
