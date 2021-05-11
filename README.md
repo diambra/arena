@@ -66,17 +66,12 @@ Execute following commands from inside the repo root
 
 ## Getting started
 
+- Make sure you are connected to the Internet when running the environment
 - Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
     - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://diambra.artificialtwin.com/terms/) and [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
     - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
 
        `sha256sum path-to-rom-file`
-
-- Make sure you are connected to the Internet when running the environment
-- When you want to run the environment for a long time (e.g. during training) and/or in multiple instances (i.e. parallel execution), make sure you reserve the whole machine for it, avoid running additional tasks, even light ones like browsing the internet
-- Make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
-- Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
-- Join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
 
 ### Examples
 
@@ -134,7 +129,7 @@ In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIA
 
 ![diambraGif](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.gif)
 
-For additional insights and cool stuff about this initiative, **follow the live stream on our [Twitch channel](https://www.twitch.tv/diambra_at)**, every Tuesday and Thursday at 10 PM CET = 1 PM PT!
+For additional insights and cool stuff about this initiative, **join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions** and **follow the live stream on our [Twitch channel](https://www.twitch.tv/diambra_at)**, every Tuesday and Thursday at 10 PM CET = 1 PM PT!
 
 ## AI Tournament
 
