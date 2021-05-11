@@ -9,8 +9,7 @@
 - **[What is DIAMBRA Environment](#what-is-diambra-environment)**
 - **[Interfaced Games](#interfaced-games)**
 - **[Installation](#installation)**
-- **[Getting Started](#getting-started)**
-- **[Examples](#examples)**
+- **[Getting Started and Examples](#getting-started-and-examples)**
 - **[AI Tournament](#ai-tournament)**
 - **[Troubleshoot](#support-and-troubleshoot)**
 - **[Citation](#citation)**
@@ -64,7 +63,7 @@ Execute following commands from inside the repo root
 
 (*) Python 3.6.x is required. OS like Ubuntu 20.10 requires to install it from [sources](https://www.python.org/downloads/).
 
-## Getting started
+## Getting started and Examples
 
 - Make sure you are connected to the Internet when running the environment
 - Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
@@ -118,12 +117,19 @@ for _ in range(100):
 env.close()
 ```
 
-In the repository you find **python notebooks included**, showing in detail how to:
-- Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
-- Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
-- Train a state of the art Reinforcement Learning algorithm (`DiambraAIAgent.ipynb`)
-- Use DIAMBRA Gym Wrappers to record expert demonstrations for Imitation Learning (`DiambraGymRecTest.ipynb`)
-- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (`DiambraImitationLearningTest.ipynb`)
+In the `examples/` folder you find **python notebooks**, showing in detail how to:
+
+##### Core
+
+- Use DIAMBRA Gym Class (`examples/core/DiambraGymTest.ipynb`)
+- Use DIAMBRA Gym Wrappers (`examples/core/DiambraGymWrapTest.ipynb`)
+- Use DIAMBRA Gym Wrappers to record expert demonstrations for Imitation Learning (`examples/core/DiambraGymRecTest.ipynb`)
+- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (Single Env) (`examples/core/DiambraImitationLearningTest.ipynb`)
+
+##### Stable-Baselines
+
+- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (Vectorized Envs Via Stable-Baselines) (`examples/stable_baselines/DiambraImitationLearningVecEnvTest.ipynb`)
+- Train a state of the art Reinforcement Learning algorithm (`examples/stable_baselines/DiambraAIAgent.ipynb`)
 
 In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA website</a> you **find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a>** providing a step by step guide for a flawless adoption. 
 
