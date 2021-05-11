@@ -7,19 +7,30 @@
 ## Summary
 
 - **[What is DIAMBRA Environment](#what-is-diambra-environment)**
+- **[Interfaced Games](#interfaced-games)**
 - **[Installation](#installtion)**
 - **[AI Tournament](#ai-tournament)**
-- **[Interfaced Games](#interfaced-games)**
-- **[Requirements](#requirements)**
+
 - **[Getting Started](#getting-started)**
 - **[Troubleshoot](#support-and-troubleshoot)**
 - **[Citation](#citation)**
 
 ## What is DIAMBRA Environment
 
-![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
+![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png | width=300)
 
 **DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, and **supports headless mode** for server-side executions too.
+
+## Interfaced games
+
+List of currently interfaced games:
+- Dead Or Alive ++
+- Street Fighter III: 3rd Strike (Coming Soon)
+- Tekken Tag Tournament (Coming Soon)
+- Ultimate Mortal Kombat III (Coming Soon)
+- Many more in development ...
+__
+**Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder
 
 ## Installation
 
@@ -30,14 +41,18 @@
 - Linux Mint 19 or newer
 - Linux Ubuntu 18.04 or newer
 
-### Core Version (to run `examples/core/*`)
+##### (Optional) Python Virtual Environment
+
+We recommend to use a Virtual Environment to manage dependencies, either [VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
+
+### Core (to run `examples/core/*`)
 
 Execute following commands from inside the repo root
 
  - Install OS dependencies: `./setupOS.sh`
  - Install Python packages: `pip3 install .`
 
-### Stable-Baselines Version (to run `examples/stable-baselines/*`)
+### Stable-Baselines Additional Support (to run `examples/core/*` and `examples/stable-baselines/*`)
 
 Execute following commands from inside the repo root
 
@@ -45,6 +60,25 @@ Execute following commands from inside the repo root
  - Install Python packages: 
    - `pip3 install .[stable-baselines]`
    - `pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
+
+## Getting started
+
+### General advice
+
+- When you want to run the environment for a long time (e.g. during training) and/or in multiple instances (i.e. parallel execution), make sure you reserve the whole machine for it, avoid running additional tasks, even light ones like browsing the internet
+- Make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
+- Make sure you are connected to the Internet when running the environment
+
+- Download games roms and place them in a folder of choice
+    - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
+    - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
+
+       `sha256sum path-to-file`
+
+
+- Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
+- Join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
+
 
 ## Examples
 
@@ -114,96 +148,12 @@ All validly submitted agents will be evaluated with **gameplays streamed live on
 
 **[Register here](https://diambra.artificialtwin.com/aitournament/)**
 
-## Interfaced games
-
-This is the list of currently interfaced games:
-- Dead Or Alive ++
-- Street Fighter III: 3rd Strike (Coming Soon)
-- Tekken Tag Tournament (Coming Soon)
-- Ultimate Mortal Kombat III (Coming Soon)
-
-## Requirements
-
-
-
-### OS Packages
-
-**For both OS (Mint/Ubuntu)** Update your OS with `sudo apt-get update`
-
-##### Mint 19 / Ubuntu 18
-
-`sudo apt-get install python3-pip libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
-
-##### Mint 20 / Ubuntu 20
-
-`sudo apt-get install python3-pip libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb`
-
-##### (*) Mint / Ubuntu
-
-`sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev`
-
-### Python Packages
-
-Use a Python Virtual Environment to manage dependencies ([VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html))
-
-To create a working python environment allowing to successfully execute all examples, first install your virtual environment manager of choice, then execute:
-
-- `virtualenv / pip`
-  ```
-  python3 -m venv env
-  source env/bin/activate
-  pip install -r diambraPipRequirements.txt
-  ```
-- `conda`
-  ```
-  conda create --name envName --file diambraCondaRequirements.txt
-  ```
-
-For a manual python packages installation, you need to install the following packages:
-
-- `pip install jupyter opencv-python gym`
--  (*)(**) `pip install stable-baselines[mpi]`
-
-### Repository content
-
-SHA256 for each rom are found in the `json` file inside the `roms/` folder
-
-___
-(*)  Specific for PPO Algorithm and Imitation Learning Gym class (based on Stable Baselines Reinforcement Learning library)
-
-(**) For additional details on Stable Baselines dependencies, visit their documentation [here](https://stable-baselines.readthedocs.io/en/master/guide/install.html).
-
-## Getting started
-
-### General advice
-
-- When you want to run the environment for a long time (e.g. during training) and/or in multiple instances (i.e. parallel execution), make sure you reserve the whole machine for it, avoid running additional tasks, even light ones like browsing the internet
-- Make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
-- Make sure you are connected to the Internet when running the environment
-- Extract `mame` binary contained in `mame/mame.zip` archive and place it inside `mame/` folder
-- Rename DIAMBRA Environment library file inside `diambraEnvLib/` folder:
-    - Mint 19 / Ubuntu 18: rename `libdiambraEnv18.so` to `libdiambraEnv.so`
-    - Mint 20 / Ubuntu 20: rename `libdiambraEnv20.so` to `libdiambraEnv.so`
-- Download games roms and place them in a folder of choice
-    - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
-    - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
-
-       `sha256sum path-to-file`
-
-- Absolute `base_path` inside Jupyter Notebooks has to be updated accordingly to where you extracted/clone the repository
-- Paths to `mame/` and `diambraEnvLib/` folders are needed, if you move them from the downloaded archive, make sure to update them accordingly
-- Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
-- Join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
-
 ## Support and Troubleshoot
 
 The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> and use the dedicated channel.
 
 ### Common known problems
 
- - If you are receiving the **Runtime error "error: execve failed: Not a directory"** in emulator booting up phase, make sure that:
-    - You properly set `base_path` variable in your script/notebook with the absolute path to the repository root folder
-    - You extracted the `mame` emulator from the `mame.zip` file
  - If you are receiving the **Runtime error "An attempt has been made to start a new process before the current process has finished its bootstrapping phase."** when running python scripts extracted from notebooks, you can fix it placing `if __name__ == '__main__':` after modules import in the script.
  - If the **environment freezes or if your receive the Runtime error "Connection refused by peer"**, make sure you reserve the whole machine to execute the environment, avoid running additional tasks, even light ones like browsing the internet
  - If the **environment is not working and you receive LUA errors in the terminal** (typically in between environment initialization and environment reset), make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
