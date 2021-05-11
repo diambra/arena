@@ -9,8 +9,7 @@
 - **[What is DIAMBRA Environment](#what-is-diambra-environment)**
 - **[Interfaced Games](#interfaced-games)**
 - **[Installation](#installation)**
-- **[Getting Started](#getting-started)**
-- **[Examples](#examples)**
+- **[Getting Started and Examples](#getting-started-and-examples)**
 - **[AI Tournament](#ai-tournament)**
 - **[Troubleshoot](#support-and-troubleshoot)**
 - **[Citation](#citation)**
@@ -43,7 +42,7 @@ List of currently interfaced games:
 
 ##### (Optional) Python Virtual Environment
 
-We recommend to use a Virtual Environment to manage dependencies, either [VirtualEnv](https://virtualenv.pypa.io/en/latest/) or [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
+We recommend to use a Virtual Environment to manage dependencies, both [VirtualEnv](https://virtualenv.pypa.io/en/latest/) and [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
 
 ### Core
 
@@ -59,26 +58,26 @@ Execute following commands from inside the repo root
  - Install OS dependencies: `./setupOS.sh -s`
  - Install Python packages: 
    - `pip3 install .[stable-baselines]`
-   - `pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
+   - (*)`pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
 
-## Getting started
 
+(*) Python 3.6.x is required. OS like Ubuntu 20.10 requires to install it from [sources](https://www.python.org/downloads/).
+
+## Getting started and Examples
+
+- Make sure you are connected to the Internet when running the environment
 - Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
     - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://diambra.artificialtwin.com/terms/) and [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
     - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
 
        `sha256sum path-to-rom-file`
 
-- Make sure you are connected to the Internet when running the environment
-- When you want to run the environment for a long time (e.g. during training) and/or in multiple instances (i.e. parallel execution), make sure you reserve the whole machine for it, avoid running additional tasks, even light ones like browsing the internet
-- Make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
-- Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
-- Join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
-
 ### Examples
 
+Basic usage:
 
 ```
+# Code from /examples/core/diambraGymGist.py
 from diambra_environment.diambraGym import diambraGym
 import os
 
@@ -118,18 +117,25 @@ for _ in range(100):
 env.close()
 ```
 
-In the repository you find **python notebooks included**, showing in detail how to:
-- Use DIAMBRA Gym Class (`DiambraGymTest.ipynb`)
-- Use DIAMBRA Gym Wrappers (`DiambraGymWrapTest.ipynb`)
-- Train a state of the art Reinforcement Learning algorithm (`DiambraAIAgent.ipynb`)
-- Use DIAMBRA Gym Wrappers to record expert demonstrations for Imitation Learning (`DiambraGymRecTest.ipynb`)
-- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (`DiambraImitationLearningTest.ipynb`)
+In the `examples/` folder you find **python notebooks**, showing in detail how to:
 
-In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA website</a> you **find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a>** providing a step by step guide for a flawless adoption. 
+##### Core
+
+- Use DIAMBRA Gym Class (`examples/core/DiambraGymTest.ipynb`)
+- Use DIAMBRA Gym Wrappers (`examples/core/DiambraGymWrapTest.ipynb`)
+- Use DIAMBRA Gym Wrappers to record expert demonstrations for Imitation Learning (`examples/core/DiambraGymRecTest.ipynb`)
+- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (Single Env) (`examples/core/DiambraImitationLearningTest.ipynb`)
+
+##### Stable-Baselines (Require Installation with Stable-Baselines Additional Support)
+
+- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (Vectorized Envs Via Stable-Baselines) (`examples/stable_baselines/DiambraImitationLearningVecEnvTest.ipynb`)
+- Train a state of the art Reinforcement Learning algorithm (`examples/stable_baselines/DiambraAIAgent.ipynb`)
+
+In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA's website</a> you **find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a>** providing a step by step guide for a flawless adoption. 
 
 ![diambraGif](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.gif)
 
-For additional insights and cool stuff about this initiative, **follow the live stream on our [Twitch channel](https://www.twitch.tv/diambra_at)**, every Tuesday and Thursday at 10 PM CET = 1 PM PT!
+For additional insights and cool stuff about this initiative, **join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions**, and **follow the live stream on our [Twitch channel](https://www.twitch.tv/diambra_at)**, every Tuesday and Thursday at 10 PM CET = 1 PM PT!
 
 ## AI Tournament
 
@@ -145,7 +151,7 @@ All validly submitted agents will be evaluated with **gameplays streamed live on
 
 The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> and use the dedicated channel.
 
-### Common known problems
+### Common Known Problems
 
  - If you are receiving the **Runtime error "An attempt has been made to start a new process before the current process has finished its bootstrapping phase."** when running python scripts extracted from notebooks, you can fix it placing `if __name__ == '__main__':` after modules import in the script.
  - If the **environment freezes or if your receive the Runtime error "Connection refused by peer"**, make sure you reserve the whole machine to execute the environment, avoid running additional tasks, even light ones like browsing the internet
