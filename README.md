@@ -9,19 +9,19 @@
 - **[What is DIAMBRA Environment](#what-is-diambra-environment)**
 - **[Interfaced Games](#interfaced-games)**
 - **[Installation](#installtion)**
-- **[AI Tournament](#ai-tournament)**
-
 - **[Getting Started](#getting-started)**
+- **[Examples](#examples)**
+- **[AI Tournament](#ai-tournament)**
 - **[Troubleshoot](#support-and-troubleshoot)**
 - **[Citation](#citation)**
 
 ## What is DIAMBRA Environment
 
-![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png | width=300)
+![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
 
 **DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, and **supports headless mode** for server-side executions too.
 
-## Interfaced games
+### Interfaced games
 
 List of currently interfaced games:
 - Dead Or Alive ++
@@ -29,6 +29,7 @@ List of currently interfaced games:
 - Tekken Tag Tournament (Coming Soon)
 - Ultimate Mortal Kombat III (Coming Soon)
 - Many more in development ...
+
 __
 **Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder
 
@@ -61,26 +62,21 @@ Execute following commands from inside the repo root
    - `pip3 install .[stable-baselines]`
    - `pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
 
-## Getting started
+### Getting started
 
-### General advice
-
-- When you want to run the environment for a long time (e.g. during training) and/or in multiple instances (i.e. parallel execution), make sure you reserve the whole machine for it, avoid running additional tasks, even light ones like browsing the internet
-- Make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
-- Make sure you are connected to the Internet when running the environment
-
-- Download games roms and place them in a folder of choice
-    - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
+- Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
+    - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://diambra.artificialtwin.com/terms/) and [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
     - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
 
        `sha256sum path-to-file`
 
-
+- Make sure you are connected to the Internet when running the environment
+- When you want to run the environment for a long time (e.g. during training) and/or in multiple instances (i.e. parallel execution), make sure you reserve the whole machine for it, avoid running additional tasks, even light ones like browsing the internet
+- Make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
 - Watch our <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">tutorials</a> for a step by step walkthrough
 - Join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions, or simply have a chat!
 
-
-## Examples
+##### Examples
 
 
 ```
