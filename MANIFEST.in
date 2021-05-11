@@ -1,0 +1,4 @@
+include diambra_environment/mame/mame
+recursive-include diambra_environment/mame/nvram *
+recursive-include diambra_environment/mame/plugins *
+include diambra_environment/diambraEnvLib/libdiambraEnv.so

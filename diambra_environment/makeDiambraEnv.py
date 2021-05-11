@@ -1,4 +1,4 @@
-from diambraWrappers import *
+from diambra_environment.diambraWrappers import *
 
 def make_diambra_env(diambraGym, env_prefix, seed, diambra_kwargs, diambra_gym_kwargs,
                      wrapper_kwargs=None, key_to_add=None, traj_rec_kwargs=None):

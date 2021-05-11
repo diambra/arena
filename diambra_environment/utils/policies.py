@@ -2,9 +2,7 @@
 import numpy as np
 import sys, os
 import random
-currentDir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(currentDir)
-from diambraGamepad import diambraGamepad
+from diambra_environment.utils.diambraGamepad import diambraGamepad
 
 # Human policy, retrieved via GamePad
 class gamepadPolicy(object):

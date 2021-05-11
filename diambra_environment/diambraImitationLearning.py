@@ -5,11 +5,7 @@ from gym import spaces
 import pickle, bz2
 import copy
 import cv2
-from utils.policies import P2ToP1AddObsMove
-
-from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
-from stable_baselines.common import set_global_seeds
-from stable_baselines.bench import Monitor
+from diambra_environment.utils.policies import P2ToP1AddObsMove
 
 class diambraImitationLearning(gym.Env):
     """DiambraMame Environment that follows gym interface"""
@@ -279,32 +275,3 @@ class diambraImitationLearning(gym.Env):
         elif mode == "rgb_array":
             output = np.expand_dims(self.lastObs, axis=2)
             return output
-
-# Function to vectorialize envs
-def make_diambra_imitationLearning_env(diambraIL, diambraIL_kwargs, seed=0,
-                                       allow_early_resets=True):
-    """
-    Utility function for multiprocessed env.
-
-    :param diambraIL_kwargs: (dict) kwargs for Diambra IL env
-    """
-
-    num_env = diambraIL_kwargs["totalCpus"]
-
-    def make_env(rank):
-        def _thunk():
-
-            # Create log dir
-            log_dir = "tmp"+str(rank)+"/"
-            os.makedirs(log_dir, exist_ok=True)
-            env = diambraIL(**diambraIL_kwargs, rank=rank)
-            env = Monitor(env, log_dir, allow_early_resets=allow_early_resets)
-            return env
-        set_global_seeds(seed)
-        return _thunk
-
-    # When using one environment, no need to start subprocesses
-    if num_env == 1:
-        return DummyVecEnv([make_env(i) for i in range(num_env)])
-
-    return SubprocVecEnv([make_env(i) for i in range(num_env)])

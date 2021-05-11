@@ -7,10 +7,8 @@ cv2.ocl.setUseOpenCL(False)
 import gym
 from gym import spaces
 
-from diambraGym import *
-
 import datetime
-from utils.parallelPickle import parallelPickleWriter
+from diambra_environment.utils.parallelPickle import parallelPickleWriter
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noop_max=6):
@@ -33,7 +31,8 @@ class NoopResetEnv(gym.Wrapper):
         assert noops > 0
         obs = None
         noopAction = [0, 0, 0, 0]
-        if self.env.actionSpace[0] == "discrete" and self.env.playersNum != "2P":
+        if self.env.actionSpace[0] == "discrete" and (self.env.playersNum != "2P" or\
+                                                      self.env.p2Brain != None):
             noopAction = 0
         for _ in range(noops):
             obs, _, done, _ = self.env.step(noopAction)
@@ -566,7 +565,7 @@ class AddObs(gym.Wrapper):
         obsNew = self.observation_mod(obs, self.resetInfo)
 
         # Store last observation
-        self.env.lastObs = obsNew
+        self.env.updateLastObs(obsNew)
 
         return obsNew
 
@@ -584,7 +583,7 @@ class AddObs(gym.Wrapper):
         obsNew = self.observation_mod(obs, stepInfo)
 
         # Store last observation
-        self.env.lastObs = obsNew
+        self.env.updateLastObs(obsNew)
 
         return obsNew, reward, done, info
 
@@ -670,7 +669,7 @@ class TrajectoryRecorder(gym.Wrapper):
         self.rewardsHist.append(reward)
         self.actionsHist.append(action)
         self.flagHist.append([info["round_done"], info["stage_done"],
-                              info["game_done"], info["episode_done"]])
+                              info["game_done"], info["ep_done"]])
         self.cumulativeRew += reward
 
         if done:

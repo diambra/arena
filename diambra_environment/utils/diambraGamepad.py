@@ -2,7 +2,7 @@ import sys, os, time
 import numpy as np
 from threading import Thread
 from collections import defaultdict
-from inputs import devices
+from diambra_environment.utils.inputs import devices
 import pickle
 from os.path import expanduser
 homeDir = expanduser("~")

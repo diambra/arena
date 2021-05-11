@@ -2,7 +2,8 @@ mame/history
 __*
 *.swp
 roms/*.zip
-diambraEnvLib/libdiambraEnv.so
-mame/mame
+diambra_environment/diambraEnvLib/libdiambraEnv.so
+diambra_environment/mame/mame
+diambra_environment/mame/history
 .ipynb*
 trajRecordings/*

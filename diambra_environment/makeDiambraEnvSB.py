@@ -1,8 +1,9 @@
-from diambraWrappers import *
+from diambra_environment.diambraWrappers import *
+
 from stable_baselines import logger
 from stable_baselines.bench import Monitor
 from stable_baselines.common.misc_util import set_global_seeds
-from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv, VecFrameStack
+from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 
 def make_diambra_env(diambraGym, env_prefix, num_env, seed, diambra_kwargs,
                      diambra_gym_kwargs, wrapper_kwargs=None,
@@ -36,6 +37,7 @@ def make_diambra_env(diambraGym, env_prefix, num_env, seed, diambra_kwargs,
                           allow_early_resets=allow_early_resets)
             return env
         return _thunk
+
     set_global_seeds(seed)
 
     # If not wanting vectorized envs
