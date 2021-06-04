@@ -153,6 +153,18 @@ The fastest way to receive support is by joining DIAMBRA <a href="https://discor
 
 ### Common Known Problems
 
+ - If when running the environment remotely with the option `headless=True` (see gist script in `examples/core/`) you receive an error like:
+   ```
+   Fatal server error:
+   (EE) Cannot establish any listening sockets - Make sure an X server isn't already running(EE)
+   _XSERVTransSocketUNIXCreateListener: ...SocketCreateListener() failed
+   _XSERVTransMakeAllCOTSServerListeners: server already running
+   (EE)
+   Fatal server error:
+   (EE) Cannot establish any listening sockets - Make sure an X server isn't already running(EE)
+   ```
+   change the `Xvfb` DISPLAY number parameter using the additional `diambraGym` optional argument `displayNum` (equal to `1` by default) increasing its value until it works
+
  - If you are receiving the **Runtime error "An attempt has been made to start a new process before the current process has finished its bootstrapping phase."** when running python scripts extracted from notebooks, you can fix it placing `if __name__ == '__main__':` after modules import in the script.
  - If the **environment freezes or if your receive the Runtime error "Connection refused by peer"**, make sure you reserve the whole machine to execute the environment, avoid running additional tasks, even light ones like browsing the internet
  - If the **environment is not working and you receive LUA errors in the terminal** (typically in between environment initialization and environment reset), make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
