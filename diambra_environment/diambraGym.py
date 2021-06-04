@@ -18,7 +18,8 @@ class diambraGym(gym.Env):
     def __init__(self, env_id, diambraEnvKwargs, P2brain=None, rewNormFac=0.5,
                  continue_game=0.0, show_final=False, gamePads=[None, None],
                  actionSpace=["multiDiscrete", "multiDiscrete"],
-                 attackButCombinations=[True, True], actBufLen=12, headless=False):
+                 attackButCombinations=[True, True], actBufLen=12,
+                 headless=False, displayNum=1):
 
         self.first = True
         self.continueGame = continue_game
@@ -120,8 +121,8 @@ class diambraGym(gym.Env):
                    self.envData.frame]
 
         if headless:
-            os.system("Xvfb :0 -screen 0 800x600x16 +extension RANDR &")
-            os.environ["DISPLAY"] = ":0"
+            os.system("Xvfb :{} -screen 0 800x600x16 +extension RANDR &".format(displayNum))
+            os.environ["DISPLAY"] = ":{}".format(displayNum)
 
         # Launch thread
         self.diambraEnvThread = threading.Thread(target=diambraEnv, args=diambraEnvArgs)
