@@ -141,11 +141,11 @@ For additional insights and cool stuff about this initiative, **join our <a href
 
 ![diambraAITournament](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/WideFlyer.jpg)
 
-We just launched an **international competition** where each participant will **train an AI agent to effectively play Dead Or Alive ++** using the environment contained in this repository.
+Our very first AI Tournament just ended, and **it was amazing!** Participants trained an AI algorithm to effectively play Dead Or Alive++. The three best algorithms participated in the final event and **competed for the 1400 CHF prize.**
 
-All validly submitted agents will be evaluated with **gameplays streamed live on our [Twitch channel](https://www.twitch.tv/diambra_at)**, with commentary and a lot of cool stuff. It is gonna be exciting!
+**Stay tuned for tons more!**
 
-**[Register here](https://diambra.artificialtwin.com/aitournament/)**
+**[Read more and watch related events here](https://diambra.artificialtwin.com/aitournament/)**
 
 ## Support and Troubleshoot
 
