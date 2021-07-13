@@ -40,6 +40,8 @@ List of currently interfaced games:
 - Linux Mint 19 or newer
 - Linux Ubuntu 18.04 or newer
 
+**!! WIN and MacOS support (via Docker) under development and available soon, STAY TUNED!**
+
 ##### (Optional) Python Virtual Environment
 
 We recommend to use a Virtual Environment to manage dependencies, both [VirtualEnv](https://virtualenv.pypa.io/en/latest/) and [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
