@@ -47,7 +47,7 @@ class diambraArenaLib:
 
         # Mame path
         if "mamePath" not in diambraEnvKwargs:
-            diambraEnvKwargs["mamePath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mame/")
+            diambraEnvKwargs["mamePath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../mame/")
 
         envKwargsString = self.envKwargsToString(envId, diambraEnvKwargs)
         diambraEnvArgs = [envKwargsString, self.pipes_path,                                  # INPUTS

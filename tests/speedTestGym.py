@@ -17,6 +17,7 @@ if __name__ == '__main__':
 
     try:
         parser = argparse.ArgumentParser()
+        parser.add_argument('--romsPath',       type=str,   required=True,      help='Absolute path to roms')
         parser.add_argument('--gameId',      type=str, default="doapp",    help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
         parser.add_argument('--player',      type=str, default="Random",   help='Player [(Random), P1, P2, P1P2]')
         parser.add_argument('--frameRatio',  type=int, default=1,          help='Frame ratio')
@@ -24,27 +25,27 @@ if __name__ == '__main__':
         parser.add_argument('--actionSpace', type=str, default="discrete", help='(discrete)/multidiscrete')
         parser.add_argument('--attButComb',  type=int, default=0,          help='If to use attack button combinations (0=False)/1=True')
         parser.add_argument('--targetSpeed', type=int, default=100,        help='Reference speed')
+        parser.add_argument('--libPath',        type=str,   default="",         help='Path to diambraEnvLib')
         opt = parser.parse_args()
         print(opt)
 
         # Common settings
         diambraKwargs = {}
-        diambraKwargs["gameId"]   = opt.gameId
-        diambraKwargs["romsPath"] = os.path.join(base_path, "../../../roms/mame/")
+        diambraKwargs["romsPath"] = opt.romsPath
+        if opt.libPath != "":
+            diambraKwargs["libPath"]  = opt.libPath
 
-        diambraKwargs["mamePath"] = os.path.join(base_path, "../../../customMAME/")
-        diambraKwargs["libPath"] = os.path.join(base_path, "../../../games_cpp/build/diambraEnvLib/libdiambraEnv.so")
-
-        diambraKwargs["continueGame"] = 0.0
-        diambraKwargs["showFinal"]    = False
+        diambraKwargs["gameId"]     = opt.gameId
+        diambraKwargs["player"]     = opt.player
+        diambraKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
 
         diambraKwargs["mameDiambraStepRatio"] = opt.frameRatio
         diambraKwargs["render"] = False
         diambraKwargs["lockFps"] = False
 
-        diambraKwargs["player"] = opt.player
+        diambraKwargs["continueGame"] = 0.0
+        diambraKwargs["showFinal"]    = False
 
-        diambraKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
         diambraKwargs["charOutfits"] = [2, 2]
 
         # DIAMBRA gym kwargs
