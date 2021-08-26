@@ -6,92 +6,51 @@ import numpy as np
 import ctypes, ctypes.util
 import time
 
-# DIAMBRA Env Command Dict
-diambraEnvComm = {}
-diambraEnvComm["step"]          = 0
-diambraEnvComm["next_round"]    = 1
-diambraEnvComm["next_stage"]    = 2
-diambraEnvComm["new_game"]      = 3
-diambraEnvComm["continue_game"] = 4
-diambraEnvComm["start"]         = 5
-diambraEnvComm["show_final"]    = 6
-diambraEnvComm["close"]         = 7
-
 # Env Data Class
 class EnvData:
 
     def __init__(self):
+
+        self.boolDataVarsList = ["roundDone", "stageDone", "gameDone", "epDone"]
+        self.cBoolData = (ctypes.c_bool*len(self.boolDataVarsList))()
+        self.cIntData = (ctypes.c_int*50)()
+
+        # Data
         self.data = {}
 
-        # Int values
-        self.fighting     = (ctypes.c_int)(*[])
-        self.reward       = (ctypes.c_int)(*[])
-        self.ownHealth_1  = (ctypes.c_int)(*[])
-        self.ownHealth_2  = (ctypes.c_int)(*[])
-        self.oppHealth_1  = (ctypes.c_int)(*[])
-        self.oppHealth_2  = (ctypes.c_int)(*[])
-        self.ownPosition  = (ctypes.c_int)(*[])
-        self.oppPosition  = (ctypes.c_int)(*[])
-        self.ownWins      = (ctypes.c_int)(*[])
-        self.oppWins      = (ctypes.c_int)(*[])
-        self.ownCharacter = (ctypes.c_int)(*[])
-        self.oppCharacter = (ctypes.c_int)(*[])
-        self.stage        = (ctypes.c_int)(*[])
-
-        # Bool values
-        self.round_done = (ctypes.c_bool)(*[])
-        self.stage_done = (ctypes.c_bool)(*[])
-        self.game_done  = (ctypes.c_bool)(*[])
-        self.ep_done    = (ctypes.c_bool)(*[])
-
         # Frame
-        self.frame = np.asarray([-10 for x in range(1500000)], dtype='uint8')
+        self.frame = np.ascontiguousarray([-10 for x in range(1500000)], dtype='uint8')
 
-    def setFrameSize(self, hwc_dim):
-        self.height = hwc_dim[0]
-        self.width  = hwc_dim[1]
-        self.nChan  = hwc_dim[2]
-        self.frameDim = hwc_dim[0] * hwc_dim[1] * hwc_dim[2]
+    def setFrameSize(self, hwcDim):
+        self.height = hwcDim[0]
+        self.width  = hwcDim[1]
+        self.nChan  = hwcDim[2]
+        self.frameDim = hwcDim[0] * hwcDim[1] * hwcDim[2]
+
+    def setIntDataVarsList(self, intDataVarsList):
+        self.intDataVarsList = intDataVarsList
 
     def processData(self):
+        # Store Int values
+        for idx, varName in enumerate(self.intDataVarsList):
+            self.data[varName] = self.cIntData[idx]
 
-        # Int values
-        self.data["fighting"]     = self.fighting.value
-        self.data["reward"]       = self.reward.value
-        self.data["ownHealth"]    = [self.ownHealth_1.value, self.ownHealth_2.value]
-        self.data["oppHealth"]    = [self.oppHealth_1.value, self.oppHealth_2.value]
-        self.data["ownPosition"]  = self.ownPosition.value
-        self.data["oppPosition"]  = self.oppPosition.value
-        self.data["ownWins"]      = self.ownWins.value
-        self.data["oppWins"]      = self.oppWins.value
-        self.data["ownCharacter"] = self.ownCharacter.value
-        self.data["oppCharacter"] = self.oppCharacter.value
-        self.data["stage"]        = self.stage.value
-
-        # Bool values
-        self.data["round_done"] = self.round_done.value
-        self.data["stage_done"] = self.stage_done.value
-        self.data["game_done"]  = self.game_done.value
-        self.data["ep_done"]    = self.ep_done.value
+        # Store Bool values
+        for idx, varName in enumerate(self.boolDataVarsList):
+            self.data[varName] = self.cBoolData[idx]
 
     def processFrame(self):
-
         return self.frame[:self.frameDim].reshape(self.height, self.width, self.nChan)
 
-    def read_info(self):
-
+    def readInfo(self):
         self.processData()
-
         return self.data
 
-    def read_data(self):
-
+    def readData(self):
         self.processData()
-
         return self.processFrame(), self.data
 
-    def read_obs(self):
-
+    def readObs(self):
         return self.processFrame()
 
 # A thread used for reading data from a pipe
@@ -112,25 +71,10 @@ class StreamGobbler(threading.Thread):
             if self._stop_event.is_set():
                 break
 
-    def wait_for_cursor(self):
-        new_line_count = 0
-        while new_line_count != 3:
-            line = self.pipe.readline()
-            if line == b'\n':
-                new_line_count += 1
-
     def stop(self):
         self._stop_event.set()
 
-def delete_old_pipes(pipes_path):
-    for the_file in os.listdir(pipes_path):
-        file_path = os.path.join(pipes_path, the_file)
-        try:
-            os.unlink(file_path)
-        except Exception as e:
-            print(e)
-
-def open_pipe(pipe_queue, path, mode):
+def openPipe(pipe_queue, path, mode):
     pipe_queue.put(open(path, mode + "b"))
 
 
@@ -164,7 +108,7 @@ class Pipe(object):
 
             # Create pipe
             pipe_queue = Queue()
-            open_thread = threading.Thread(target=open_pipe, args=[pipe_queue, str(self.path.absolute()), self.mode])
+            open_thread = threading.Thread(target=openPipe, args=[pipe_queue, str(self.path.absolute()), self.mode])
             open_thread.start()
             open_thread.join(timeout=3)
             self.fifo = pipe_queue.get(timeout=1)
@@ -185,9 +129,9 @@ class Pipe(object):
 
         self.fifo.close()
 
-    def sendComm(self, commType, P1mov=0, P1att=0, P2mov=0, P2att=0):
-        commString = str(commType) + "+" + str(P1mov) + "+" + str(P1att) + "+"\
-                                         + str(P2mov) + "+" + str(P2att) + "+"
+    def sendComm(self, commType, movP1=0, attP1=0, movP2=0, attP2=0):
+        commString = str(commType) + "+" + str(movP1) + "+" + str(attP1) + "+"\
+                                         + str(movP2) + "+" + str(attP2) + "+"
         self.writeln(commString);
 
     # Writes to the pipe
@@ -218,7 +162,17 @@ class DataPipe(object):
     def close(self):
         self.pipe.close()
 
-    def read_envInfo(self, timeout=None):
+    def readEnvInfo(self, timeout=None):
+        line = self.pipe.readln(timeout=timeout)
+        line = line.decode('utf-8')
+        return line.split(",")
+
+    def readEnvIntDataVarsList(self, timeout=None):
+        line = self.pipe.readln(timeout=timeout)
+        line = line.decode('utf-8')
+        return line.split(",")
+
+    def readResetInfo(self, timeout=None):
         line = self.pipe.readln(timeout=timeout)
         line = line.decode('utf-8')
         return line.split(",")
@@ -231,4 +185,5 @@ class DataPipe(object):
 
     def readFlag(self, timeout=None):
         line = self.pipe.readln(timeout=timeout)
-        return
+        line = line.decode('utf-8')
+        return int(line.split(",")[0])
