@@ -120,6 +120,7 @@ setuptools.setup(
             'gym>=0.17.1',
             'jupyter>=1.0.0',
             'testresources',
+            'inputs',
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
         packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
