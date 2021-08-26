@@ -97,8 +97,7 @@ with open("README.md", "r") as description:
     long_description = description.read()
 
 extras= {
-	'core': [],
-	'stable-baselines': ['stable-baselines[mpi]', 'python_version >= "3.6"']
+	'core': []
 	}
 
 #NOTE Package data is inside MANIFEST.In
