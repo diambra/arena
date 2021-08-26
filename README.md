@@ -29,7 +29,7 @@ List of currently interfaced games:
 - Ultimate Mortal Kombat III (Coming Soon)
 - Many more in development ...
 
-**Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder.
+**Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder
 
 ## Installation
 
