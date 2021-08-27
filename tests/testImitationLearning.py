@@ -4,7 +4,7 @@ from os import listdir
 import numpy as np
 import argparse
 
-from diambraArena.diambraImitationLearning import *
+import diambraArena
 
 def showObs(observation, waitKey=1, viz=True):
     if type(observation) == dict:

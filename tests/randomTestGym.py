@@ -46,7 +46,7 @@ if __name__ == '__main__':
         parser.add_argument('--frameRatio',     type=int,   default=3,          help='Frame ratio')
         parser.add_argument('--nEpisodes',      type=int,   default=1,          help='Number of episodes')
         parser.add_argument('--continueGame',   type=float, default=-1.0,       help='ContinueGame flag (-inf,+1.0]')
-        parser.add_argument('--actionSpace',    type=str,   default="discrete", help='(discrete)/multidiscrete')
+        parser.add_argument('--actionSpace',    type=str,   default="discrete", help='(discrete)/multiDiscrete')
         parser.add_argument('--attButComb',     type=int,   default=0,          help='If to use attack button combinations (0=False)/1=True')
         parser.add_argument('--noAction',       type=int,   default=0,          help='If to use no action policy (0=False)')
         parser.add_argument('--hardCore',       type=int,   default=0,          help='Hard core mode (0=False)')
@@ -62,7 +62,6 @@ if __name__ == '__main__':
 
         # Common settings
         diambraKwargs = {}
-        print("CWD = ", os.getcwd())
         diambraKwargs["romsPath"] = opt.romsPath
         if opt.libPath != "":
             diambraKwargs["libPath"]  = opt.libPath
@@ -90,7 +89,8 @@ if __name__ == '__main__':
 
         envId = opt.gameId + "_randomTestGym"
         hardCore = False if opt.hardCore == 0 else True
-        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, seed=timeDepSeed, hardCore=hardCore)
+        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
+                                seed=timeDepSeed, hardCore=hardCore)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)

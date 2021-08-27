@@ -3,7 +3,7 @@ from os.path import expanduser
 import numpy as np
 import argparse
 
-from diambraArena.makeEnv import makeEnv
+import diambraArena
 
 def reject_outliers(data):
     m = 2
@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument('--romsPath',       type=str,   required=True,      help='Absolute path to roms')
+        parser.add_argument('--romsPath',    type=str, required=True,      help='Absolute path to roms')
         parser.add_argument('--gameId',      type=str, default="doapp",    help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
         parser.add_argument('--player',      type=str, default="Random",   help='Player [(Random), P1, P2, P1P2]')
         parser.add_argument('--frameRatio',  type=int, default=1,          help='Frame ratio')
@@ -25,7 +25,7 @@ if __name__ == '__main__':
         parser.add_argument('--actionSpace', type=str, default="discrete", help='(discrete)/multidiscrete')
         parser.add_argument('--attButComb',  type=int, default=0,          help='If to use attack button combinations (0=False)/1=True')
         parser.add_argument('--targetSpeed', type=int, default=100,        help='Reference speed')
-        parser.add_argument('--libPath',        type=str,   default="",         help='Path to diambraEnvLib')
+        parser.add_argument('--libPath',     type=str, default="",         help='Path to diambraEnvLib')
         opt = parser.parse_args()
         print(opt)
 
@@ -72,7 +72,8 @@ if __name__ == '__main__':
         wrapperKwargs["scaleMod"] = 0
 
         envId = opt.gameId + "_speedTestWrappers"
-        env = makeEnv(envId, timeDepSeed, diambraKwargs, diambraGymKwargs, wrapperKwargs, trajRecKwargs)
+        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, 
+                                wrapperKwargs, trajRecKwargs, seed=timeDepSeed)
 
         observation = env.reset()
 

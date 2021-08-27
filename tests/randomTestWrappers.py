@@ -3,8 +3,8 @@ from os.path import expanduser
 import numpy as np
 import argparse
 
+import diambraArena
 from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction
-from diambraArena.makeEnv import makeEnv
 
 # Visualize Obs content
 def showObs(observation, nActionsStack, waitKey=1, viz=True, charList=None):
@@ -122,8 +122,9 @@ if __name__ == '__main__':
 
         envId = opt.gameId + "_randomTestWrappers"
         hardCore = False if opt.hardCore == 0 else True
-        env = makeEnv(envId, timeDepSeed, diambraKwargs, diambraGymKwargs,
-                      wrapperKwargs, trajRecKwargs, hardCore=hardCore)
+        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, 
+                                wrapperKwargs, trajRecKwargs, 
+                                seed=timeDepSeed, hardCore=hardCore)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)
