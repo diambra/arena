@@ -2,8 +2,8 @@ import cv2, sys, os, time
 import numpy as np
 import argparse
 
+import diambraArena
 from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction
-from diambraArena.makeEnv import makeEnv
 
 # Visualize Obs content
 def showObs(observation, waitKey=1, viz=True, charList=None):
@@ -62,6 +62,7 @@ if __name__ == '__main__':
 
         # Common settings
         diambraKwargs = {}
+        print("CWD = ", os.getcwd())
         diambraKwargs["romsPath"] = opt.romsPath
         if opt.libPath != "":
             diambraKwargs["libPath"]  = opt.libPath
@@ -89,7 +90,7 @@ if __name__ == '__main__':
 
         envId = opt.gameId + "_randomTestGym"
         hardCore = False if opt.hardCore == 0 else True
-        env = makeEnv(envId, timeDepSeed, diambraKwargs, diambraGymKwargs, hardCore=hardCore)
+        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, seed=timeDepSeed, hardCore=hardCore)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)

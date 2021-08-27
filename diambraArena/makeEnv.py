@@ -1,8 +1,8 @@
 from diambraArena.diambraGym import *
 from diambraArena.wrappers.diambraWrappers import *
 
-def makeEnv(envPrefix, seed, diambraKwargs, diambraGymKwargs,
-            wrapperKwargs=None, trajRecKwargs=None, hardCore=False):
+def make(envPrefix, diambraKwargs, diambraGymKwargs={}, seed=42,
+         wrapperKwargs={}, trajRecKwargs=None, hardCore=False):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -22,8 +22,7 @@ def makeEnv(envPrefix, seed, diambraKwargs, diambraGymKwargs,
 
     env.seed(seed)
 
-    if wrapperKwargs is not None:
-        env = envWrapping(env, diambraKwargs["player"], **wrapperKwargs, hardCore=hardCore)
+    env = envWrapping(env, diambraKwargs["player"], **wrapperKwargs, hardCore=hardCore)
 
     if trajRecKwargs is not None:
         if hardCore:

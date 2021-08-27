@@ -20,7 +20,7 @@ class diambraArenaLib:
         # Launch diambra env core
         # Load library
         if "libPath" not in diambraEnvKwargs:
-            diambraEnvKwargs["libPath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diambraEnvLib/libdiambraEnv.so")
+            diambraEnvKwargs["libPath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "libdiambraEnv.so")
 
         if not diambraEnvKwargs["libPath"]:
            print("Unable to find the specified library: {}".format(diambraEnvKwargs["libPath"]))

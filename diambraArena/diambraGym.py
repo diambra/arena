@@ -3,8 +3,8 @@ import numpy as np
 import gym
 from gym import spaces
 from collections import deque
-from diambraArena.diambraEnvLib.libInterface import diambraArenaLib
 from diambraArena.gymUtils import discreteToMultiDiscreteAction
+from diambraArena.diambraEnvLib.libInterface import diambraArenaLib
 
 # DIAMBRA Env Gym
 class diambraGymHardCoreBase(gym.Env):
