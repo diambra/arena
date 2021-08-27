@@ -1,5 +1,5 @@
-from diambraArena.diambraGym import *
-from diambraArena.wrappers.diambraWrappers import *
+from diambraArena.diambraGym import makeGymEnv
+from diambraArena.wrappers.diambraWrappers import envWrapping
 
 def make(envPrefix, diambraKwargs, diambraGymKwargs={},
          wrapperKwargs={}, trajRecKwargs=None, seed=42, hardCore=False):
@@ -9,21 +9,16 @@ def make(envPrefix, diambraKwargs, diambraGymKwargs={},
     :param wrapperKwargs: (dict) the parameters for envWrapping function
     """
 
-    if diambraKwargs["player"] != "P1P2": #1P Mode
-        if hardCore:
-            env = diambraGymHardCore1P(envPrefix, diambraKwargs, **diambraGymKwargs)
-        else:
-            env = diambraGym1P(envPrefix, diambraKwargs, **diambraGymKwargs)
-    else: #2P Mode
-        if hardCore:
-            env = diambraGymHardCore2P(envPrefix, diambraKwargs, **diambraGymKwargs)
-        else:
-            env = diambraGym2P(envPrefix, diambraKwargs, **diambraGymKwargs)
+    # Initialize random seed
+    env, player = makeGymEnv(envPrefix, diambraKwargs, diambraGymKwargs, hardCore)
 
+    # Initialize random seed
     env.seed(seed)
 
-    env = envWrapping(env, diambraKwargs["player"], **wrapperKwargs, hardCore=hardCore)
+    # Apply environment wrappers
+    env = envWrapping(env, player, **wrapperKwargs, hardCore=hardCore)
 
+    # Apply trajectories recorder wrappers
     if trajRecKwargs is not None:
         if hardCore:
             from diambraArena.wrappers.trajRecWrapperHardCore import TrajectoryRecorder

@@ -89,7 +89,7 @@ class diambraArenaLib:
         baseEnvKwargs["lockFps"] = False
         baseEnvKwargs["difficulty"] = 3
         baseEnvKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
-        baseEnvKwargs["charOutfits"] = {2, 2}
+        baseEnvKwargs["charOutfits"] = [2, 2]
         baseEnvKwargs["headless"] = False
         baseEnvKwargs["displayNum"] = 1
         baseEnvKwargs["disableKeyboard"] = True
@@ -173,4 +173,4 @@ class diambraArenaLib:
         self.diambraEnvThread.join(timeout=30)
         if self.diambraEnvThread.isAlive():
             error = "Failed to close DIAMBRA Env process"
-            raise EnvironmentError(error)
+            raise RuntimeError(error)

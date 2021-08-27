@@ -497,3 +497,28 @@ class diambraGym2P(diambraGymHardCore2P):
         observation = self.addObsIntegration(frame, data)
 
         return observation
+
+def makeGymEnv(envPrefix, diambraKwargs, diambraGymKwargs, hardCore):
+
+    # Check mandatory parameters
+    mandatoryParams = ["gameId", "romsPath"]
+    for param in mandatoryParams:
+        if param not in diambraKwargs:
+            raise RuntimeError("\"{}\" is a mandatory parameter.".format(param))
+
+    # Default to single player mode
+    if "player" not in diambraKwargs:
+        diambraKwargs["player"] = "Random"
+
+    if diambraKwargs["player"] != "P1P2": #1P Mode
+        if hardCore:
+            env = diambraGymHardCore1P(envPrefix, diambraKwargs, **diambraGymKwargs)
+        else:
+            env = diambraGym1P(envPrefix, diambraKwargs, **diambraGymKwargs)
+    else: #2P Mode
+        if hardCore:
+            env = diambraGymHardCore2P(envPrefix, diambraKwargs, **diambraGymKwargs)
+        else:
+            env = diambraGym2P(envPrefix, diambraKwargs, **diambraGymKwargs)
+
+    return env, diambraKwargs["player"]
