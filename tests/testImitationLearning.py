@@ -59,9 +59,9 @@ try:
     diambraILKwargs["totalCpus"] = opt.nProc
 
     if opt.hardCore == 0:
-        env = diambraImitationLearning(**diambraILKwargs)
+        env = diambraArena.imitationLearning(**diambraILKwargs)
     else:
-        env = diambraImitationLearningHardCore(**diambraILKwargs)
+        env = diambraArena.imitationLearningHardCore(**diambraILKwargs)
 
     observation = env.reset()
     env.render(mode="human")
