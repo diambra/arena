@@ -43,6 +43,7 @@ diambraGymKwargs["attackButCombinations"] = True # If to use attack buttons comb
 env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs)
 
 observation = env.reset()
+showGymObs(observation, env.charNames)
 
 while True:
 
@@ -50,6 +51,9 @@ while True:
 
     observation, reward, done, info = env.step(actions)
     showGymObs(observation, env.charNames)
+    print("Reward: {}".format(reward))
+    print("Done: {}".format(done))
+    print("Info: {}".format(info))
 
     if done:
         observation = env.reset()

@@ -1,6 +1,7 @@
 import diambraArena
 from diambraArena.gymUtils import showWrapObs
 import os
+import numpy as np
 
 # Show files in folder
 basePath = os.path.dirname(os.path.abspath(__file__))
@@ -22,12 +23,15 @@ env.trajSummary()
 env.render(mode="human")
 showWrapObs(observation, env.nActionsStack, env.charNames)
 
-while currNumEp < maxNumEp:
+while True:
 
     dummyActions = 0
     observation, reward, done, info = env.step(dummyActions)
     env.render(mode="human")
     showWrapObs(observation, env.nActionsStack, env.charNames)
+    print("Reward: {}".format(reward))
+    print("Done: {}".format(done))
+    print("Info: {}".format(info))
 
     if np.any(env.exhausted):
         break

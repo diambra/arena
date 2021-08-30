@@ -71,17 +71,21 @@ gamepad = diambraGamepad(env.actionList())
 gamepad.start()
 
 observation = env.reset()
+showWrapObs(observation, env.nActionsStack, env.charNames, 1, False)
 
 while True:
 
     actions = gamepad.getActions()
 
     observation, reward, done, info = env.step(actions)
-    showWrapObs(observation, env.charNames, 1, False)
+    showWrapObs(observation, env.nActionsStack, env.charNames, 1, False)
+    print("Reward: {}".format(reward))
+    print("Done: {}".format(done))
+    print("Info: {}".format(info))
 
     if done:
         observation = env.reset()
-        showWrapObs(observation, env.charNames, 1, False)
+        showWrapObs(observation, env.nActionsStack, env.charNames, 1, False)
         break
 
 env.close()

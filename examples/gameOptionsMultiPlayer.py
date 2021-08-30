@@ -32,6 +32,7 @@ diambraKwargs["charOutfits"] = [2, 2] # Character outfit
 env = diambraArena.make(envId, diambraKwargs)
 
 observation = env.reset()
+showGymObs(observation, env.charNames)
 
 while True:
 
@@ -40,6 +41,9 @@ while True:
 
     observation, reward, done, info = env.step(actions)
     showGymObs(observation, env.charNames)
+    print("Reward: {}".format(reward))
+    print("Done: {}".format(done))
+    print("Info: {}".format(info))
 
     if done:
         observation = env.reset()
