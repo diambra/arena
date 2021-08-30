@@ -1,10 +1,7 @@
-import cv2, sys, os, time
-from os.path import expanduser
-import numpy as np
-import argparse
-
 import diambraArena
 from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction, showWrapObs
+from os.path import expanduser
+import argparse
 
 if __name__ == '__main__':
     timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
@@ -157,7 +154,7 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showWrapObs(observation, wrapperKwargs["actionsStack"], waitKey, vizFlag, env.charNames)
+            showWrapObs(observation, wrapperKwargs["actionsStack"], env.charNames, waitKey, vizFlag)
             print("--")
             print("Current Cumulative Reward =", cumulativeEpRew)
 
@@ -172,7 +169,7 @@ if __name__ == '__main__':
                 cumulativeEpRew = 0.0
 
                 observation = env.reset()
-                showWrapObs(observation, wrapperKwargs["actionsStack"], waitKey, vizFlag, env.charNames)
+                showWrapObs(observation, wrapperKwargs["actionsStack"], env.charNames, waitKey, vizFlag)
 
             if np.any([info["roundDone"], info["stageDone"], info["gameDone"], info["epDone"]]):
 

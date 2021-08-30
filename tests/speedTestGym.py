@@ -1,9 +1,5 @@
-import sys, os, time
-import random
-import numpy as np
-import argparse
-
 import diambraArena
+import argparse
 
 def reject_outliers(data):
     m = 2

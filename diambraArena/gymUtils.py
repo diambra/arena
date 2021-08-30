@@ -125,7 +125,7 @@ def discreteToMultiDiscreteAction(action, nMoveActions):
     return movAct, attAct
 
 # Visualize Gym Obs content
-def showGymObs(observation, waitKey=1, viz=True, charList=None):
+def showGymObs(observation, charList, waitKey=1, viz=True):
     if type(observation) == dict:
         for k, v in observation.items():
             if k != "frame":
@@ -151,7 +151,7 @@ def showGymObs(observation, waitKey=1, viz=True, charList=None):
         cv2.waitKey(waitKey)
 
 # Visualize Obs content
-def showWrapObs(observation, nActionsStack, waitKey=1, viz=True, charList=None):
+def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
     if type(observation) == dict:
         for k, v in observation.items():
             if k != "frame":

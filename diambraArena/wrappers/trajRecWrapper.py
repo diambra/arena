@@ -9,7 +9,7 @@ from diambraArena.gymUtils import gymObsDictSpaceToStandardDict, parallelPickleW
 
 # Trajectory recorder wrapper
 class TrajectoryRecorder(gym.Wrapper):
-    def __init__(self, env, filePath, userName, ignoreP2, commitHash):
+    def __init__(self, env, filePath, userName, ignoreP2, commitHash="0000000"):
         """
         Record trajectories to use them for imitation learning
         :param env: (Gym Environment) the environment to wrap

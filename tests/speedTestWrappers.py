@@ -1,9 +1,5 @@
-import sys, os, time
-from os.path import expanduser
-import numpy as np
-import argparse
-
 import diambraArena
+import argparse
 
 def reject_outliers(data):
     m = 2
@@ -72,7 +68,7 @@ if __name__ == '__main__':
         wrapperKwargs["scaleMod"] = 0
 
         envId = opt.gameId + "_speedTestWrappers"
-        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, 
+        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
                                 wrapperKwargs, trajRecKwargs, seed=timeDepSeed)
 
         observation = env.reset()

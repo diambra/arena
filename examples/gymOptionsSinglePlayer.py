@@ -1,4 +1,5 @@
 import diambraArena
+from diambraArena.gymUtils import showGymObs
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -15,7 +16,7 @@ envId = "TestEnv" # This ID must be unique for every instance of the environment
 # Additional game options
 diambraEnvKwargs["player"] = "Random" # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
 
-# Game continue logic:
+# Game continue logic (0.0 by default):
 # - [0.0, 1.0]: probability of continuing game at game over
 # - int((-inf, -1.0]): number of continues at game over before episode to be considered done
 diambraKwargs["continueGame"] = -1.0
@@ -35,6 +36,7 @@ diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]] #
 diambraEnvKwargs["charOutfits"] = [2, 2] # Character outfit
 
 # Gym options
+diambraGymKwargs = {}
 diambraGymKwargs["actionSpace"] = "discrete" # If to use discrete or multiDiscrete action space
 diambraGymKwargs["attackButCombinations"] = True # If to use attack buttons combinations actions
 
@@ -47,9 +49,11 @@ while True:
     actions = env.action_space.sample()
 
     observation, reward, done, info = env.step(actions)
+    showGymObs(observation, env.charNames)
 
     if done:
         observation = env.reset()
+        showGymObs(observation, env.charNames)
         break
 
 env.close()

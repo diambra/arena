@@ -1,11 +1,7 @@
-import sys, os, time, cv2
-from os.path import expanduser
-from os import listdir
-import numpy as np
-import argparse
-
 import diambraArena
 from diambraArena.gymUtils import showWrapObs
+from os import listdir
+import argparse
 
 try:
     parser = argparse.ArgumentParser()
@@ -16,8 +12,6 @@ try:
     parser.add_argument('--waitKey',  type=int, default=1,     help='CV2 WaitKey [0, 1]')
     opt = parser.parse_args()
     print(opt)
-
-    homeDir = expanduser("~")
 
     vizFlag = True if opt.viz == 1 else False
 
@@ -38,14 +32,9 @@ try:
     observation = env.reset()
     env.render(mode="human")
 
-    nChars = env.nChars
-    charNames = env.charNames
-    nActions = env.nActions
-    nActionsStack = env.nActionsStack
-
     env.trajSummary()
 
-    showWrapObs(observation, nActionsStack, opt.waitKey, vizFlag, charNames)
+    showWrapObs(observation, env.nActionsStack, env.charNames, opt.waitKey, vizFlag)
 
     cumulativeEpRew = 0.0
     cumulativeEpRewAll = []
@@ -57,15 +46,8 @@ try:
 
         dummyActions = 0
         observation, reward, done, info = env.step(dummyActions)
-
-        if np.any(env.exhausted):
-            break
-
         env.render(mode="human")
 
-        observation = observation
-        reward = reward
-        done = done
         action = info["action"]
 
         print("Action:", action)
@@ -73,7 +55,7 @@ try:
         print("done = ", done)
         for k, v in info.items():
             print("info[\"{}\"] = {}".format(k, v))
-        showWrapObs(observation, nActionsStack, opt.waitKey, vizFlag, charNames)
+        showWrapObs(observation, env.nActionsStack, env.charNames, opt.waitKey, vizFlag)
 
         print("----------")
 
@@ -93,6 +75,8 @@ try:
                     if np.any(observation[:,:,frameIdx] != observation[:,:,frameIdx+1]):
                         raise RuntimeError("Frames inside observation after round/stage/game/episode done are not equal. Dones =", info["roundDone"], info["stageDone"], info["gameDone"], info["epone"])
 
+        if np.any(env.exhausted):
+            break
 
         if done:
             currNumEp += 1
@@ -103,12 +87,15 @@ try:
             cumulativeEpRew = 0.0
 
             observation = env.reset()
-            showWrapObs(observation, nActionsStack, opt.waitKey, vizFlag, charNames)
+            env.render(mode="human")
+            showWrapObs(observation, env.nActionsStack, env.charNames, opt.waitKey, vizFlag)
 
     if diambraILKwargs["totalCpus"] == 1:
         print("All ep. rewards =", cumulativeEpRewAll)
         print("Mean cumulative reward =", np.mean(cumulativeEpRewAll))
         print("Std cumulative reward =", np.std(cumulativeEpRewAll))
+
+    env.close()
 
     print("ALL GOOD!")
 except Exception as e:

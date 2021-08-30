@@ -1,4 +1,5 @@
 import diambraArena
+from diambraArena.gymUtils import showWrapObs
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -15,7 +16,7 @@ envId = "TestEnv" # This ID must be unique for every instance of the environment
 # Additional game options
 diambraEnvKwargs["player"] = "Random" # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
 
-# Game continue logic:
+# Game continue logic (0.0 by default):
 # - [0.0, 1.0]: probability of continuing game at game over
 # - int((-inf, -1.0]): number of continues at game over before episode to be considered done
 diambraKwargs["continueGame"] = -1.0
@@ -34,7 +35,24 @@ diambraEnvKwargs["difficulty"]  = 3 # Game difficulty level
 diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]] # Character to be used
 diambraEnvKwargs["charOutfits"] = [2, 2] # Character outfit
 
-env = diambraArena.make(envId, diambraEnvKwargs)
+# Gym options
+diambraGymKwargs = {}
+diambraGymKwargs["actionSpace"] = "discrete" # If to use discrete or multiDiscrete action space
+diambraGymKwargs["attackButCombinations"] = True # If to use attack buttons combinations actions
+
+# Gym wrappers options
+wrapperKwargs = {}
+wrapperKwargs["noOpMax"] = 0 # Number of no-Op actions to be executed at the beginning of the episode (0 by default)
+wrapperKwargs["hwcObsResize"] = [128, 128, 1] # Frame resize operation spec (deactivated by default)
+wrapperKwargs["normalizeRewards"] = True # If to perform rewards normalization (True by default)
+wrapperKwargs["clipRewards"] = False # If to clip rewards (False by default)
+wrapperKwargs["frameStack"] = 4 # Number of frames to be stacked together (1 by default)
+wrapperKwargs["dilation"] = 1 # Frames interval when stacking (1 by default)
+wrapperKwargs["actionsStack"] = 12 # How many past actions to stack together (1 by default)
+wrapperKwargs["scale"] = True # If to scale observation numerical values (deactivated by default)
+wrapperKwargs["scaleMod"] = 0 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
+
+env = diambraArena.make(envId, diambraEnvKwargs, diambraGymKwargs, wrapperKwargs)
 
 observation = env.reset()
 
@@ -43,9 +61,11 @@ while True:
     actions = env.action_space.sample()
 
     observation, reward, done, info = env.step(actions)
+    showWrapObs(observation, env.charNames)
 
     if done:
         observation = env.reset()
+        showWrapObs(observation, env.charNames)
         break
 
 env.close()
