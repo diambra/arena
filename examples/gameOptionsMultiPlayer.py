@@ -1,5 +1,6 @@
 import diambraArena
 from diambraArena.gymUtils import showGymObs
+import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -35,6 +36,7 @@ observation = env.reset()
 while True:
 
     actions = env.action_space.sample()
+    actions = np.append(actions["P1"], actions["P2"])
 
     observation, reward, done, info = env.step(actions)
     showGymObs(observation, env.charNames)
