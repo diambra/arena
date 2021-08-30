@@ -7,12 +7,12 @@ opt = parser.parse_args()
 print(opt)
 
 # Mandatory parameters
-diambraEnvKwargs = {}
-diambraEnvKwargs["gameId"]   = "doapp" # Game selection
-diambraEnvKwargs["romsPath"] = opt.romsPath # Path to roms folder
+diambraKwargs = {}
+diambraKwargs["gameId"]   = "doapp" # Game selection
+diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
 envId = "TestEnv" # This ID must be unique for every instance of the environment
 
-env = diambraArena.make(envId, diambraEnvKwargs)
+env = diambraArena.make(envId, diambraKwargs)
 
 observation = env.reset()
 

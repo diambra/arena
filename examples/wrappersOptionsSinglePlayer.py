@@ -41,18 +41,18 @@ diambraGymKwargs["actionSpace"] = "discrete" # If to use discrete or multiDiscre
 diambraGymKwargs["attackButCombinations"] = True # If to use attack buttons combinations actions
 
 # Gym wrappers options
-wrapperKwargs = {}
-wrapperKwargs["noOpMax"] = 0 # Number of no-Op actions to be executed at the beginning of the episode (0 by default)
-wrapperKwargs["hwcObsResize"] = [128, 128, 1] # Frame resize operation spec (deactivated by default)
-wrapperKwargs["normalizeRewards"] = True # If to perform rewards normalization (True by default)
-wrapperKwargs["clipRewards"] = False # If to clip rewards (False by default)
-wrapperKwargs["frameStack"] = 4 # Number of frames to be stacked together (1 by default)
-wrapperKwargs["dilation"] = 1 # Frames interval when stacking (1 by default)
-wrapperKwargs["actionsStack"] = 12 # How many past actions to stack together (1 by default)
-wrapperKwargs["scale"] = True # If to scale observation numerical values (deactivated by default)
-wrapperKwargs["scaleMod"] = 0 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
+wrappersKwargs = {}
+wrappersKwargs["noOpMax"] = 0 # Number of no-Op actions to be executed at the beginning of the episode (0 by default)
+wrappersKwargs["hwcObsResize"] = [128, 128, 1] # Frame resize operation spec (deactivated by default)
+wrappersKwargs["normalizeRewards"] = True # If to perform rewards normalization (True by default)
+wrappersKwargs["clipRewards"] = False # If to clip rewards (False by default)
+wrappersKwargs["frameStack"] = 4 # Number of frames to be stacked together (1 by default)
+wrappersKwargs["dilation"] = 1 # Frames interval when stacking (1 by default)
+wrappersKwargs["actionsStack"] = 12 # How many past actions to stack together (1 by default)
+wrappersKwargs["scale"] = True # If to scale observation numerical values (deactivated by default)
+wrappersKwargs["scaleMod"] = 0 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 
-env = diambraArena.make(envId, diambraEnvKwargs, diambraGymKwargs, wrapperKwargs)
+env = diambraArena.make(envId, diambraEnvKwargs, diambraGymKwargs, wrappersKwargs)
 
 observation = env.reset()
 

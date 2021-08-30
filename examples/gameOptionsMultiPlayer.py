@@ -8,27 +8,27 @@ opt = parser.parse_args()
 print(opt)
 
 # Mandatory parameters
-diambraEnvKwargs = {}
-diambraEnvKwargs["gameId"]   = "doapp" # Game selection
-diambraEnvKwargs["romsPath"] = opt.romsPath # Path to roms folder
+diambraKwargs = {}
+diambraKwargs["gameId"]   = "doapp" # Game selection
+diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
 envId = "TestEnv" # This ID must be unique for every instance of the environment
 
 # Additional game options
-diambraEnvKwargs["player"] = "P1P2" # 2 Players game
+diambraKwargs["player"] = "P1P2" # 2 Players game
 
-diambraEnvKwargs["render"] = True # Renders the environment, deactivate for speedup
-diambraEnvKwargs["lockFps"] = False # Locks to 60 FPS, deactivate for speedup
-diambraEnvKwargs["sound"] = diambraEnvKwargs["lockFps"] and diambraEnvKwargs["render"] # Activate game sound
-diambraEnvKwargs["mameDiambraStepRatio"] = 6 # Number of steps performed by the game for every environment step, bounds: [1, 6]
+diambraKwargs["render"] = True # Renders the environment, deactivate for speedup
+diambraKwargs["lockFps"] = False # Locks to 60 FPS, deactivate for speedup
+diambraKwargs["sound"] = diambraKwargs["lockFps"] and diambraKwargs["render"] # Activate game sound
+diambraKwargs["mameDiambraStepRatio"] = 6 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 
-diambraEnvKwargs["headless"] = False # Allows to execute the environment in headless mode (for server-side executions)
+diambraKwargs["headless"] = False # Allows to execute the environment in headless mode (for server-side executions)
 
 # Game-specific options (see documentation for details)
-diambraEnvKwargs["difficulty"]  = 3 # Game difficulty level
-diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]] # Character to be used
-diambraEnvKwargs["charOutfits"] = [2, 2] # Character outfit
+diambraKwargs["difficulty"]  = 3 # Game difficulty level
+diambraKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]] # Character to be used
+diambraKwargs["charOutfits"] = [2, 2] # Character outfit
 
-env = diambraArena.make(envId, diambraEnvKwargs)
+env = diambraArena.make(envId, diambraKwargs)
 
 observation = env.reset()
 
