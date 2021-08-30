@@ -147,7 +147,7 @@ def showGymObs(observation, charList, waitKey=1, viz=True):
             obs = np.array(observation).astype(np.float32)/255
 
     if viz:
-        cv2.imshow("image", obs[:, :, ::-1]) #bgr 2 rgb
+        cv2.imshow("Frame", obs[:, :, ::-1]) #bgr 2 rgb
         cv2.waitKey(waitKey)
 
 # Visualize Obs content
@@ -179,6 +179,6 @@ def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
 
     if viz:
         for idx in range(obs.shape[2]):
-            cv2.imshow("image"+str(idx), obs[:,:,idx])
+            cv2.imshow("Frame-"+str(idx), obs[:,:,idx])
 
         cv2.waitKey(waitKey)
