@@ -90,6 +90,7 @@ if __name__ == '__main__':
         envId = opt.gameId + "_randomTestGym"
         hardCore = False if opt.hardCore == 0 else True
         env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
+                                wrapperKwargs={"normalizeRewards": False},
                                 seed=timeDepSeed, hardCore=hardCore)
 
         # Print environment obs and action spaces summary
