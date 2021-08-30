@@ -1,9 +1,15 @@
 import diambraArena
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--romsPath', type=str, required=True, help='Absolute path to roms')
+opt = parser.parse_args()
+print(opt)
 
 # Mandatory parameters
 diambraEnvKwargs = {}
 diambraEnvKwargs["gameId"]   = "doapp" # Game selection
-diambraEnvKwargs["romsPath"] = "/home/apalmas/Applications/Diambra/diambraengine/roms/mame/" # Path to roms folder
+diambraEnvKwargs["romsPath"] = opt.romsPath # Path to roms folder
 envId = "TestEnv" # This ID must be unique for every instance of the environment
 
 env = diambraArena.make(envId, diambraEnvKwargs)
