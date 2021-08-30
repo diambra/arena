@@ -34,7 +34,11 @@ diambraEnvKwargs["difficulty"]  = 3 # Game difficulty level
 diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]] # Character to be used
 diambraEnvKwargs["charOutfits"] = [2, 2] # Character outfit
 
-env = diambraArena.make(envId, diambraEnvKwargs)
+# Gym options
+diambraGymKwargs["actionSpace"] = "discrete" # If to use discrete or multiDiscrete action space
+diambraGymKwargs["attackButCombinations"] = True # If to use attack buttons combinations actions
+
+env = diambraArena.make(envId, diambraEnvKwargs, diambraGymKwargs)
 
 observation = env.reset()
 
