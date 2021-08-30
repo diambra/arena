@@ -1,15 +1,18 @@
 import diambraArena
 from diambraArena.gymUtils import showWrapObs
-from os import listdir
+import os
 
 # Show files in folder
-trajRecFolder = opt.path
-trajectoriesFiles = [os.path.join(trajRecFolder, f) for f in listdir(trajRecFolder) if os.path.isfile(os.path.join(trajRecFolder, f))]
-print(trajectoriesFiles)
+basePath = os.path.dirname(os.path.abspath(__file__))
+recordedTrajectoriesFolder = os.path.join(basePath, "recordedTrajectories")
+recordedTrajectoriesFiles = [os.path.join(recordedTrajectoriesFolder, f)
+                             for f in os.listdir(recordedTrajectoriesFolder)
+                             if os.path.isfile(os.path.join(recordedTrajectoriesFolder, f))]
+print(recordedTrajectoriesFiles)
 
 # Imitation learning options
 diambraILKwargs = {}
-diambraILKwargs["trajFilesList"] = trajectoriesFiles
+diambraILKwargs["trajFilesList"] = recordedTrajectoriesFiles
 diambraILKwargs["totalCpus"] = 2
 
 env = diambraArena.imitationLearning(**diambraILKwargs)

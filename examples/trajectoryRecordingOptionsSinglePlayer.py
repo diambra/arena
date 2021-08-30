@@ -54,17 +54,17 @@ wrapperKwargs["actionsStack"] = 12 # How many past actions to stack together (1 
 wrapperKwargs["scale"] = True # If to scale observation numerical values (deactivated by default)
 wrapperKwargs["scaleMod"] = 0 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 
-# Gym experience recording wrapper kwargs
+# Gym trajectory recording wrapper kwargs
 homeDir = expanduser("~")
-expRecKwargs = {}
-expRecKwargs["userName"] = "Alex" # Username
-expRecKwargs["filePath"] = os.path.join(homeDir, "diambraArena/expRecordings",
-                                        diambraEnvKwargs["gameId"]) # Path where to save recorderd experience
-expRecKwargs["ignoreP2"] = 0 # If to ignore P2 experience (useful when collecting
-                             # only human experience while playing as a human against a RL agent)
+trajRecKwargs = {}
+trajRecKwargs["userName"] = "Alex" # Username
+trajRecKwargs["filePath"] = os.path.join(homeDir, "diambraArena/trajRecordings",
+                                        diambraEnvKwargs["gameId"]) # Path where to save recorderd trajectories
+trajRecKwargs["ignoreP2"] = 0 # If to ignore P2 trajectory (useful when collecting
+                             # only human trajectories while playing as a human against a RL agent)
 
 env = diambraArena.make(envId, diambraEnvKwargs, diambraGymKwargs, wrapperKwargs,
-                        expRecKwargs)
+                        trajRecKwargs)
 
 # GamePad(s) initialization
 gamepad = diambraGamepad(env.actionList())
