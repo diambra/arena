@@ -174,7 +174,7 @@ class diambraImitationLearningBase(gym.Env):
             # Storing env info
             self.nChars = len(self.RLTrajDict["charNames"])
             self.charNames = self.RLTrajDict["charNames"]
-            self.actionsStack = self.RLTrajDict["actionsStack"]
+            self.nActionsStack = self.RLTrajDict["nActionsStack"]
             self.playerSide = self.RLTrajDict["playerSide"]
             assert self.nActions == self.RLTrajDict["nActions"],\
                 "Recorded episode has {} actions".format(self.RLTrajDict["nActions"])

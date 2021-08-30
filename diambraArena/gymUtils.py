@@ -1,7 +1,8 @@
 import gym
 from gym import spaces
 import numpy as np
-import pickle, bz2
+import pickle, bz2, cv2
+import numpy as np
 from threading import Thread
 
 # Save compressed pickle files in parallel
@@ -123,3 +124,61 @@ def discreteToMultiDiscreteAction(action, nMoveActions):
 
     return movAct, attAct
 
+# Visualize Gym Obs content
+def showGymObs(observation, waitKey=1, viz=True, charList=None):
+    if type(observation) == dict:
+        for k, v in observation.items():
+            if k != "frame":
+                if type(v) == dict:
+                    for k2, v2 in v.items():
+                        if "ownChar" in k2 or "oppChar" in k2:
+                            print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,charList[v2]))
+                        else:
+                            print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,v2))
+                else:
+                    print("observation[\"{}\"]: {}".format(k,v))
+            else:
+                print("observation[\"frame\"].shape:", observation["frame"].shape)
+
+        if viz:
+            obs = np.array(observation["frame"]).astype(np.float32)/255
+    else:
+        if viz:
+            obs = np.array(observation).astype(np.float32)/255
+
+    if viz:
+        cv2.imshow("image", obs[:, :, ::-1]) #bgr 2 rgb
+        cv2.waitKey(waitKey)
+
+# Visualize Obs content
+def showWrapObs(observation, nActionsStack, waitKey=1, viz=True, charList=None):
+    if type(observation) == dict:
+        for k, v in observation.items():
+            if k != "frame":
+                if type(v) == dict:
+                    for k2, v2 in v.items():
+                        if type(v2) == dict:
+                            for k3, v3 in v2.items():
+                                print("observation[\"{}\"][\"{}\"][\"{}\"]:\n{}"\
+                                      .format(k,k2,k3,np.reshape(v3, [nActionsStack,-1])))
+                        elif "ownChar" in k2 or "oppChar" in k2:
+                            print("observation[\"{}\"][\"{}\"]: {} / {}".format(k,k2,v2,\
+                                                      charList[np.where(v2 == 1)[0][0]]))
+                        else:
+                            print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,v2))
+                else:
+                    print("observation[\"{}\"]: {}".format(k,v))
+            else:
+                print("observation[\"frame\"].shape:", observation["frame"].shape)
+
+        if viz:
+            obs = np.array(observation["frame"]).astype(np.float32)
+    else:
+        if viz:
+            obs = np.array(observation).astype(np.float32)
+
+    if viz:
+        for idx in range(obs.shape[2]):
+            cv2.imshow("image"+str(idx), obs[:,:,idx])
+
+        cv2.waitKey(waitKey)

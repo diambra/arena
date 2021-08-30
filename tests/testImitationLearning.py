@@ -5,35 +5,7 @@ import numpy as np
 import argparse
 
 import diambraArena
-
-def showObs(observation, waitKey=1, viz=True):
-    if type(observation) == dict:
-        for k, v in observation.items():
-            if k != "frame":
-                if type(v) == dict:
-                    for k2, v2 in v.items():
-                        if type(v2) == dict:
-                            for k3, v3 in v2.items():
-                                print("observation[\"{}\"][\"{}\"][\"{}\"]:\n{}"\
-                                      .format(k,k2,k3,np.reshape(v3, [actionsStack,-1])))
-                        else:
-                            print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,v2))
-                else:
-                    print("observation[\"{}\"]: {}".format(k,v))
-            else:
-                print("observation[\"frame\"].shape:", observation["frame"].shape)
-
-        if viz:
-            obs = np.array(observation["frame"]).astype(np.float32)
-    else:
-        if viz:
-            obs = np.array(observation).astype(np.float32)
-
-    if viz:
-        for idx in range(obs.shape[2]):
-            cv2.imshow("image"+str(idx), obs[:,:,idx])
-
-        cv2.waitKey(waitKey)
+from diambraArena.gymUtils import showWrapObs
 
 try:
     parser = argparse.ArgumentParser()
@@ -69,11 +41,11 @@ try:
     nChars = env.nChars
     charNames = env.charNames
     nActions = env.nActions
-    actionsStack = env.actionsStack
+    nActionsStack = env.nActionsStack
 
     env.trajSummary()
 
-    showObs(observation, opt.waitKey, vizFlag)
+    showWrapObs(observation, nActionsStack, opt.waitKey, vizFlag, charNames)
 
     cumulativeEpRew = 0.0
     cumulativeEpRewAll = []
@@ -101,7 +73,7 @@ try:
         print("done = ", done)
         for k, v in info.items():
             print("info[\"{}\"] = {}".format(k, v))
-        showObs(observation, opt.waitKey, vizFlag)
+        showWrapObs(observation, nActionsStack, opt.waitKey, vizFlag, charNames)
 
         print("----------")
 
@@ -131,7 +103,7 @@ try:
             cumulativeEpRew = 0.0
 
             observation = env.reset()
-            showObs(observation, opt.waitKey, vizFlag)
+            showWrapObs(observation, nActionsStack, opt.waitKey, vizFlag, charNames)
 
     if diambraILKwargs["totalCpus"] == 1:
         print("All ep. rewards =", cumulativeEpRewAll)

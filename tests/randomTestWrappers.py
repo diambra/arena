@@ -4,40 +4,7 @@ import numpy as np
 import argparse
 
 import diambraArena
-from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction
-
-# Visualize Obs content
-def showObs(observation, nActionsStack, waitKey=1, viz=True, charList=None):
-    if type(observation) == dict:
-        for k, v in observation.items():
-            if k != "frame":
-                if type(v) == dict:
-                    for k2, v2 in v.items():
-                        if type(v2) == dict:
-                            for k3, v3 in v2.items():
-                                print("observation[\"{}\"][\"{}\"][\"{}\"]:\n{}"\
-                                      .format(k,k2,k3,np.reshape(v3, [nActionsStack,-1])))
-                        elif "ownChar" in k2 or "oppChar" in k2:
-                            print("observation[\"{}\"][\"{}\"]: {} / {}".format(k,k2,v2,\
-                                                      charList[np.where(v2 == 1)[0][0]]))
-                        else:
-                            print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,v2))
-                else:
-                    print("observation[\"{}\"]: {}".format(k,v))
-            else:
-                print("observation[\"frame\"].shape:", observation["frame"].shape)
-
-        if viz:
-            obs = np.array(observation["frame"]).astype(np.float32)
-    else:
-        if viz:
-            obs = np.array(observation).astype(np.float32)
-
-    if viz:
-        for idx in range(obs.shape[2]):
-            cv2.imshow("image"+str(idx), obs[:,:,idx])
-
-        cv2.waitKey(waitKey)
+from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction, showWrapObs
 
 if __name__ == '__main__':
     timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
@@ -122,8 +89,8 @@ if __name__ == '__main__':
 
         envId = opt.gameId + "_randomTestWrappers"
         hardCore = False if opt.hardCore == 0 else True
-        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, 
-                                wrapperKwargs, trajRecKwargs, 
+        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
+                                wrapperKwargs, trajRecKwargs,
                                 seed=timeDepSeed, hardCore=hardCore)
 
         # Print environment obs and action spaces summary
@@ -190,7 +157,7 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showObs(observation, wrapperKwargs["actionsStack"], waitKey, vizFlag, charList=env.charNames)
+            showWrapObs(observation, wrapperKwargs["actionsStack"], waitKey, vizFlag, env.charNames)
             print("--")
             print("Current Cumulative Reward =", cumulativeEpRew)
 
@@ -205,7 +172,7 @@ if __name__ == '__main__':
                 cumulativeEpRew = 0.0
 
                 observation = env.reset()
-                showObs(observation, wrapperKwargs["actionsStack"], waitKey, vizFlag, charList=env.charNames)
+                showWrapObs(observation, wrapperKwargs["actionsStack"], waitKey, vizFlag, env.charNames)
 
             if np.any([info["roundDone"], info["stageDone"], info["gameDone"], info["epDone"]]):
 

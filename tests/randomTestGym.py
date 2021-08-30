@@ -1,35 +1,9 @@
-import cv2, sys, os, time
+import sys, os, time
 import numpy as np
 import argparse
 
 import diambraArena
-from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction
-
-# Visualize Obs content
-def showObs(observation, waitKey=1, viz=True, charList=None):
-    if type(observation) == dict:
-        for k, v in observation.items():
-            if k != "frame":
-                if type(v) == dict:
-                    for k2, v2 in v.items():
-                        if "ownChar" in k2 or "oppChar" in k2:
-                            print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,charList[v2]))
-                        else:
-                            print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,v2))
-                else:
-                    print("observation[\"{}\"]: {}".format(k,v))
-            else:
-                print("observation[\"frame\"].shape:", observation["frame"].shape)
-
-        if viz:
-            obs = np.array(observation["frame"]).astype(np.float32)/255
-    else:
-        if viz:
-            obs = np.array(observation).astype(np.float32)/255
-
-    if viz:
-        cv2.imshow("image", obs[:, :, ::-1]) #bgr 2 rgb
-        cv2.waitKey(waitKey)
+from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction, showGymObs
 
 if __name__ == '__main__':
     timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
@@ -157,7 +131,7 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showObs(observation, waitKey, vizFlag, charList=env.charNames)
+            showGymObs(observation, waitKey, vizFlag, env.charNames)
             print("--")
             print("Current Cumulative Reward =", cumulativeEpRew)
 
@@ -172,7 +146,7 @@ if __name__ == '__main__':
                 cumulativeEpRew = 0.0
 
                 observation = env.reset()
-                showObs(observation, waitKey, vizFlag, charList=env.charNames)
+                showGymObs(observation, waitKey, vizFlag, env.charNames)
 
             if np.any([info["roundDone"], info["stageDone"], info["gameDone"], info["epDone"]]):
 
