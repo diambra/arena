@@ -1,7 +1,8 @@
 import diambraArena
 from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction, showWrapObs
+import argparse, time, os
 from os.path import expanduser
-import argparse
+import numpy as np
 
 if __name__ == '__main__':
     timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)

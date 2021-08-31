@@ -2,6 +2,7 @@ import diambraArena
 from diambraArena.gymUtils import showWrapObs
 from os import listdir
 import argparse
+import numpy as np
 
 try:
     parser = argparse.ArgumentParser()

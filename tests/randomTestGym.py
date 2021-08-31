@@ -1,6 +1,7 @@
 import diambraArena
 from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction, showGymObs
-import argparse
+import argparse, time
+import numpy as np
 
 if __name__ == '__main__':
     timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)

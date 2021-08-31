@@ -1,7 +1,7 @@
 import diambraArena
 from diambraArena.gymUtils import showWrapObs
 from diambraArena.utils.diambraGamepad import diambraGamepad
-import argparse
+import argparse, os
 from os.path import expanduser
 
 parser = argparse.ArgumentParser()
@@ -67,7 +67,7 @@ env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, wrappersKwargs,
                         trajRecKwargs)
 
 # GamePad(s) initialization
-gamepad = diambraGamepad(env.actionList())
+gamepad = diambraGamepad(env.actionList)
 gamepad.start()
 
 observation = env.reset()

@@ -1,5 +1,6 @@
 import diambraArena
-import argparse
+import argparse, time
+import numpy as np
 
 def reject_outliers(data):
     m = 2
