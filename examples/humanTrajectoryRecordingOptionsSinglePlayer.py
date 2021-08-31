@@ -24,7 +24,7 @@ diambraKwargs["player"] = "Random" # Player side selection: P1 (left), P2 (right
 diambraKwargs["continueGame"] = -1.0
 
 diambraKwargs["render"] = True # Renders the environment, deactivate for speedup
-diambraKwargs["lockFps"] = False # Locks to 60 FPS, deactivate for speedup
+diambraKwargs["lockFps"] = True # Locks to 60 FPS, deactivate for speedup
 diambraKwargs["sound"] = diambraKwargs["lockFps"] and diambraKwargs["render"] # Activate game sound
 diambraKwargs["mameDiambraStepRatio"] = 1 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 
@@ -39,7 +39,7 @@ diambraKwargs["charOutfits"] = [2, 2] # Character outfit
 
 # Gym options
 diambraGymKwargs = {}
-diambraGymKwargs["actionSpace"] = "discrete" # If to use discrete or multiDiscrete action space
+diambraGymKwargs["actionSpace"] = "multiDiscrete" # If to use discrete or multiDiscrete action space
 diambraGymKwargs["attackButCombinations"] = True # If to use attack buttons combinations actions
 
 # Gym wrappers options
