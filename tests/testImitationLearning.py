@@ -1,7 +1,7 @@
 import diambraArena
 from diambraArena.gymUtils import showWrapObs
+import argparse, os
 from os import listdir
-import argparse
 import numpy as np
 
 try:
