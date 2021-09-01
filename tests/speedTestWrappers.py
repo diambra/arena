@@ -111,7 +111,7 @@ if __name__ == '__main__':
 
         fpsVal2 = reject_outliers(fpsVal)
         avgFps = np.mean(fpsVal2)
-        print("Average speed = {} FPS, STD {} FPS", avgFps, np.std(fpsVal2))
+        print("Average speed = {} FPS, STD {} FPS".format(avgFps, np.std(fpsVal2)))
 
         if abs(avgFps - opt.targetSpeed) > opt.targetSpeed*0.025:
             raise RuntimeError("Fps different than expected: {} VS {}".format(avgFps, opt.targetSpeed))
