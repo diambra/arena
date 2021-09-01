@@ -13,7 +13,7 @@ if(plat != "Linux"):
 pipmain(['install', 'setuptools'])
 import setuptools
 from setuptools.command.install import install
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 pipmain(['install', 'distro'])
 import distro
@@ -35,10 +35,10 @@ aptCmd2_19="sudo apt-get install --assume-yes libboost1.65-dev qt5-default libss
 aptCmdSb_20="sudo apt-get install --assume-yes cmake libopenmpi-dev python3-dev zlib1g-dev"
 aptCmdSb_19="sudo apt-get install --assume-yes cmake libopenmpi-dev python3-dev zlib1g-dev"
 #Diambra Lib commands
-cpLib20="cp diambra_environment/diambraEnvLib/libdiambraEnv20.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
-cpLib18="cp diambra_environment/diambraEnvLib/libdiambraEnv18.so diambra_environment/diambraEnvLib/libdiambraEnv.so"
+cpLib20="cp diambraArena/diambraEnvLib/libdiambraEnv20.so diambraArena/diambraEnvLib/libdiambraEnv.so"
+cpLib18="cp diambraArena/diambraEnvLib/libdiambraEnv18.so diambraArena/diambraEnvLib/libdiambraEnv.so"
 #MAME Cmd
-unzipMameCmd="unzip diambra_environment/mame/mame.zip -d diambra_environment/mame"
+unzipMameCmd="unzip diambraArena/mame/mame.zip -d diambraArena/mame"
 
 if(name == "Ubuntu"):
     if(release < 18.04):
@@ -97,14 +97,13 @@ with open("README.md", "r") as description:
     long_description = description.read()
 
 extras= {
-	'core': [],
-	'stable-baselines': ['stable-baselines[mpi]', 'python_version >= "3.6"']
+	'core': []
 	}
 
 #NOTE Package data is inside MANIFEST.In
 
 setuptools.setup(
-        name='DIAMBRAEnvironment',
+        name='diambraArena',
         url='https://github.com/diambra/DIAMBRAenvironment',
         version='0.2',
         author="Artificial Twin",
@@ -123,15 +122,16 @@ setuptools.setup(
             'inputs',
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
-        packages=['diambra_environment','diambra_environment/customPolicies','diambra_environment/utils'],
+        #packages=['diambraArena','diambraArena/wrappers','diambraArena/utils'],
+        packages=[package for package in find_packages() if package.startswith("diambraArena")],
         include_package_data=True,
         extras_require=extras,
         classifiers=['Operating System :: Ubuntu 18.04 :: Ubuntu 20.04 :: Mint 19 Cinnamon :: Mint 20 Ulysse']
         )
 
 #DIAMBRA Lib Clear Cmd
-clearLibCmd="rm diambra_environment/diambraEnvLib/libdiambraEnv.so"
+clearLibCmd="rm diambraArena/diambraEnvLib/libdiambraEnv.so"
 os.system(clearLibCmd)
 #MAME Clear Cmd
-clearMameCmd="rm diambra_environment/mame/mame"
+clearMameCmd="rm diambraArena/mame/mame"
 os.system(clearMameCmd)
