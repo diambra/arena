@@ -1,7 +1,6 @@
 import sys, os
 import tkinter as tk
 import screeninfo, time
-from threading import Thread
 import sys, os
 
 gifFilePath = os.path.join(os.path.dirname(__file__), ".splashScreen.gif")
@@ -15,7 +14,7 @@ def getMonitorFromCoord(x, y):
     return monitors[0]
 
 # Class to manage gampad
-class DIAMBRASplashScreen(Thread): # def class typr thread
+class DIAMBRASplashScreen():
     def __init__(self, timeInterval=100, timeout=5000):
 
         self.timeout = timeout
