@@ -17,7 +17,6 @@ def getMonitorFromCoord(x, y):
 # Class to manage gampad
 class DIAMBRASplashScreen(Thread): # def class typr thread
     def __init__(self, timeInterval=100, timeout=5000):
-        #Thread.__init__(self)   # thread init class (don't forget this)
 
         self.timeout = timeout
         self.timeInterval = timeInterval
