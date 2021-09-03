@@ -2,3 +2,4 @@ include diambraArena/mame/mame
 recursive-include diambraArena/mame/nvram *
 recursive-include diambraArena/mame/plugins *
 include diambraArena/diambraEnvLib/libdiambraEnv.so
+include diambraArena/utils/.splashScreen.gif
