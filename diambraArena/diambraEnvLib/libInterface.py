@@ -57,6 +57,8 @@ class diambraArenaLib:
         self.diambraEnvThread = threading.Thread(target=diambraEnv, args=diambraEnvArgs)
         self.diambraEnvThread.start()
 
+        # Splash Screen
+
         # Signal file definition
         tmpPathFileName = "pipesTmp" + envId + ".log"
         tmpPath = Path(self.pipes_path).joinpath(tmpPathFileName)
