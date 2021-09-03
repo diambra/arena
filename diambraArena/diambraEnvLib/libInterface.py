@@ -5,6 +5,7 @@ import ctypes, ctypes.util
 
 import threading
 from diambraArena.diambraEnvLib.pipe import EnvData, Pipe, DataPipe
+from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
 
 # DIAMBRA Env Gym
@@ -58,6 +59,7 @@ class diambraArenaLib:
         self.diambraEnvThread.start()
 
         # Splash Screen
+        splashScreen = DIAMBRASplashScreen()
 
         # Signal file definition
         tmpPathFileName = "pipesTmp" + envId + ".log"
