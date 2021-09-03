@@ -269,7 +269,16 @@ class ScaledFloatObs(gym.ObservationWrapper):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
 
-        return ScaledFloatObsFunc(observation, self.originalObservationSpace)
+        try:
+            oldObs = observation
+            observation = ScaledFloatObsFunc(observation, self.originalObservationSpace)
+        except Exception as e:
+            print("Error in scaled float obs: ", e)
+            print("Obs =")
+            print(oldObs)
+            sys.exit()
+
+        return observation
 
 class LazyFrames(object):
     def __init__(self, frames):
