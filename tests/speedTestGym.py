@@ -17,7 +17,7 @@ if __name__ == '__main__':
         parser.add_argument('--romsPath',    type=str, required=True,      help='Absolute path to roms')
         parser.add_argument('--gameId',      type=str, default="doapp",    help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
         parser.add_argument('--player',      type=str, default="Random",   help='Player [(Random), P1, P2, P1P2]')
-        parser.add_argument('--frameRatio',  type=int, default=1,          help='Frame ratio')
+        parser.add_argument('--stepRatio',   type=int, default=1,          help='Frame ratio')
         parser.add_argument('--nEpisodes',   type=int, default=1,          help='Number of episodes')
         parser.add_argument('--actionSpace', type=str, default="discrete", help='(discrete)/multidiscrete')
         parser.add_argument('--attButComb',  type=int, default=0,          help='If to use attack button combinations (0=False)/1=True')
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         diambraKwargs["player"]     = opt.player
         diambraKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
 
-        diambraKwargs["mameDiambraStepRatio"] = opt.frameRatio
+        diambraKwargs["stepRatio"] = opt.stepRatio
         diambraKwargs["render"] = False
         diambraKwargs["lockFps"] = False
 

@@ -26,7 +26,7 @@ diambraKwargs["continueGame"] = -1.0
 diambraKwargs["render"] = True # Renders the environment, deactivate for speedup
 diambraKwargs["lockFps"] = True # Locks to 60 FPS, deactivate for speedup
 diambraKwargs["sound"] = diambraKwargs["lockFps"] and diambraKwargs["render"] # Activate game sound
-diambraKwargs["mameDiambraStepRatio"] = 1 # Number of steps performed by the game for every environment step, bounds: [1, 6]
+diambraKwargs["stepRatio"] = 1 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 
 diambraKwargs["headless"] = False # Allows to execute the environment in headless mode (for server-side executions)
 

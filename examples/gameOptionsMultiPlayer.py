@@ -20,7 +20,7 @@ diambraKwargs["player"] = "P1P2" # 2 Players game
 diambraKwargs["render"] = True # Renders the environment, deactivate for speedup
 diambraKwargs["lockFps"] = False # Locks to 60 FPS, deactivate for speedup
 diambraKwargs["sound"] = diambraKwargs["lockFps"] and diambraKwargs["render"] # Activate game sound
-diambraKwargs["mameDiambraStepRatio"] = 6 # Number of steps performed by the game for every environment step, bounds: [1, 6]
+diambraKwargs["stepRatio"] = 6 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 
 diambraKwargs["headless"] = False # Allows to execute the environment in headless mode (for server-side executions)
 
