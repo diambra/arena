@@ -88,7 +88,7 @@ class diambraArenaLib:
         baseEnvKwargs = {}
         baseEnvKwargs["continueGame"] = 0.0
         baseEnvKwargs["showFinal"] = True
-        baseEnvKwargs["mameDiambraStepRatio"] = 6
+        baseEnvKwargs["stepRatio"] = 6
         baseEnvKwargs["render"] = True
         baseEnvKwargs["lockFps"] = False
         baseEnvKwargs["difficulty"] = 3
@@ -111,7 +111,7 @@ class diambraArenaLib:
         output += "binaryPath"+       "+2+" + baseEnvKwargs["mamePath"] + "+"
         output += "continueGame"+     "+3+" + str(baseEnvKwargs["continueGame"]) + "+"
         output += "showFinal"+        "+0+" + str(int(baseEnvKwargs["showFinal"])) + "+"
-        output += "frameRatio"+       "+1+" + str(baseEnvKwargs["mameDiambraStepRatio"]) + "+"
+        output += "stepRatio"+        "+1+" + str(baseEnvKwargs["stepRatio"]) + "+"
         output += "render"+           "+0+" + str(int(baseEnvKwargs["render"])) + "+"
         output += "lockFps"+          "+0+" + str(int(baseEnvKwargs["lockFps"])) + "+"
         output += "sound"+            "+0+" + str(int(baseEnvKwargs["render"] and baseEnvKwargs["lockFps"])) + "+"

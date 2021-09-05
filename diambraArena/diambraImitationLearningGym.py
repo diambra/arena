@@ -9,7 +9,7 @@ from diambraArena.gymUtils import standardDictToGymObsDict, discreteToMultiDiscr
 
 # Diambra imitation learning environment
 class diambraImitationLearningBase(gym.Env):
-    """DiambraMame Environment that follows gym interface"""
+    """Diambra Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
 
     def __init__(self, trajFilesList, rank=0, totalCpus=1):
