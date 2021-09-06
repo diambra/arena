@@ -93,8 +93,8 @@ os.system(unzipMameCmd)
 #    def run(self):
 #        install.run(self)
 
-with open("README.md", "r") as description:
-    long_description = description.read()
+#with open("README.md", "r") as description:
+#    long_description = description.read()
 
 extras= {
 	'core': []
@@ -109,7 +109,7 @@ setuptools.setup(
         author="Artificial Twin",
         author_email="diambra@artificialtwin.com",
         description="DIAMBRA™ | Dueling AI Arena. Built with OpenAI Gym standard, easy to use,\ntransforms famous classic videogames into Reinforcement Learning tasks",
-        long_description=long_description,
+        long_description=description,
         long_description_content_type="Reinforcement Learning",
         license='GNU Affero GPL',
         install_requires=[
@@ -120,6 +120,8 @@ setuptools.setup(
             'jupyter>=1.0.0',
             'testresources',
             'inputs',
+            'screeninfo',
+            'tk',
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42'],
         #packages=['diambraArena','diambraArena/wrappers','diambraArena/utils'],
