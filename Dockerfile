@@ -9,13 +9,13 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get update -y
 
 # Packages that must be always installed
-RUN apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter unzip python3-tk -y
+RUN apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter unzip python3-tk vim -y
 RUN pip3 install --upgrade pip
 
 # Copy diambraArena Repo
-RUN mkdir /diambraArena
-COPY . /diambraArena
-WORKDIR /diambraArena/
+RUN mkdir /opt/diambraArena
+COPY . /opt/diambraArena
+WORKDIR /opt/diambraArena/
 RUN pip3 install .
 
 #Expose a port? Example: EXPOSE 80
