@@ -10,12 +10,14 @@ RUN apt-get update -y
 
 # Packages that must be always installed
 RUN apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter unzip python3-tk vim -y
+RUN apt-get install wget libopencv-dev -y
 RUN pip3 install --upgrade pip
 
 # Copy diambraArena Repo
 RUN mkdir /opt/diambraArena
 COPY . /opt/diambraArena
 WORKDIR /opt/diambraArena/
+RUN pip3 install --ignore-installed pyzmq
 RUN pip3 install .
 
 #Expose a port? Example: EXPOSE 80

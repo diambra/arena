@@ -109,7 +109,7 @@ setuptools.setup(
         author="Artificial Twin",
         author_email="diambra@artificialtwin.com",
         description="DIAMBRA™ | Dueling AI Arena. Built with OpenAI Gym standard, easy to use,\ntransforms famous classic videogames into Reinforcement Learning tasks",
-        long_description=description,
+        long_description="DIAMBRA™ | Dueling AI Arena. Built with OpenAI Gym standard, easy to use,\ntransforms famous classic videogames into Reinforcement Learning tasks",
         long_description_content_type="Reinforcement Learning",
         license='GNU Affero GPL',
         install_requires=[
