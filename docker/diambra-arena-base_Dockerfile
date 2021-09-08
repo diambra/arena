@@ -2,7 +2,7 @@
 FROM ubuntu:bionic
 
 # Maintainer
-LABEL maintainer=Artificial Twin <diambra@artificialtwin.com>
+LABEL maintainer="Artificial Twin <diambra@artificialtwin.com>"
 
 # Fix hang in TZ
 ENV TZ=America/Los_Angeles
