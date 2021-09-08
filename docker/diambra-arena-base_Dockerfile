@@ -13,7 +13,7 @@ RUN apt-get update -y
 
 # Packages that must be always installed
 RUN apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter unzip python3-tk vim -y
-RUN apt-get install wget libopencv-dev -y
+RUN apt-get install wget libopencv-dev ssh cmake libopenmpi-dev python3-dev zlib1g-dev -y
 RUN pip3 install --upgrade pip
 
 # Copy diambraArena Repo
