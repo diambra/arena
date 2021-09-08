@@ -78,7 +78,7 @@ Execute following commands from inside the repo root
 
 Basic usage:
 
-```
+```python
 # Code from /examples/core/diambraGymGist.py
 from diambra_environment.diambraGym import diambraGym
 import os
