@@ -19,6 +19,3 @@ COPY . /opt/diambraArena
 WORKDIR /opt/diambraArena/
 RUN pip3 install --ignore-installed pyzmq
 RUN pip3 install .
-
-#Expose a port? Example: EXPOSE 80
-#Entry Point of a program? ENTRYPOINT [ "/usr/sbin/shutdown" ]

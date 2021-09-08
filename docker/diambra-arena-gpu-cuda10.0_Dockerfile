@@ -1,0 +1,29 @@
+# Create DIAMBRA Arena base image (diambra:diambra-arena-base)
+FROM diambra:diambra-arena-base
+
+# Install CUDA Toolkit 10.0
+CMD ["bash"]
+RUN apt-get update && apt-get install -y --no-install-recommends     gnupg2 curl ca-certificates &&     curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub | apt-key add - &&     echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list &&     echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list &&     apt-get purge --autoremove -y curl     && rm -rf /var/lib/apt/lists/* # buildkit
+
+ENV CUDA_VERSION=10.0.130
+ENV CUDA_PKG_VERSION=10-0=10.0.130-1
+
+RUN apt-get update && apt-get install -y --no-install-recommends     cuda-cudart-$CUDA_PKG_VERSION     cuda-compat-10-0     && ln -s cuda-10.0 /usr/local/cuda &&     rm -rf /var/lib/apt/lists/* # buildkit
+RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf &&     echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf # buildkit
+
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64
+
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_REQUIRE_CUDA=cuda>=10.0 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=410,driver<411
+CMD ["bash"]
+
+ENV CUDA=10.0
+ENV CUDNN=7.4.1.5-1
+
+RUN ["/bin/bash", "-c", "apt-get update && apt-get install -y --no-install-recommends         build-essential         cuda-command-line-tools-${CUDA/./-}         cuda-cublas-${CUDA/./-}         cuda-cufft-${CUDA/./-}         cuda-curand-${CUDA/./-}         cuda-cusolver-${CUDA/./-}         cuda-cusparse-${CUDA/./-}         curl         libcudnn7=${CUDNN}+cuda${CUDA}         libfreetype6-dev         libhdf5-serial-dev         libzmq3-dev         pkg-config         software-properties-common         unzip"]
+
+RUN apt-get update &&         apt-get install nvinfer-runtime-trt-repo-ubuntu1804-5.0.2-ga-cuda${CUDA}         && apt-get update         && apt-get install -y --no-install-recommends libnvinfer5=5.0.2-1+cuda${CUDA}         && apt-get clean         && rm -rf /var/lib/apt/lists/*
+
+ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
