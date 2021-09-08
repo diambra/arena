@@ -1,6 +1,9 @@
 # Create Base Image (Ubuntu 18.04)
 FROM ubuntu:bionic
 
+# Maintainer
+LABEL maintainer=Artificial Twin <diambra@artificialtwin.com>
+
 # Fix hang in TZ
 ENV TZ=America/Los_Angeles
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
