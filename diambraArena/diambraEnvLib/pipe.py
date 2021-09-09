@@ -111,7 +111,7 @@ class Pipe(object):
             open_thread = threading.Thread(target=openPipe, args=[pipe_queue, str(self.path.absolute()), self.mode])
             open_thread.start()
             open_thread.join(timeout=3)
-            self.fifo = pipe_queue.get(timeout=1)
+            self.fifo = pipe_queue.get(timeout=3)
 
             if self.mode == "r":
                 self.read_queue = Queue()
