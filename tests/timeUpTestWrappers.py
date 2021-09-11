@@ -95,9 +95,6 @@ if __name__ == '__main__':
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
             showWrapObs(observation, wrapperKwargs["actionsStack"], env.charNames, waitKey, vizFlag)
-            print("--")
-            print("Current Cumulative Reward =", cumulativeEpRew)
-
             print("----------")
 
             if done:
