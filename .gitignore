@@ -1,6 +1,7 @@
 mame/history
 *.swp
 roms/*.zip
+*.tar
 diambraArena/diambraEnvLib/libdiambraEnv.so
 diambraArena/mame/mame
 diambraArena/mame/history
