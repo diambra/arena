@@ -13,7 +13,7 @@ docker run --rm --gpus all -it -v pythonDep:/usr/local/lib/python3.6/dist-packag
 docker exec -u 0 -it diambraArena bash
 
 # Save docker local image to tarball
-docker save -o tarball.tar diambra-arena-base
+docker save -o tarball.tar diambra:diambra-arena-base
 
 # Load docker image from tarball into local images
 docker load -i tarball.tar
