@@ -195,7 +195,7 @@ class diambraImitationLearningBase(gym.Env):
 
                 # For each step, isolate P1 actions from P1P2 experience
                 for idx in range(self.RLTrajDict["epLen"]):
-                    # Actions (inverting positions)
+                    # Actions (inverting sides)
                     if (self.actionSpace == "discrete"):
                         self.RLTrajDict["actions"][idx] = self.RLTrajDict["actions"][idx][0]
                     else:
@@ -243,7 +243,7 @@ class diambraImitationLearningBase(gym.Env):
             # Rewards (inverting sign)
             self.RLTrajDictP2["rewards"][idx] = -self.RLTrajDict["rewards"][idx]
 
-            # Actions (inverting positions)
+            # Actions (inverting sides)
             if (self.actionSpace == "discrete"):
                 self.RLTrajDictP2["actions"][idx] = self.RLTrajDict["actions"][idx][1]
             else:

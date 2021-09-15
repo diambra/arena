@@ -175,15 +175,15 @@ if __name__ == '__main__':
             if np.any([info["roundDone"], info["stageDone"], info["gameDone"], info["epDone"]]):
 
                 if not hardCore:
-                    # Position check
+                    # Side check
                     if env.playerSide == "P2":
-                        if observation["P1"]["ownPosition"] != 1.0 or observation["P1"]["oppPosition"] != 0.0:
-                            raise RuntimeError("Wrong starting positions:", observation["P1"]["ownPosition"],
-                                                                            observation["P1"]["oppPosition"])
+                        if observation["P1"]["ownSide"] != 1.0 or observation["P1"]["oppSide"] != 0.0:
+                            raise RuntimeError("Wrong starting sides:", observation["P1"]["ownSide"],
+                                                                            observation["P1"]["oppSide"])
                     else:
-                        if observation["P1"]["ownPosition"] != 0.0 or observation["P1"]["oppPosition"] != 1.0:
-                            raise RuntimeError("Wrong starting positions:", observation["P1"]["ownPosition"],
-                                                                            observation["P1"]["oppPosition"])
+                        if observation["P1"]["ownSide"] != 0.0 or observation["P1"]["oppSide"] != 1.0:
+                            raise RuntimeError("Wrong starting sides:", observation["P1"]["ownSide"],
+                                                                            observation["P1"]["oppSide"])
 
                     obs = observation["frame"]
                 else:
