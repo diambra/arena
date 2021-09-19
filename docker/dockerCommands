@@ -6,6 +6,7 @@ docker build -f docker/diambra-arena-gpu-cuda10.0_Dockerfile -t diambra:diambra-
 
 # Create a container from an image
 docker run --rm --gpus all -it -v pythonDep:/usr/local/lib/python3.6/dist-packages/ -v diambraRoms:/opt/diambraArena/roms --name diambraArena diambra:diambra-arena-base bash
+docker run --rm -it --name diambraArena diambra:diambra-arena-base bash
 
 # Create a container with the XORG Gui support
 # X11Docker repo: https://github.com/mviereck/x11docker
@@ -15,7 +16,7 @@ docker run --rm --gpus all -it -v pythonDep:/usr/local/lib/python3.6/dist-packag
 docker exec -u 0 -it diambraArena bash
 
 # Copy folder from local FS to docker container (the latter should be in execution)
-docker cp /../roms/mame/ diambra-arena:/opt/diambraArena/roms/
+docker cp ../roms/mame/ diambraArena:/opt/diambraArena/roms/
 
 # Save docker local image to tarball
 docker save -o tarball.tar diambra:diambra-arena-base

@@ -509,6 +509,10 @@ def makeGymEnv(envPrefix, diambraKwargs, diambraGymKwargs, hardCore):
     # Default to single player mode
     if "player" not in diambraKwargs:
         diambraKwargs["player"] = "Random"
+    # Default to not headless mode
+    if "headless" not in diambraKwargs:
+        diambraKwargs["headless"] = False
+
 
     if diambraKwargs["player"] != "P1P2": #1P Mode
         if hardCore:

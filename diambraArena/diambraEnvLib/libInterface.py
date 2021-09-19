@@ -59,7 +59,8 @@ class diambraArenaLib:
         self.diambraEnvThread.start()
 
         # Splash Screen
-        splashScreen = DIAMBRASplashScreen()
+        if not diambraEnvKwargs["headless"]:
+            DIAMBRASplashScreen()
 
         # Signal file definition
         tmpPathFileName = "pipesTmp" + envId + ".log"
