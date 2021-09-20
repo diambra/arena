@@ -7,7 +7,7 @@ docker build -f docker/diambra-arena-gpu-cuda10.0_Dockerfile -t diambra:diambra-
 # Create a container from an image
 docker run --rm --gpus all -it -v pythonDep:/usr/local/lib/python3.6/dist-packages/ -v diambraRoms:/opt/diambraArena/roms --name diambraArena diambra:diambra-arena-base bash
 docker run --rm -it --name diambraArena diambra:diambra-arena-base bash
-docker run --rm -it -e XDG_RUNTIME_DIR=/tmp/ --name diambraArena diambra:diambra-arena-base bash
+docker run --rm -it -e XDG_RUNTIME_DIR=/tmp/ --name diambraArena diambra:diambra-arena-base bash # DEPRECATED ?
 
 # Create a container with the XORG Gui support
 # X11Docker repo: https://github.com/mviereck/x11docker
