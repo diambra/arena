@@ -12,6 +12,7 @@ docker run --rm -it -e XDG_RUNTIME_DIR=/tmp/ --name diambraArena diambra:diambra
 # Create a container with the XORG Gui support
 # X11Docker repo: https://github.com/mviereck/x11docker
 ./x11docker --cap-default --hostipc --hostnet --name=diambraArena --wm=host -- -it -v pythonDep:/usr/local/lib/python3.6/dist-packages/ -v diambraRoms:/opt/diambraArena/roms -- diambra:diambra-arena-base bash
+./x11docker --cap-default --hostipc --hostnet --name=diambraArena --wm=host -- -it -- diambra:diambra-arena-base bash
 
 # Access a running container
 docker exec -u 0 -it diambraArena bash
