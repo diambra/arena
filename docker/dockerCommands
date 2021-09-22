@@ -10,11 +10,11 @@ docker run --rm --privileged -it --name diambraArena diambra:diambra-arena-base 
 
 # Create a container with the XORG Gui support
 # X11Docker repo: https://github.com/mviereck/x11docker
-./x11docker --cap-default --hostipc --hostnet --name=diambraArena --wm=host -- -it -v pythonDep:/usr/local/lib/python3.6/dist-packages/ -v diambraRoms:/opt/diambraArena/roms -- diambra:diambra-arena-base bash
-./x11docker --cap-default --hostipc --hostnet --name=diambraArena --wm=host -- -it -- diambra:diambra-arena-base bash
+./x11docker --cap-default --hostipc --hostnet --name=diambraArena --wm=host -- --privileged -it -v pythonDep:/usr/local/lib/python3.6/dist-packages/ -v diambraRoms:/opt/diambraArena/roms -- diambra:diambra-arena-base bash
+./x11docker --cap-default --hostipc --hostnet --name=diambraArena --wm=host -- --privileged -it -- diambra:diambra-arena-base bash
 
 # Access a running container
-docker exec -u 0 -it diambraArena bash
+docker exec -u 0 --prvileged -it diambraArena bash
 
 # Copy folder from local FS to docker container (the latter should be in execution)
 docker cp ../roms/mame/ diambraArena:/opt/diambraArena/roms/
