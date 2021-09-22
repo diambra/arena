@@ -96,10 +96,11 @@ class diambraArenaLib:
         baseEnvKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
         baseEnvKwargs["charOutfits"] = [2, 2]
         baseEnvKwargs["headless"] = False
-        baseEnvKwargs["displayNum"] = 1
+        baseEnvKwargs["displayNum"] = ":1"
         baseEnvKwargs["disableKeyboard"] = True
         baseEnvKwargs["disableJoystick"] = True
-        baseEnvKwargs["recordConfigFile"] = ""
+        baseEnvKwargs["recordConfigFile"] = "\"\""
+        baseEnvKwargs["rank"] = 0
 
         for k, v in envKwargs.items():
             baseEnvKwargs[k] = v
@@ -125,10 +126,11 @@ class diambraArenaLib:
         output += "charOutfits1"+     "+1+" + str(baseEnvKwargs["charOutfits"][0]) + "+"
         output += "charOutfits2"+     "+1+" + str(baseEnvKwargs["charOutfits"][1]) + "+"
         output += "headless"+         "+0+" + str(int(baseEnvKwargs["headless"])) + "+"
-        output += "displayNum"+       "+2+" + str(baseEnvKwargs["displayNum"]) + "+"
+        output += "displayNum"+       "+2+" + baseEnvKwargs["displayNum"] + "+"
         output += "disableKeyboard"+  "+0+" + str(int(baseEnvKwargs["disableKeyboard"])) + "+"
         output += "disableJoystick"+  "+0+" + str(int(baseEnvKwargs["disableJoystick"])) + "+"
         output += "recordConfigFile"+ "+2+" + baseEnvKwargs["recordConfigFile"] + "+"
+        output += "rank"+             "+1+" + str(baseEnvKwargs["rank"]) + "+"
 
         return output
 
