@@ -73,6 +73,8 @@ class diambraArenaLib:
         # Wait until the fifo file has been created and opened on Diambra Env side
         while (not tmpPath.exists()):
             time.sleep(1)
+            if not self.diambraEnvThread.isAlive():
+                sys.exit()
 
         time.sleep(2)
 
