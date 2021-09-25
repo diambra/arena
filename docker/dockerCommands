@@ -14,7 +14,7 @@ docker run --rm --privileged -it --name diambraArena diambra:diambra-arena-base 
 ./x11docker --cap-default --hostipc --hostnet --name=diambraArena --wm=host -- --privileged -it -- diambra:diambra-arena-base bash
 
 # Access a running container
-docker exec -u 0 --prvileged -it diambraArena bash
+docker exec -u 0 --privileged -it diambraArena bash
 
 # Copy folder from local FS to docker container (the latter should be in execution)
 docker cp ../roms/mame/ diambraArena:/opt/diambraArena/roms/
