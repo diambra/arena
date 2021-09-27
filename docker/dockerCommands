@@ -10,8 +10,7 @@ docker run --rm --privileged -it --name diambraArena diambra:diambra-arena-base 
 
 # Create a container with the XORG Gui support
 # X11Docker repo: https://github.com/mviereck/x11docker
-./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host --pulseaudio -- --privileged -it -v pythonDep:/usr/local/lib/python3.6/dist-packages/ -v diambraRoms:/opt/diambraArena/roms -- diambra:diambra-arena-base bash
-./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host --pulseaudio -- --privileged -it -- diambra:diambra-arena-base bash
+./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host --pulseaudio -- --privileged -- diambra:diambra-arena-base &>/dev/null & sleep 2s; docker exec -u 0 --privileged -it diambraArena bash
 
 # Access a running container
 docker exec -u 0 --privileged -it diambraArena bash
