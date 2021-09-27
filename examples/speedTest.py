@@ -10,14 +10,15 @@ def reject_outliers(data):
     return filtered
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=True, help='Absolute path to roms')
+parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
 opt = parser.parse_args()
 print(opt)
 
 # Mandatory parameters
 diambraKwargs = {}
 diambraKwargs["gameId"]   = "doapp" # Game selection
-diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
+if opt.romsPath is not None:
+    diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
 diambraKwargs["stepRatio"] = 1
 diambraKwargs["lockFps"] = False
 diambraKwargs["render"] = False

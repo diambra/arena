@@ -91,7 +91,7 @@ class diambraArenaLib:
         baseEnvKwargs["showFinal"] = True
         baseEnvKwargs["stepRatio"] = 6
         baseEnvKwargs["render"] = True
-        baseEnvKwargs["lockFps"] = False
+        baseEnvKwargs["lockFps"] = True
         baseEnvKwargs["difficulty"] = 3
         baseEnvKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
         baseEnvKwargs["charOutfits"] = [2, 2]
