@@ -24,3 +24,4 @@ COPY . /opt/diambraArena
 WORKDIR /opt/diambraArena/
 RUN pip install --ignore-installed pyzmq
 RUN pip install .
+RUN rm -rf diambraArena  docker  img  LICENSE.txt  MANIFEST.in  README.md setupOS.sh  setup.py  tests
