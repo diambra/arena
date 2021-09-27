@@ -14,11 +14,13 @@ RUN apt-get update -y
 # Packages that must be always installed
 RUN apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter unzip python3-tk vim -y
 RUN apt-get install wget libopencv-dev ssh cmake libopenmpi-dev python3-dev zlib1g-dev pciutils -y
-RUN pip3 install --upgrade pip
+RUN ln -s /usr/bin/python3 /usr/bin/python & \
+    ln -s /usr/bin/pip3 /usr/bin/pip
+RUN pip install --upgrade pip
 
 # Copy diambraArena Repo
 RUN mkdir /opt/diambraArena
 COPY . /opt/diambraArena
 WORKDIR /opt/diambraArena/
-RUN pip3 install --ignore-installed pyzmq
-RUN pip3 install .
+RUN pip install --ignore-installed pyzmq
+RUN pip install .
