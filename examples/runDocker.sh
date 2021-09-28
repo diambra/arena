@@ -94,6 +94,6 @@ else
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
       -- $imageName &>/dev/null & sleep 4s; \
       docker exec -u 0 --privileged -it diambraArena \
-      bash -c "cd /opt/diambraArena/code/ && $cmd"
+      bash -c "cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
 fi
 
