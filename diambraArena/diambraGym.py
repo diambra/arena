@@ -522,8 +522,9 @@ def makeGymEnv(envPrefix, diambraKwargs, diambraGymKwargs, hardCore):
 
     # Check for OS var DISPLAY
     if os.getenv("DISPLAY") == None:
-        print("No DISPLAY environment variable detected, activating HEADLESS mode")
+        print("No DISPLAY environment variable detected, activating HEADLESS mode, and deactivating lockFps if active")
         diambraKwargs["headless"] = True
+        diambraKwargs["lockFps"]  = False
 
     if diambraKwargs["player"] != "P1P2": #1P Mode
         if hardCore:
