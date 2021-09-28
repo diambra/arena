@@ -1,8 +1,9 @@
-import gym
+import gym, os
 from gym import spaces
 import numpy as np
 import pickle, bz2, cv2
 import numpy as np
+import json
 from threading import Thread
 
 # Save compressed pickle files in parallel
@@ -182,3 +183,20 @@ def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
             cv2.imshow("Frame-"+str(idx), obs[:,:,idx])
 
         cv2.waitKey(waitKey)
+
+# List all available games
+def availableGames(details=False):
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
+    gamesFile = open(gamesFilePath)
+    gamesDict = json.load(gamesFile)
+
+    for k, v in gamesDict.items():
+        print("")
+        print(" Title: {} - ID: {}".format(v["name"], v["id"]))
+        print("   Difficulty levels: Min {} - Max {}".format(v["difficulty"][0], v["difficulty"][1]))
+        if details:
+            print("   SHA256 sum: {}".format(v["sha256"]))
+            print("   Rom name: {}".format(v["rom_name"]))
+            print("   Characters list: {}".format(v["charList"]))
+
