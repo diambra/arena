@@ -8,3 +8,4 @@ diambraArena/mame/history
 diambraArena/mame/cfg
 .ipynb*
 trajRecordings/*
+__pycache__

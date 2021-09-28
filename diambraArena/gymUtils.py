@@ -185,18 +185,22 @@ def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
         cv2.waitKey(waitKey)
 
 # List all available games
-def availableGames(details=False):
+def availableGames(printOut=True, details=False):
     basePath = os.path.dirname(os.path.abspath(__file__))
     gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
     gamesFile = open(gamesFilePath)
     gamesDict = json.load(gamesFile)
 
-    for k, v in gamesDict.items():
-        print("")
-        print(" Title: {} - ID: {}".format(v["name"], v["id"]))
-        print("   Difficulty levels: Min {} - Max {}".format(v["difficulty"][0], v["difficulty"][1]))
-        if details:
-            print("   SHA256 sum: {}".format(v["sha256"]))
-            print("   Rom name: {}".format(v["rom_name"]))
-            print("   Characters list: {}".format(v["charList"]))
+    if printOut:
+        for k, v in gamesDict.items():
+            print("")
+            print(" Title: {} - ID: {}".format(v["name"], v["id"]))
+            print("   Difficulty levels: Min {} - Max {}".format(v["difficulty"][0], v["difficulty"][1]))
+            if details:
+                print("   SHA256 sum: {}".format(v["sha256"]))
+                print("   Rom name: {}".format(v["rom_name"]))
+                print("   Characters list: {}".format(v["charList"]))
+    else:
+        return gamesDict
+
 
