@@ -82,14 +82,14 @@ echo " "
 if [ "$gui" == "0" ]
 then
      #-v pythonDep:/usr/local/lib/python3.6/dist-packages/ \
-    docker run -it --rm --privileged \
+    docker run -it --rm --gpus all --privileged \
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      --name diambraArena $imageName \
       bash -c "cd /opt/diambraArena/code/ && $cmd"
 else
      #-v pythonDep:/usr/local/lib/python3.6/dist-packages/ \
-    ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host --pulseaudio -- --privileged \
+    ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host --pulseaudio -- --gpus all --privileged \
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
       -- $imageName &>/dev/null & sleep 4s; \
