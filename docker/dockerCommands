@@ -1,4 +1,5 @@
 # Build DIAMBRA base docker image
+docker build -f docker/diambra-arena-base_Dockerfile --no-cache -t diambra:diambra-arena-base .
 docker build -f docker/diambra-arena-base_Dockerfile -t diambra:diambra-arena-base .
 
 # Build DIAMBRA image with GPU-CUDA10.0 support
