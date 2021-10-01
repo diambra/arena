@@ -1,11 +1,13 @@
 #!/bin/bash
 # Launch a python script using the docker image
+# runDocker.sh -r "/home/apalmas/Diambra/diambraEngine/roms/mame/" -s diambraArenaGist.py -d GPU
 
 device="CPU"
 gui="0"
 romsPath=""
 pythonFile=""
 cmd=""
+gpuSetup=""
 
 while getopts r:s:d:g:c: flag
 do
@@ -67,6 +69,17 @@ fi
 
 if [ "$device" == "GPU" ]
 then
+    # Check if nvidia-docker is installed 
+    nvidiaDockerCheck=$(dpkg-query -W -f='${Status} ${Version}\n' nvidia-docker2)
+    if [[ "$nvidiaDockerCheck" == "install ok installed"* ]]; then
+      echo "Nvidia-Docker package found."
+    else
+      echo "WARNING: Nvidia-Docker package has not been found, container with GPU support will likely abort."
+      echo "Make sure to install the Nvidia-Docker package following this guide:"
+      echo "  https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html"
+    fi
+
+    gpuSetup="--gpus all"
     imageName="diambra:diambra-arena-gpu-cuda10.0"
 else
     device="CPU"
@@ -85,14 +98,15 @@ echo " "
 if [ "$gui" == "0" ]
 then
      #-v pythonDep:/usr/local/lib/python3.6/dist-packages/ \
-    docker run -it --rm --gpus all --privileged \
+    docker run -it --rm $gpuSetup --privileged \
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      --name diambraArena $imageName \
       bash -c "cd /opt/diambraArena/code/ && $cmd"
 else
      #-v pythonDep:/usr/local/lib/python3.6/dist-packages/ \
-    ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host --pulseaudio --size=1024x600 -- --gpus all --privileged \
+    ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host \
+     --pulseaudio --size=1024x600 -- $gpuSetup --privileged \
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
       -- $imageName &>/dev/null & sleep 4s; \
@@ -100,4 +114,3 @@ else
       bash -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
       #bash -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
 fi
-
