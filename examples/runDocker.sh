@@ -1,6 +1,6 @@
 #!/bin/bash
 # Launch a python script using the docker image
-# runDocker.sh -r "/home/apalmas/Diambra/diambraEngine/roms/mame/" -s diambraArenaGist.py -d GPU
+# runDocker.sh -r "/home/apalmas/Applications/Diambra/diambraEngine/roms/mame/" -s diambraArenaGist.py -d GPU
 
 device="CPU"
 gui="0"
@@ -102,7 +102,7 @@ then
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      --name diambraArena $imageName \
-      bash -c "cd /opt/diambraArena/code/ && $cmd"
+      sh -c "cd /opt/diambraArena/code/ && $cmd"
 else
      #-v pythonDep:/usr/local/lib/python3.6/dist-packages/ \
     ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host \
@@ -111,6 +111,6 @@ else
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
       -- $imageName &>/dev/null & sleep 4s; \
       docker exec -u 0 --privileged -it diambraArena \
-      bash -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
-      #bash -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
+      sh -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
+      #sh -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
 fi
