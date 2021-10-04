@@ -90,7 +90,7 @@ class Pipe(object):
 
         # Pipe path definition
         self.path = self.pipes_path.joinpath(Path(pipe_id + "-" + str(env_id) + ".pipe"))
-        print("Pipe: "+str(self.path.absolute()))
+        #print("Pipe: "+str(self.path.absolute()))
         if self.path.exists():
             self.path.unlink()
 
@@ -102,13 +102,15 @@ class Pipe(object):
             tmpPath.unlink()
 
     # Opens the pipe in the toolkit and in the Lua engine
-    # When a pipe is opened in read mode, it will block the thread until the same pipe is opened in write mode on a different thread
+    # When a pipe is opened in read mode, it will block the thread until the
+    # same pipe is opened in write mode on a different thread
     def open(self):
         try:
 
             # Create pipe
             pipe_queue = Queue()
-            open_thread = threading.Thread(target=openPipe, args=[pipe_queue, str(self.path.absolute()), self.mode])
+            open_thread = threading.Thread(target=openPipe, args=[pipe_queue,
+                                                                  str(self.path.absolute()), self.mode])
             open_thread.start()
             open_thread.join(timeout=3)
             self.fifo = pipe_queue.get(timeout=3)
