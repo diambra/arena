@@ -8,8 +8,9 @@ romsPath=""
 pythonFile=""
 cmd=""
 gpuSetup=""
+volume=""
 
-while getopts r:s:d:g:c: flag
+while getopts r:s:d:g:c:v: flag
 do
     case "${flag}" in
         r) romsPath=${OPTARG};;
@@ -17,6 +18,7 @@ do
         d) device=${OPTARG};;
         g) gui=${OPTARG};;
         c) cmd=${OPTARG};;
+        v) volume="-v ${OPTARG}:/usr/local/lib/python3.6/dist-packages/";;
     esac
 done
 
@@ -92,24 +94,23 @@ echo "  Roms path: $romsPath";
 echo "  Device: $device";
 echo "  GUI Active: $gui";
 echo "  Command: $cmd";
+echo "  Volumes option: $volume";
 echo "---"
 echo " "
 
 if [ "$gui" == "0" ]
 then
-     #-v pythonDep:/usr/local/lib/python3.6/dist-packages/ \
-    docker run -it --rm $gpuSetup --privileged \
+    docker run -it --rm $gpuSetup --privileged $volume \
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
 else
-     #-v pythonDep:/usr/local/lib/python3.6/dist-packages/ \
     ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host \
-     --pulseaudio --size=1024x600 -- $gpuSetup --privileged \
+     --pulseaudio --size=1024x600 -- $gpuSetup --privileged $volume \
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
-      -- $imageName &>/dev/null & sleep 4s; \
+     -- $imageName &>/dev/null & sleep 4s; \
       docker exec -u 0 --privileged -it diambraArena \
       sh -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
       #sh -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
