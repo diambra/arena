@@ -1,6 +1,25 @@
 #!/bin/bash
 # Launch a python script using the docker image
-# runDocker.sh -r "/home/apalmas/Applications/Diambra/diambraEngine/roms/mame/" -s diambraArenaGist.py -d GPU
+
+function usage() {
+
+  echo " "
+  echo "Usage:"
+  echo "  - Headless (CPU): ./runDocker.sh -r \"your/roms/local/path\""
+  echo "                                   -s  yourPythonScriptInCurrentDir.py"
+  echo "                                   -v yourVolumeName (optional)"
+  echo " "      
+  echo "  - Headless (GPU): ./runDocker.sh -r \"your/roms/local/path\""
+  echo "                                   -s  yourPythonScriptInCurrentDir.py"
+  echo "                                   -d GPU"
+  echo "                                   -v yourVolumeName (optional)"
+  echo " "
+  echo "  - Terminal (CPU): ./runDocker.sh -c bash"
+  echo "                                   -v yourVolumeName (optional)"
+  echo " "
+}
+
+clear
 
 device="CPU"
 gui="0"
@@ -27,7 +46,9 @@ if [ -z "$DIAMBRAROMSPATH" ]
 then
   if [ -z "$romsPath" ]
   then
-      echo "ERROR: \$DIAMBRAROMSPATH Environment variable is empty. Either add the absolute path to roms in your environment variables or provide it as input argument with the \"-c\" flag"
+      echo "ERROR: \$DIAMBRAROMSPATH Environment variable is empty."
+      echo " Either add the absolute path to roms in your environment variables or provide it as input argument with the \"-c\" flag"
+      usage
       exit 1
   fi
 else
@@ -56,6 +77,7 @@ then
   if [ -z "$pythonFile" ]
   then
       echo "ERROR: use etither \"-s\" to execute a python script or \"-c\" to execute a command"
+      usage
       exit 1
   else
       cmd="python $pythonFile"

@@ -1,12 +1,4 @@
 :: Launch a python script using the docker image
-:: GUI Run
-:: runDocker.bat "ROMSPATH=your\roms\path" "PYTHONFILE=yourFile.py" "GUI=1" "ENVDISPLAYIP=<vEthernetIP>:0.0"
-:: No GUI Run
-:: runDocker.bat "ROMSPATH=your\roms\path" "PYTHONFILE=yourFile.py"
-:: No GUI with VOLUMES Run
-:: runDocker.bat "ROMSPATH=your\roms\path" "PYTHONFILE=yourFile.py" "VOLUME=pythonDep"
-:: Terminal with VOLUMES Run
-:: runDocker.bat "CMDTOEXEC=bash" "VOLUME=pythonDep"
 
 @echo off
 set "GUI=0"
@@ -29,22 +21,22 @@ if "%~1"=="" (
 goto skipErrorArg
  :errorArg
 echo Usage:
-echo    - Headless: runDocker.bat "ROMSPATH=your\roms\path"
-echo                              "PYTHONFILE=yourFile.py"
-echo                              "VOLUME=pythonDep" (optional)
+echo    - Headless: runDocker.bat "ROMSPATH=your\roms\local\path"
+echo                              "PYTHONFILE=yourPythonScriptInCurrentDir.py"
+echo                              "VOLUME=yourVolumeName" (optional)
 echo.
-echo    - With GUI: runDocker.bat "ROMSPATH=your\roms\path" 
-echo                              "PYTHONFILE=yourFile.py" 
+echo    - With GUI: runDocker.bat "ROMSPATH=your\roms\local\path" 
+echo                              "PYTHONFILE=yourPythonScriptInCurrentDir.py"
 echo                              "GUI=1" 
 echo                              "ENVDISPLAYIP=<vEthernetIP>:0.0"
 echo                              "XSRVPATH=<pathToVcXsrv>"  (optional)
-echo                              "VOLUME=pythonDep" (optional)
+echo                              "VOLUME=yourVolumeName" (optional)
 echo.
 echo        Where: ENVDISPLAYIP is the IP address of the vEthernet, retrieve it with 'ipconfig' command
 echo               XSRVPATH is the path to Windows VcXsrv X Server, usually located in 'C:\Program Files\vcxsrv.exe' 
 echo.
 echo    - Terminal: runDocker.bat "CMDTOEXEC=bash"
-echo                              "VOLUME=pythonDep" (optional)
+echo                              "VOLUME=yourVolumrName" (optional)
 goto end
  :skipErrorArg
 
