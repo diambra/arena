@@ -16,11 +16,39 @@ cls
 
 if "%~1"=="" (
   echo ERROR. No arguments found
-  goto errorArg
+  goto usage
 )
-goto skipErrorArg
- :errorArg
-echo Usage:
+goto skipUsage
+ :usage
+echo Usage: 
+echo.
+echo    runDocker.bat [OPTIONS]
+echo.
+echo  OPTIONS:
+echo    "ROMSPATH=<path>" Specify your local path to where game roms are located. 
+echo                      (Mandatory to run environments.)
+echo.
+echo    "PYTHONFILE=<file>" Python script to run inside docker container. 
+echo                        Must be located in the folder from where the batch script is executed.
+echo.
+echo    "CMDTOEXEC=<command>" Command to be executed at docker container startup.
+echo                          Can be used to start and interactive linux shell, for example to install pip packages.
+echo.
+echo    "GUI=<X>" Specify if to run in Headless mode (X=0, default) or with GUI support (X=1)
+echo.
+echo    "ENVDISPLAYIP=<vEthernetIP>:0.0" Specify the vEthernet IP Address on which the Virtual X Server is listening. 
+echo                                     The address can be retrieved using `ipconfig` command, 
+echo                                     look for `Default Switch` or `WSL` in connection details.
+echo                                     (Mandatory for executions with GUI support.)
+echo. 
+echo    "XSRVPATH=<path>" Specify where Windows X Server executable is located.
+echo                      Standard location is usually `C:\Program Files\vcxsrv.exe`
+echo                      (Optional, the script will try to recover it automatically.)
+echo. 
+echo    "VOLUME=<name>" Specify the name of the volume where to store pip packages 
+echo                    installed inside the container to make them persistent. (Optional)
+echo.
+echo Examples:
 echo    - Headless: runDocker.bat "ROMSPATH=your\roms\local\path"
 echo                              "PYTHONFILE=yourPythonScriptInCurrentDir.py"
 echo                              "VOLUME=yourVolumeName" (optional)
@@ -32,13 +60,12 @@ echo                              "ENVDISPLAYIP=<vEthernetIP>:0.0"
 echo                              "XSRVPATH=<pathToVcXsrv>"  (optional)
 echo                              "VOLUME=yourVolumeName" (optional)
 echo.
-echo        Where: ENVDISPLAYIP is the IP address of the vEthernet, retrieve it with 'ipconfig' command
-echo               XSRVPATH is the path to Windows VcXsrv X Server, usually located in 'C:\Program Files\vcxsrv.exe' 
-echo.
 echo    - Terminal: runDocker.bat "CMDTOEXEC=bash"
 echo                              "VOLUME=yourVolumrName" (optional)
 goto end
- :skipErrorArg
+ :skipUsage
+
+if %1 == "-h" goto :usage
 
 set %1
 if not "%~2"=="" set %2
@@ -52,11 +79,11 @@ if NOT "%DIAMBRAROMSPATH%"=="" if "%ROMSPATH%"=="" set "ROMSPATH=%DIAMBRAROMSPAT
 
 if "%PYTHONFILE%"=="" IF "%CMDTOEXEC%"=="" (
   echo ERROR. Either PYTHONFILE or CMDTOEXEC arguments must be provided when launching the run command
-  goto errorArg
+  goto usage
 )
 if "%GUI%"=="1" IF "%ENVDISPLAYIP%"=="" (
   echo ERROR. When running with GUI active, ENVDISPLAYIP arugment must be provided
-  goto errorArg
+  goto usage
 )
 if NOT "%PYTHONFILE%"=="" IF "%CMDTOEXEC%"=="" set "CMDTOEXEC=python %PYTHONFILE%"
 

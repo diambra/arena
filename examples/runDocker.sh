@@ -3,15 +3,42 @@
 
 function usage() {
 
-  echo " "
   echo "Usage:"
+  echo " "
+  echo "  ./runDocker.sh [OPTIONS]"
+  echo " "
+  echo "OPTIONS:"
+  echo "  -r \"<path>\" Specify your local path to where game roms are located."
+  echo "              (Mandatory to run environments.)"
+  echo " "
+  echo "  -s <file> Python script to run inside docker container."
+  echo "            Must be located in the folder from where the bash script is executed."
+  echo " "
+  echo "  -c <command> Command to be executed at docker container startup."
+  echo "               Can be used to start and interactive linux shell, for example to install pip packages."
+  echo " "
+  echo "  -g <X> Specify if to run in Headless mode (X=0, default) or with GUI support (X=1)"
+  echo " "
+  echo "  -d <DEVICE> Specify if to run CPU docker image (DEVICE=CPU, default)"
+  echo "              or the one with NVIDIA GPU Support (DEVICE=GPU)" 
+  echo "              Requires Nvidia-Docker Toolkit installed"
+  echo " " 
+  echo "  -v <name> Specify the name of the volume where to store pip packages"
+  echo "            installed inside the container to make them persistent. (Optional)"
+  echo " " 
+  echo "Examples:"
   echo "  - Headless (CPU): ./runDocker.sh -r \"your/roms/local/path\""
-  echo "                                   -s  yourPythonScriptInCurrentDir.py"
+  echo "                                   -s yourPythonScriptInCurrentDir.py"
   echo "                                   -v yourVolumeName (optional)"
   echo " "      
   echo "  - Headless (GPU): ./runDocker.sh -r \"your/roms/local/path\""
-  echo "                                   -s  yourPythonScriptInCurrentDir.py"
+  echo "                                   -s yourPythonScriptInCurrentDir.py"
   echo "                                   -d GPU"
+  echo "                                   -v yourVolumeName (optional)"
+  echo " "
+  echo "  - With GUI (CPU): ./runDocker.sh -r \"your/roms/local/path\""
+  echo "                                   -s yourPythonScriptInCurrentDir.py"
+  echo "                                   -g 1"
   echo "                                   -v yourVolumeName (optional)"
   echo " "
   echo "  - Terminal (CPU): ./runDocker.sh -c bash"
@@ -29,7 +56,7 @@ cmd=""
 gpuSetup=""
 volume=""
 
-while getopts r:s:d:g:c:v: flag
+while getopts r:s:d:g:c:v:h flag
 do
     case "${flag}" in
         r) romsPath=${OPTARG};;
@@ -38,6 +65,7 @@ do
         g) gui=${OPTARG};;
         c) cmd=${OPTARG};;
         v) volume="-v ${OPTARG}:/usr/local/lib/python3.6/dist-packages/";;
+        h) usage; exit 0;;
     esac
 done
 
@@ -122,6 +150,7 @@ echo " "
 
 if [ "$gui" == "0" ]
 then
+    cmd="xvfb-run $cmd"
     docker run -it --rm $gpuSetup --privileged $volume \
      --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
