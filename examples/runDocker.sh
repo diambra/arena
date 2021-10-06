@@ -1,12 +1,15 @@
 #!/bin/bash
 # Launch a python script using the docker image
 
+osName=$(uname -s)
+
 function usage() {
 
   echo "Usage:"
   echo " "
   echo "  ./runDocker.sh [OPTIONS]"
   echo " "
+
   echo "OPTIONS:"
   echo "  -h Prints out this help message."
   echo " "
@@ -21,10 +24,19 @@ function usage() {
   echo " "
   echo "  -g <X> Specify if to run in Headless mode (X=0, default) or with GUI support (X=1)"
   echo " "
-  echo "  -d <DEVICE> Specify if to run CPU docker image (DEVICE=CPU, default)"
-  echo "              or the one with NVIDIA GPU Support (DEVICE=GPU)" 
-  echo "              Requires Nvidia-Docker Toolkit installed"
-  echo " " 
+  if [ $osName == "Linux" ]
+  then
+    echo "  -d <DEVICE> Specify if to run CPU docker image (DEVICE=CPU, default)"
+    echo "              or the one with NVIDIA GPU Support (DEVICE=GPU)" 
+    echo "              Requires Nvidia-Docker Toolkit installed"
+    echo " " 
+  else
+    echo "  -e <vEthernetIP>:0.0 Specify the vEthernet IP Address on which the Virtual X Server is listening."
+    echo "                       The address can be retrieved using `ifconfig` command,"
+    echo "                       look for \`docker0\` in connection details."
+    echo "                       (Mandatory for executions with GUI support.)"
+    echo " " 
+  fi
   echo "  -v <name> Specify the name of the volume where to store pip packages"
   echo "            installed inside the container to make them persistent. (Optional)"
   echo " " 
@@ -33,21 +45,31 @@ function usage() {
   echo "                                   -s yourPythonScriptInCurrentDir.py"
   echo "                                   -v yourVolumeName (optional)"
   echo " "      
-  echo "  - Headless (GPU): ./runDocker.sh -r \"your/roms/local/path\""
-  echo "                                   -s yourPythonScriptInCurrentDir.py"
-  echo "                                   -d GPU"
-  echo "                                   -v yourVolumeName (optional)"
-  echo " "
+  if [ $osName == "Linux" ]
+  then
+    echo "  - Headless (GPU): ./runDocker.sh -r \"your/roms/local/path\""
+    echo "                                   -s yourPythonScriptInCurrentDir.py"
+    echo "                                   -d GPU"
+    echo "                                   -v yourVolumeName (optional)"
+    echo " "
+  fi
   echo "  - With GUI (CPU): ./runDocker.sh -r \"your/roms/local/path\""
   echo "                                   -s yourPythonScriptInCurrentDir.py"
   echo "                                   -g 1"
+  if [ $osName != "Linux" ] 
+  then
+    echo "                                   -e <vEthernetIP>:0.0"
+  fi
   echo "                                   -v yourVolumeName (optional)"
   echo " "
   echo "  - Terminal (CPU): ./runDocker.sh -c bash"
   echo "                                   -v yourVolumeName (optional)"
   echo " "
-  echo "  - CUDA Installation Test (GPU): ./runDocker.sh -c \"cat /proc/driver/nvidia/version; nvcc -V\""
-  echo "                                                 -d GPU"
+  if [ $osName == "Linux" ]
+  then
+    echo "  - CUDA Installation Test (GPU): ./runDocker.sh -c \"cat /proc/driver/nvidia/version; nvcc -V\""
+    echo "                                                 -d GPU"
+  fi
   echo " "
 }
 
@@ -60,8 +82,9 @@ pythonFile=""
 cmd=""
 gpuSetup=""
 volume=""
+envDisplayIp=""
 
-while getopts r:s:d:g:c:v:h flag
+while getopts r:s:d:g:c:v:e:h flag
 do
     case "${flag}" in
         r) romsPath=${OPTARG};;
@@ -70,22 +93,30 @@ do
         g) gui=${OPTARG};;
         c) cmd=${OPTARG};;
         v) volume="-v ${OPTARG}:/usr/local/lib/python3.6/dist-packages/";;
+        e) envDisplayIp=${OPTARG};;
         h) usage; exit 0;;
     esac
 done
 
 # Check inputs/variables
-if [ -z "$DIAMBRAROMSPATH" ]
+if [ $osName != "Linux" ]
 then
-  :
-else
+  if [ $device == "GPU" ]
+  then
+    echo "WARNING: No GPU support for macOS. Forcing CPU Docker image execution."
+    device="CPU"
+  fi
+fi
+
+if [ "$DIAMBRAROMSPATH" != "" ]
+then
   if [ -z "$romsPath" ]
   then
       romsPath=$DIAMBRAROMSPATH
   else
     if [ "$romsPath" != "$DIAMBRAROMSPATH" ]
     then
-        echo "WARNING \$DIAMBRAROMSPATH and \$romsPath differ: \"$DIAMBRAROMSPATH\" VS \"$romsPath\", using \"$romsPath\""
+        echo "WARNING: \$DIAMBRAROMSPATH and \$romsPath differ: \"$DIAMBRAROMSPATH\" VS \"$romsPath\", using \"$romsPath\""
     fi
   fi
 fi
@@ -94,8 +125,18 @@ if [ "$gui" == "1" ]
 then
   if [ "$device" == "GPU" ]
   then 
-      echo "WARNING GUI can be used only with CPU docker image, running headless."
+      echo "WARNING: GUI can be used only with CPU docker image, running headless."
       gui="0"
+  fi
+  if [ $osName != "Linux" ]
+  then 
+    if [ $envDisplayIp == "" ]
+    then
+      echo "ERROR: No Env Variable for Display IP set, use \"-e\" to provide it as a command line argument."
+      usage
+      exit 1
+   
+    fi
   fi
 fi
 
@@ -103,18 +144,16 @@ if [ -z "$cmd" ]
 then
   if [ -z "$pythonFile" ]
   then
-      echo "ERROR: use etither \"-s\" to execute a python script or \"-c\" to execute a command"
+      echo "ERROR: No command to execute found. Use etither \"-s\" to execute a python script or \"-c\" to execute a command"
       usage
       exit 1
   else
       cmd="python $pythonFile"
   fi
 else
-  if [ -z "$pythonFile" ]
+  if [ "$pythonFile" != "" ]
   then
-      :
-  else
-      echo "WARNING: both \"-c\" and \"-s\" arguments passed, using \"-c\": $cmd"
+      echo "WARNING: Both \"-c\" and \"-s\" arguments passed, using \"-c\": $cmd"
   fi
 fi
 
@@ -138,12 +177,13 @@ else
 fi
 
 echo " "
-echo "Executing in the docker ($device image):";
-echo "  Roms path: $romsPath";
-echo "  Device: $device";
-echo "  GUI Active: $gui";
-echo "  Command: $cmd";
-echo "  Volumes option: $volume";
+echo "Executing in the docker ($device image):"
+echo "  OS: $osName"
+echo "  Roms path: $romsPath"
+echo "  Device: $device"
+echo "  GUI Active: $gui"
+echo "  Command: $cmd"
+echo "  Volumes option: $volume"
 echo "---"
 echo " "
 
@@ -160,6 +200,8 @@ then
      --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
 else
+  if [ $osName == "Linux" ]
+  then
     ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host \
      --pulseaudio --size=1024x600 -- $gpuSetup --privileged $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
@@ -167,4 +209,14 @@ else
       docker exec -u 0 --privileged -it diambraArena \
       sh -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
       #sh -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
+  else
+    echo "Running Virtual X Server ..."
+    # TODO: Start X Server Quartz?
+    echo "Running DIAMBRA Arena docker container ..."
+    docker run -it --rm $gpuSetup --privileged -e DISPLAY="$envDisplayIp" $volume $romsPath \
+     --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
+     --name diambraArena $imageName \
+      sh -c "cd /opt/diambraArena/code/ && $cmd"
+    # TODO: KILLARE QUARTZ?
+  fi
 fi
