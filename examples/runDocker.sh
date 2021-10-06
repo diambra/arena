@@ -46,6 +46,9 @@ function usage() {
   echo "  - Terminal (CPU): ./runDocker.sh -c bash"
   echo "                                   -v yourVolumeName (optional)"
   echo " "
+  echo "  - CUDA Installation Test (GPU): ./runDocker.sh -c \"cat /proc/driver/nvidia/version; nvcc -V\""
+  echo "                                                 -d GPU"
+  echo " "
 }
 
 clear
