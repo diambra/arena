@@ -105,7 +105,7 @@ extras= {
 setuptools.setup(
         name='diambraArena',
         url='https://github.com/diambra/DIAMBRAenvironment',
-        version='0.2',
+        version='1.0',
         author="Artificial Twin",
         author_email="diambra@artificialtwin.com",
         description="DIAMBRA™ | Dueling AI Arena. Built with OpenAI Gym standard, easy to use,\ntransforms famous classic videogames into Reinforcement Learning tasks",
