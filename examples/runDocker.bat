@@ -25,6 +25,8 @@ echo.
 echo    runDocker.bat [OPTIONS]
 echo.
 echo  OPTIONS:
+echo    -h Prints out this help message.
+echo.
 echo    "ROMSPATH=<path>" Specify your local path to where game roms are located. 
 echo                      (Mandatory to run environments.)
 echo.
@@ -65,7 +67,7 @@ echo                              "VOLUME=yourVolumrName" (optional)
 goto end
  :skipUsage
 
-if %1 == "-h" goto :usage
+if %1==-h goto :usage
 
 set %1
 if not "%~2"=="" set %2
