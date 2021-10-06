@@ -72,13 +72,7 @@ done
 # Check inputs/variables
 if [ -z "$DIAMBRAROMSPATH" ]
 then
-  if [ -z "$romsPath" ]
-  then
-      echo "ERROR: \$DIAMBRAROMSPATH Environment variable is empty."
-      echo " Either add the absolute path to roms in your environment variables or provide it as input argument with the \"-c\" flag"
-      usage
-      exit 1
-  fi
+  :
 else
   if [ -z "$romsPath" ]
   then
@@ -148,18 +142,21 @@ echo "  Volumes option: $volume";
 echo "---"
 echo " "
 
+if [ "$romsPath" != "" ]
+then 
+  romsPath="--mount src=$romsPath,target="/opt/diambraArena/roms",type=bind "
+fi
+
 if [ "$gui" == "0" ]
 then
     cmd="xvfb-run $cmd"
-    docker run -it --rm $gpuSetup --privileged $volume \
-     --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
+    docker run -it --rm $gpuSetup --privileged $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
 else
     ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host \
-     --pulseaudio --size=1024x600 -- $gpuSetup --privileged $volume \
-     --mount src=$romsPath,target="/opt/diambraArena/roms",type=bind \
+     --pulseaudio --size=1024x600 -- $gpuSetup --privileged $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      -- $imageName &>/dev/null & sleep 4s; \
       docker exec -u 0 --privileged -it diambraArena \
