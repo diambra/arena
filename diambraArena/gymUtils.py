@@ -5,6 +5,7 @@ import pickle, bz2, cv2
 import numpy as np
 import json
 from threading import Thread
+import hashlib
 
 # Save compressed pickle files in parallel
 class parallelPickleWriter(Thread): # def class typr thread
@@ -203,4 +204,52 @@ def availableGames(printOut=True, details=False):
     else:
         return gamesDict
 
+# List sha256 per game
+def gameSha256(gameId=None):
 
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
+    gamesFile = open(gamesFilePath)
+    gamesDict = json.load(gamesFile)
+
+    if gameId == None:
+        for k, v in gamesDict.items():
+            print("")
+            print(" Title: {}\n ID: {}\n SHA256: {}".format(v["name"], v["id"], v["sha256"]))
+    else:
+        v = gamesDict[gameId]
+        print(" Title: {}\n ID: {}\n SHA256: {}".format(v["name"], v["id"], v["sha256"]))
+
+# Check rom sha256
+def sha256_checksum(filename, block_size=65536):
+    sha256 = hashlib.sha256()
+    with open(filename, 'rb') as f:
+        for block in iter(lambda: f.read(block_size), b''):
+            sha256.update(block)
+    return sha256.hexdigest()
+
+def checkGameSha256(path, gameId=None):
+
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
+    gamesFile = open(gamesFilePath)
+    gamesDict = json.load(gamesFile)
+
+    fileChecksum = sha256_checksum(path)
+
+    if gameId == None:
+
+        found = False
+        for k, v in gamesDict.items():
+            if fileChecksum == v["sha256"]:
+                found = True
+                print("Correct ROM file for {}, sha256 = {}".format(v["name"], v["sha256"]))
+                break
+        if found == False:
+            print("ERROR: ROM file not valid")
+    else:
+        if fileChecksum == gamesDict[gameId]["sha256"]:
+            print("Correct ROM file for {}, sha256 = {}".format(gamesDict[gameId]["name"], v["sha256"]))
+        else:
+            print("Expected  SHA256 Checksum: {}".format(gamesDict[gameId]["sha256"]))
+            print("Retrieved SHA256 Checksum: {}".format(fileChecksum))
