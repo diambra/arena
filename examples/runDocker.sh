@@ -13,6 +13,10 @@ function usage() {
   echo "OPTIONS:"
   echo "  -h Prints out this help message."
   echo " "
+  echo "  -l Prints out available games list."
+  echo " "
+  echo "  -t <romFile.zip> Checks ROM file validity."
+  echo " "
   echo "  -r \"<path>\" Specify your local path to where game roms are located."
   echo "              (Mandatory to run environments.)"
   echo " "
@@ -41,6 +45,11 @@ function usage() {
   echo "            installed inside the container to make them persistent. (Optional)"
   echo " " 
   echo "Examples:"
+  echo "  - Availble games list with details: ./runDocker.sh -l"
+  echo " "
+  echo "  - ROM File Validation: ./runDocker.sh -r \"your/roms/local/path\""
+  echo "                                        -t romFile.zip"
+  echo " "
   echo "  - Headless (CPU): ./runDocker.sh -r \"your/roms/local/path\""
   echo "                                   -s yourPythonScriptInCurrentDir.py"
   echo "                                   -v yourVolumeName (optional)"
@@ -83,8 +92,9 @@ cmd=""
 gpuSetup=""
 volume=""
 envDisplayIp=""
+romFile=""
 
-while getopts r:s:d:g:c:v:e:h flag
+while getopts r:s:d:g:c:v:e:ht:l flag
 do
     case "${flag}" in
         r) romsPath=${OPTARG};;
@@ -95,6 +105,8 @@ do
         v) volume="-v ${OPTARG}:/usr/local/lib/python3.6/dist-packages/";;
         e) envDisplayIp=${OPTARG};;
         h) usage; exit 0;;
+        t) romFile=${OPTARG}; cmd="python -c \"import diambraArena, os; diambraArena.checkGameSha256(os.path.join(os.getenv('DIAMBRAROMSPATH'), '$romFile'))\"";;
+        l) cmd="python -c \"import diambraArena; diambraArena.availableGames(True, True)\"";;
     esac
 done
 
