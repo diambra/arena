@@ -9,6 +9,7 @@ set "ENVDISPLAYIP="
 set "XSRVPATH="
 set "CURDIR="
 set "CMDTOEXEC="
+set "ROMCHECK="
  
 SetLocal EnableDelayedExpansion
 
@@ -27,7 +28,11 @@ echo.
 echo  OPTIONS:
 echo    -h Prints out this help message.
 echo.
-echo    "ROMSPATH=<path>" Specify your local path to where game roms are located. 
+echo    -l Prints out available games list.
+echo.
+echo    "ROMCHECK=<romFile.zip>" Check ROM file validity.
+echo.
+echo    "ROMSPATH=<path>" Specify your local path where game ROMs are located. 
 echo                      (Mandatory to run environments.)
 echo.
 echo    "PYTHONFILE=<file>" Python script to run inside docker container. 
@@ -68,6 +73,7 @@ goto end
  :skipUsage
 
 if %1==-h goto :usage
+if %1==-l set CMDTOEXEC="python -c \"import diambraArena; diambraArena.availableGames(True, True)\""
 
 set %1
 if not "%~2"=="" set %2
@@ -78,6 +84,8 @@ if not "%~6"=="" set %6
 
 echo DIAMBRAROMSPATH ENV VAR = %DIAMBRAROMSPATH%
 if NOT "%DIAMBRAROMSPATH%"=="" if "%ROMSPATH%"=="" set "ROMSPATH=%DIAMBRAROMSPATH%"
+
+if NOT "%ROMCHECK%"=="" set "CMDTOEXEC=python -c \"import diambraArena, os; diambraArena.checkGameSha256(os.path.join(os.getenv('DIAMBRAROMSPATH'), '%ROMCHECK%'))\""
 
 if "%PYTHONFILE%"=="" IF "%CMDTOEXEC%"=="" (
   echo ERROR. Either PYTHONFILE or CMDTOEXEC arguments must be provided when launching the run command
