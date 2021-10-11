@@ -3,7 +3,7 @@
         { 
             "name": "Dead Or Alive ++", 
             "id": "doapp",
-            "rom_name": "doapp.zip", 
+            "original_rom_name": "doapp.zip", 
             "search_keywords": ["DEAD OR ALIVE ++ [JAPAN]", "dead-or-alive-japan", "80781", "wowroms"],
             "notes": "",
             "nvramSave": "at28c16",
@@ -18,7 +18,7 @@
         {
             "name": "Street Fighter III",
             "id": "sfiii3n",
-            "rom_name": "sfiii3n.zip",
+            "original_rom_name": "sfiii3n.zip",
             "search_keywords": ["STREET FIGHTER III 3RD STRIKE: FIGHT FOR THE FUTUR [JAPAN] (CLONE)", "street-fighter-iii-3rd-strike-fight-for-the-futur-japan-clone", "106255", "wowroms"],
             "notes": "",
             "nvramSave": "",
@@ -33,7 +33,7 @@
         {
             "name": "Tekken Tag Tournament",
             "id": "tektagt",
-            "rom_name": "tektagt.zip",
+            "original_rom_name": "tektagtac.zip",
             "search_keywords": ["TEKKEN TAG TOURNAMENT [ASIA] (CLONE)", "tekken-tag-tournament-asia-clone", "108661", "wowroms"],
             "notes": "Rename the rom from tektagtac.zip to tektagt.zip",
             "nvramSave": "at28c16",
@@ -52,7 +52,7 @@
         { 
             "name": "Ultimate Mortal Kombat 3",
             "id": "umk3",
-            "rom_name": "umk3.zip",
+            "original_rom_name": "umk3r10.zip",
             "search_keywords": ["ULTIMATE MORTAL KOMBAT 3 (CLONE)", "ultimate-mortal-kombat-3-clone", "109574", "wowroms"],
             "notes": "Rename the rom from umk3r10.zip to umk3.zip",
             "nvramSave": "nvram",
@@ -69,7 +69,7 @@
         { 
             "name": "Samurai Showdown 5 Special",
             "id": "samsh5sp",
-            "rom_name": "samsh5sp.zip",
+            "original_rom_name": "samsh5sp.zip",
             "search_keywords": ["SAMURAI SHODOWN V SPECIAL", "samurai-shodown-v-special", "100347", "wowroms"],
             "notes": "",
             "nvramSave": "",

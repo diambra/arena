@@ -199,7 +199,7 @@ def availableGames(printOut=True, details=False):
             print("   Difficulty levels: Min {} - Max {}".format(v["difficulty"][0], v["difficulty"][1]))
             if details:
                 print("   SHA256 sum: {}".format(v["sha256"]))
-                print("   Rom name: {}".format(v["rom_name"]))
+                print("   Original ROM name: {}".format(v["original_rom_name"]))
                 print("   Search keywords: {}".format(v["search_keywords"]))
                 if v["notes"] != "":
                     print("   " + "\033[91m\033[4m\033[1m" + "Notes: {}".format(v["notes"]) + "\033[0m")
