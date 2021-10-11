@@ -30,7 +30,7 @@ echo    -h Prints out this help message.
 echo.
 echo    -l Prints out available games list.
 echo.
-echo    "ROMCHECK=<romFile.zip>" Check ROM file validity.
+echo    "ROMCHECK=<romFile>.zip" Check ROM file validity.
 echo.
 echo    "ROMSPATH=<path>" Specify your local path where game ROMs are located. 
 echo                      (Mandatory to run environments.)
@@ -43,10 +43,10 @@ echo                          Can be used to start and interactive linux shell, 
 echo.
 echo    "GUI=<X>" Specify if to run in Headless mode (X=0, default) or with GUI support (X=1)
 echo.
-echo    "ENVDISPLAYIP=<vEthernetIP>:0.0" Specify the vEthernet IP Address on which the Virtual X Server is listening. 
-echo                                     The address can be retrieved using `ipconfig` command, 
-echo                                     look for `Default Switch` or `WSL` in connection details.
-echo                                     (Mandatory for executions with GUI support.)
+echo    "ENVDISPLAYIP=<vEthernetIP>" Specify the vEthernet IP Address on which the Virtual X Server is listening. 
+echo                                 The address can be retrieved using `ipconfig` command, 
+echo                                 look for `Default Switch` or `WSL` in connection details.
+echo                                 (Optional, the script will try to recover it automatically.)
 echo. 
 echo    "XSRVPATH=<path>" Specify where Windows X Server executable is located.
 echo                      Standard location is usually `C:\Program Files\vcxsrv.exe`
@@ -56,6 +56,11 @@ echo    "VOLUME=<name>" Specify the name of the volume where to store pip packag
 echo                    installed inside the container to make them persistent. (Optional)
 echo.
 echo Examples:
+echo    - Availble games list with details: diambraArena.bat -l
+echo. 
+echo    - ROM File Validation: diambraArena.bat "ROMSPATH=your\roms\local\path"
+echo                                            "ROMCHECK=<romFile>.zip"
+echo.
 echo    - Headless: diambraArena.bat "ROMSPATH=your\roms\local\path"
 echo                                 "PYTHONFILE=yourPythonScriptInCurrentDir.py"
 echo                                 "VOLUME=yourVolumeName" (optional)
@@ -63,8 +68,8 @@ echo.
 echo    - With GUI: diambraArena.bat "ROMSPATH=your\roms\local\path" 
 echo                                 "PYTHONFILE=yourPythonScriptInCurrentDir.py"
 echo                                 "GUI=1" 
-echo                                 "ENVDISPLAYIP=<vEthernetIP>:0.0"
-echo                                 "XSRVPATH=<pathToVcXsrv>"  (optional)
+echo                                 "ENVDISPLAYIP=<vEthernetIP>" (optional)
+echo                                 "XSRVPATH=<pathToVcXsrv>" (optional)
 echo                                 "VOLUME=yourVolumeName" (optional)
 echo.
 echo    - Terminal: diambraArena.bat "CMDTOEXEC=bash"
@@ -73,9 +78,12 @@ goto end
  :skipUsage
 
 if %1==-h goto :usage
-if %1==-l set CMDTOEXEC="python -c \"import diambraArena; diambraArena.availableGames(True, True)\""
+if %1==-l (
+  set "CMDTOEXEC=python -c 'import diambraArena; diambraArena.availableGames(True, True)'"
+) else (
+  set %1
+)
 
-set %1
 if not "%~2"=="" set %2
 if not "%~3"=="" set %3
 if not "%~4"=="" set %4
@@ -85,16 +93,13 @@ if not "%~6"=="" set %6
 echo DIAMBRAROMSPATH ENV VAR = %DIAMBRAROMSPATH%
 if NOT "%DIAMBRAROMSPATH%"=="" if "%ROMSPATH%"=="" set "ROMSPATH=%DIAMBRAROMSPATH%"
 
-if NOT "%ROMCHECK%"=="" set "CMDTOEXEC=python -c \"import diambraArena, os; diambraArena.checkGameSha256(os.path.join(os.getenv('DIAMBRAROMSPATH'), '%ROMCHECK%'))\""
+if NOT "%ROMCHECK%"=="" set "CMDTOEXEC=python -c 'import diambraArena, os; diambraArena.checkGameSha256(os.path.join(os.getenv(\"DIAMBRAROMSPATH\"), \"%ROMCHECK%\"))'"
 
 if "%PYTHONFILE%"=="" IF "%CMDTOEXEC%"=="" (
   echo ERROR. Either PYTHONFILE or CMDTOEXEC arguments must be provided when launching the run command
   goto usage
 )
-if "%GUI%"=="1" IF "%ENVDISPLAYIP%"=="" (
-  echo ERROR. When running with GUI active, ENVDISPLAYIP arugment must be provided
-  goto usage
-)
+
 if NOT "%PYTHONFILE%"=="" IF "%CMDTOEXEC%"=="" set "CMDTOEXEC=python %PYTHONFILE%"
 
 set "CURDIR="%cd%""
@@ -124,6 +129,18 @@ if "%GUI%"=="0" (
 ) else (
   rem VcXsrv options https://gist.github.com/ctaggart/68ead4d0d942b240061086f4ba587f5f
 
+  if "%ENVDISPLAYIP%"=="" (
+    echo Trying to retrieve ENVDISPLAYIP automatically ...
+    set "ENVDISPLAYIP="
+    for /f "delims=[] tokens=2" %%a in ('ping -4 -n 1 %ComputerName% ^| findstr [') do set "ENVDISPLAYIP=%%a"
+
+    if "!ENVDISPLAYIP!"=="" (
+      echo "ERROR. Unable to retrieve ENVDISPLAYIP, provide it as a command line argument"
+      goto usage
+    )
+    echo ENVDISPLAYIP retrieved: !ENVDISPLAYIP!
+  )
+
   if "%XSRVPATH%"=="" (
 
     echo Trying to retrieve XSRVPATH automatically ...
@@ -143,7 +160,7 @@ if "%GUI%"=="0" (
   echo Running Virtual X Server ...
   START /B CMD /C CALL "!XSRVPATH!" -noprimary -nowgl -ac -displayfd 664 -screen 0 400x300@1
   echo Running DIAMBRA Arena docker container ...
-  docker run -it --rm --privileged -e DISPLAY="%ENVDISPLAYIP%" %ROMSPATH% %VOLUME% ^
+  docker run -it --rm --privileged -e DISPLAY="!ENVDISPLAYIP!:0.0" %ROMSPATH% %VOLUME% ^
    --mount src=%CURDIR%,target="/opt/diambraArena/code",type=bind ^
    --name diambraArena diambra:diambra-arena-base ^
    sh -c "cd /opt/diambraArena/code/ && %CMDTOEXEC%"
