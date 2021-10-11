@@ -200,6 +200,9 @@ def availableGames(printOut=True, details=False):
             if details:
                 print("   SHA256 sum: {}".format(v["sha256"]))
                 print("   Rom name: {}".format(v["rom_name"]))
+                print("   Search keywords: {}".format(v["search_keywords"]))
+                if v["notes"] != "":
+                    print("   " + "\033[91m\033[4m\033[1m" + "Notes: {}".format(v["notes"]) + "\033[0m")
                 print("   Characters list: {}".format(v["charList"]))
     else:
         return gamesDict
