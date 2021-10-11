@@ -5,12 +5,11 @@ osName=$(uname -s)
 
 function usage() {
 
-  echo "Usage:"
+  echo -e "\033[1mUsage:\033[0m"
   echo " "
   echo "  ./diambraArena.sh [OPTIONS]"
   echo " "
-
-  echo "OPTIONS:"
+  echo -e "\033[1mOPTIONS:\033[0m"
   echo "  -h Prints out this help message."
   echo " "
   echo "  -l Prints out available games list."
@@ -44,7 +43,7 @@ function usage() {
   echo "  -v <name> Specify the name of the volume where to store pip packages"
   echo "            installed inside the container to make them persistent. (Optional)"
   echo " " 
-  echo "Examples:"
+  echo -e "\033[1mExamples:\033[0m"
   echo "  - Availble games list with details: ./diambraArena.sh -l"
   echo " "
   echo "  - ROM File Validation: ./diambraArena.sh -r \"your/roms/local/path\""
