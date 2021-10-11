@@ -7,7 +7,7 @@ function usage() {
 
   echo "Usage:"
   echo " "
-  echo "  ./runDocker.sh [OPTIONS]"
+  echo "  ./diambraArena.sh [OPTIONS]"
   echo " "
 
   echo "OPTIONS:"
@@ -18,7 +18,7 @@ function usage() {
   echo "  -t <romFile.zip> Checks ROM file validity."
   echo " "
   echo "  -r \"<path>\" Specify your local path to where game roms are located."
-  echo "              (Mandatory to run environments.)"
+  echo "              (Mandatory to run environments and to check ROM validity.)"
   echo " "
   echo "  -s <file> Python script to run inside docker container."
   echo "            Must be located in the folder from where the bash script is executed."
@@ -45,39 +45,39 @@ function usage() {
   echo "            installed inside the container to make them persistent. (Optional)"
   echo " " 
   echo "Examples:"
-  echo "  - Availble games list with details: ./runDocker.sh -l"
+  echo "  - Availble games list with details: ./diambraArena.sh -l"
   echo " "
-  echo "  - ROM File Validation: ./runDocker.sh -r \"your/roms/local/path\""
-  echo "                                        -t romFile.zip"
+  echo "  - ROM File Validation: ./diambraArena.sh -r \"your/roms/local/path\""
+  echo "                                           -t romFile.zip"
   echo " "
-  echo "  - Headless (CPU): ./runDocker.sh -r \"your/roms/local/path\""
-  echo "                                   -s yourPythonScriptInCurrentDir.py"
-  echo "                                   -v yourVolumeName (optional)"
+  echo "  - Headless (CPU): ./diambraArena.sh -r \"your/roms/local/path\""
+  echo "                                      -s yourPythonScriptInCurrentDir.py"
+  echo "                                      -v yourVolumeName (optional)"
   echo " "      
   if [ $osName == "Linux" ]
   then
-    echo "  - Headless (GPU): ./runDocker.sh -r \"your/roms/local/path\""
-    echo "                                   -s yourPythonScriptInCurrentDir.py"
-    echo "                                   -d GPU"
-    echo "                                   -v yourVolumeName (optional)"
+    echo "  - Headless (GPU): ./diambraArena.sh -r \"your/roms/local/path\""
+    echo "                                      -s yourPythonScriptInCurrentDir.py"
+    echo "                                      -d GPU"
+    echo "                                      -v yourVolumeName (optional)"
     echo " "
   fi
-  echo "  - With GUI (CPU): ./runDocker.sh -r \"your/roms/local/path\""
-  echo "                                   -s yourPythonScriptInCurrentDir.py"
-  echo "                                   -g 1"
+  echo "  - With GUI (CPU): ./diambraArena.sh -r \"your/roms/local/path\""
+  echo "                                      -s yourPythonScriptInCurrentDir.py"
+  echo "                                      -g 1"
   if [ $osName != "Linux" ] 
   then
-    echo "                                   -e <vEthernetIP>:0.0"
+    echo "                                      -e <vEthernetIP>:0.0"
   fi
-  echo "                                   -v yourVolumeName (optional)"
+  echo "                                      -v yourVolumeName (optional)"
   echo " "
-  echo "  - Terminal (CPU): ./runDocker.sh -c bash"
-  echo "                                   -v yourVolumeName (optional)"
+  echo "  - Terminal (CPU): ./diambraArena.sh -c bash"
+  echo "                                      -v yourVolumeName (optional)"
   echo " "
   if [ $osName == "Linux" ]
   then
-    echo "  - CUDA Installation Test (GPU): ./runDocker.sh -c \"cat /proc/driver/nvidia/version; nvcc -V\""
-    echo "                                                 -d GPU"
+    echo "  - CUDA Installation Test (GPU): ./diambraArena.sh -c \"cat /proc/driver/nvidia/version; nvcc -V\""
+    echo "                                                    -d GPU"
   fi
   echo " "
 }

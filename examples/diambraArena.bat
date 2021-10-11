@@ -23,7 +23,7 @@ goto skipUsage
  :usage
 echo Usage: 
 echo.
-echo    runDocker.bat [OPTIONS]
+echo    diambraArena.bat [OPTIONS]
 echo.
 echo  OPTIONS:
 echo    -h Prints out this help message.
@@ -56,19 +56,19 @@ echo    "VOLUME=<name>" Specify the name of the volume where to store pip packag
 echo                    installed inside the container to make them persistent. (Optional)
 echo.
 echo Examples:
-echo    - Headless: runDocker.bat "ROMSPATH=your\roms\local\path"
-echo                              "PYTHONFILE=yourPythonScriptInCurrentDir.py"
-echo                              "VOLUME=yourVolumeName" (optional)
+echo    - Headless: diambraArena.bat "ROMSPATH=your\roms\local\path"
+echo                                 "PYTHONFILE=yourPythonScriptInCurrentDir.py"
+echo                                 "VOLUME=yourVolumeName" (optional)
 echo.
-echo    - With GUI: runDocker.bat "ROMSPATH=your\roms\local\path" 
-echo                              "PYTHONFILE=yourPythonScriptInCurrentDir.py"
-echo                              "GUI=1" 
-echo                              "ENVDISPLAYIP=<vEthernetIP>:0.0"
-echo                              "XSRVPATH=<pathToVcXsrv>"  (optional)
-echo                              "VOLUME=yourVolumeName" (optional)
+echo    - With GUI: diambraArena.bat "ROMSPATH=your\roms\local\path" 
+echo                                 "PYTHONFILE=yourPythonScriptInCurrentDir.py"
+echo                                 "GUI=1" 
+echo                                 "ENVDISPLAYIP=<vEthernetIP>:0.0"
+echo                                 "XSRVPATH=<pathToVcXsrv>"  (optional)
+echo                                 "VOLUME=yourVolumeName" (optional)
 echo.
-echo    - Terminal: runDocker.bat "CMDTOEXEC=bash"
-echo                              "VOLUME=yourVolumrName" (optional)
+echo    - Terminal: diambraArena.bat "CMDTOEXEC=bash"
+echo                                 "VOLUME=yourVolumrName" (optional)
 goto end
  :skipUsage
 
