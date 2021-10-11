@@ -195,7 +195,7 @@ def availableGames(printOut=True, details=False):
     if printOut:
         for k, v in gamesDict.items():
             print("")
-            print(" Title: {} - ID: {}".format(v["name"], v["id"]))
+            print(" Title: {} - GameId: {}".format(v["name"], v["id"]))
             print("   Difficulty levels: Min {} - Max {}".format(v["difficulty"][0], v["difficulty"][1]))
             if details:
                 print("   SHA256 sum: {}".format(v["sha256"]))
