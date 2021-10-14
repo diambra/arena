@@ -95,6 +95,7 @@ class diambraArenaLib:
         baseEnvKwargs["render"] = True
         baseEnvKwargs["lockFps"] = True
         baseEnvKwargs["difficulty"] = 3
+        baseEnvKwargs["tower"] = 3
         baseEnvKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
         baseEnvKwargs["charOutfits"] = [2, 2]
         baseEnvKwargs["superArt"] = [1, 1]
@@ -130,6 +131,7 @@ class diambraArenaLib:
         output += "charOutfits2"+     "+1+" + str(baseEnvKwargs["charOutfits"][1]) + "+"
         output += "superArt1"+        "+1+" + str(baseEnvKwargs["superArt"][0]) + "+"
         output += "superArt2"+        "+1+" + str(baseEnvKwargs["superArt"][1]) + "+"
+        output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
         output += "headless"+         "+0+" + str(int(baseEnvKwargs["headless"])) + "+"
         output += "displayNum"+       "+2+" + baseEnvKwargs["displayNum"] + "+"
         output += "disableKeyboard"+  "+0+" + str(int(baseEnvKwargs["disableKeyboard"])) + "+"
