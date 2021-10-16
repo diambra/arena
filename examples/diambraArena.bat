@@ -43,10 +43,15 @@ echo                          Can be used to start and interactive linux shell, 
 echo.
 echo    "GUI=<X>" Specify if to run in Headless mode (X=0, default) or with GUI support (X=1)
 echo.
+
+set "ENVDISPLAYIP="
+for /f "delims=[] tokens=2" %%a in ('ping -4 -n 1 %ComputerName% ^| findstr [') do set "ENVDISPLAYIP=%%a"
+
 echo    "ENVDISPLAYIP=<vEthernetIP>" Specify the vEthernet IP Address on which the Virtual X Server is listening. 
 echo                                 The address can be retrieved using `ipconfig` command, 
 echo                                 look for `Default Switch` or `WSL` in connection details.
-echo                                 (Optional, the script will try to recover it automatically.)
+echo                                 (Optional, the script will use !ENVDISPLAYIP! (automatically recovered)
+echo                                 for executions with GUI support. If it's not correct, please provide it with this option.)
 echo. 
 echo    "XSRVPATH=<path>" Specify where Windows X Server executable is located.
 echo                      Standard location is usually `C:\Program Files\vcxsrv.exe`

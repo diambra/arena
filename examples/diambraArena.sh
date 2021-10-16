@@ -34,10 +34,11 @@ function usage() {
     echo "              Requires Nvidia-Docker Toolkit installed"
     echo " " 
   else
+    envDisplayIp=$(ifconfig en0 | awk '/inet /&&!/127.0.0.1/{print $2}')
     echo "  -e <vEthernetIP>:0.0 Specify the vEthernet IP Address on which the Virtual X Server is listening."
-    echo "                       The address can be retrieved using `ifconfig` command,"
-    echo "                       look for \`docker0\` in connection details."
-    echo "                       (Mandatory for executions with GUI support.)"
+    echo "                       The address can be retrieved using 'ifconfig en0' command."
+    echo "                       (Optional, the script will use $vEthIp (automatically recovered)"
+    echo "                       for executions with GUI support. If it's not correct, please provide it with this option.)"
     echo " " 
   fi
   echo "  -v <name> Specify the name of the volume where to store pip packages"
@@ -66,7 +67,7 @@ function usage() {
   echo "                                      -g 1"
   if [ $osName != "Linux" ] 
   then
-    echo "                                      -e <vEthernetIP>:0.0"
+    echo "                                      -e <vEthernetIP>:0.0 (optional, default=$vEthIp)"
   fi
   echo "                                      -v yourVolumeName (optional)"
   echo " "
@@ -141,11 +142,19 @@ then
   fi
   if [ $osName != "Linux" ]
   then 
-    if [ $envDisplayIp == "" ]
+    if [ "$envDisplayIp" == "" ]
     then
-      echo "ERROR: No Env Variable for Display IP set, use \"-e\" to provide it as a command line argument."
-      usage
-      exit 1
+      echo "Trying to retrieve ENVDISPLAYIP automatically ..."
+      envDisplayIp=$(ifconfig en0 | awk '/inet /&&!/127.0.0.1/{print $2}')
+
+      if [ "$envDisplayIp" == "" ]
+        then
+        echo "ERROR: Unable to retrieve ENVDISPLAYIP, provide it a command line argument."
+        usage
+        exit 1
+      fi
+ 
+      echo "ENVDISPLAYIP found in $envDisplayIp"
    
     fi
   fi
@@ -222,9 +231,10 @@ else
       #sh -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
   else
     echo "Running Virtual X Server ..."
-    # TODO: Start X Server Quartz?
-    echo "Running DIAMBRA Arena docker container ..."
-    docker run -it --rm $gpuSetup --privileged -e DISPLAY="$envDisplayIp" $volume $romsPath \
+    # https://www.xquartz.org/releases/XQuartz-2.7.8.html
+    socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &>/dev/null & sleep 15s; open -a xquartz; sleep 5s; \
+    echo "Running DIAMBRA Arena docker container ..."; \
+    docker run -it --rm $gpuSetup --privileged -e DISPLAY="$envDisplayIp:0.0" $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
