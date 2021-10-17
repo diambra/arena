@@ -103,8 +103,8 @@ class diambraArenaLib:
         baseEnvKwargs["displayNum"] = ":1"
         baseEnvKwargs["disableKeyboard"] = True
         baseEnvKwargs["disableJoystick"] = True
-        baseEnvKwargs["recordConfigFile"] = "\"\""
         baseEnvKwargs["rank"] = 0
+        baseEnvKwargs["recordConfigFile"] = "\"\""
 
         for k, v in envKwargs.items():
             baseEnvKwargs[k] = v
@@ -136,8 +136,8 @@ class diambraArenaLib:
         output += "displayNum"+       "+2+" + baseEnvKwargs["displayNum"] + "+"
         output += "disableKeyboard"+  "+0+" + str(int(baseEnvKwargs["disableKeyboard"])) + "+"
         output += "disableJoystick"+  "+0+" + str(int(baseEnvKwargs["disableJoystick"])) + "+"
-        output += "recordConfigFile"+ "+2+" + baseEnvKwargs["recordConfigFile"] + "+"
         output += "rank"+             "+1+" + str(baseEnvKwargs["rank"]) + "+"
+        output += "recordConfigFile"+ "+2+" + baseEnvKwargs["recordConfigFile"] + "+"
 
         return output
 
