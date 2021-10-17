@@ -1,9 +1,11 @@
-import gym
+import gym, os
 from gym import spaces
 import numpy as np
 import pickle, bz2, cv2
 import numpy as np
+import json
 from threading import Thread
+import hashlib
 
 # Save compressed pickle files in parallel
 class parallelPickleWriter(Thread): # def class typr thread
@@ -182,3 +184,75 @@ def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
             cv2.imshow("Frame-"+str(idx), obs[:,:,idx])
 
         cv2.waitKey(waitKey)
+
+# List all available games
+def availableGames(printOut=True, details=False):
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
+    gamesFile = open(gamesFilePath)
+    gamesDict = json.load(gamesFile)
+
+    if printOut:
+        for k, v in gamesDict.items():
+            print("")
+            print(" Title: {} - GameId: {}".format(v["name"], v["id"]))
+            print("   Difficulty levels: Min {} - Max {}".format(v["difficulty"][0], v["difficulty"][1]))
+            if details:
+                print("   SHA256 sum: {}".format(v["sha256"]))
+                print("   Original ROM name: {}".format(v["original_rom_name"]))
+                print("   Search keywords: {}".format(v["search_keywords"]))
+                if v["notes"] != "":
+                    print("   " + "\033[91m\033[4m\033[1m" + "Notes: {}".format(v["notes"]) + "\033[0m")
+                print("   Characters list: {}".format(v["charList"]))
+    else:
+        return gamesDict
+
+# List sha256 per game
+def gameSha256(gameId=None):
+
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
+    gamesFile = open(gamesFilePath)
+    gamesDict = json.load(gamesFile)
+
+    if gameId == None:
+        for k, v in gamesDict.items():
+            print("")
+            print(" Title: {}\n ID: {}\n SHA256: {}".format(v["name"], v["id"], v["sha256"]))
+    else:
+        v = gamesDict[gameId]
+        print(" Title: {}\n ID: {}\n SHA256: {}".format(v["name"], v["id"], v["sha256"]))
+
+# Check rom sha256
+def sha256_checksum(filename, block_size=65536):
+    sha256 = hashlib.sha256()
+    with open(filename, 'rb') as f:
+        for block in iter(lambda: f.read(block_size), b''):
+            sha256.update(block)
+    return sha256.hexdigest()
+
+def checkGameSha256(path, gameId=None):
+
+    basePath = os.path.dirname(os.path.abspath(__file__))
+    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
+    gamesFile = open(gamesFilePath)
+    gamesDict = json.load(gamesFile)
+
+    fileChecksum = sha256_checksum(path)
+
+    if gameId == None:
+
+        found = False
+        for k, v in gamesDict.items():
+            if fileChecksum == v["sha256"]:
+                found = True
+                print("Correct ROM file for {}, sha256 = {}".format(v["name"], v["sha256"]))
+                break
+        if found == False:
+            print("ERROR: ROM file not valid")
+    else:
+        if fileChecksum == gamesDict[gameId]["sha256"]:
+            print("Correct ROM file for {}, sha256 = {}".format(gamesDict[gameId]["name"], v["sha256"]))
+        else:
+            print("Expected  SHA256 Checksum: {}".format(gamesDict[gameId]["sha256"]))
+            print("Retrieved SHA256 Checksum: {}".format(fileChecksum))

@@ -501,7 +501,7 @@ class diambraGym2P(diambraGymHardCore2P):
 def makeGymEnv(envPrefix, diambraKwargs, diambraGymKwargs, hardCore):
 
     # Check mandatory parameters
-    mandatoryParams = ["gameId", "romsPath"]
+    mandatoryParams = ["gameId"]
     for param in mandatoryParams:
         if param not in diambraKwargs:
             raise RuntimeError("\"{}\" is a mandatory parameter.".format(param))
@@ -509,6 +509,22 @@ def makeGymEnv(envPrefix, diambraKwargs, diambraGymKwargs, hardCore):
     # Default to single player mode
     if "player" not in diambraKwargs:
         diambraKwargs["player"] = "Random"
+    # Default to not headless mode
+    if "headless" not in diambraKwargs:
+        diambraKwargs["headless"] = False
+    # Retrieve roms path from ENV variables
+    if "romsPath" not in diambraKwargs:
+        if os.getenv("DIAMBRAROMSPATH") == None:
+            raise RuntimeError("\"romsPath\" is a mandatory parameter, either add"+\
+                               " it to DIAMBRAROMSPATH environment variable or specify it via DIAMBRA kwargs.")
+        else:
+            diambraKwargs["romsPath"] = os.getenv("DIAMBRAROMSPATH")
+
+    # Check for OS var DISPLAY
+    if os.getenv("DISPLAY") == None:
+        print("No DISPLAY environment variable detected, activating HEADLESS mode, and deactivating lockFps if active")
+        diambraKwargs["headless"] = True
+        diambraKwargs["lockFps"]  = False
 
     if diambraKwargs["player"] != "P1P2": #1P Mode
         if hardCore:

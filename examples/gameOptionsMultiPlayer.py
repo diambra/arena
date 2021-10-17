@@ -4,14 +4,15 @@ import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=True, help='Absolute path to roms')
+parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
 opt = parser.parse_args()
 print(opt)
 
 # Mandatory parameters
 diambraKwargs = {}
 diambraKwargs["gameId"]   = "doapp" # Game selection
-diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
+if opt.romsPath is not None:
+    diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
 envId = "TestEnv" # This ID must be unique for every instance of the environment
 
 # Additional game options

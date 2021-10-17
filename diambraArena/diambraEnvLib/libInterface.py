@@ -59,7 +59,8 @@ class diambraArenaLib:
         self.diambraEnvThread.start()
 
         # Splash Screen
-        splashScreen = DIAMBRASplashScreen()
+        if not diambraEnvKwargs["headless"]:
+            DIAMBRASplashScreen()
 
         # Signal file definition
         tmpPathFileName = "pipesTmp" + envId + ".log"
@@ -92,17 +93,18 @@ class diambraArenaLib:
         baseEnvKwargs["showFinal"] = True
         baseEnvKwargs["stepRatio"] = 6
         baseEnvKwargs["render"] = True
-        baseEnvKwargs["lockFps"] = False
+        baseEnvKwargs["lockFps"] = True
         baseEnvKwargs["difficulty"] = 3
         baseEnvKwargs["tower"] = 3
         baseEnvKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
         baseEnvKwargs["charOutfits"] = [2, 2]
         baseEnvKwargs["superArt"] = [1, 1]
         baseEnvKwargs["headless"] = False
-        baseEnvKwargs["displayNum"] = 1
+        baseEnvKwargs["displayNum"] = ":1"
         baseEnvKwargs["disableKeyboard"] = True
         baseEnvKwargs["disableJoystick"] = True
-        baseEnvKwargs["recordConfigFile"] = ""
+        baseEnvKwargs["rank"] = 0
+        baseEnvKwargs["recordConfigFile"] = "\"\""
 
         for k, v in envKwargs.items():
             baseEnvKwargs[k] = v
@@ -121,6 +123,7 @@ class diambraArenaLib:
         output += "sound"+            "+0+" + str(int(baseEnvKwargs["render"] and baseEnvKwargs["lockFps"])) + "+"
         output += "player"+           "+2+" + baseEnvKwargs["player"] + "+"
         output += "difficulty"+       "+1+" + str(baseEnvKwargs["difficulty"]) + "+"
+        output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
         output += "character1"+       "+2+" + baseEnvKwargs["characters"][0][0] + "+"
         output += "character2"+       "+2+" + baseEnvKwargs["characters"][1][0] + "+"
         output += "character1_2"+     "+2+" + baseEnvKwargs["characters"][0][1] + "+"
@@ -129,11 +132,11 @@ class diambraArenaLib:
         output += "charOutfits2"+     "+1+" + str(baseEnvKwargs["charOutfits"][1]) + "+"
         output += "superArt1"+        "+1+" + str(baseEnvKwargs["superArt"][0]) + "+"
         output += "superArt2"+        "+1+" + str(baseEnvKwargs["superArt"][1]) + "+"
-        output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
         output += "headless"+         "+0+" + str(int(baseEnvKwargs["headless"])) + "+"
-        output += "displayNum"+       "+2+" + str(baseEnvKwargs["displayNum"]) + "+"
+        output += "displayNum"+       "+2+" + baseEnvKwargs["displayNum"] + "+"
         output += "disableKeyboard"+  "+0+" + str(int(baseEnvKwargs["disableKeyboard"])) + "+"
         output += "disableJoystick"+  "+0+" + str(int(baseEnvKwargs["disableJoystick"])) + "+"
+        output += "rank"+             "+1+" + str(baseEnvKwargs["rank"]) + "+"
         output += "recordConfigFile"+ "+2+" + baseEnvKwargs["recordConfigFile"] + "+"
 
         return output

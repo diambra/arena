@@ -1,5 +1,13 @@
 import diambraArena
-import argparse
+import argparse, time
+import numpy as np
+
+def reject_outliers(data):
+    m = 2
+    u = np.mean(data)
+    s = np.std(data)
+    filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
+    return filtered
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
@@ -11,15 +19,27 @@ diambraKwargs = {}
 diambraKwargs["gameId"]   = "doapp" # Game selection
 if opt.romsPath is not None:
     diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
+diambraKwargs["stepRatio"] = 1
+diambraKwargs["lockFps"] = False
+diambraKwargs["render"] = False
+diambraKwargs["headless"] = False
 envId = "TestEnv" # This ID must be unique for every instance of the environment
 
 env = diambraArena.make(envId, diambraKwargs)
 
 observation = env.reset()
 
+tic = time.time()
+fpsVal = []
+
 while True:
 
-    actions = env.action_space.sample()
+    toc = time.time()
+    fps = 1/(toc - tic)
+    tic = toc
+    fpsVal.append(fps)
+
+    actions = [0, 0]
 
     observation, reward, done, info = env.step(actions)
 
@@ -28,3 +48,7 @@ while True:
         break
 
 env.close()
+
+fpsVal2 = reject_outliers(fpsVal)
+avgFps = np.mean(fpsVal2)
+print("Average speed = {} FPS, STD {} FPS".format(avgFps, np.std(fpsVal2)))
