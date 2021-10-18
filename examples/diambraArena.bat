@@ -21,11 +21,11 @@ if "%~1"=="" (
 )
 goto skipUsage
  :usage
-echo [1mUsage:[0m 
+echo [1mUsage:[0m
 echo.
 echo    diambraArena.bat [OPTIONS]
 echo.
-echo [1mOPTIONS:[0m
+echo [1mOPTIONS:[0m
 echo    -h Prints out this help message.
 echo.
 echo    -l Prints out available games list.
@@ -60,7 +60,7 @@ echo.
 echo    "VOLUME=<name>" Specify the name of the volume where to store pip packages 
 echo                    installed inside the container to make them persistent. (Optional)
 echo.
-echo [1mExamples:[0m
+echo [1mExamples:[0m
 echo    - Availble games list with details: diambraArena.bat -l
 echo. 
 echo    - ROM File Validation: diambraArena.bat "ROMSPATH=your\roms\local\path"
