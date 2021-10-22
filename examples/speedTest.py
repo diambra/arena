@@ -15,17 +15,16 @@ opt = parser.parse_args()
 print(opt)
 
 # Mandatory parameters
-diambraKwargs = {}
-diambraKwargs["gameId"]   = "doapp" # Game selection
+settings = {}
+settings["gameId"]   = "doapp"
 if opt.romsPath is not None:
-    diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
-diambraKwargs["stepRatio"] = 1
-diambraKwargs["lockFps"] = False
-diambraKwargs["render"] = False
-diambraKwargs["headless"] = False
-envId = "TestEnv" # This ID must be unique for every instance of the environment
+    settings["romsPath"] = opt.romsPath
 
-env = diambraArena.make(envId, diambraKwargs)
+settings["stepRatio"] = 1
+settings["lockFps"] = False
+settings["render"] = False
+
+env = diambraArena.make("TestEnv", settings)
 
 observation = env.reset()
 
