@@ -25,29 +25,27 @@ if __name__ == '__main__':
 
         homeDir = expanduser("~")
 
-        # Common settings
-        diambraKwargs = {}
-        diambraKwargs["romsPath"] = opt.romsPath
+        # Settings
+        settings = {}
+        settings["romsPath"] = opt.romsPath
         if opt.libPath != "":
-            diambraKwargs["libPath"]  = opt.libPath
+            settings["libPath"]  = opt.libPath
 
-        diambraKwargs["gameId"]     = opt.gameId
-        diambraKwargs["player"]     = "P1P2"
-        diambraKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
+        settings["gameId"]     = opt.gameId
+        settings["player"]     = "P1P2"
+        settings["characters"] = [["Random", "Random"], ["Random", "Random"]]
 
-        diambraKwargs["stepRatio"] = 3
-        diambraKwargs["render"] = True
-        diambraKwargs["lockFps"] = False
+        settings["stepRatio"] = 3
+        settings["render"] = True
+        settings["lockFps"] = False
 
-        diambraKwargs["continueGame"] = opt.continueGame
-        diambraKwargs["showFinal"]    = False
+        settings["continueGame"] = opt.continueGame
+        settings["showFinal"]    = False
 
-        diambraKwargs["charOutfits"] = [2, 2]
+        settings["charOutfits"] = [2, 2]
 
-        # DIAMBRA gym kwargs
-        diambraGymKwargs = {}
-        diambraGymKwargs["actionSpace"] = ["discrete", "discrete"]
-        diambraGymKwargs["attackButCombinations"] = [False, False]
+        settings["actionSpace"] = ["discrete", "discrete"]
+        settings["attackButCombination"] = [False, False]
 
         trajRecKwargs = None
 
@@ -65,14 +63,11 @@ if __name__ == '__main__':
 
         envId = opt.gameId + "_timeUpTestWrappers"
         hardCore = False
-        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
-                                wrapperKwargs, trajRecKwargs,
+        env = diambraArena.make(envId, settings, wrapperKwargs, trajRecKwargs,
                                 seed=timeDepSeed, hardCore=hardCore)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)
-
-        actionsPrintDict = env.printActionsDict
 
         observation = env.reset()
 

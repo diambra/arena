@@ -11,16 +11,16 @@ class diambraGymHardCoreBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, envId, diambraEnvKwargs, rewNormFac, actionSpace, attackButCombinations):
+    def __init__(self, envId, diambraEnvKwargs, rewNormFac, actionSpace, attackButCombination):
         super(diambraGymHardCoreBase, self).__init__()
 
         self.rewNormFac = rewNormFac
         self.actionSpace = actionSpace
-        self.attackButCombinations=attackButCombinations
+        self.attackButCombination=attackButCombination
 
         print("EnvId = {}".format(envId))
         print("Action Spaces = {}".format(self.actionSpace))
-        print("Use attack buttons combinations = {}".format(self.attackButCombinations))
+        print("Use attack buttons combinations = {}".format(self.attackButCombination))
 
         # Launch DIAMBRA Arena
         self.diambraArena = diambraArenaLib(envId, diambraEnvKwargs)
@@ -45,7 +45,7 @@ class diambraGymHardCoreBase(gym.Env):
         # N actions
         self.nActions = [self.nActionsButComb, self.nActionsButComb]
         for idx in range(2):
-            if not self.attackButCombinations[idx]:
+            if not self.attackButCombination[idx]:
                 self.nActions[idx] = self.nActionsNoButComb
 
         # Frame height, width and channel dimensions
@@ -116,9 +116,15 @@ class diambraGymHardCoreBase(gym.Env):
     def actionList(self):
         return self.actionList
 
-    # Return actions dict
-    def printActionsDict(self):
-        return self.printActionsDict
+    # Print Actions
+    def printActions(self):
+        print("Move actions:")
+        for k, v in self.printActionsDict[0].items():
+            print(" {}: {}".format(k,v))
+
+        print("Attack actions:")
+        for k, v in self.printActionsDict[1].items():
+            print(" {}: {}".format(k,v))
 
     # Step method to be implemented in derived classes
     def step(self, action):
@@ -153,9 +159,9 @@ class diambraGymHardCoreBase(gym.Env):
 # DIAMBRA Gym base class for single player mode
 class diambraGymHardCore1P(diambraGymHardCoreBase):
     def __init__(self, envId, diambraKwargs, rewNormFac=0.5,
-                 actionSpace="multiDiscrete", attackButCombinations=True):
+                 actionSpace="multiDiscrete", attackButCombination=True):
         super().__init__( envId, diambraKwargs, rewNormFac, actionSpace,
-                          [attackButCombinations, attackButCombinations])
+                          [attackButCombination, attackButCombination])
 
         # Define action and observation space
         # They must be gym.spaces objects
@@ -224,9 +230,9 @@ class diambraGymHardCore1P(diambraGymHardCoreBase):
 class diambraGymHardCore2P(diambraGymHardCoreBase):
     def __init__(self, envId, diambraKwargs, rewNormFac=0.5,
                  actionSpace=["multiDiscrete", "multiDiscrete"],
-                 attackButCombinations=[True, True]):
+                 attackButCombination=[True, True]):
         super().__init__( envId, diambraKwargs, rewNormFac,
-                          actionSpace, attackButCombinations)
+                          actionSpace, attackButCombination)
 
         # Define action spaces, they must be gym.spaces objects
         actionSpaceDict = {}
@@ -300,8 +306,8 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
 # DIAMBRA Gym base class providing frame and additional info as observations
 class diambraGym1P(diambraGymHardCore1P):
     def __init__(self, envId, diambraKwargs, rewNormFac=0.5, actionSpace="multiDiscrete",
-                 attackButCombinations=True):
-        super().__init__( envId, diambraKwargs, rewNormFac, actionSpace, attackButCombinations)
+                 attackButCombination=True):
+        super().__init__( envId, diambraKwargs, rewNormFac, actionSpace, attackButCombination)
 
         # Dictionary observation space
         observationSpaceDict = {}
@@ -396,9 +402,9 @@ class diambraGym1P(diambraGymHardCore1P):
 class diambraGym2P(diambraGymHardCore2P):
     def __init__(self, envId, diambraKwargs, rewNormFac=0.5,
                  actionSpace=["multiDiscrete", "multiDiscrete"],
-                 attackButCombinations=[True, True]):
+                 attackButCombination=[True, True]):
         super().__init__( envId, diambraKwargs, rewNormFac, actionSpace,
-                          attackButCombinations)
+                          attackButCombination)
 
         # Dictionary observation space
         observationSpaceDict = {}
