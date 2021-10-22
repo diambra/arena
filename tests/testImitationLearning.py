@@ -21,14 +21,14 @@ try:
     trajectoriesFiles = [os.path.join(trajRecFolder, f) for f in listdir(trajRecFolder) if os.path.isfile(os.path.join(trajRecFolder, f))]
     print(trajectoriesFiles)
 
-    diambraILKwargs = {}
-    diambraILKwargs["trajFilesList"] = trajectoriesFiles
-    diambraILKwargs["totalCpus"] = opt.nProc
+    diambraILSettings = {}
+    diambraILSettings["trajFilesList"] = trajectoriesFiles
+    diambraILSettings["totalCpus"] = opt.nProc
 
     if opt.hardCore == 0:
-        env = diambraArena.imitationLearning(**diambraILKwargs)
+        env = diambraArena.imitationLearning(**diambraILSettings)
     else:
-        env = diambraArena.imitationLearningHardCore(**diambraILKwargs)
+        env = diambraArena.imitationLearningHardCore(**diambraILSettings)
 
     observation = env.reset()
     env.render(mode="human")
@@ -91,7 +91,7 @@ try:
             env.render(mode="human")
             showWrapObs(observation, env.nActionsStack, env.charNames, opt.waitKey, vizFlag)
 
-    if diambraILKwargs["totalCpus"] == 1:
+    if diambraILSettings["totalCpus"] == 1:
         print("All ep. rewards =", cumulativeEpRewAll)
         print("Mean cumulative reward =", np.mean(cumulativeEpRewAll))
         print("Std cumulative reward =", np.std(cumulativeEpRewAll))

@@ -47,23 +47,23 @@ if __name__ == '__main__':
         settings["actionSpace"] = ["discrete", "discrete"]
         settings["attackButCombination"] = [False, False]
 
-        trajRecKwargs = None
+        trajRecSettings = None
 
-        # Env wrappers kwargs
-        wrapperKwargs = {}
-        wrapperKwargs["noOpMax"] = 0
-        wrapperKwargs["hwcObsResize"] = [128, 128, 1]
-        wrapperKwargs["normalizeRewards"] = True
-        wrapperKwargs["clipRewards"] = False
-        wrapperKwargs["frameStack"] = 4
-        wrapperKwargs["dilation"] = 1
-        wrapperKwargs["actionsStack"] = 12
-        wrapperKwargs["scale"] = True
-        wrapperKwargs["scaleMod"] = 0
+        # Env wrappers settings
+        wrappersSettings = {}
+        wrappersSettings["noOpMax"] = 0
+        wrappersSettings["hwcObsResize"] = [128, 128, 1]
+        wrappersSettings["normalizeRewards"] = True
+        wrappersSettings["clipRewards"] = False
+        wrappersSettings["frameStack"] = 4
+        wrappersSettings["dilation"] = 1
+        wrappersSettings["actionsStack"] = 12
+        wrappersSettings["scale"] = True
+        wrappersSettings["scaleMod"] = 0
 
         envId = opt.gameId + "_timeUpTestWrappers"
         hardCore = False
-        env = diambraArena.make(envId, settings, wrapperKwargs, trajRecKwargs,
+        env = diambraArena.make(envId, settings, wrappersSettings, trajRecSettings,
                                 seed=timeDepSeed, hardCore=hardCore)
 
         # Print environment obs and action spaces summary
@@ -89,13 +89,13 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showWrapObs(observation, wrapperKwargs["actionsStack"], env.charNames, waitKey, vizFlag)
+            showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, waitKey, vizFlag)
             print("----------")
 
             if done:
                 print("Resetting Env")
                 observation = env.reset()
-                showWrapObs(observation, wrapperKwargs["actionsStack"], env.charNames, waitKey, vizFlag)
+                showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, waitKey, vizFlag)
                 break
 
         env.close()

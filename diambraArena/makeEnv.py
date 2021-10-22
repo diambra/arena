@@ -1,12 +1,11 @@
 from diambraArena.diambraGym import makeGymEnv
 from diambraArena.wrappers.diambraWrappers import envWrapping
 
-def make(envPrefix, diambraKwargs, wrapperKwargs={}, trajRecKwargs=None,
-         seed=42):
+def make(envPrefix, diambraKwargs, wrappersSettings={}, trajRecSettings=None, seed=42):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
-    :param wrapperKwargs: (dict) the parameters for envWrapping function
+    :param wrappersSettings: (dict) the parameters for envWrapping function
     """
 
     diambraGymKwargs={}
@@ -26,15 +25,15 @@ def make(envPrefix, diambraKwargs, wrapperKwargs={}, trajRecKwargs=None,
     env.seed(seed)
 
     # Apply environment wrappers
-    env = envWrapping(env, player, **wrapperKwargs, hardCore=hardCore)
+    env = envWrapping(env, player, **wrappersSettings, hardCore=hardCore)
 
     # Apply trajectories recorder wrappers
-    if trajRecKwargs is not None:
+    if trajRecSettings is not None:
         if hardCore:
             from diambraArena.wrappers.trajRecWrapperHardCore import TrajectoryRecorder
         else:
             from diambraArena.wrappers.trajRecWrapper import TrajectoryRecorder
 
-        env = TrajectoryRecorder(env, **trajRecKwargs)
+        env = TrajectoryRecorder(env, **trajRecSettings)
 
     return env

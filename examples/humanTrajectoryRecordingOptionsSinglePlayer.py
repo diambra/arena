@@ -31,21 +31,21 @@ wrappersSettings["actionsStack"] = 12
 wrappersSettings["scale"] = True
 
 # Gym trajectory recording wrapper kwargs
-trajRecKwargs = {}
+trajRecSettings = {}
 homeDir = expanduser("~")
 
 # Username
-trajRecKwargs["userName"] = "Alex"
+trajRecSettings["userName"] = "Alex"
 
 # Path where to save recorderd trajectories
-trajRecKwargs["filePath"] = os.path.join(homeDir, "diambraArena/trajRecordings",
+trajRecSettings["filePath"] = os.path.join(homeDir, "diambraArena/trajRecordings",
                                          settings["gameId"])
 
 # If to ignore P2 trajectory (useful when collecting
 # only human trajectories while playing as a human against a RL agent)
-trajRecKwargs["ignoreP2"] = 0
+trajRecSettings["ignoreP2"] = 0
 
-env = diambraArena.make("TestEnv", settings, wrappersSettings, trajRecKwargs)
+env = diambraArena.make("TestEnv", settings, wrappersSettings, trajRecSettings)
 
 # GamePad(s) initialization
 gamepad = diambraGamepad(env.actionList)
