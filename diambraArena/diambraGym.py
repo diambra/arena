@@ -11,7 +11,7 @@ class diambraGymHardCoreBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, envId, diambraEnvKwargs, rewNormFac, actionSpace, attackButCombination):
+    def __init__(self, envId, envSettings, rewNormFac, actionSpace, attackButCombination):
         super(diambraGymHardCoreBase, self).__init__()
 
         self.rewNormFac = rewNormFac
@@ -23,12 +23,12 @@ class diambraGymHardCoreBase(gym.Env):
         print("Use attack buttons combinations = {}".format(self.attackButCombination))
 
         # Launch DIAMBRA Arena
-        self.diambraArena = diambraArenaLib(envId, diambraEnvKwargs)
+        self.diambraArena = diambraArenaLib(envId, envSettings)
 
         # Get Env Info
         envInfo = self.diambraArena.readEnvInfo()
         self.envInfoProcess(envInfo)
-        self.playerSide = diambraEnvKwargs["player"]
+        self.playerSide = envSettings["player"]
 
         # Read Env Int Data List
         self.diambraArena.readEnvIntDataVarsList()
@@ -158,9 +158,9 @@ class diambraGymHardCoreBase(gym.Env):
 
 # DIAMBRA Gym base class for single player mode
 class diambraGymHardCore1P(diambraGymHardCoreBase):
-    def __init__(self, envId, diambraKwargs, rewNormFac=0.5,
+    def __init__(self, envId, envSettings, rewNormFac=0.5,
                  actionSpace="multiDiscrete", attackButCombination=True):
-        super().__init__( envId, diambraKwargs, rewNormFac, actionSpace,
+        super().__init__( envId, envSettings, rewNormFac, actionSpace,
                           [attackButCombination, attackButCombination])
 
         # Define action and observation space
@@ -228,10 +228,10 @@ class diambraGymHardCore1P(diambraGymHardCoreBase):
 
 # DIAMBRA Gym base class for two players mode
 class diambraGymHardCore2P(diambraGymHardCoreBase):
-    def __init__(self, envId, diambraKwargs, rewNormFac=0.5,
+    def __init__(self, envId, envSettings, rewNormFac=0.5,
                  actionSpace=["multiDiscrete", "multiDiscrete"],
                  attackButCombination=[True, True]):
-        super().__init__( envId, diambraKwargs, rewNormFac,
+        super().__init__( envId, envSettings, rewNormFac,
                           actionSpace, attackButCombination)
 
         # Define action spaces, they must be gym.spaces objects
@@ -305,9 +305,9 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
 
 # DIAMBRA Gym base class providing frame and additional info as observations
 class diambraGym1P(diambraGymHardCore1P):
-    def __init__(self, envId, diambraKwargs, rewNormFac=0.5, actionSpace="multiDiscrete",
+    def __init__(self, envId, envSettings, rewNormFac=0.5, actionSpace="multiDiscrete",
                  attackButCombination=True):
-        super().__init__( envId, diambraKwargs, rewNormFac, actionSpace, attackButCombination)
+        super().__init__( envId, envSettings, rewNormFac, actionSpace, attackButCombination)
 
         # Dictionary observation space
         observationSpaceDict = {}
@@ -400,10 +400,10 @@ class diambraGym1P(diambraGymHardCore1P):
 
 # DIAMBRA Gym base class providing frame and additional info as observations
 class diambraGym2P(diambraGymHardCore2P):
-    def __init__(self, envId, diambraKwargs, rewNormFac=0.5,
+    def __init__(self, envId, envSettings, rewNormFac=0.5,
                  actionSpace=["multiDiscrete", "multiDiscrete"],
                  attackButCombination=[True, True]):
-        super().__init__( envId, diambraKwargs, rewNormFac, actionSpace,
+        super().__init__( envId, envSettings, rewNormFac, actionSpace,
                           attackButCombination)
 
         # Dictionary observation space
@@ -504,43 +504,44 @@ class diambraGym2P(diambraGymHardCore2P):
 
         return observation
 
-def makeGymEnv(envPrefix, diambraKwargs, diambraGymKwargs, hardCore):
+def makeGymEnv(envPrefix, envSettings, gymSpecSettings, hardCore):
 
     # Check mandatory parameters
     mandatoryParams = ["gameId"]
     for param in mandatoryParams:
-        if param not in diambraKwargs:
+        if param not in envSettings:
             raise RuntimeError("\"{}\" is a mandatory parameter.".format(param))
 
     # Default to single player mode
-    if "player" not in diambraKwargs:
-        diambraKwargs["player"] = "Random"
+    if "player" not in envSettings:
+        envSettings["player"] = "Random"
     # Default to not headless mode
-    if "headless" not in diambraKwargs:
-        diambraKwargs["headless"] = False
+    if "headless" not in envSettings:
+        envSettings["headless"] = False
     # Retrieve roms path from ENV variables
-    if "romsPath" not in diambraKwargs:
+    if "romsPath" not in envSettings:
         if os.getenv("DIAMBRAROMSPATH") == None:
             raise RuntimeError("\"romsPath\" is a mandatory parameter, either add"+\
-                               " it to DIAMBRAROMSPATH environment variable or specify it via DIAMBRA kwargs.")
+                               " it to DIAMBRAROMSPATH environment variable or"+\
+                               " specify it via environment settings.")
         else:
-            diambraKwargs["romsPath"] = os.getenv("DIAMBRAROMSPATH")
+            envSettings["romsPath"] = os.getenv("DIAMBRAROMSPATH")
 
     # Check for OS var DISPLAY
     if os.getenv("DISPLAY") == None:
         print("No DISPLAY environment variable detected, activating HEADLESS mode, and deactivating lockFps if active")
-        diambraKwargs["headless"] = True
-        diambraKwargs["lockFps"]  = False
+        envSettings["headless"] = True
+        envSettings["lockFps"]  = False
 
-    if diambraKwargs["player"] != "P1P2": #1P Mode
+    if envSettings["player"] != "P1P2": #1P Mode
         if hardCore:
-            env = diambraGymHardCore1P(envPrefix, diambraKwargs, **diambraGymKwargs)
+            env = diambraGymHardCore1P(envPrefix, envSettings, **gymSpecSettings)
         else:
-            env = diambraGym1P(envPrefix, diambraKwargs, **diambraGymKwargs)
+            env = diambraGym1P(envPrefix, envSettings, **gymSpecSettings)
     else: #2P Mode
         if hardCore:
-            env = diambraGymHardCore2P(envPrefix, diambraKwargs, **diambraGymKwargs)
+            env = diambraGymHardCore2P(envPrefix, envSettings, **gymSpecSettings)
         else:
-            env = diambraGym2P(envPrefix, diambraKwargs, **diambraGymKwargs)
+            env = diambraGym2P(envPrefix, envSettings, **gymSpecSettings)
 
-    return env, diambraKwargs["player"]
+    return env, envSettings["player"]
