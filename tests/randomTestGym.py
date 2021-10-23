@@ -57,10 +57,12 @@ if __name__ == '__main__':
             settings["actionSpace"] = settings["actionSpace"][0]
             settings["attackButCombination"] = settings["attackButCombination"][0]
 
-        envId = opt.gameId + "_randomTestGym"
         hardCore = False if opt.hardCore == 0 else True
-        env = diambraArena.make(envId, settings, wrapperKwargs={"normalizeRewards": False},
-                                seed=timeDepSeed, hardCore=hardCore)
+        settings["hardCore"] = hardCore
+
+        envId = opt.gameId + "_randomTestGym"
+        env = diambraArena.make(envId, settings, wrappersSettings={"normalizeRewards": False},
+                                seed=timeDepSeed)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)

@@ -47,6 +47,8 @@ if __name__ == '__main__':
         settings["actionSpace"] = ["discrete", "discrete"]
         settings["attackButCombination"] = [False, False]
 
+        settings["hardCore"] = False
+
         trajRecSettings = None
 
         # Env wrappers settings
@@ -62,9 +64,8 @@ if __name__ == '__main__':
         wrappersSettings["scaleMod"] = 0
 
         envId = opt.gameId + "_timeUpTestWrappers"
-        hardCore = False
         env = diambraArena.make(envId, settings, wrappersSettings, trajRecSettings,
-                                seed=timeDepSeed, hardCore=hardCore)
+                                seed=timeDepSeed)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)

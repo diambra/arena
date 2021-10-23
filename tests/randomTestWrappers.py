@@ -83,8 +83,10 @@ if __name__ == '__main__':
         wrappersSettings["scale"] = True
         wrappersSettings["scaleMod"] = 0
 
-        envId = opt.gameId + "_randomTestWrappers"
         hardCore = False if opt.hardCore == 0 else True
+        settings["hardCore"] = hardCore
+
+        envId = opt.gameId + "_randomTestWrappers"
         env = diambraArena.make(envId, settings, wrappersSettings, trajRecSettings,
                                 seed=timeDepSeed)
 
