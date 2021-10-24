@@ -32,43 +32,40 @@ if __name__ == '__main__':
         if vizFlag:
             waitKey = 0
 
-        # Common settings
-        diambraKwargs = {}
-        diambraKwargs["romsPath"] = opt.romsPath
+        # Settings
+        settings = {}
+        settings["romsPath"] = opt.romsPath
         if opt.libPath != "":
-            diambraKwargs["libPath"]  = opt.libPath
+            settings["libPath"]  = opt.libPath
 
-        diambraKwargs["gameId"]     = opt.gameId
-        diambraKwargs["player"]     = opt.player
-        diambraKwargs["characters"] = [[opt.character1, opt.character1_2], [opt.character2, opt.character2_2]]
+        settings["gameId"]     = opt.gameId
+        settings["player"]     = opt.player
+        settings["characters"] = [[opt.character1, opt.character1_2], [opt.character2, opt.character2_2]]
 
-        diambraKwargs["stepRatio"] = opt.stepRatio
-        diambraKwargs["render"] = True
-        diambraKwargs["lockFps"] = False
+        settings["stepRatio"] = opt.stepRatio
+        settings["render"] = True
+        settings["lockFps"] = False
 
-        diambraKwargs["continueGame"] = opt.continueGame
-        diambraKwargs["showFinal"]    = False
+        settings["continueGame"] = opt.continueGame
+        settings["showFinal"]    = False
 
-        diambraKwargs["charOutfits"] = [2, 2]
+        settings["charOutfits"] = [2, 2]
 
-        # DIAMBRA gym kwargs
-        diambraGymKwargs = {}
-        diambraGymKwargs["actionSpace"] = [opt.actionSpace, opt.actionSpace]
-        diambraGymKwargs["attackButCombinations"] = [opt.attButComb, opt.attButComb]
-        if diambraKwargs["player"] != "P1P2":
-            diambraGymKwargs["actionSpace"] = diambraGymKwargs["actionSpace"][0]
-            diambraGymKwargs["attackButCombinations"] = diambraGymKwargs["attackButCombinations"][0]
+        settings["actionSpace"] = [opt.actionSpace, opt.actionSpace]
+        settings["attackButCombination"] = [opt.attButComb, opt.attButComb]
+        if settings["player"] != "P1P2":
+            settings["actionSpace"] = settings["actionSpace"][0]
+            settings["attackButCombination"] = settings["attackButCombination"][0]
+
+        hardCore = False if opt.hardCore == 0 else True
+        settings["hardCore"] = hardCore
 
         envId = opt.gameId + "_randomTestGym"
-        hardCore = False if opt.hardCore == 0 else True
-        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
-                                wrapperKwargs={"normalizeRewards": False},
-                                seed=timeDepSeed, hardCore=hardCore)
+        env = diambraArena.make(envId, settings, wrappersSettings={"normalizeRewards": False},
+                                seed=timeDepSeed)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)
-
-        actionsPrintDict = env.printActionsDict
 
         observation = env.reset()
 
@@ -81,44 +78,44 @@ if __name__ == '__main__':
         while currNumEp < maxNumEp:
 
             actions = [None, None]
-            if diambraKwargs["player"] != "P1P2":
+            if settings["player"] != "P1P2":
                 actions = env.action_space.sample()
 
                 if opt.noAction == 1:
-                    if diambraGymKwargs["actionSpace"] == "multiDiscrete":
+                    if settings["actionSpace"] == "multiDiscrete":
                         for iEl, _ in enumerate(actions):
                             actions[iEl] = 0
                     else:
                         actions = 0
 
-                if diambraGymKwargs["actionSpace"] == "discrete":
+                if settings["actionSpace"] == "discrete":
                     moveAction, attAction = discreteToMultiDiscreteAction(actions, env.nActions[0][0])
                 else:
                     moveAction, attAction = actions[0], actions[1]
 
-                print("(P1) {} {}".format(actionsPrintDict[0][moveAction],
-                                          actionsPrintDict[1][attAction]))
+                print("(P1) {} {}".format(env.printActionsDict[0][moveAction],
+                                          env.printActionsDict[1][attAction]))
 
             else:
                 for idx in range(2):
                     actions[idx] = env.action_space["P{}".format(idx+1)].sample()
 
                     if opt.noAction == 1 and idx == 0:
-                        if diambraGymKwargs["actionSpace"][idx] == "multiDiscrete":
+                        if settings["actionSpace"][idx] == "multiDiscrete":
                             for iEl, _ in enumerate(actions[idx]):
                                 actions[idx][iEl] = 0
                         else:
                             actions[idx] = 0
 
-                    if diambraGymKwargs["actionSpace"][idx] == "discrete":
+                    if settings["actionSpace"][idx] == "discrete":
                         moveAction, attAction = discreteToMultiDiscreteAction(actions[idx], env.nActions[idx][0])
                     else:
                         moveAction, attAction = actions[idx][0], actions[idx][1]
 
-                    print("(P{}) {} {}".format(idx+1, actionsPrintDict[0][moveAction],
-                                                      actionsPrintDict[1][attAction]))
+                    print("(P{}) {} {}".format(idx+1, env.printActionsDict[0][moveAction],
+                                                      env.printActionsDict[1][attAction]))
 
-            if diambraKwargs["player"] == "P1P2" or diambraGymKwargs["actionSpace"] != "discrete":
+            if settings["player"] == "P1P2" or settings["actionSpace"] != "discrete":
                 actions = np.append(actions[0], actions[1])
 
             observation, reward, done, info = env.step(actions)

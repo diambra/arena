@@ -11,17 +11,23 @@ recordedTrajectoriesFiles = [os.path.join(recordedTrajectoriesFolder, f)
                              if os.path.isfile(os.path.join(recordedTrajectoriesFolder, f))]
 print(recordedTrajectoriesFiles)
 
-# Imitation learning options
-diambraILKwargs = {}
-diambraILKwargs["trajFilesList"] = recordedTrajectoriesFiles
-diambraILKwargs["totalCpus"] = 2
+# Imitation learning settings
+settings = {}
 
-env = diambraArena.imitationLearning(**diambraILKwargs)
+# List of recorded trajectories files
+settings["trajFilesList"] = recordedTrajectoriesFiles
+
+# Number of parallel Imitation Learning environments to run
+settings["totalCpus"] = 2
+
+env = diambraArena.imitationLearning(**settings)
 
 observation = env.reset()
-env.trajSummary()
 env.render(mode="human")
 showWrapObs(observation, env.nActionsStack, env.charNames)
+
+# Show trajectory summary
+env.trajSummary()
 
 while True:
 

@@ -26,51 +26,48 @@ if __name__ == '__main__':
         opt = parser.parse_args()
         print(opt)
 
-        # Common settings
-        diambraKwargs = {}
-        diambraKwargs["romsPath"] = opt.romsPath
+        # Settings
+        settings = {}
+        settings["romsPath"] = opt.romsPath
         if opt.libPath != "":
-            diambraKwargs["libPath"]  = opt.libPath
+            settings["libPath"]  = opt.libPath
 
-        diambraKwargs["gameId"]     = opt.gameId
-        diambraKwargs["player"]     = opt.player
-        diambraKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
+        settings["gameId"]     = opt.gameId
+        settings["player"]     = opt.player
+        settings["characters"] = [["Random", "Random"], ["Random", "Random"]]
 
-        diambraKwargs["stepRatio"] = opt.stepRatio
-        diambraKwargs["render"] = False
-        diambraKwargs["lockFps"] = False
+        settings["stepRatio"] = opt.stepRatio
+        settings["render"] = False
+        settings["lockFps"] = False
 
-        diambraKwargs["continueGame"] = 0.0
-        diambraKwargs["showFinal"]    = False
+        settings["continueGame"] = 0.0
+        settings["showFinal"]    = False
 
-        diambraKwargs["charOutfits"] = [2, 2]
+        settings["charOutfits"] = [2, 2]
 
-        # DIAMBRA gym kwargs
-        diambraGymKwargs = {}
-        diambraGymKwargs["actionSpace"] = [opt.actionSpace, opt.actionSpace]
-        diambraGymKwargs["attackButCombinations"] = [opt.attButComb, opt.attButComb]
-        if diambraKwargs["player"] != "P1P2":
-            diambraGymKwargs["actionSpace"] = diambraGymKwargs["actionSpace"][0]
-            diambraGymKwargs["attackButCombinations"] = diambraGymKwargs["attackButCombinations"][0]
+        settings["actionSpace"] = [opt.actionSpace, opt.actionSpace]
+        settings["attackButCombination"] = [opt.attButComb, opt.attButComb]
+        if settings["player"] != "P1P2":
+            settings["actionSpace"] = settings["actionSpace"][0]
+            settings["attackButCombination"] = settings["attackButCombination"][0]
 
-        # Recording kwargs
-        trajRecKwargs = None
+        # Recording settings
+        trajRecSettings = None
 
-        # Env wrappers kwargs
-        wrapperKwargs = {}
-        wrapperKwargs["noOpMax"] = 0
-        wrapperKwargs["hwcObsResize"] = [128, 128, 1]
-        wrapperKwargs["normalizeRewards"] = True
-        wrapperKwargs["clipRewards"] = False
-        wrapperKwargs["frameStack"] = 4
-        wrapperKwargs["dilation"] = 1
-        wrapperKwargs["actionsStack"] = 12
-        wrapperKwargs["scale"] = True
-        wrapperKwargs["scaleMod"] = 0
+        # Env wrappers settings
+        wrappersSettings = {}
+        wrappersSettings["noOpMax"] = 0
+        wrappersSettings["hwcObsResize"] = [128, 128, 1]
+        wrappersSettings["normalizeRewards"] = True
+        wrappersSettings["clipRewards"] = False
+        wrappersSettings["frameStack"] = 4
+        wrappersSettings["dilation"] = 1
+        wrappersSettings["actionsStack"] = 12
+        wrappersSettings["scale"] = True
+        wrappersSettings["scaleMod"] = 0
 
         envId = opt.gameId + "_speedTestWrappers"
-        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
-                                wrapperKwargs, trajRecKwargs, seed=timeDepSeed)
+        env = diambraArena.make(envId, settings, wrappersSettings, trajRecSettings, seed=timeDepSeed)
 
         observation = env.reset()
 
@@ -89,14 +86,14 @@ if __name__ == '__main__':
             fpsVal.append(fps)
 
             actions = [None, None]
-            if diambraKwargs["player"] != "P1P2":
+            if settings["player"] != "P1P2":
                 actions = env.action_space.sample()
 
             else:
                 for idx in range(2):
                     actions[idx] = env.action_space["P{}".format(idx+1)].sample()
 
-            if diambraKwargs["player"] == "P1P2" or diambraGymKwargs["actionSpace"] != "discrete":
+            if settings["player"] == "P1P2" or settings["actionSpace"] != "discrete":
                 actions = np.append(actions[0], actions[1])
 
             observation, reward, done, info = env.step(actions)

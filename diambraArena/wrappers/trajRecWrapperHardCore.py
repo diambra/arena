@@ -23,7 +23,7 @@ class TrajectoryRecorder(gym.Wrapper):
         self.commitHash = commitHash
 
         if (self.env.playerSide == "P1P2"):
-            if ((self.env.attackButCombinations[0] != self.env.attackButCombinations[1]) or\
+            if ((self.env.attackButCombination[0] != self.env.attackButCombination[1]) or\
                 (self.env.actionSpace[0] != self.env.actionSpace[1])):
                 raise Exception("Different attack buttons combinations and/or "\
                                 "different action spaces not supported for 2P experience recordings")
@@ -85,7 +85,7 @@ class TrajectoryRecorder(gym.Wrapper):
             else:
                 toSave["actionSpace"]   = self.env.actionSpace[0]
             toSave["nActions"]      = self.env.nActions[0]
-            toSave["attackButComb"] = self.env.attackButCombinations[0]
+            toSave["attackButComb"] = self.env.attackButCombination[0]
             toSave["frameShp"]      = self.frameShp
             toSave["ignoreP2"]      = self.ignoreP2
             toSave["charNames"]     = self.env.charNames

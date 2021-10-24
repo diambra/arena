@@ -25,54 +25,50 @@ if __name__ == '__main__':
 
         homeDir = expanduser("~")
 
-        # Common settings
-        diambraKwargs = {}
-        diambraKwargs["romsPath"] = opt.romsPath
+        # Settings
+        settings = {}
+        settings["romsPath"] = opt.romsPath
         if opt.libPath != "":
-            diambraKwargs["libPath"]  = opt.libPath
+            settings["libPath"]  = opt.libPath
 
-        diambraKwargs["gameId"]     = opt.gameId
-        diambraKwargs["player"]     = "P1P2"
-        diambraKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
+        settings["gameId"]     = opt.gameId
+        settings["player"]     = "P1P2"
+        settings["characters"] = [["Random", "Random"], ["Random", "Random"]]
 
-        diambraKwargs["stepRatio"] = 3
-        diambraKwargs["render"] = True
-        diambraKwargs["lockFps"] = False
+        settings["stepRatio"] = 3
+        settings["render"] = True
+        settings["lockFps"] = False
 
-        diambraKwargs["continueGame"] = opt.continueGame
-        diambraKwargs["showFinal"]    = False
+        settings["continueGame"] = opt.continueGame
+        settings["showFinal"]    = False
 
-        diambraKwargs["charOutfits"] = [2, 2]
+        settings["charOutfits"] = [2, 2]
 
-        # DIAMBRA gym kwargs
-        diambraGymKwargs = {}
-        diambraGymKwargs["actionSpace"] = ["discrete", "discrete"]
-        diambraGymKwargs["attackButCombinations"] = [False, False]
+        settings["actionSpace"] = ["discrete", "discrete"]
+        settings["attackButCombination"] = [False, False]
 
-        trajRecKwargs = None
+        settings["hardCore"] = False
 
-        # Env wrappers kwargs
-        wrapperKwargs = {}
-        wrapperKwargs["noOpMax"] = 0
-        wrapperKwargs["hwcObsResize"] = [128, 128, 1]
-        wrapperKwargs["normalizeRewards"] = True
-        wrapperKwargs["clipRewards"] = False
-        wrapperKwargs["frameStack"] = 4
-        wrapperKwargs["dilation"] = 1
-        wrapperKwargs["actionsStack"] = 12
-        wrapperKwargs["scale"] = True
-        wrapperKwargs["scaleMod"] = 0
+        trajRecSettings = None
+
+        # Env wrappers settings
+        wrappersSettings = {}
+        wrappersSettings["noOpMax"] = 0
+        wrappersSettings["hwcObsResize"] = [128, 128, 1]
+        wrappersSettings["normalizeRewards"] = True
+        wrappersSettings["clipRewards"] = False
+        wrappersSettings["frameStack"] = 4
+        wrappersSettings["dilation"] = 1
+        wrappersSettings["actionsStack"] = 12
+        wrappersSettings["scale"] = True
+        wrappersSettings["scaleMod"] = 0
 
         envId = opt.gameId + "_timeUpTestWrappers"
-        hardCore = False
-        env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs,
-                                wrapperKwargs, trajRecKwargs,
-                                seed=timeDepSeed, hardCore=hardCore)
+        env = diambraArena.make(envId, settings, wrappersSettings, trajRecSettings,
+                                seed=timeDepSeed)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)
-
-        actionsPrintDict = env.printActionsDict
 
         observation = env.reset()
 
@@ -94,13 +90,13 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showWrapObs(observation, wrapperKwargs["actionsStack"], env.charNames, waitKey, vizFlag)
+            showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, waitKey, vizFlag)
             print("----------")
 
             if done:
                 print("Resetting Env")
                 observation = env.reset()
-                showWrapObs(observation, wrapperKwargs["actionsStack"], env.charNames, waitKey, vizFlag)
+                showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, waitKey, vizFlag)
                 break
 
         env.close()

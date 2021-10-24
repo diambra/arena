@@ -7,53 +7,43 @@ parser.add_argument('--romsPath', type=str, required=False, help='Absolute path 
 opt = parser.parse_args()
 print(opt)
 
-# Mandatory parameters
-diambraKwargs = {}
-diambraKwargs["gameId"]   = "doapp" # Game selection
+# Mandatory settings
+settings = {}
+settings["gameId"] = "doapp"
 if opt.romsPath is not None:
-    diambraKwargs["romsPath"] = opt.romsPath # Path to roms folder
-envId = "TestEnv" # This ID must be unique for every instance of the environment
+    settings["romsPath"] = opt.romsPath
 
-# Additional game options
-diambraKwargs["player"] = "Random" # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
+# Gym wrappers settings
+wrappersSettings = {}
 
-# Game continue logic (0.0 by default):
-# - [0.0, 1.0]: probability of continuing game at game over
-# - int((-inf, -1.0]): number of continues at game over before episode to be considered done
-diambraKwargs["continueGame"] = -1.0
+# Number of no-Op actions to be executed at the beginning of the episode (0 by default)
+wrappersSettings["noOpMax"] = 0
 
-diambraKwargs["render"] = True # Renders the environment, deactivate for speedup
-diambraKwargs["lockFps"] = False # Locks to 60 FPS, deactivate for speedup
-diambraKwargs["sound"] = diambraKwargs["lockFps"] and diambraKwargs["render"] # Activate game sound
-diambraKwargs["stepRatio"] = 6 # Number of steps performed by the game for every environment step, bounds: [1, 6]
+# Frame resize operation spec (deactivated by default)
+wrappersSettings["hwcObsResize"] = [128, 128, 1]
 
-diambraKwargs["headless"] = False # Allows to execute the environment in headless mode (for server-side executions)
+# If to perform rewards normalization (True by default)
+wrappersSettings["normalizeRewards"] = True
 
-diambraKwargs["showFinal"]    = False # If to show game final when game is completed
+# If to clip rewards (False by default)
+wrappersSettings["clipRewards"] = False
 
-# Game-specific options (see documentation for details)
-diambraKwargs["difficulty"]  = 3 # Game difficulty level
-diambraKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]] # Character to be used
-diambraKwargs["charOutfits"] = [2, 2] # Character outfit
+# Number of frames to be stacked together (1 by default)
+wrappersSettings["frameStack"] = 4
 
-# Gym options
-diambraGymKwargs = {}
-diambraGymKwargs["actionSpace"] = "discrete" # If to use discrete or multiDiscrete action space
-diambraGymKwargs["attackButCombinations"] = True # If to use attack buttons combinations actions
+# Frames interval when stacking (1 by default)
+wrappersSettings["dilation"] = 1
 
-# Gym wrappers options
-wrappersKwargs = {}
-wrappersKwargs["noOpMax"] = 0 # Number of no-Op actions to be executed at the beginning of the episode (0 by default)
-wrappersKwargs["hwcObsResize"] = [128, 128, 1] # Frame resize operation spec (deactivated by default)
-wrappersKwargs["normalizeRewards"] = True # If to perform rewards normalization (True by default)
-wrappersKwargs["clipRewards"] = False # If to clip rewards (False by default)
-wrappersKwargs["frameStack"] = 4 # Number of frames to be stacked together (1 by default)
-wrappersKwargs["dilation"] = 1 # Frames interval when stacking (1 by default)
-wrappersKwargs["actionsStack"] = 12 # How many past actions to stack together (1 by default)
-wrappersKwargs["scale"] = True # If to scale observation numerical values (deactivated by default)
-wrappersKwargs["scaleMod"] = 0 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
+# How many past actions to stack together (1 by default)
+wrappersSettings["actionsStack"] = 12
 
-env = diambraArena.make(envId, diambraKwargs, diambraGymKwargs, wrappersKwargs)
+# If to scale observation numerical values (deactivated by default)
+wrappersSettings["scale"] = True
+
+# Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
+wrappersSettings["scaleMod"] = 0
+
+env = diambraArena.make("TestEnv", settings, wrappersSettings)
 
 observation = env.reset()
 showWrapObs(observation, env.nActionsStack, env.charNames)
