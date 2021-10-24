@@ -16,7 +16,7 @@ print(opt)
 
 # Mandatory parameters
 settings = {}
-settings["gameId"]   = "doapp"
+settings["gameId"] = "doapp"
 if opt.romsPath is not None:
     settings["romsPath"] = opt.romsPath
 
