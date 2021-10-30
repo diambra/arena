@@ -33,7 +33,6 @@ if __name__ == '__main__':
 
         settings["gameId"]     = opt.gameId
         settings["player"]     = "P1P2"
-        settings["characters"] = [["Random", "Random"], ["Random", "Random"]]
 
         settings["stepRatio"] = 3
         settings["render"] = True
@@ -41,8 +40,6 @@ if __name__ == '__main__':
 
         settings["continueGame"] = opt.continueGame
         settings["showFinal"]    = False
-
-        settings["charOutfits"] = [2, 2]
 
         settings["actionSpace"] = ["discrete", "discrete"]
         settings["attackButCombination"] = [False, False]
