@@ -48,8 +48,9 @@ settings["showFinal"] = False
 # Game difficulty level
 settings["difficulty"]  = 3
 
-# Character to be used
-settings["characters"]  = [["Random", "Random"], ["Random", "Random"]]
+# Character to be used, automatically extended with "Random" for games requiring
+# to select more than one character (e.g. Tekken Tag Tournament)
+settings["characters"]  = [["Random"], ["Random"]]
 
 # Character outfit
 settings["charOutfits"] = [2, 2]

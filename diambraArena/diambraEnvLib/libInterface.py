@@ -88,6 +88,8 @@ class diambraArenaLib:
     def envKwargsToString(self, envId, envKwargs):
 
         # Default parameters
+        maxCharToSelect = 3
+
         baseEnvKwargs = {}
         baseEnvKwargs["continueGame"] = 0.0
         baseEnvKwargs["showFinal"] = True
@@ -96,7 +98,7 @@ class diambraArenaLib:
         baseEnvKwargs["lockFps"] = True
         baseEnvKwargs["difficulty"] = 3
         baseEnvKwargs["tower"] = 3
-        baseEnvKwargs["characters"] = [["Random", "Random"], ["Random", "Random"]]
+        baseEnvKwargs["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
         baseEnvKwargs["charOutfits"] = [2, 2]
         baseEnvKwargs["superArt"] = [1, 1]
         baseEnvKwargs["headless"] = False
@@ -107,6 +109,13 @@ class diambraArenaLib:
         baseEnvKwargs["recordConfigFile"] = "\"\""
 
         for k, v in envKwargs.items():
+
+            # Check for characters
+            if k == "characters":
+                for iPlayer in range(2):
+                    for iChar in range(len(v[iPlayer]), maxCharToSelect):
+                        v[iPlayer].append("Random")
+
             baseEnvKwargs[k] = v
 
         output = ""
@@ -126,8 +135,9 @@ class diambraArenaLib:
         output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
         output += "character1"+       "+2+" + baseEnvKwargs["characters"][0][0] + "+"
         output += "character2"+       "+2+" + baseEnvKwargs["characters"][1][0] + "+"
-        output += "character1_2"+     "+2+" + baseEnvKwargs["characters"][0][1] + "+"
-        output += "character2_2"+     "+2+" + baseEnvKwargs["characters"][1][1] + "+"
+        for iChar in range(1,maxCharToSelect):
+            output += "character1_{}".format(iChar+1)+     "+2+" + baseEnvKwargs["characters"][0][iChar] + "+"
+            output += "character2_{}".format(iChar+1)+     "+2+" + baseEnvKwargs["characters"][1][iChar] + "+"
         output += "charOutfits1"+     "+1+" + str(baseEnvKwargs["charOutfits"][0]) + "+"
         output += "charOutfits2"+     "+1+" + str(baseEnvKwargs["charOutfits"][1]) + "+"
         output += "superArt1"+        "+1+" + str(baseEnvKwargs["superArt"][0]) + "+"

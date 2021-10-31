@@ -34,7 +34,6 @@ if __name__ == '__main__':
 
         settings["gameId"]     = opt.gameId
         settings["player"]     = opt.player
-        settings["characters"] = [["Random", "Random"], ["Random", "Random"]]
 
         settings["stepRatio"] = opt.stepRatio
         settings["render"] = False
@@ -42,8 +41,6 @@ if __name__ == '__main__':
 
         settings["continueGame"] = 0.0
         settings["showFinal"]    = False
-
-        settings["charOutfits"] = [2, 2]
 
         settings["actionSpace"] = [opt.actionSpace, opt.actionSpace]
         settings["attackButCombination"] = [opt.attButComb, opt.attButComb]
