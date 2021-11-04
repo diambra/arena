@@ -54,6 +54,7 @@ if __name__ == '__main__':
         # Env wrappers settings
         wrappersSettings = {}
         wrappersSettings["noOpMax"] = 0
+        wrappersSettings["stickyActions"] = 1
         wrappersSettings["hwcObsResize"] = [128, 128, 1]
         wrappersSettings["normalizeRewards"] = True
         wrappersSettings["clipRewards"] = False
