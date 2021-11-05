@@ -24,11 +24,12 @@ class diambraGymHardCoreBase(gym.Env):
 
         # Launch DIAMBRA Arena
         self.diambraArena = diambraArenaLib(envId, envSettings)
+        self.envSettings = self.diambraArena.envSettings
 
         # Get Env Info
         envInfo = self.diambraArena.readEnvInfo()
         self.envInfoProcess(envInfo)
-        self.playerSide = envSettings["player"]
+        self.playerSide = self.envSettings["player"]
 
         # Read Env Int Data List
         self.diambraArena.readEnvIntDataVarsList()

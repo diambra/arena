@@ -37,6 +37,32 @@ class NoopResetEnv(gym.Wrapper):
     def step(self, action):
         return self.env.step(action)
 
+class StickyActionsEnv(gym.Wrapper):
+    def __init__(self, env, stickyActions):
+        """
+        Apply sticky actions
+        :param env: (Gym Environment) the environment to wrap
+        :param stickyActions: (int) number of steps during which the same action is sent
+        """
+        gym.Wrapper.__init__(self, env)
+        self.stickyActions = stickyActions
+
+        assert self.env.envSettings["stepRatio"] == 1, "StickyActions can be activated "\
+                                                       "only when stepRatio is set equal to 1"
+
+    def step(self, action):
+
+        rew = 0.0
+
+        for _ in range(self.stickyActions):
+
+            obs, rewStep, done, info = self.env.step(action)
+            rew += rewStep
+            if info["roundDone"] == True:
+                break
+
+        return obs, rew, done, info
+
 class ClipRewardEnv(gym.RewardWrapper):
     def __init__(self, env):
         """
@@ -68,9 +94,9 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         return float(reward)/float(self.env.rewNormFac*self.env.maxDeltaHealth)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
-def envWrapping(env, player, noOpMax=0, clipRewards=False, normalizeRewards=True, frameStack=1,
-                actionsStack=1, scale=False, scaleMod = 0, hwcObsResize = [84, 84, 0],
-                dilation=1, hardCore=False):
+def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
+                normalizeRewards=True, frameStack=1, actionsStack=1, scale=False,
+                scaleMod = 0, hwcObsResize = [84, 84, 0], dilation=1, hardCore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
@@ -90,6 +116,9 @@ def envWrapping(env, player, noOpMax=0, clipRewards=False, normalizeRewards=True
 
     if noOpMax > 0:
         env = NoopResetEnv(env, noOpMax=noOpMax)
+
+    if stickyActions > 1:
+        env = StickyActionsEnv(env, stickyActions=stickyActions)
 
     if hardCore:
         from diambraArena.wrappers.obsWrapperHardCore import WarpFrame, WarpFrame3C, FrameStack, FrameStackDilated,\

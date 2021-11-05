@@ -118,6 +118,8 @@ class diambraArenaLib:
 
             baseEnvKwargs[k] = v
 
+        self.envSettings = baseEnvKwargs
+
         output = ""
 
         output += "envId"+            "+2+" + envId + "+"

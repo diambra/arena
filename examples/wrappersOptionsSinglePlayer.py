@@ -19,6 +19,9 @@ wrappersSettings = {}
 # Number of no-Op actions to be executed at the beginning of the episode (0 by default)
 wrappersSettings["noOpMax"] = 0
 
+# Number of steps for which the same action should be sent (1 by default)
+wrappersSettings["stickyActions"] = 1
+
 # Frame resize operation spec (deactivated by default)
 wrappersSettings["hwcObsResize"] = [128, 128, 1]
 
