@@ -100,7 +100,7 @@ class diambraArenaLib:
         baseEnvKwargs["tower"] = 3
         baseEnvKwargs["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
         baseEnvKwargs["charOutfits"] = [2, 2]
-        baseEnvKwargs["superArt"] = [1, 1]
+        baseEnvKwargs["superArt"] = [0, 0]
         baseEnvKwargs["headless"] = False
         baseEnvKwargs["displayNum"] = ":1"
         baseEnvKwargs["disableKeyboard"] = True
