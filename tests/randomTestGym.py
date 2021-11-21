@@ -57,6 +57,10 @@ if __name__ == '__main__':
             settings["actionSpace"] = settings["actionSpace"][0]
             settings["attackButCombination"] = settings["attackButCombination"][0]
 
+        nRounds = 2
+        if opt.gameId == "kof98umh":
+            nRounds = 3
+
         hardCore = False if opt.hardCore == 0 else True
         settings["hardCore"] = hardCore
 
@@ -173,7 +177,7 @@ if __name__ == '__main__':
         if opt.gameId == "tektagt":
             maxContinue = (maxContinue + 1) * 0.7 - 1
 
-        if opt.noAction == 1 and np.mean(cumulativeEpRewAll) > -2*(maxContinue+1)*env.maxDeltaHealth+0.001:
+        if opt.noAction == 1 and np.mean(cumulativeEpRewAll) > -nRounds*(maxContinue+1)*env.maxDeltaHealth+0.001:
             raise RuntimeError("NoAction policy and average reward different than {} ({})".format(-2*(maxContinue+1)*env.maxDeltaHealth, np.mean(cumulativeEpRewAll)))
 
         print("ALL GOOD!")
