@@ -100,7 +100,13 @@ class diambraArenaLib:
         baseEnvKwargs["tower"] = 3
         baseEnvKwargs["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
         baseEnvKwargs["charOutfits"] = [2, 2]
+
+        # SFIII Specific
         baseEnvKwargs["superArt"] = [0, 0]
+        # KOF Specific
+        baseEnvKwargs["fightingStyle"] = [0, 0]
+        baseEnvKwargs["ultimateStyle"] = [[0, 0, 0], [0, 0, 0]]
+
         baseEnvKwargs["headless"] = False
         baseEnvKwargs["displayNum"] = ":1"
         baseEnvKwargs["disableKeyboard"] = True
@@ -137,13 +143,23 @@ class diambraArenaLib:
         output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
         output += "character1"+       "+2+" + baseEnvKwargs["characters"][0][0] + "+"
         output += "character2"+       "+2+" + baseEnvKwargs["characters"][1][0] + "+"
-        for iChar in range(1,maxCharToSelect):
+        for iChar in range(1, maxCharToSelect):
             output += "character1_{}".format(iChar+1)+     "+2+" + baseEnvKwargs["characters"][0][iChar] + "+"
             output += "character2_{}".format(iChar+1)+     "+2+" + baseEnvKwargs["characters"][1][iChar] + "+"
         output += "charOutfits1"+     "+1+" + str(baseEnvKwargs["charOutfits"][0]) + "+"
         output += "charOutfits2"+     "+1+" + str(baseEnvKwargs["charOutfits"][1]) + "+"
+
+        # SFIII Specific
         output += "superArt1"+        "+1+" + str(baseEnvKwargs["superArt"][0]) + "+"
         output += "superArt2"+        "+1+" + str(baseEnvKwargs["superArt"][1]) + "+"
+        # KOF Specific
+        output += "fightingStyle1"+   "+1+" + str(baseEnvKwargs["fightingStyle"][0]) + "+"
+        output += "fightingStyle2"+   "+1+" + str(baseEnvKwargs["fightingStyle"][1]) + "+"
+        for idx in range(2):
+            output += "ultimateStyleDash"+str(idx+1)+  "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][0]) + "+"
+            output += "ultimateStyleEvade"+str(idx+1)+ "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][1]) + "+"
+            output += "ultimateStyleBar"+str(idx+1)+   "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][2]) + "+"
+
         output += "headless"+         "+0+" + str(int(baseEnvKwargs["headless"])) + "+"
         output += "displayNum"+       "+2+" + baseEnvKwargs["displayNum"] + "+"
         output += "disableKeyboard"+  "+0+" + str(int(baseEnvKwargs["disableKeyboard"])) + "+"
