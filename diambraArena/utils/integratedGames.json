@@ -81,5 +81,22 @@
                          "Mina", "Zankuro", "Nakoruru", "Rera", "Yunfei", "Basara", "Mizuki"],
             "difficulty": [1, 8, 6],
             "cfg": {"WS": "But1", "MS": "But2", "K": "But3", "M": "But4"}
+        },
+    "kof98umh":
+        { 
+            "name": "The King Of Fighters '98 UMH",
+            "id": "kof98umh",
+            "original_rom_name": "kof98umh.zip",
+            "search_keywords": ["The King Of Fighters '98: Ultimate Match HERO", "kof98umh", "allmyroms"],
+            "notes": "",
+            "nvramSave": "",
+            "sha256": "beb7bdea87137832f5f6d731fd1abd0350c0cd6b6b2d57cab2bedbac24fe8d0a",
+            "charList": ["Kyo","Benimaru","Daimon","Terry","Andy","Joe","Ryo","Robert","Yuri",
+                         "Leona","Ralf","Clark","Athena","Kensou","Chin","Chizuru","Mai","King",
+                         "Kim","Chang","Choi","Yashiro","Shermie","Chris","Yamazaki","Blue","Billy",
+                         "Iori","Mature","Vice","Heidern","Takuma","Saisyu","Heavy-D!","Lucky","Brian",
+                         "Eiji","Kasumi","Shingo","Rugal","Geese","Krauser","Mr.Big","Goenitz","Orochi"],
+            "difficulty": [1, 8, 6],
+            "cfg": {"WP": "But1", "WK": "But2", "SP": "But3", "SK": "But4"}
         }
 }
