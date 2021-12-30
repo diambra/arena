@@ -97,12 +97,15 @@ class diambraArenaLib:
         baseEnvKwargs["render"] = True
         baseEnvKwargs["lockFps"] = True
         baseEnvKwargs["difficulty"] = 3
-        baseEnvKwargs["tower"] = 3
         baseEnvKwargs["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
         baseEnvKwargs["charOutfits"] = [2, 2]
 
         # SFIII Specific
         baseEnvKwargs["superArt"] = [0, 0]
+
+        # UMK3 Specific
+        baseEnvKwargs["tower"] = 3
+
         # KOF Specific
         baseEnvKwargs["fightingStyle"] = [0, 0]
         baseEnvKwargs["ultimateStyle"] = [[0, 0, 0], [0, 0, 0]]
@@ -140,7 +143,6 @@ class diambraArenaLib:
         output += "sound"+            "+0+" + str(int(baseEnvKwargs["render"] and baseEnvKwargs["lockFps"])) + "+"
         output += "player"+           "+2+" + baseEnvKwargs["player"] + "+"
         output += "difficulty"+       "+1+" + str(baseEnvKwargs["difficulty"]) + "+"
-        output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
         output += "character1"+       "+2+" + baseEnvKwargs["characters"][0][0] + "+"
         output += "character2"+       "+2+" + baseEnvKwargs["characters"][1][0] + "+"
         for iChar in range(1, maxCharToSelect):
@@ -152,6 +154,8 @@ class diambraArenaLib:
         # SFIII Specific
         output += "superArt1"+        "+1+" + str(baseEnvKwargs["superArt"][0]) + "+"
         output += "superArt2"+        "+1+" + str(baseEnvKwargs["superArt"][1]) + "+"
+        # UMK3 Specific
+        output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
         # KOF Specific
         output += "fightingStyle1"+   "+1+" + str(baseEnvKwargs["fightingStyle"][0]) + "+"
         output += "fightingStyle2"+   "+1+" + str(baseEnvKwargs["fightingStyle"][1]) + "+"
