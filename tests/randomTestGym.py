@@ -15,6 +15,8 @@ if __name__ == '__main__':
         parser.add_argument('--character2',     type=str,   default="Random",   help='Character P2 (Random)')
         parser.add_argument('--character1_2',   type=str,   default="Random",   help='Character P1_2 (Random)')
         parser.add_argument('--character2_2',   type=str,   default="Random",   help='Character P2_2 (Random)')
+        parser.add_argument('--character1_3',   type=str,   default="Random",   help='Character P1_3 (Random)')
+        parser.add_argument('--character2_3',   type=str,   default="Random",   help='Character P2_3 (Random)')
         parser.add_argument('--stepRatio',      type=int,   default=3,          help='Frame ratio')
         parser.add_argument('--nEpisodes',      type=int,   default=1,          help='Number of episodes')
         parser.add_argument('--continueGame',   type=float, default=-1.0,       help='ContinueGame flag (-inf,+1.0]')
@@ -40,7 +42,8 @@ if __name__ == '__main__':
 
         settings["gameId"]     = opt.gameId
         settings["player"]     = opt.player
-        settings["characters"] = [[opt.character1, opt.character1_2], [opt.character2, opt.character2_2]]
+        settings["characters"] = [[opt.character1, opt.character1_2, opt.character1_3],
+                                  [opt.character2, opt.character2_2, opt.character2_3]]
 
         settings["stepRatio"] = opt.stepRatio
         settings["render"] = True

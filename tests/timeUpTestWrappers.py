@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
             actions = [None, None]
             for idx in range(2):
-                if opt.firstRoundAct == 1:
+                if opt.firstRoundAct == 1 and observation["P1"]["ownWins"] == 0.0 and observation["P1"]["oppWins"] == 0.0:
                     actions[idx] = env.action_space["P{}".format(idx+1)].sample()
                 else:
                     actions[idx] = 0
