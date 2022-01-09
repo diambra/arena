@@ -230,6 +230,7 @@ else
       sh -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
       #sh -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
   else
+    echo "Boot phase will require about 30 seconds, please be patient..."
     echo "Running Virtual X Server ..."
     # https://www.xquartz.org/releases/XQuartz-2.7.8.html
     socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &>/dev/null & sleep 15s; open -a xquartz; sleep 5s; \
