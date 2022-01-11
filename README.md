@@ -1,4 +1,4 @@
-# DIAMBRA Environment
+# DIAMBRA Arena
 
 **🧪 PLEASE NOTE THAT THIS SOFTWARE IS STILL IN ALPHA ⚗️**
 
