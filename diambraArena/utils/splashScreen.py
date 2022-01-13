@@ -19,7 +19,8 @@ class DIAMBRASplashScreen():
 
         self.timeout = timeout
         self.timeInterval = timeInterval
-        self.labels = (t*"\u25AE" for t in range(int((timeout-750)/timeInterval)))
+        #self.labels = (t*"\u25AE" for t in range(int((timeout-750)/timeInterval)))
+        self.labels = (t*"" for t in range(int((timeout-750)/timeInterval)))
         self.labelsEmpty = (int((timeout-750)/timeInterval)-1)*"\u25AF"
 
         self.window = tk.Tk()
@@ -37,7 +38,7 @@ class DIAMBRASplashScreen():
         hwDim = [image.height(), image.width()]
         self.window.geometry('%dx%d+%d+%d' % (hwDim[1], hwDim[0], (width - hwDim[1])/2, (height - hwDim[0])/2))
 
-        self.canvas = tk.Canvas(self.window, height=hwDim[0], width=hwDim[1], bg="brown")
+        self.canvas = tk.Canvas(self.window, height=hwDim[0], width=hwDim[1], bg="brown", bd=0, highlightthickness=0)
         self.canvas.create_image(hwDim[1]/2, hwDim[0]/2, image=image)
         self.emptyText = self.canvas.create_text(30, hwDim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
         #self.canvas.itemconfigure(self.emptyText, text=self.labelsEmpty)
