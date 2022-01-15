@@ -1,3 +1,5 @@
+![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
+
 # DIAMBRA Arena
 
 **🧪 PLEASE NOTE THAT THIS SOFTWARE IS STILL IN ALPHA ⚗️**
@@ -15,8 +17,6 @@
 - **[Citation](#citation)**
 
 ## What is DIAMBRA Environment
-
-![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
 
 **DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, and **supports headless mode** for server-side executions too.
 
@@ -79,42 +79,28 @@ Execute following commands from inside the repo root
 Basic usage:
 
 ```python
-# Code from /examples/core/diambraGymGist.py
-from diambra_environment.diambraGym import diambraGym
-import os
+import diambraArena
 
-repo_base_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../") # Absolute path to your DIAMBRA environment repo
+# Mandatory settings
+settings = {}
+# Game selection
+settings["gameId"] = "doapp"
+# Path to roms folder
+settings["romsPath"] = opt.romsPath
 
-diambraEnvKwargs = {}
-diambraEnvKwargs["gameId"]          = "doapp" # Game selection
-diambraEnvKwargs["roms_path"]       = os.path.join(repo_base_path, "roms/") # Absolute path to roms
-
-diambraEnvKwargs["mame_diambra_step_ratio"] = 6
-diambraEnvKwargs["render"]                  = True # Renders the environment, deactivate for speedup
-diambraEnvKwargs["lock_fps"]                = True # Locks to 60 FPS
-diambraEnvKwargs["sound"]                   = diambraEnvKwargs["lock_fps"] and diambraEnvKwargs["render"]
-
-# 1P
-diambraEnvKwargs["player"] = "P1"
-
-# Game specific
-diambraEnvKwargs["difficulty"]  = 3
-diambraEnvKwargs["characters"]  = [["Random", "Random"], ["Random", "Random"]]
-diambraEnvKwargs["charOutfits"] = [2, 2]
-
-envId = "TestEnv" # This ID must be unique for every instance of the environment when using diambraGym class
-env = diambraGym(envId, diambraEnvKwargs, headless=False) # Use `headless=True` for server-side executions
+env = diambraArena.make("TestEnv", settings)
 
 observation = env.reset()
 
-for _ in range(100):
+while True:
 
-    actions = env.action_spaces[0].sample() # Sampling for 1P mode
+    actions = env.action_space.sample()
 
     observation, reward, done, info = env.step(actions)
 
     if done:
         observation = env.reset()
+        break
 
 env.close()
 ```
@@ -153,32 +139,16 @@ Our very first AI Tournament just ended, and **it was amazing!** Participants tr
 
 The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> and use the dedicated channel.
 
-### Common Known Problems
-
- - If when running the environment remotely with the option `headless=True` (see gist script in `examples/core/`) you receive an error like:
-   ```
-   Fatal server error:
-   (EE) Cannot establish any listening sockets - Make sure an X server isn't already running(EE)
-   _XSERVTransSocketUNIXCreateListener: ...SocketCreateListener() failed
-   _XSERVTransMakeAllCOTSServerListeners: server already running
-   (EE)
-   Fatal server error:
-   (EE) Cannot establish any listening sockets - Make sure an X server isn't already running(EE)
-   ```
-   change the `Xvfb` DISPLAY number parameter using the additional `diambraGym` optional argument `displayNum` (equal to `1` by default) increasing its value until it works
-
- - If you are receiving the **Runtime error "An attempt has been made to start a new process before the current process has finished its bootstrapping phase."** when running python scripts extracted from notebooks, you can fix it placing `if __name__ == '__main__':` after modules import in the script.
- - If the **environment freezes or if your receive the Runtime error "Connection refused by peer"**, make sure you reserve the whole machine to execute the environment, avoid running additional tasks, even light ones like browsing the internet
- - If the **environment is not working and you receive LUA errors in the terminal** (typically in between environment initialization and environment reset), make sure you placed the environment folder in the OS drive with an `ext4` filesystem (mounted `NTFS` data drives can cause problems)
-
 ## Citation
 ```
-  @misc{diambra2021
+  @misc{diambra2022
     author = {Alessandro Palmas},
-    title = {DIAMBRA Environment, Gym Compliant Interface For Famous Videogames},
-    year = {2021},
-    howpublished = {\url{https://github.com/diambra/DIAMBRAenvironment}},
+    title = {DIAMBRA Arena: built with OpenAI Gym Python interface, easy to use, transforms popular video games into Reinforcement Learning environments.},
+    year = {2022},
+    howpublished = {\url{https://github.com/diambra/diambraArena}},
   }
 ```
 
-###### DIAMBRA™ is a Trade Mark, property of and made with :heart: by <a href="https://artificialtwin.com" target="_blank">Artificial Twin</a>, © Copyright 2018 - 2021.
+## Terms of Use
+
+###### DIAMBRA™ is a Trade Mark, © Copyright 2018 - 2022. All Right Reserved.
