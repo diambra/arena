@@ -2,25 +2,25 @@
 
 # DIAMBRA Arena
 
-**🧪 PLEASE NOTE THAT THIS SOFTWARE IS STILL IN ALPHA ⚗️**
+DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It acts as an interface towards popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym standard**, that makes its adoption smooth and straightforward.
 
-**⚠️ BREAKING CHANGES MAY OCCUR ⚠️**
+It **supports all major Operating Systems: Linux, Windows and MacOS**, most of them via Docker, with a step by step installation guide available in this manual. It is **completely free to use**, the user only needs to <a href="https://diambra.ai/register/" target="_blank">register on the official website</a>.
 
-## Summary
+In addition, it comes with a <a href="https://docs.diambra.ai" target="_blank">comprehensive documentation</a>, and this repository provides a **collection of examples** covering main use cases of interest **that can be run in just a few steps**.
 
-- **[What is DIAMBRA Environment](#what-is-diambra-environment)**
-- **[Interfaced Games](#interfaced-games)**
-- **[Installation](#installation)**
-- **[Getting Started and Examples](#getting-started-and-examples)**
+## Index
+
+- **[Overview](#overview)**
+- **[Installation & Quickstart](#installation--quickstart)**
 - **[AI Tournament](#ai-tournament)**
-- **[Troubleshoot](#support-and-troubleshoot)**
+- **[References](#references)**
+- **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
 - **[Citation](#citation)**
+- **[Terms of Use](#terms-of-use)**
 
-## What is DIAMBRA Environment
+## Oveview
 
 **DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, and **supports headless mode** for server-side executions too.
-
-### Interfaced games
 
 List of currently interfaced games:
 - Dead Or Alive ++
@@ -31,7 +31,7 @@ List of currently interfaced games:
 
 **Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder
 
-## Installation
+## Installation & Quickstart
 
 ### Prerequisites
 
@@ -131,7 +131,16 @@ Our very first AI Tournament just ended, and **it was amazing!** Participants tr
 
 **[Read more and watch related events here](https://diambra.artificialtwin.com/aitournament/)**
 
-## Support and Troubleshoot
+## References
+
+ - Documentation: <a href="https://docs.diambra.ai" target="_blank">https://docs.diambra.ai</a>
+ - Website: <a href="https://diambra.ai" target="_blank">https://diambra.ai</a>
+ - Discord Server: <a href="https://discord.gg/tFDS2UN5sv" target="_blank">https://discord.gg/tFDS2UN5sv</a>
+ - Linkedin: <a href="https://www.linkedin.com/company/diambrav" target="_blank">https://www.linkedin.com/company/diambra</a>
+ - Twitch Channel: <a href="https://www.twitch.tv/diambra_ai" target="_blank">https://www.twitch.tv/diambra_ai</a>
+ - YouTube Channel: <a href="https://www.youtube.com/channel/UCMlHRxN3KtLIj1N8mKvmXDw/videos" target="_blank">https://www.youtube.com/channel/UCMlHRxN3KtLIj1N8mKvmXDw/videos</a>
+
+## Support, Feature Requests & Bugs Reports
 
 The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> and use the dedicated channel.
 
