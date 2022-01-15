@@ -83,19 +83,15 @@ import diambraArena
 
 # Mandatory settings
 settings = {}
-# Game selection
-settings["gameId"] = "doapp"
-# Path to roms folder
-settings["romsPath"] = opt.romsPath
+settings["gameId"] = "doapp" # Game selection
+settings["romsPath"] = /path/to/roms/ # Path to roms folder
 
 env = diambraArena.make("TestEnv", settings)
-
 observation = env.reset()
 
 while True:
 
     actions = env.action_space.sample()
-
     observation, reward, done, info = env.step(actions)
 
     if done:
