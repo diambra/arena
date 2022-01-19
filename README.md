@@ -8,30 +8,39 @@ It **supports all major Operating Systems: Linux, Windows and MacOS**, most of t
 
 In addition, it comes with a <a href="https://docs.diambra.ai" target="_blank">comprehensive documentation</a>, and this repository provides a **collection of examples** covering main use cases of interest **that can be run in just a few steps**.
 
+##### Environments Main Features                                                 
+                                                                                
+All environments are episodic Reinforcement Learning tasks, with discrete actions (gamepad buttons) and observations composed by screen pixels plus additional numerical data (RAM values like characters health bars or characters stage side).
+                                                                                
+They all **support both single player (1P) as well as two players (2P) mode**, making them the perfect resource to explore all the following Reinforcement Learning subfields:
+
+| ![standardRl](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitiveMa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitieHa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![selfPlay](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![imitationLearning](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![humanInTheLoop](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| Standard RL | Competitive Multi-Agent | Competitive Human-Agent | Self-Play | Imitation Learning | Human-in-the-Loop |
+                                       
+#### Available Games                                                            
+                                                                                
+Interfaced games have been selected among the most popular fighting retro-games. While sharing the same fundamental mechanics, they provide slightly different challenges, with specific features such as different type and number of characters, how to perform combos, health bars recharging, etc.
+                                                                                
+Whenever possible, games are released with all hidden/bonus characters unlocked.
+                                                                                
+Additional details can be found in the <a href="https://docs.diambra.ai/envs/games/" target="_blank">dedicated section</a> of the documentation.
+
+| ![standardRl](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitiveMa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitieHa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![selfPlay](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![imitationLearning](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![humanInTheLoop](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| Dead Or Alive ++ | Street Fighter III 3rd Strike | Tekken Tag Tournament | Ultimate Mortal Kombat 3 | Samurai Showdown 5 Special | The King of Fighers '98 Ultimate Match Hero|
+
 ## Index
 
-- **[Overview](#overview)**
-- **[Installation & Quickstart](#installation--quickstart)**
+- **[Installation](#installation)**
+- **[Quickstart](#quickstart)**
 - **[AI Tournament](#ai-tournament)**
 - **[References](#references)**
 - **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
 - **[Citation](#citation)**
 - **[Terms of Use](#terms-of-use)**
 
-## Oveview
-
-**DIAMBRA Environment** is a software package that **transforms famous videogames in Reinforcement Learning tasks**. It provides a **python interface** that follows the standard de-facto in this field, **[OpenAI Gym](https://gym.openai.com/)**, so it is **super easy to use**, and **supports headless mode** for server-side executions too.
-
-List of currently interfaced games:
-- Dead Or Alive ++
-- Street Fighter III: 3rd Strike (Coming Soon)
-- Tekken Tag Tournament (Coming Soon)
-- Ultimate Mortal Kombat III (Coming Soon)
-- Many more in development ...
-
-**Note**: roms are identified via SHA256 signatures, the correct value for each game is found in the `json` file inside the `roms/` folder
-
-## Installation & Quickstart
+## Installation
 
 ### Prerequisites
 
@@ -65,7 +74,9 @@ Execute following commands from inside the repo root
 
 (*) Python 3.6.x is required. OS like Ubuntu 20.10 requires to install it from [sources](https://www.python.org/downloads/).
 
-## Getting started and Examples
+## Quickstart
+
+![rlScheme](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
 
 - Make sure you are connected to the Internet when running the environment
 - Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
