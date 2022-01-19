@@ -142,7 +142,9 @@ Our very first AI Tournament just ended, and **it was amazing!** Participants tr
 
 ## Support, Feature Requests & Bugs Reports
 
-The fastest way to receive support is by joining DIAMBRA <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> and use the dedicated channel.
+To receive support, use the dedicated channel in our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord Server</a>.
+
+To request features or report bugs, use the <a href="https://github.com/diambra/diambraArena/issues" target="_blank">GitHub Issue Tracker</a>.
 
 ## Citation
 ```
@@ -155,5 +157,7 @@ The fastest way to receive support is by joining DIAMBRA <a href="https://discor
 ```
 
 ## Terms of Use
+
+DIAMBRA Arena software package is subject to our <a href="https://diambra.ai/terms" target="_blank">Terms of Use</a>. By using it, you accept them in full.
 
 ###### DIAMBRA™ is a Trade Mark, © Copyright 2018 - 2022. All Right Reserved.
