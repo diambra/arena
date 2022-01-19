@@ -1,4 +1,4 @@
-![diambra](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
+![diambra](https://raw.githubusercontent.com/diambra/diambraArena/main/img/github.png)
 
 # DIAMBRA Arena
 
@@ -14,7 +14,7 @@ All environments are episodic Reinforcement Learning tasks, with discrete action
                                                                                 
 They all **support both single player (1P) as well as two players (2P) mode**, making them the perfect resource to explore all the following Reinforcement Learning subfields:
 
-| ![standardRl](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitiveMa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitieHa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![selfPlay](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![imitationLearning](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![humanInTheLoop](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) |
+| ![standardRl](https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsCOM.png) | ![competitiveMa](https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsAI.png) | ![competitieHa](https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsHUM.png) | ![selfPlay](https://raw.githubusercontent.com/diambra/diambraArena/main/img/SP.png) | ![imitationLearning](https://raw.githubusercontent.com/diambra/diambraArena/main/img/IL.png) | ![humanInTheLoop](https://raw.githubusercontent.com/diambra/diambraArena/main/img/HITL.png) |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Standard RL | Competitive Multi-Agent | Competitive Human-Agent | Self-Play | Imitation Learning | Human-in-the-Loop |
                                        
@@ -26,7 +26,7 @@ Whenever possible, games are released with all hidden/bonus characters unlocked.
                                                                                 
 Additional details can be found in the <a href="https://docs.diambra.ai/envs/games/" target="_blank">dedicated section</a> of the documentation.
 
-| ![standardRl](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitiveMa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![competitieHa](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![selfPlay](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![imitationLearning](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) | ![humanInTheLoop](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png) |
+| ![doapp](https://raw.githubusercontent.com/diambra/diambraArena/main/img/doapp.jpg) | ![sfiii3n](https://raw.githubusercontent.com/diambra/diambraArena/main/img/sfiii3n.jpg) | ![tektagt](https://raw.githubusercontent.com/diambra/diambraArena/main/img/tektagt.jpg) | ![umk3](https://raw.githubusercontent.com/diambra/diambraArena/main/img/umk3.jpg) | ![samsh6sp](https://raw.githubusercontent.com/diambra/diambraArena/main/img/samsh5sp.jpg) | ![kof98umh](https://raw.githubusercontent.com/diambra/diambraArena/main/img/kof98umh.jpg) |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Dead Or Alive ++ | Street Fighter III 3rd Strike | Tekken Tag Tournament | Ultimate Mortal Kombat 3 | Samurai Showdown 5 Special | The King of Fighers '98 Ultimate Match Hero|
 
@@ -76,7 +76,7 @@ Execute following commands from inside the repo root
 
 ## Quickstart
 
-![rlScheme](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.png)
+![rlScheme](https://raw.githubusercontent.com/diambra/diambraArena/main/img/basicUsage.png)
 
 - Make sure you are connected to the Internet when running the environment
 - Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
