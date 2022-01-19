@@ -254,7 +254,7 @@ class diambraImitationLearningBase(gym.Env):
     def render(self, mode='human'):
 
         if mode == "human":
-            windowName = "Diambra Imitation Learning Environment"
+            windowName = "Diambra Imitation Learning Environment - {}".format(self.rank)
             cv2.namedWindow(windowName,cv2.WINDOW_GUI_NORMAL)
             cv2.imshow(windowName, self.lastObs)
             cv2.waitKey(1)

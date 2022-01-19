@@ -17,8 +17,11 @@ settings = {}
 # List of recorded trajectories files
 settings["trajFilesList"] = recordedTrajectoriesFiles
 
-# Number of parallel Imitation Learning environments to run
+# Number of parallel Imitation Learning environments that will be run
 settings["totalCpus"] = 2
+
+# Rank of the created environment
+settings["rank"] = 0
 
 env = diambraArena.imitationLearning(**settings)
 
