@@ -35,10 +35,10 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 ## Index
 
 - **[Installation](#installation)**
-- **[Quickstart & Examples](#quickstart--examples)**
+- **[Quickstart & Examples](#quickstart-examples)**
 - **[AI Tournaments](#ai-tournaments)**
 - **[References](#references)**
-- **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
+- **[Support, Feature Requests & Bugs Reports](#support-feature-requests-bugs-reports)**
 - **[Citation](#citation)**
 - **[Terms of Use](#terms-of-use)**
 
