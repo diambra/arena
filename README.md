@@ -8,7 +8,7 @@ It **supports all major Operating Systems: Linux, Windows and MacOS**, most of t
 
 In addition, it comes with a <a href="https://docs.diambra.ai" target="_blank">comprehensive documentation</a>, and this repository provides a **collection of examples** covering main use cases of interest **that can be run in just a few steps**.
 
-##### Environments Main Features                                                 
+#### Environments Main Features                                                 
                                                                                 
 All environments are episodic Reinforcement Learning tasks, with discrete actions (gamepad buttons) and observations composed by screen pixels plus additional numerical data (RAM values like characters health bars or characters stage side).
                                                                                 
@@ -18,17 +18,19 @@ They all **support both single player (1P) as well as two players (2P) mode**, m
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Standard RL | Competitive Multi-Agent | Competitive Human-Agent | Self-Play | Imitation Learning | Human-in-the-Loop |
                                        
-#### Available Games                                                            
+#### Available Games
                                                                                 
 Interfaced games have been selected among the most popular fighting retro-games. While sharing the same fundamental mechanics, they provide slightly different challenges, with specific features such as different type and number of characters, how to perform combos, health bars recharging, etc.
                                                                                 
 Whenever possible, games are released with all hidden/bonus characters unlocked.
                                                                                 
-Additional details can be found in the <a href="https://docs.diambra.ai/envs/games/" target="_blank">dedicated section</a> of the documentation.
+Additional details can be found in the <a href="https://docs.diambra.ai/envs/games/" target="_blank">dedicated section</a> of our Documentation.
 
 | ![doapp](https://raw.githubusercontent.com/diambra/diambraArena/main/img/doapp.jpg) | ![sfiii3n](https://raw.githubusercontent.com/diambra/diambraArena/main/img/sfiii3n.jpg) | ![tektagt](https://raw.githubusercontent.com/diambra/diambraArena/main/img/tektagt.jpg) | ![umk3](https://raw.githubusercontent.com/diambra/diambraArena/main/img/umk3.jpg) | ![samsh6sp](https://raw.githubusercontent.com/diambra/diambraArena/main/img/samsh5sp.jpg) | ![kof98umh](https://raw.githubusercontent.com/diambra/diambraArena/main/img/kof98umh.jpg) |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Dead Or Alive ++ | Street Fighter III 3rd Strike | Tekken Tag Tournament | Ultimate Mortal Kombat 3 | Samurai Showdown 5 Special | The King of Fighers '98 Ultimate Match Hero|
+
+**Many more are coming soon...**
 
 ## Index
 
@@ -46,7 +48,9 @@ DIAMBRA Arena runs on all major Operating Systems: Linux, Windows and MacOS. It 
 
 Docker installation is quick and controlled, with equal (if not better) performances in terms of environment execution speed, when compared with installation from source. It even allows, on every OS, to run all environments with rendering active, showing game frames on screen in real time.
 
-The installation takes only a few steps, all clearly explained in our <a href="https://docs.diambra.ai/installation/" target="_blank">Documentation</a>.
+The installation takes only a few steps, **<a href="https://docs.diambra.ai/installation/" target="_blank">refer to the dedicated section</a> of our Documentation** where they are clearly explained.
+
+#### Prerequisites
 
 In order to use DIAMBRA Arena, it is needed to:
  - Have an active internet connection
