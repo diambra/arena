@@ -8,7 +8,7 @@ It **supports all major Operating Systems: Linux, Windows and MacOS**, most of t
 
 In addition, it comes with a <a href="https://docs.diambra.ai" target="_blank">comprehensive documentation</a>, and this repository provides a **collection of examples** covering main use cases of interest **that can be run in just a few steps**.
 
-#### Environments Main Features                                                 
+#### Main Features                                                 
                                                                                 
 All environments are episodic Reinforcement Learning tasks, with discrete actions (gamepad buttons) and observations composed by screen pixels plus additional numerical data (RAM values like characters health bars or characters stage side).
                                                                                 
