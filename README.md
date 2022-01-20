@@ -33,8 +33,8 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 ## Index
 
 - **[Installation](#installation)**
-- **[Quickstart](#quickstart)**
-- **[AI Tournament](#ai-tournament)**
+- **[Quickstart & Examples](#quickstart--examples)**
+- **[AI Tournaments](#ai-tournaments)**
 - **[References](#references)**
 - **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
 - **[Citation](#citation)**
@@ -42,52 +42,25 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 ## Installation
 
-### Prerequisites
+DIAMBRA Arena runs on all major Operating Systems: Linux, Windows and MacOS. It is natively supported on Linux Ubuntu 18.04 or newer and Linux Mint 19 or newer, where it can be installed directly from sources. For all other options (different Linux distributions, Windows and MacOS), it leverages Docker technology.
 
-##### Operating System
+Docker installation is quick and controlled, with equal (if not better) performances in terms of environment execution speed, when compared with installation from source. It even allows, on every OS, to run all environments with rendering active, showing game frames on screen in real time.
 
-- Linux Mint 19 or newer
-- Linux Ubuntu 18.04 or newer
+The installation takes only a few steps, all clearly explained in our <a href="https://docs.diambra.ai/installation/" target="_blank">Documentation</a>.
 
-**!! WIN and MacOS support (via Docker) under development and available soon, STAY TUNED!**
+In order to use DIAMBRA Arena, it is needed to:
+ - Have an active internet connection
+ - **<a href="https://diambra.ai/register/" target="_blank">Create an account on our website</a>**, it requires just a few clicks and is 100% free
 
-##### (Optional) Python Virtual Environment
+Credentials (email/user id and password) will be asked at the first environment execution.
 
-We recommend to use a Virtual Environment to manage dependencies, both [VirtualEnv](https://virtualenv.pypa.io/en/latest/) and [[Ana]Conda](https://docs.conda.io/projects/conda/en/latest/index.html) have been tested.
+## Quickstart & Examples
 
-### Core
-
-Execute following commands from inside the repo root
-
- - Install OS dependencies: `./setupOS.sh`
- - Install Python packages: `pip3 install .`
-
-### Stable-Baselines Additional Support
-
-Execute following commands from inside the repo root
-
- - Install OS dependencies: `./setupOS.sh -s`
- - Install Python packages: 
-   - `pip3 install .[stable-baselines]`
-   - (*)`pip3 install tensorflow-gpu==1.14.0` **OR** `pip3 install tensorflow==1.14.0` for GPU/CPU versions
-
-
-(*) Python 3.6.x is required. OS like Ubuntu 20.10 requires to install it from [sources](https://www.python.org/downloads/).
-
-## Quickstart
+DIAMBRA Arena usage follows the standard RL interaction framework: the agent sends an action to the environment, which process it and performs a transition accordingly, from the starting state to the new state, returning the observation and the reward to the agent to close the interaction loop. The figure below shows this typical interaction scheme and data flow.
 
 ![rlScheme](https://raw.githubusercontent.com/diambra/diambraArena/main/img/basicUsage.png)
 
-- Make sure you are connected to the Internet when running the environment
-- Download games roms and place them in a folder of choice (default to `repo-root/roms/`)
-    - **WARNING #1**: Downloading roms can be illegal depending on different conditions and country. It is your sole and only responsibility to make sure you respect the law. More info can be found [here](https://diambra.artificialtwin.com/terms/) and [here](https://wiki.mamedev.org/index.php/FAQ:ROMs).
-    - **WARNING #2**: Only a specific rom will work for each game. It is uniquely identified by means of it SHA256 sum value. Check it with the specific shell command:
-
-       `sha256sum path-to-rom-file`
-
-### Examples
-
-Basic usage:
+The shortest snippet for a complete basic execution of an environment consists of just a few lines of code, and is presented in the code block below:
 
 ```python
 import diambraArena
@@ -112,35 +85,29 @@ while True:
 env.close()
 ```
 
-In the `examples/` folder you find **python notebooks**, showing in detail how to:
+### Examples
 
-##### Core
+The `examples/` folder contains ready to use scripts representing the most important use-cases, in particular:
+ - Single Player Environment
+ - Multi Player Environment
+ - Wrappers Options
+ - Human Experience Recorder
+ - Imitation Learning
 
-- Use DIAMBRA Gym Class (`examples/core/DiambraGymTest.ipynb`)
-- Use DIAMBRA Gym Wrappers (`examples/core/DiambraGymWrapTest.ipynb`)
-- Use DIAMBRA Gym Wrappers to record expert demonstrations for Imitation Learning (`examples/core/DiambraGymRecTest.ipynb`)
-- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (Single Env) (`examples/core/DiambraImitationLearningTest.ipynb`)
-
-##### Stable-Baselines (Require Installation with Stable-Baselines Additional Support)
-
-- Use DIAMBRA Imitation Learning Gym to use recorded expert demonstrations (Vectorized Envs Via Stable-Baselines) (`examples/stable_baselines/DiambraImitationLearningVecEnvTest.ipynb`)
-- Train a state of the art Reinforcement Learning algorithm (`examples/stable_baselines/DiambraAIAgent.ipynb`)
-
-In addition, on <a href="https://diambra.artificialtwin.com" target="_blank">DIAMBRA's website</a> you **find a collection of <a href="https://diambra.artificialtwin.com/downloadenv/#tutorials" target="_blank">video tutorials</a>** providing a step by step guide for a flawless adoption. 
+These examples show how to leverage both single and two players modes, how to set up environment wrappers specifying all their options, how to record human expert demonstrations and how to load them to apply imitation learning. They can be used as templates and starting points to explore all the features of the software package.
 
 ![diambraGif](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.gif)
 
-For additional insights and cool stuff about this initiative, **join our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord server</a> to interact with other developers and share ideas and questions**, and **follow the live stream on our [Twitch channel](https://www.twitch.tv/diambra_at)**, every Tuesday and Thursday at 10 PM CET = 1 PM PT!
+## AI Tournaments
 
-## AI Tournament
+We are about to launch our AI Tournaments Platform, where every coder will be able to train his agents and compete.
+There will be one-to-one fights against other agents, challenges to collect accolades & bages, and matches versus human players.
+
+**<a href="https://diambra.ai/register/" target="_blank">Join us to become an early member!</a>**
 
 ![diambraAITournament](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/WideFlyer.jpg)
 
-Our very first AI Tournament just ended, and **it was amazing!** Participants trained an AI algorithm to effectively play Dead Or Alive++. The three best algorithms participated in the final event and **competed for the 1400 CHF prize.**
-
-**Stay tuned for tons more!**
-
-**[Read more and watch related events here](https://diambra.artificialtwin.com/aitournament/)**
+Our very first AI Tournament **has been an amazing experience!** Participants trained an AI algorithm to effectively play Dead Or Alive++. The three best algorithms participated in the final event and **competed for the 1400 CHF prize.**
 
 ## References
 
