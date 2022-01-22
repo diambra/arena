@@ -32,28 +32,38 @@ function setupMintUlyssa() {
     echo 'Updating APT'
     sudo apt-get update
 
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev \
+                         qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip \
+                         jupyter unzip python3-tk vim wget libopencv-dev ssh cmake \
+                         libopenmpi-dev python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 function setupMintTessa() {
     echo 'Updating APT'
     sudo apt-get update
 
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev \
+         xvfb python3-pip jupyter unzip python3-tk vim wget libopencv-dev ssh \
+         cmake libopenmpi-dev python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 function setupUbuntuGroovyGorilla() {
     echo 'Updating APT'
     sudo apt-get update
 
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev \
+                         qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter \
+                         unzip python3-tk vim wget libopencv-dev ssh cmake libopenmpi-dev \
+                         python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 function setupUbuntuBionicBeaver() {
     echo 'Updating APT'
     sudo apt-get update
 
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev \
+                         xvfb python3-pip jupyter unzip python3-tk vim wget libopencv-dev \
+                         ssh cmake libopenmpi-dev python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 distroName=$(cat /etc/*-release | uniq -u | grep DISTRIB_ID)
