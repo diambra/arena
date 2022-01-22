@@ -2,7 +2,7 @@
 FROM diambra:diambra-arena-base
 
 # Maintainer
-LABEL maintainer="Artificial Twin <diambra@artificialtwin.com>"
+LABEL maintainer="DIAMBRA Team <info@diambra.ai>"
 
 # Install CUDA Toolkit 10.0
 CMD ["bash"]
