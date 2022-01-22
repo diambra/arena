@@ -27,13 +27,6 @@ if(not(name == "Ubuntu") and not(name == "Linux Mint")):
     sys.exit()
 
 print("Distro test ok, testing version of your current flavor")
-aptCmd1="sudo apt-get update --assume-yes"
-#MAIN Packages Required
-aptCmd2_20="sudo apt-get --assume-yes install libboost1.71-dev libboost-system1.71-dev ibboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip"
-aptCmd2_19="sudo apt-get install --assume-yes libboost1.65-dev qt5-default libssl-dev ibsdl2-ttf-dev xvfb python3-pip"
-#Stable-baselines specific packages
-aptCmdSb_20="sudo apt-get install --assume-yes cmake libopenmpi-dev python3-dev zlib1g-dev"
-aptCmdSb_19="sudo apt-get install --assume-yes cmake libopenmpi-dev python3-dev zlib1g-dev"
 #Diambra Lib commands
 cpLib20="cp diambraArena/diambraEnvLib/libdiambraEnv20.so diambraArena/diambraEnvLib/libdiambraEnv.so"
 cpLib18="cp diambraArena/diambraEnvLib/libdiambraEnv18.so diambraArena/diambraEnvLib/libdiambraEnv.so"
@@ -46,17 +39,9 @@ if(name == "Ubuntu"):
         sys.exit()
     if(release > 20):
         print("LSB Groovy Gorilla or higher")
-#        os.system(aptCmd1)
-#        os.system(aptCmd2_20)
-#        if(True):
-#            os.system(aptCmdSb_20)
         os.system(cpLib20)
     else:
         print("LSB Bionic Beaver or higher")
-#        os.system(aptCmd1)
-#        os.system(aptCmd2_19)
-#        if(True):
-#            os.system(aptCmdSb_19)
         os.system(cpLib18)
 
 if(name == "Linux Mint"):
@@ -65,36 +50,12 @@ if(name == "Linux Mint"):
         sys.exit()
     if(release > 20):
         print("Mint Ulyssa")
-#        os.system(aptCmd1)
-#        os.system(aptCmd2_20)
-#        if(True):
-#            os.system(aptCmdSb_20)
         os.system(cpLib20)
     else:
         print("Mint Tessa")
-#        os.system(aptCmd1)
-#        os.system(aptCmd2_19)
-#        if(True):
-#            os.system(aptCmdSb_19)
         os.system(cpLib18)
 
 os.system(unzipMameCmd)
-
-#NOTE Not useful for now
-#class DiambraInstall(install):
-#    user_options = install.user_options
-
-#    def initialize_options(self):
-#        install.initialize_options(self)
-
-#    def finalize_options(self):
-#        install.finalize_options(self)
-
-#    def run(self):
-#        install.run(self)
-
-#with open("README.md", "r") as description:
-#    long_description = description.read()
 
 extras= {
 	'core': []
@@ -106,10 +67,10 @@ setuptools.setup(
         name='diambraArena',
         url='https://github.com/diambra/DIAMBRAenvironment',
         version='1.0',
-        author="Artificial Twin",
-        author_email="diambra@artificialtwin.com",
-        description="DIAMBRA™ | Dueling AI Arena. Built with OpenAI Gym standard, easy to use,\ntransforms famous classic videogames into Reinforcement Learning tasks",
-        long_description="DIAMBRA™ | Dueling AI Arena. Built with OpenAI Gym standard, easy to use,\ntransforms famous classic videogames into Reinforcement Learning tasks",
+        author="DIAMBRA Team",
+        author_email="info@diambra.ai",
+        description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
+        long_description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
         long_description_content_type="Reinforcement Learning",
         license='GNU Affero GPL',
         install_requires=[
