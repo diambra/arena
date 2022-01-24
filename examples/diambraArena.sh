@@ -217,7 +217,7 @@ then
     cmd="xvfb-run $cmd"
     docker run -it --rm $gpuSetup --privileged $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
-     --name diambraArena $imageName \
+     -v diambraService:/root/ --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
 else
   if [ $osName == "Linux" ]
@@ -225,7 +225,7 @@ else
     ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host \
      --pulseaudio --size=1024x600 -- $gpuSetup --privileged $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
-     -- $imageName &>/dev/null & sleep 4s; \
+     -v diambraService:/root/ -- $imageName &>/dev/null & sleep 4s; \
       docker exec -u 0 --privileged -it diambraArena \
       sh -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
       #sh -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
@@ -237,7 +237,7 @@ else
     echo "Running DIAMBRA Arena docker container ..."; \
     docker run -it --rm $gpuSetup --privileged -e DISPLAY="$envDisplayIp:0.0" $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
-     --name diambraArena $imageName \
+     -v diambraService:/root/ --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
     # TODO: KILLARE QUARTZ?
   fi
