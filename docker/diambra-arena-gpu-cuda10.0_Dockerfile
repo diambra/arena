@@ -1,5 +1,5 @@
 # Create DIAMBRA Arena base image (diambra:diambra-arena-base)
-FROM diambra:diambra-arena-base
+FROM diambra/diambra-arena:base
 
 # Maintainer
 LABEL maintainer="DIAMBRA Team <info@diambra.ai>"
