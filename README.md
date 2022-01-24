@@ -1,4 +1,4 @@
-![diambra](https://raw.githubusercontent.com/diambra/diambraArena/main/img/github.png)
+<img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/github.png" alt="diambra" width="100%"/>
 
 # DIAMBRA Arena
 
@@ -14,7 +14,7 @@ All environments are episodic Reinforcement Learning tasks, with discrete action
                                                                                 
 They all **support both single player (1P) as well as two players (2P) mode**, making them the perfect resource to explore all the following Reinforcement Learning subfields:
 
-| ![standardRl](https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsCOM.png) | ![competitiveMa](https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsAI.png) | ![competitieHa](https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsHUM.png) | ![selfPlay](https://raw.githubusercontent.com/diambra/diambraArena/main/img/SP.png) | ![imitationLearning](https://raw.githubusercontent.com/diambra/diambraArena/main/img/IL.png) | ![humanInTheLoop](https://raw.githubusercontent.com/diambra/diambraArena/main/img/HITL.png) |
+| <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsCOM.png" alt="standardRl" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsAI.png" alt="competitiveMa" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/AIvsHUM.png" alt="competitiveHa" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/SP.png" alt="selfPlay" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/IL.png" alt="imitationLearning" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/HITL.png" alt="humanInTheLoop" width="100%"/> |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Standard RL | Competitive Multi-Agent | Competitive Human-Agent | Self-Play | Imitation Learning | Human-in-the-Loop |
                                        
@@ -26,7 +26,7 @@ Whenever possible, games are released with all hidden/bonus characters unlocked.
                                                                                 
 Additional details can be found in the <a href="https://docs.diambra.ai/envs/games/" target="_blank">dedicated section</a> of our Documentation.
 
-| ![doapp](https://raw.githubusercontent.com/diambra/diambraArena/main/img/doapp.jpg) | ![sfiii3n](https://raw.githubusercontent.com/diambra/diambraArena/main/img/sfiii3n.jpg) | ![tektagt](https://raw.githubusercontent.com/diambra/diambraArena/main/img/tektagt.jpg) | ![umk3](https://raw.githubusercontent.com/diambra/diambraArena/main/img/umk3.jpg) | ![samsh6sp](https://raw.githubusercontent.com/diambra/diambraArena/main/img/samsh5sp.jpg) | ![kof98umh](https://raw.githubusercontent.com/diambra/diambraArena/main/img/kof98umh.jpg) |
+| <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/doapp.jpg" alt="doapp" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/sfiii3n.jpg" alt="sfiii3n" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/tektagt.jpg" alt="tektagt" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/umk3.jpg" alt="umk3" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/samsh5sp.jpg" alt="samsh6sp" width="100%"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/kof98umh.jpg" alt="kof98umh" width="100%"/> |
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | Dead Or Alive ++ | Street Fighter III 3rd Strike | Tekken Tag Tournament | Ultimate Mortal Kombat 3 | Samurai Showdown 5 Special | The King of Fighers '98 Ultimate Match Hero|
 
@@ -62,7 +62,7 @@ Credentials (email/user id and password) will be asked at the first environment 
 
 DIAMBRA Arena usage follows the standard RL interaction framework: the agent sends an action to the environment, which process it and performs a transition accordingly, from the starting state to the new state, returning the observation and the reward to the agent to close the interaction loop. The figure below shows this typical interaction scheme and data flow.
 
-![rlScheme](https://raw.githubusercontent.com/diambra/diambraArena/main/img/basicUsage.png)
+<img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/basicUsage.png" alt="rlScheme" width="100%"/>
 
 The shortest snippet for a complete basic execution of an environment consists of just a few lines of code, and is presented in the code block below:
 
@@ -100,7 +100,7 @@ The `examples/` folder contains ready to use scripts representing the most impor
 
 These examples show how to leverage both single and two players modes, how to set up environment wrappers specifying all their options, how to record human expert demonstrations and how to load them to apply imitation learning. They can be used as templates and starting points to explore all the features of the software package.
 
-![diambraGif](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.gif)
+<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.gif" alt="diambraGif" width="100%"/>
 
 ## AI Tournaments
 
@@ -109,13 +109,14 @@ There will be one-to-one fights against other agents, challenges to collect acco
 
 **<a href="https://diambra.ai/register/" target="_blank">Join us to become an early member!</a>**
 
-![diambraAITournament](https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/WideFlyer.jpg)
+<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/WideFlyer.jpg" alt="diambraAITournament" width="100%"/>
 
 Our very first AI Tournament **has been an amazing experience!** Participants trained an AI algorithm to effectively play Dead Or Alive++. The three best algorithms participated in the final event and **competed for the 1400 CHF prize.**
 
 ## References
 
  - Documentation: <a href="https://docs.diambra.ai" target="_blank">https://docs.diambra.ai</a>
+ - Docker Repository: <a href="https://hub.docker.com/r/diambra/diambra-arena" target="_blank">https://hub.docker.com/r/diambra/diambra-arena</a>
  - Website: <a href="https://diambra.ai" target="_blank">https://diambra.ai</a>
  - Discord Server: <a href="https://discord.gg/tFDS2UN5sv" target="_blank">https://discord.gg/tFDS2UN5sv</a>
  - Linkedin: <a href="https://www.linkedin.com/company/diambrav" target="_blank">https://www.linkedin.com/company/diambra</a>
