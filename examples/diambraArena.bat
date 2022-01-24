@@ -129,7 +129,7 @@ if "%GUI%"=="0" (
   set "CMDTOEXEC=xvfb-run !CMDTOEXEC!"
   docker run -it --rm --privileged %ROMSPATH% %VOLUME% ^
    --mount src=%CURDIR%,target="/opt/diambraArena/code",type=bind ^
-   --name diambraArena diambra:diambra-arena-base ^
+   --name diambraArena diambra/diambra-arena:base ^
    sh -c "cd /opt/diambraArena/code/ && !CMDTOEXEC!" 
 ) else (
   rem VcXsrv options https://gist.github.com/ctaggart/68ead4d0d942b240061086f4ba587f5f
@@ -167,7 +167,7 @@ if "%GUI%"=="0" (
   echo Running DIAMBRA Arena docker container ...
   docker run -it --rm --privileged -e DISPLAY="!ENVDISPLAYIP!:0.0" %ROMSPATH% %VOLUME% ^
    --mount src=%CURDIR%,target="/opt/diambraArena/code",type=bind ^
-   --name diambraArena diambra:diambra-arena-base ^
+   --name diambraArena diambra/diambra-arena:base ^
    sh -c "cd /opt/diambraArena/code/ && %CMDTOEXEC%"
   TASKKILL /IM vcxsrv.exe /F
 )

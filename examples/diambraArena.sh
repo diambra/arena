@@ -190,10 +190,10 @@ then
     fi
 
     gpuSetup="--gpus all"
-    imageName="diambra:diambra-arena-gpu-cuda10.0"
+    imageName="diambra/diambra-arena:gpu-cuda10.0"
 else
     device="CPU"
-    imageName="diambra:diambra-arena-base"
+    imageName="diambra/diambra-arena:base"
 fi
 
 echo " "
