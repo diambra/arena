@@ -96,6 +96,7 @@ class diambraArenaLib:
         baseEnvKwargs["stepRatio"] = 6
         baseEnvKwargs["render"] = True
         baseEnvKwargs["lockFps"] = True
+        baseEnvKwargs["sound"] = False
         baseEnvKwargs["difficulty"] = 3
         baseEnvKwargs["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
         baseEnvKwargs["charOutfits"] = [2, 2]
@@ -140,7 +141,7 @@ class diambraArenaLib:
         output += "stepRatio"+        "+1+" + str(baseEnvKwargs["stepRatio"]) + "+"
         output += "render"+           "+0+" + str(int(baseEnvKwargs["render"])) + "+"
         output += "lockFps"+          "+0+" + str(int(baseEnvKwargs["lockFps"])) + "+"
-        output += "sound"+            "+0+" + str(int(baseEnvKwargs["render"] and baseEnvKwargs["lockFps"])) + "+"
+        output += "sound"+            "+0+" + str(int(baseEnvKwargs["sound"])) + "+"
         output += "player"+           "+2+" + baseEnvKwargs["player"] + "+"
         output += "difficulty"+       "+1+" + str(baseEnvKwargs["difficulty"]) + "+"
         output += "character1"+       "+2+" + baseEnvKwargs["characters"][0][0] + "+"
