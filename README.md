@@ -132,7 +132,7 @@ To request features or report bugs, use the <a href="https://github.com/diambra/
 ## Citation
 ```
   @misc{diambra2022
-    author = {Alessandro Palmas},
+    author = {DIAMBRA Team},
     title = {DIAMBRA Arena: built with OpenAI Gym Python interface, easy to use, transforms popular video games into Reinforcement Learning environments.},
     year = {2022},
     howpublished = {\url{https://github.com/diambra/diambraArena}},
