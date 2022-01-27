@@ -8,17 +8,12 @@ function help()
     echo "DIAMBRA Environment Helper"
     echo "No flags: => core installation"
     echo "Flag -c | --core => core installation"
-    echo "Flag -s | --stable-baselines => stable-baselines installation"
     echo "Flag -h | --help => print this page"
 }
 
 while (( "$#" )); do
     case "$1" in 
         -c|--core)
-        shift
-        ;;
-        -s|--stable-baselines)
-        stable_baselines=1
         shift
         ;;
         -h|--help)
@@ -37,40 +32,38 @@ function setupMintUlyssa() {
     echo 'Updating APT'
     sudo apt-get update
 
-    if [ $stable_baselines -eq 1 ]; then
-        sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
-    fi
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev \
+                         qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip \
+                         jupyter unzip python3-tk vim wget libopencv-dev ssh cmake \
+                         libopenmpi-dev python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 function setupMintTessa() {
     echo 'Updating APT'
     sudo apt-get update
 
-    if [ $stable_baselines -eq 1 ]; then
-        sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
-    fi
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev \
+         xvfb python3-pip jupyter unzip python3-tk vim wget libopencv-dev ssh \
+         cmake libopenmpi-dev python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 function setupUbuntuGroovyGorilla() {
     echo 'Updating APT'
     sudo apt-get update
 
-    if [ $stable_baselines -eq 1 ]; then
-        sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
-    fi 
-    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.71-dev libboost-system1.71-dev libboost-filesystem1.71-dev \
+                         qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter \
+                         unzip python3-tk vim wget libopencv-dev ssh cmake libopenmpi-dev \
+                         python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 function setupUbuntuBionicBeaver() {
     echo 'Updating APT'
     sudo apt-get update
 
-    if [ $stable_baselines -eq 1 ]; then
-        sudo apt-get install cmake libopenmpi-dev python3-dev zlib1g-dev 
-    fi
-    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev xvfb python3-pip jupyter
+    sudo apt-get install libboost1.65-dev qt5-default libssl-dev libsdl2-ttf-dev \
+                         xvfb python3-pip jupyter unzip python3-tk vim wget libopencv-dev \
+                         ssh cmake libopenmpi-dev python3-dev zlib1g-dev pciutils lshw htop wmctrl -y
 }
 
 distroName=$(cat /etc/*-release | uniq -u | grep DISTRIB_ID)

@@ -1,0 +1,102 @@
+{ 
+    "doapp": 
+        { 
+            "name": "Dead Or Alive ++", 
+            "id": "doapp",
+            "original_rom_name": "doapp.zip", 
+            "search_keywords": ["DEAD OR ALIVE ++ [JAPAN]", "dead-or-alive-japan", "80781", "wowroms"],
+            "notes": "",
+            "nvramSave": "at28c16",
+            "sha256": "d95855c7d8596a90f0b8ca15725686567d767a9a3f93a8896b489a160e705c4e", 
+            "charList": ["Kasumi", "Zack", "Hayabusa", "Bayman",              
+                         "Lei-Fang", "Raidou", "Gen-Fu", "Tina",              
+                         "Bass", "Jann-Lee", "Ayane"],
+            "difficulty": [1, 4, 3],
+            "cfg": {"H": "But6", "P": "But1", "K": "But2"}
+        },
+    "sfiii3n": 
+        {
+            "name": "Street Fighter III",
+            "id": "sfiii3n",
+            "original_rom_name": "sfiii3n.zip",
+            "search_keywords": ["STREET FIGHTER III 3RD STRIKE: FIGHT FOR THE FUTUR [JAPAN] (CLONE)", "street-fighter-iii-3rd-strike-fight-for-the-futur-japan-clone", "106255", "wowroms"],
+            "notes": "",
+            "nvramSave": "",
+            "sha256": "7239b5eb005488db22ace477501c574e9420c0ab70aeeb0795dfeb474284d416", 
+            "charList": ["Alex", "Twelve", "Hugo", "Sean", "Makoto", "Elena", 
+                         "Ibuki", "Chun-Li", "Dudley", "Necro", "Q", "Oro",    
+                         "Urien", "Remy", "Ryu", "Gouki", "Yun", "Yang", "Ken", "Gill"],
+            "difficulty": [1, 8, 6],
+            "cfg": {"LP": "But4", "MP": "But1", "HP": "But5", "LK": "But3", "MK": "But2", "HK": "But6"}
+        },
+    "tektagt":
+        {
+            "name": "Tekken Tag Tournament",
+            "id": "tektagt",
+            "original_rom_name": "tektagtac.zip",
+            "search_keywords": ["TEKKEN TAG TOURNAMENT [ASIA] (CLONE)", "tekken-tag-tournament-asia-clone", "108661", "wowroms"],
+            "notes": "Rename the rom from tektagtac.zip to tektagt.zip",
+            "nvramSave": "at28c16",
+            "sha256": "57be777eae0ee9e1c035a64da4c0e7cb7112259ccebe64e7e97029ac7f01b168",
+            "charList": ["Xiaoyu", "Yoshimitsu", "Nina", "Law", "Hwoarang", "Eddy",
+                         "Paul", "King", "Lei", "Jin", "Baek", "Michelle", "Armorking",
+                         "Gunjack", "Anna", "Brian", "Heihachi", "Ganryu", "Julia",
+                         "Jun", "Kunimitsu", "Kazuya", "Bruce", "Kuma", "Jack-Z",
+                         "Lee", "Wang", "P.Jack", "Devil", "True Ogre", "Ogre",
+                         "Roger", "Tetsujin", "Panda", "Tiger", "Angel", "Alex",
+                         "Mokujin", "Unknown"],
+            "difficulty": [1, 9, 7],
+            "cfg": {"LP": "But4", "RP": "But1", "LK": "But3", "RK": "But2", "TAG": "But6"}
+        },
+    "umk3":
+        { 
+            "name": "Ultimate Mortal Kombat 3",
+            "id": "umk3",
+            "original_rom_name": "umk3r10.zip",
+            "search_keywords": ["ULTIMATE MORTAL KOMBAT 3 (CLONE)", "ultimate-mortal-kombat-3-clone", "109574", "wowroms"],
+            "notes": "Rename the rom from umk3r10.zip to umk3.zip",
+            "nvramSave": "nvram",
+            "sha256": "f48216ad82f78cb86e9c07d2507be347f904f4b5ae354a85ae7c34d969d265af",
+            "charList": ["Kitana", "Reptile", "Kano", "Sektor", "Kabal", "Sonya",
+                         "Mileena", "Sindel", "Sheeva", "Jax", "Ermac", "Stryker",
+                         "Shang Tsung", "Nightwolf", "Sub-Zero-2", "Cyrax", "Liu Kang",
+                         "Jade", "Sub-Zero", "Kung Lao", "Smoke", "Skorpion",  
+                         "Human Smoke", "Noob Saibot", "Motaro", "Shao Kahn"],
+            "difficulty": [1, 5, 4],
+            "cfg": {"HP": "But1", "HK": "But2", "LK": "But3",  "LP": "But4", "RUN": "But5", "BLK": "But6"}
+        },
+    "samsh5sp":
+        { 
+            "name": "Samurai Showdown 5 Special",
+            "id": "samsh5sp",
+            "original_rom_name": "samsh5sp.zip",
+            "search_keywords": ["SAMURAI SHODOWN V SPECIAL", "samurai-shodown-v-special", "100347", "wowroms"],
+            "notes": "",
+            "nvramSave": "",
+            "sha256": "adf33d8a02f3d900b4aa95e62fb21d9278fb920b179665b12a489bd39a6c103d",
+            "charList": ["Kyoshiro", "Jubei", "Hanzo", "Enja", "Amakusa", "Suija",
+                         "Galford", "Charlotte", "Kusare", "Sogetsu", "Gaira",
+                         "Ukyo", "Yoshitora", "Gaoh", "Haohmaru", "Genjuro",  
+                         "Shizumaru", "Kazuki", "Tamtam", "Rasetsumaru", "Rimururu",
+                         "Mina", "Zankuro", "Nakoruru", "Rera", "Yunfei", "Basara", "Mizuki"],
+            "difficulty": [1, 8, 6],
+            "cfg": {"WS": "But1", "MS": "But2", "K": "But3", "M": "But4"}
+        },
+    "kof98umh":
+        { 
+            "name": "The King Of Fighters '98 UMH",
+            "id": "kof98umh",
+            "original_rom_name": "kof98umh.zip",
+            "search_keywords": ["The King Of Fighters '98: Ultimate Match HERO", "kof98umh", "allmyroms"],
+            "notes": "",
+            "nvramSave": "",
+            "sha256": "beb7bdea87137832f5f6d731fd1abd0350c0cd6b6b2d57cab2bedbac24fe8d0a",
+            "charList": ["Kyo","Benimaru","Daimon","Terry","Andy","Joe","Ryo","Robert","Yuri",
+                         "Leona","Ralf","Clark","Athena","Kensou","Chin","Chizuru","Mai","King",
+                         "Kim","Chang","Choi","Yashiro","Shermie","Chris","Yamazaki","Blue","Billy",
+                         "Iori","Mature","Vice","Heidern","Takuma","Saisyu","Heavy-D!","Lucky","Brian",
+                         "Eiji","Kasumi","Shingo","Rugal","Geese","Krauser","Mr.Big","Goenitz","Orochi"],
+            "difficulty": [1, 8, 6],
+            "cfg": {"WP": "But1", "WK": "But2", "SP": "But3", "SK": "But4"}
+        }
+}
