@@ -28,7 +28,7 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/doapp.jpg" alt="doapp" width="125"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/sfiii3n.jpg" alt="sfiii3n" width="125"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/tektagt.jpg" alt="tektagt" width="125"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/umk3.jpg" alt="umk3" width="125"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/samsh5sp.jpg" alt="samsh6sp" width="125"/> | <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/kof98umh.jpg" alt="kof98umh" width="125"/> |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| Dead Or Alive ++ | Street Fighter III<br>3rd Strike | Tekken Tag<br>Tournament | Ultimate Mortal<br>Kombat 3 | Samurai Showdown<br>5 Special | The King of<br>Fighers '98 Ultimate<br>Match Hero|
+| Dead<br>Or<br>Alive ++ | Street<br>Fighter III<br>3rd Strike | Tekken Tag<br>Tournament | Ultimate<br>Mortal<br>Kombat 3 | Samurai<br>Showdown<br>5 Special | The King of<br>Fighers '98<br>Ultimate<br>Match Hero|
 
 **Many more are coming soon...**
 
