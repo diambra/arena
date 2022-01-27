@@ -35,10 +35,10 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 ## Index
 
 - **[Installation](#installation)**
-- **[Quickstart & Examples](#quickstart-examples)**
+- **[Quickstart & Examples](#quickstart--examples)**
 - **[AI Tournaments](#ai-tournaments)**
 - **[References](#references)**
-- **[Support, Feature Requests & Bugs Reports](#support-feature-requests-bugs-reports)**
+- **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
 - **[Citation](#citation)**
 - **[Terms of Use](#terms-of-use)**
 
@@ -62,7 +62,9 @@ Credentials (email/user id and password) will be asked at the first environment 
 
 DIAMBRA Arena usage follows the standard RL interaction framework: the agent sends an action to the environment, which process it and performs a transition accordingly, from the starting state to the new state, returning the observation and the reward to the agent to close the interaction loop. The figure below shows this typical interaction scheme and data flow.
 
-<img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/basicUsage.png" alt="rlScheme" width="100%"/>
+<p align="center">
+<img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/basicUsage.png" alt="rlScheme" width="75%"/>
+</p>
 
 The shortest snippet for a complete basic execution of an environment consists of just a few lines of code, and is presented in the code block below:
 
@@ -72,7 +74,7 @@ import diambraArena
 # Mandatory settings
 settings = {}
 settings["gameId"] = "doapp" # Game selection
-settings["romsPath"] = /path/to/roms/ # Path to roms folder
+settings["romsPath"] = "/path/to/roms/" # Path to roms folder
 
 env = diambraArena.make("TestEnv", settings)
 observation = env.reset()
