@@ -98,5 +98,22 @@
                          "Eiji","Kasumi","Shingo","Rugal","Geese","Krauser","Mr.Big","Goenitz","Orochi"],
             "difficulty": [1, 8, 6],
             "cfg": {"WP": "But1", "WK": "But2", "SP": "But3", "SK": "But4"}
+        },
+    "mvsc":
+        { 
+            "name": "Marvel VS Capcom: Clash of Super Heroes",
+            "id": "mvsc",
+            "original_rom_name": "mvsc.zip",
+            "search_keywords": ["Marvel VS Capcom: Clash of Super Heroes", "mvsc", "allmyroms"],
+            "notes": "",
+            "nvramSave": "",
+            "sha256": "edfb9f5915268697f817b86d535a3e7e28b5d13a7f64a517723b09757b462dd8",
+            "charList": ["Chun-Li", "Ryu", "Zangief", "Morrigan", "Captain Commando",
+                         "Megaman", "Strider Hiryu", "Spider Man", "Jin", "Captain America",
+                         "Venom", "Hulk", "Gambit", "War Machine", "Wolverine", "Roll",
+                         "Onslaught", "Alt-Venom", "Alt-Hulk", "Alt-War Machine",
+                         "Shadow Lady", "Alt-Morrigan"],
+            "difficulty": [1, 8, 6],
+            "cfg": {"WP": "But1", "MP": "But2", "SP": "But3","WK": "But4", "MK": "But5", "SK": "But6"}
         }
 }
