@@ -41,8 +41,9 @@ elements protected by copyright, and to interface them with it.
 It is the case, for example, of Game ROMS required to execute the corresponding 
 Game-related Environment. In such cases, it is sole and only responsibility of 
 the User to comply with all the laws and regulations, and to make sure he has the 
-right to use such copyright-protected material. DIAMBRA members will spend their 
-maximum effort in avoiding illegal distribution of such material, and are by 
-no means responsible for copyright infringement.
+right to use such copyright-protected material. DIAMBRA members do not support 
+in any way piracy, and illegal distribution of copyright-protected material, 
+thus they will spend their maximum effort in avoiding illegal distribution of 
+such material, and are by no means responsible for copyright infringement.
 
 END OF DISCLAIMER
