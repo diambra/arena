@@ -2,6 +2,8 @@
 # Launch a python script using the docker image
 
 osName=$(uname -s)
+DOCKER=${DOCKER:-docker}
+X11DOCKER=${X11DOCKER:-./x11docker}
 
 function usage() {
 
@@ -215,18 +217,18 @@ fi
 if [ "$gui" == "0" ]
 then
     cmd="xvfb-run $cmd"
-    docker run -it --rm $gpuSetup --privileged $volume $romsPath \
+    $DOCKER run -it --rm $gpuSetup --privileged $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      -v diambraService:/root/ --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
 else
   if [ $osName == "Linux" ]
   then
-    ./x11docker --cap-default --hostipc --network=host --name=diambraArena --wm=host \
+    $X11DOCKER --cap-default --hostipc --network=host --name=diambraArena --wm=host \
      --pulseaudio --size=1024x600 -- $gpuSetup --privileged $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
-     -v diambraService:/root/ -- $imageName &>/dev/null & sleep 4s; \
-      docker exec -u 0 --privileged -it diambraArena \
+     -v diambraService:/root/ -- $imageName &>/dev/null & sleep 10s; \
+      $DOCKER exec -u 0 --privileged -it diambraArena \
       sh -c "set -m; cd /opt/diambraArena/code/ && $cmd"; pkill -f "bash ./x11docker*"
       #sh -c "set -m; cd /opt/diambraArena/code/ && $cmd & sleep 10s; wmctrl -r "MAME" -e 0,307,150,400,300; fg"; pkill -f "bash ./x11docker*"
   else
@@ -235,7 +237,7 @@ else
     # https://www.xquartz.org/releases/XQuartz-2.7.8.html
     socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\" &>/dev/null & sleep 15s; open -a xquartz; sleep 5s; \
     echo "Running DIAMBRA Arena docker container ..."; \
-    docker run -it --rm $gpuSetup --privileged -e DISPLAY="$envDisplayIp:0.0" $volume $romsPath \
+    $DOCKER run -it --rm $gpuSetup --privileged -e DISPLAY="$envDisplayIp:0.0" $volume $romsPath \
      --mount src=$(pwd),target="/opt/diambraArena/code",type=bind \
      -v diambraService:/root/ --name diambraArena $imageName \
       sh -c "cd /opt/diambraArena/code/ && $cmd"
