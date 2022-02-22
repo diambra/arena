@@ -1,0 +1,28 @@
+ARG BASE_IMAGE=diambra/base:latest
+FROM $BASE_IMAGE
+
+RUN apt-get update && \
+    curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub | apt-key add - && \
+    echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
+    echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu2004/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install CUDA Toolkit 11.0
+ENV CUDA_PKG_VERSION=11-5
+
+RUN apt-get -qy update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -qy cuda-cudart-$CUDA_PKG_VERSION cuda-compat-$CUDA_PKG_VERSION \
+      cuda-command-line-tools-$CUDA_PKG_VERSION libcublas-$CUDA_PKG_VERSION \
+      libcufft-$CUDA_PKG_VERSION libcurand-$CUDA_PKG_VERSION \
+      libcusolver-$CUDA_PKG_VERSION libcusparse-$CUDA_PKG_VERSION \
+      libfreetype6-dev libhdf5-serial-dev libzmq3-dev pkg-config software-properties-common unzip \
+      libcudnn8 libnvinfer8 && \
+      apt-get clean && \
+      rm -rf /var/lib/apt/lists/* \
+      pip install tensorflow-gpu==1.14;
+
+ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:$PATH
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+ENV NVIDIA_REQUIRE_CUDA=cuda>=10.0 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=410,driver<411
+ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
