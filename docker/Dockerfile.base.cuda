@@ -18,11 +18,11 @@ RUN apt-get -qy update && \
       libfreetype6-dev libhdf5-serial-dev libzmq3-dev pkg-config software-properties-common unzip \
       libcudnn8 libnvinfer8 && \
       apt-get clean && \
-      rm -rf /var/lib/apt/lists/* \
-      pip install tensorflow-gpu==1.14;
+      rm -rf /var/lib/apt/lists/* && \
+      ln -s python3 /usr/bin/python && \
+      pip install tensorflow-gpu==2.8.0
 
 ENV PATH=/usr/local/nvidia/bin:/usr/local/cuda/bin:$PATH
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_REQUIRE_CUDA=cuda>=10.0 brand=tesla,driver>=384,driver<385 brand=tesla,driver>=410,driver<411
-ENV LD_LIBRARY_PATH=/usr/local/cuda/extras/CUPTI/lib64:/usr/local/nvidia/lib:/usr/local/nvidia/lib64
