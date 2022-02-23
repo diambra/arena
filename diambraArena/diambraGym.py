@@ -527,6 +527,18 @@ def makeGymEnv(envPrefix, envSettings, gymSpecSettings, hardCore):
                                " specify it via environment settings.")
         else:
             envSettings["romsPath"] = os.getenv("DIAMBRAROMSPATH")
+    else:
+        # Check if Docker execution
+        if os.getenv("DOCKER_EXEC") != None:
+
+            # Check if romsPath different than hardcoded path inside Docker
+            if envSettings["romsPath"] != "/opt/diambraArena/roms/":
+                print("WARNING: found a user-defined \"romsPath\" setting inside a Docker execution that differs from the required one:")
+                print("         User defined \"romsPath\" = {}".format(envSettings["romsPath"]))
+                print("         Required     \"romsPath\" = /opt/diambraArena/roms/")
+                print("         Forcing it to the correct value")
+                envSettings["romsPath"] = "/opt/diambraArena/roms/"
+
 
     # Check for OS var DISPLAY
     if os.getenv("DISPLAY") == None:
