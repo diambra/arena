@@ -6,10 +6,13 @@ parser.add_argument('--romsPath', type=str, required=False, help='Absolute path 
 opt = parser.parse_args()
 print(opt)
 
-# Mandatory settings
-settings = {}
-# Game selection
-settings["gameId"] = "doapp"
+settings = {
+  "gameId": "doapp",
+  "render": False,
+  "lockFps": False,
+  "totalCpus": 32,
+}
+
 if opt.romsPath is not None:
     # Path to roms folder
     settings["romsPath"] = opt.romsPath
