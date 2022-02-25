@@ -4,11 +4,11 @@ Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
 - Commercial use is forbidden without specific prior written permission received 
-  from DIAMBRA Team. In this context and for the purpose of  this LICENSE, 
+  from DIAMBRA Team. In this context and for the purpose of this LICENSE, 
   "Commercial use" includes (but is not limited to): using this software to 
   organize Tournaments or Competitions of any type, selling services or 
-  products that make use of this software like providing it as a service or 
-  enclosed in a wrapper accessible via network of any type, and creating
+  products that make use of this software (like providing it as a service, or 
+  enclosed in a wrapper accessible via network of any type), and creating
   content through it that can be commercialized in any way
 - Redistributions of source code must retain the above copyright notice, this 
   list of conditions and the following disclaimer.
