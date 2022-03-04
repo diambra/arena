@@ -3,6 +3,9 @@
 
 osName=$(uname -s)
 
+image=${IMAGE:-"diambra/diambra-arena:main"}
+cudaImage=${IMAGE_CUDA:-"diambra/diambra-arena-cuda10:main"}
+
 function usage() {
 
   echo -e "\033[1mUsage:\033[0m"
@@ -190,10 +193,10 @@ then
     fi
 
     gpuSetup="--gpus all"
-    imageName="diambra/diambra-arena:gpu-cuda10.0"
+    imageName=$cudaImage
 else
     device="CPU"
-    imageName="diambra/diambra-arena:base"
+    imageName=$image
 fi
 
 echo " "
