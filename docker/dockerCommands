@@ -1,5 +1,8 @@
-# Build DIAMBRA base docker image
+# Build DIAMBRA docker base image
 make image-base
+
+# Build DIAMBRA Arena CPU image
+make image
 
 # Build DIAMBRA image with GPU-CUDA10.0 support
 make image-cuda-10
