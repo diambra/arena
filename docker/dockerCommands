@@ -18,6 +18,9 @@ docker login -u "diambra" -p "XXXXXXXXXXXX" docker.io
 # Push docker image to Docker Hub
 make push-images
 
+# Run launcher scripts (example)
+IMAGE=diambra/diambra-arena:$(git rev-parse --short HEAD) IMAGE_CUDA=diambra/diambra-arena-cuda10:$(git rev-parse --short HEAD) ./diambraArena.sh -d GPU -c "bash"
+
 # Create a container from an image
 docker run --rm --privileged --gpus all -it -v pythonDep:/usr/local/lib/python3.6/dist-packages/ -v diambraRoms:/opt/diambraArena/roms --name diambraArena diambra/diambra-arena:main bash
 docker run --rm --privileged --gpus all -it --name diambraArena diambra/diambra-arena:main bash
