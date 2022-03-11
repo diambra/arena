@@ -79,7 +79,7 @@ function usage() {
   echo " "
   if [ $osName == "Linux" ]
   then
-    echo "  - CUDA Installation Test (GPU): ./diambraArena.sh -c \"cat /proc/driver/nvidia/version; nvcc -V\""
+    echo "  - CUDA Installation Test (GPU): ./diambraArena.sh -c \"nvidia-smi\""
     echo "                                                    -d GPU"
   fi
   echo " "
