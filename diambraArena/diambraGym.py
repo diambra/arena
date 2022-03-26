@@ -18,13 +18,22 @@ class diambraGymHardCoreBase(gym.Env):
         self.actionSpace = actionSpace
         self.attackButCombination=attackButCombination
 
-        print("EnvId = {}".format(envId))
-        print("Action Spaces = {}".format(self.actionSpace))
-        print("Use attack buttons combinations = {}".format(self.attackButCombination))
-
         # Launch DIAMBRA Arena
         self.diambraArena = diambraArenaLib(envId, envSettings)
         self.envSettings = self.diambraArena.envSettings
+
+        # Settings log
+        print("EnvId = {}".format(envId))
+        print("Environment settings: --- ")
+        print("")
+        for key in sorted(self.envSettings):
+            if key != "actionSpace" and key != "attackButCombination":
+                print("  \"{}\": {}".format(key, self.envSettings[key]))
+        print("   - ")
+        print("  \"actionSpace\": {}".format(self.actionSpace))
+        print("  \"attackButCombination\": {}".format(self.attackButCombination))
+        print("")
+        print("------------------------- ")
 
         # Get Env Info
         envInfo = self.diambraArena.readEnvInfo()
