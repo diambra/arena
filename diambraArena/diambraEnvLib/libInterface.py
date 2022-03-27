@@ -29,7 +29,6 @@ class diambraArenaLib:
 
         try:
            diambraEnvLib = ctypes.CDLL(diambraEnvKwargs["libPath"])
-           print("diambraEnv library successfully loaded")
         except OSError as e:
            print("Unable to load the system C library:", e)
            sys.exit()
