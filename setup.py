@@ -24,6 +24,7 @@ release=float(distrib[1])
 
 if(not(name == "Ubuntu") and not(name == "Linux Mint")):
     print("Warning, only Ubuntu and Mint distros are supported for this package")
+    import sys
     sys.exit()
 
 print("Distro test ok, testing version of your current flavor")
