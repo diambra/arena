@@ -29,7 +29,6 @@ class diambraArenaLib:
 
         try:
            diambraEnvLib = ctypes.CDLL(diambraEnvKwargs["libPath"])
-           print("diambraEnv library successfully loaded")
         except OSError as e:
            print("Unable to load the system C library:", e)
            sys.exit()
@@ -74,8 +73,8 @@ class diambraArenaLib:
         # Wait until the fifo file has been created and opened on Diambra Env side
         while (not tmpPath.exists()):
             time.sleep(1)
-            if not self.diambraEnvThread.isAlive():
-                sys.exit()
+            if not self.diambraEnvThread.is_alive():
+                sys.exit(1)
 
         time.sleep(2)
 
