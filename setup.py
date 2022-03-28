@@ -1,4 +1,4 @@
-import platform
+import platform, sys
 
 try:
     from pip import main as pipmain
@@ -24,8 +24,7 @@ release=float(distrib[1])
 
 if(not(name == "Ubuntu") and not(name == "Linux Mint")):
     print("Warning, only Ubuntu and Mint distros are supported for this package")
-    import sys
-    sys.exit()
+    sys.exit(1)
 
 print("Distro test ok, testing version of your current flavor")
 #Diambra Lib commands
@@ -37,7 +36,7 @@ unzipMameCmd="unzip diambraArena/mame/mame.zip -d diambraArena/mame"
 if(name == "Ubuntu"):
     if(release < 18.04):
         print("Warning, only LSB Bionic Beaver and Groovy Gorilla are supported for this package")
-        sys.exit()
+        sys.exit(1)
     if(release > 20):
         print("LSB Groovy Gorilla or higher")
         os.system(cpLib20)
@@ -48,7 +47,7 @@ if(name == "Ubuntu"):
 if(name == "Linux Mint"):
     if(release < 19):
         print("Warning, only LSB Tessa and Ulyssa are supported for this package")
-        sys.exit()
+        sys.exit(1)
     if(release > 20):
         print("Mint Ulyssa")
         os.system(cpLib20)
