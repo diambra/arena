@@ -110,6 +110,10 @@ class diambraArenaLib:
         baseEnvKwargs["fightingStyle"] = [0, 0]
         baseEnvKwargs["ultimateStyle"] = [[0, 0, 0], [0, 0, 0]]
 
+        # MVSC Specific
+        baseEnvKwargs["fightingMode"] = [0, 0]
+        baseEnvKwargs["speedMode"] = [0, 0]
+
         baseEnvKwargs["headless"] = False
         baseEnvKwargs["displayNum"] = ":1"
         baseEnvKwargs["disableKeyboard"] = True
@@ -163,6 +167,11 @@ class diambraArenaLib:
             output += "ultimateStyleDash"+str(idx+1)+  "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][0]) + "+"
             output += "ultimateStyleEvade"+str(idx+1)+ "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][1]) + "+"
             output += "ultimateStyleBar"+str(idx+1)+   "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][2]) + "+"
+        # MVSC Specific
+        output += "fightingMode1"+    "+1+" + str(baseEnvKwargs["fightingMode"][0]) + "+"
+        output += "fightingMode2"+    "+1+" + str(baseEnvKwargs["fightingMode"][1]) + "+"
+        output += "speedMode1"+       "+1+" + str(baseEnvKwargs["speedMode"][0]) + "+"
+        output += "speedMode2"+       "+1+" + str(baseEnvKwargs["speedMode"][1]) + "+"
 
         output += "headless"+         "+0+" + str(int(baseEnvKwargs["headless"])) + "+"
         output += "displayNum"+       "+2+" + baseEnvKwargs["displayNum"] + "+"

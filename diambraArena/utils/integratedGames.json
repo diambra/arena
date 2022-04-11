@@ -105,7 +105,7 @@
             "id": "mvsc",
             "original_rom_name": "mvsc.zip",
             "search_keywords": ["Marvel VS Capcom: Clash of Super Heroes", "mvsc", "allmyroms", "edge emulation", "qsound_hle"],
-            "notes": "You need also the file qsound_hle.zip, that can be retrieved easily on the website edge-emulation.com",
+            "notes": "Together with thre ROM, get also the file qsound_hle.zip, available on the website edge-emulation.com, and place it in your ROMs folder",
             "nvramSave": "",
             "sha256": "edfb9f5915268697f817b86d535a3e7e28b5d13a7f64a517723b09757b462dd8",
             "charList": ["Chun-Li", "Ryu", "Zangief", "Morrigan", "Captain Commando",
