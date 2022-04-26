@@ -113,7 +113,7 @@
                          "Venom", "Hulk", "Gambit", "War Machine", "Wolverine", "Roll",
                          "Onslaught", "Alt-Venom", "Alt-Hulk", "Alt-War Machine",
                          "Shadow Lady", "Alt-Morrigan"],
-            "difficulty": [1, 8, 6],
+            "difficulty": [1, 4, 6],
             "cfg": {"WP": "But1", "MP": "But2", "SP": "But3","WK": "But4", "MK": "But5", "SK": "But6"}
         }
 }

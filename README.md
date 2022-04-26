@@ -1,5 +1,16 @@
 <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/github.png" alt="diambra" width="100%"/>
 
+<p align="center">
+  <a href="https://docs.diambra.ai">Documentation</a> •
+  <a href="https://diambra.ai/">Website</a>
+</p>
+<p align="center">
+  <a href="https://www.linkedin.com/company/diambra">Linkedin</a> •
+  <a href="https://discord.gg/tFDS2UN5sv">Discord</a> •
+  <a href="https://www.twitch.tv/diambra_ai">Twitch</a> •
+  <a href="https://www.youtube.com/c/diambra_ai">YouTube</a>
+</p>
+
 # DIAMBRA Arena
 
 DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It acts as an interface towards popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym standard**, that makes its adoption smooth and straightforward.
