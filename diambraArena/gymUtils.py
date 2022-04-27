@@ -135,7 +135,7 @@ def showGymObs(observation, charList, partnerList=[], waitKey=1, viz=True):
                     for k2, v2 in v.items():
                         if "ownChar" in k2 or "oppChar" in k2:
                             print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,charList[v2]))
-                        elif "ownPartner" in k2 or "oppPartner" in k2:
+                        elif ("ownPartner" in k2 or "oppPartner" in k2) and "Attack" not in k2:
                             print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,partnerList[v2]))
                         else:
                             print("observation[\"{}\"][\"{}\"]: {}".format(k,k2,v2))
@@ -168,7 +168,7 @@ def showWrapObs(observation, nActionsStack, charList, partnerList=[], waitKey=1,
                         elif "ownChar" in k2 or "oppChar" in k2:
                             print("observation[\"{}\"][\"{}\"]: {} / {}".format(k,k2,v2,\
                                                       charList[np.where(v2 == 1)[0][0]]))
-                        elif "ownPartner" in k2 or "oppPartner" in k2:
+                        elif ("ownPartner" in k2 or "oppPartner" in k2) and "Attack" not in k2:
                             print("observation[\"{}\"][\"{}\"]: {} / {}".format(k,k2,v2,\
                                                       partnerList[np.where(v2 == 1)[0][0]]))
                         else:

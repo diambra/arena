@@ -68,7 +68,7 @@ envId = "TestEnv"
 env = diambraArena.make(envId, settings)
 
 observation = env.reset()
-showGymObs(observation, env.charNames, env.patnerNames)
+showGymObs(observation, env.charNames, env.partnerNames)
 
 while True:
 
