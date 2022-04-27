@@ -101,6 +101,7 @@ class TrajectoryRecorder(gym.Wrapper):
             toSave["frameShp"]      = self.frameShp
             toSave["ignoreP2"]      = self.ignoreP2
             toSave["charNames"]     = self.env.charNames
+            toSave["partnerNames"]  = self.env.partnerNames
             toSave["nActionsStack"] = int(self.env.observation_space["P1"]["actions"]["move"].nvec.shape[0]/self.env.nActions[0][0])
             toSave["epLen"]         = len(self.rewardsHist)
             toSave["cumRew"]        = self.cumulativeRew

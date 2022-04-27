@@ -35,7 +35,7 @@ try:
 
     env.trajSummary()
 
-    showWrapObs(observation, env.nActionsStack, env.charNames, opt.waitKey, vizFlag)
+    showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames, opt.waitKey, vizFlag)
 
     cumulativeEpRew = 0.0
     cumulativeEpRewAll = []
@@ -56,7 +56,7 @@ try:
         print("done = ", done)
         for k, v in info.items():
             print("info[\"{}\"] = {}".format(k, v))
-        showWrapObs(observation, env.nActionsStack, env.charNames, opt.waitKey, vizFlag)
+        showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames, opt.waitKey, vizFlag)
 
         print("----------")
 
@@ -89,7 +89,7 @@ try:
 
             observation = env.reset()
             env.render(mode="human")
-            showWrapObs(observation, env.nActionsStack, env.charNames, opt.waitKey, vizFlag)
+            showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames, opt.waitKey, vizFlag)
 
     if diambraILSettings["totalCpus"] == 1:
         print("All ep. rewards =", cumulativeEpRewAll)

@@ -133,7 +133,7 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showGymObs(observation, env.charNames, waitKey, vizFlag)
+            showGymObs(observation, env.charNames, env.partnerNames, waitKey, vizFlag)
             print("--")
             print("Current Cumulative Reward =", cumulativeEpRew)
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
                 cumulativeEpRew = 0.0
 
                 observation = env.reset()
-                showGymObs(observation, env.charNames, waitKey, vizFlag)
+                showGymObs(observation, env.charNames, env.partnerNames, waitKey, vizFlag)
 
             if np.any([info["roundDone"], info["stageDone"], info["gameDone"], info["epDone"]]):
 

@@ -27,7 +27,7 @@ env = diambraArena.imitationLearning(**settings)
 
 observation = env.reset()
 env.render(mode="human")
-showWrapObs(observation, env.nActionsStack, env.charNames)
+showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames)
 
 # Show trajectory summary
 env.trajSummary()
@@ -37,7 +37,7 @@ while True:
     dummyActions = 0
     observation, reward, done, info = env.step(dummyActions)
     env.render(mode="human")
-    showWrapObs(observation, env.nActionsStack, env.charNames)
+    showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
@@ -48,6 +48,6 @@ while True:
     if done:
         observation = env.reset()
         env.render(mode="human")
-        showWrapObs(observation, env.nActionsStack, env.charNames)
+        showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames)
 
 env.close()

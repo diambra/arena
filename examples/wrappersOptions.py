@@ -49,21 +49,21 @@ wrappersSettings["scaleMod"] = 0
 env = diambraArena.make("TestEnv", settings, wrappersSettings)
 
 observation = env.reset()
-showWrapObs(observation, env.nActionsStack, env.charNames)
+showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames)
 
 while True:
 
     actions = env.action_space.sample()
 
     observation, reward, done, info = env.step(actions)
-    showWrapObs(observation, env.nActionsStack, env.charNames)
+    showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
 
     if done:
         observation = env.reset()
-        showWrapObs(observation, env.nActionsStack, env.charNames)
+        showWrapObs(observation, env.nActionsStack, env.charNames, env.partnerNames)
         break
 
 env.close()
