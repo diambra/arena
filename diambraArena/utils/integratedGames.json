@@ -115,5 +115,18 @@
                          "Shadow Lady", "Alt-Morrigan"],
             "difficulty": [1, 4, 6],
             "cfg": {"WP": "But1", "MP": "But2", "SP": "But3","WK": "But4", "MK": "But5", "SK": "But6"}
+        },
+    "xmvssf":
+        { 
+            "name": "X-Men VS Street Fighter",
+            "id": "xmvsf",
+            "original_rom_name": "xmvsf.zip",
+            "search_keywords": ["X-Men VS Street Fighter", "xmvssf", "Euro 961004", "emurom", "edge emulation", "qsound_hle"],
+            "notes": "Together with thre ROM, get also the file qsound_hle.zip, available on the website edge-emulation.com, and place it in your ROMs folder",
+            "nvramSave": "",
+            "sha256": "0e40c26cae58928b1758fc5e9ceb458ae5a4bbd298759faf8216120ed7f5cbe5",
+            "charList": ["Chun-Li"],
+            "difficulty": [1, 4, 6],
+            "cfg": {"WP": "But1", "MP": "But2", "SP": "But3","WK": "But4", "MK": "But5", "SK": "But6"}
         }
 }
