@@ -88,13 +88,13 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, waitKey, vizFlag)
+            showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, env.partnerNames, waitKey, vizFlag)
             print("----------")
 
             if done:
                 print("Resetting Env")
                 observation = env.reset()
-                showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, waitKey, vizFlag)
+                showWrapObs(observation, wrappersSettings["actionsStack"], env.charNames, env.partnerNames, waitKey, vizFlag)
                 break
 
         env.close()

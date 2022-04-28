@@ -172,8 +172,8 @@ class diambraImitationLearningBase(gym.Env):
             infile.close()
 
             # Storing env info
-            self.nChars = len(self.RLTrajDict["charNames"])
             self.charNames = self.RLTrajDict["charNames"]
+            self.partnerNames = self.RLTrajDict["partnerNames"]
             self.nActionsStack = self.RLTrajDict["nActionsStack"]
             self.playerSide = self.RLTrajDict["playerSide"]
             assert self.nActions == self.RLTrajDict["nActions"],\

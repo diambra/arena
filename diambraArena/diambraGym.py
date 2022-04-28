@@ -82,6 +82,17 @@ class diambraGymHardCoreBase(gym.Env):
 
         currentIdx = currentIdx + self.numberOfCharacters
 
+        # Number of partners of the game
+        self.numberOfPartners = int(envInfo[currentIdx])
+        currentIdx += 1
+
+        # Partners names list
+        self.partnerNames = []
+        for idx in range(currentIdx, currentIdx + self.numberOfPartners):
+            self.partnerNames.append(envInfo[idx])
+
+        currentIdx = currentIdx + self.numberOfPartners
+
         # Action list
         moveList = ()
         for idx in range(currentIdx, currentIdx + self.nActionsButComb[0]):

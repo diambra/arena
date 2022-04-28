@@ -68,21 +68,21 @@ envId = "TestEnv"
 env = diambraArena.make(envId, settings)
 
 observation = env.reset()
-showGymObs(observation, env.charNames)
+showGymObs(observation, env.charNames, env.partnerNames)
 
 while True:
 
     actions = env.action_space.sample()
 
     observation, reward, done, info = env.step(actions)
-    showGymObs(observation, env.charNames)
+    showGymObs(observation, env.charNames, env.partnerNames)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
 
     if done:
         observation = env.reset()
-        showGymObs(observation, env.charNames)
+        showGymObs(observation, env.charNames, env.partnerNames)
         break
 
 env.close()
