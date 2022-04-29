@@ -177,7 +177,7 @@ class DataPipe(object):
     def readResetInfo(self, timeout=None):
         line = self.pipe.readln(timeout=timeout)
         line = line.decode('utf-8')
-        return line.split(",")
+        return line.split(",")[0]
 
     # Initialize frame dims inside read pipe
     def setFrameSize(self, hwc_dim):
@@ -187,5 +187,3 @@ class DataPipe(object):
 
     def readFlag(self, timeout=None):
         line = self.pipe.readln(timeout=timeout)
-        line = line.decode('utf-8')
-        return int(line.split(",")[0])
