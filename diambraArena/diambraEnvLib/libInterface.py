@@ -49,6 +49,10 @@ class diambraArenaLib:
         if "mamePath" not in diambraEnvKwargs:
             diambraEnvKwargs["mamePath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../mame/")
 
+        # Data path, set to mamePath by default for backward compatibility
+        if "dataPath" not in diambraEnvKwargs:
+            diambraEnvKwargs["dataPath"] = diambraEnvKwargs["mamePath"]
+
         envKwargsString = self.envKwargsToString(envId, diambraEnvKwargs)
         diambraEnvArgs = [envKwargsString, self.pipes_path,                                  # INPUTS
                           self.envData.cIntData, self.envData.cBoolData, self.envData.frame] # OUTPUTS
@@ -134,6 +138,7 @@ class diambraArenaLib:
         output += "envId"+            "+2+" + envId + "+"
         output += "gameId"+           "+2+" + baseEnvKwargs["gameId"] + "+"
         output += "romsPath"+         "+2+" + baseEnvKwargs["romsPath"] + "+"
+        output += "dataPath"+         "+2+" + baseEnvKwargs["dataPath"] + "+"
         output += "binaryPath"+       "+2+" + baseEnvKwargs["mamePath"] + "+"
         output += "continueGame"+     "+3+" + str(baseEnvKwargs["continueGame"]) + "+"
         output += "showFinal"+        "+0+" + str(int(baseEnvKwargs["showFinal"])) + "+"
