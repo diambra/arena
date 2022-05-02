@@ -154,10 +154,8 @@ class diambraGymHardCoreBase(gym.Env):
     # Resetting the environment
     def resetComplete(self):
         self.diambraArena.reset()
-        # Read specific info after resett
-        resetInfo = self.diambraArena.readResetInfo()
-        self.playerSide = resetInfo[0]
-        self.savedFramesNum = int(resetInfo[1])
+        # Read playerSide after reset
+        self.playerSide = self.diambraArena.readResetInfo()
         observation, data = self.diambraArena.readData()
 
         return observation, data
@@ -231,7 +229,7 @@ class diambraGymHardCore1P(diambraGymHardCoreBase):
             movAct, attAct = discreteToMultiDiscreteAction(action, self.nActions[0][0])
 
         self.diambraArena.step(movAct, attAct)
-        self.savedFramesNum = self.diambraArena.readFlag()
+        self.diambraArena.readFlag()
         observation, data = self.diambraArena.readData()
         reward            = data["reward"]
         done              = data["epDone"]
@@ -307,7 +305,7 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
                 movActP2, attActP2 = discreteToMultiDiscreteAction(action[1], self.nActions[1][0])
 
         self.diambraArena.step(movActP1, attActP1, movActP2, attActP2)
-        self.savedFramesNum = self.diambraArena.readFlag()
+        self.diambraArena.readFlag()
         observation, data = self.diambraArena.readData()
         reward            = data["reward"]
         done              = data["gameDone"]
