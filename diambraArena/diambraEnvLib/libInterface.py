@@ -12,7 +12,7 @@ import time
 class diambraArenaLib:
     """Diambra Environment gym interface"""
 
-    def __init__(self, envId, diambraEnvKwargs):
+    def __init__(self, diambraEnvKwargs):
 
         self.envData = EnvData()
 
@@ -49,7 +49,9 @@ class diambraArenaLib:
         if "mamePath" not in diambraEnvKwargs:
             diambraEnvKwargs["mamePath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../mame/")
 
-        envKwargsString = self.envKwargsToString(envId, diambraEnvKwargs)
+        self.envSettings = diambraEnvKwargs
+
+        envKwargsString = self.envKwargsToString(diambraEnvKwargs)
         diambraEnvArgs = [envKwargsString, self.pipes_path,                                  # INPUTS
                           self.envData.cIntData, self.envData.cBoolData, self.envData.frame] # OUTPUTS
 
@@ -62,13 +64,13 @@ class diambraArenaLib:
             DIAMBRASplashScreen()
 
         # Signal file definition
-        tmpPathFileName = "pipesTmp" + envId + ".log"
+        tmpPathFileName = "pipesTmp" + diambraEnvKwargs["envId"] + ".log"
         tmpPath = Path(self.pipes_path).joinpath(tmpPathFileName)
 
         # Create Write Pipe
-        self.writePipe = Pipe(envId, "writeToDiambra", "w", self.pipes_path, tmpPath)
+        self.writePipe = Pipe(diambraEnvKwargs["envId"], "writeToDiambra", "w", self.pipes_path, tmpPath)
         # Create Read Pipe
-        self.readPipe = DataPipe(envId, "readFromDiambra", "r", self.pipes_path, tmpPath)
+        self.readPipe = DataPipe(diambraEnvKwargs["envId"], "readFromDiambra", "r", self.pipes_path, tmpPath)
 
         # Wait until the fifo file has been created and opened on Diambra Env side
         while (not tmpPath.exists()):
@@ -84,92 +86,51 @@ class diambraArenaLib:
         self.readPipe.open()
 
     # Transforming env kwargs to string
-    def envKwargsToString(self, envId, envKwargs):
+    def envKwargsToString(self, envSettings):
 
-        # Default parameters
         maxCharToSelect = 3
-
-        baseEnvKwargs = {}
-        baseEnvKwargs["continueGame"] = 0.0
-        baseEnvKwargs["showFinal"] = True
-        baseEnvKwargs["stepRatio"] = 6
-        baseEnvKwargs["render"] = True
-        baseEnvKwargs["lockFps"] = True
-        baseEnvKwargs["sound"] = False
-        baseEnvKwargs["difficulty"] = 3
-        baseEnvKwargs["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
-        baseEnvKwargs["charOutfits"] = [2, 2]
-
-        # SFIII Specific
-        baseEnvKwargs["superArt"] = [0, 0]
-
-        # UMK3 Specific
-        baseEnvKwargs["tower"] = 3
-
-        # KOF Specific
-        baseEnvKwargs["fightingStyle"] = [0, 0]
-        baseEnvKwargs["ultimateStyle"] = [[0, 0, 0], [0, 0, 0]]
-
-        baseEnvKwargs["headless"] = False
-        baseEnvKwargs["displayNum"] = ":1"
-        baseEnvKwargs["disableKeyboard"] = True
-        baseEnvKwargs["disableJoystick"] = True
-        baseEnvKwargs["rank"] = 0
-        baseEnvKwargs["recordConfigFile"] = ""
-
-        for k, v in envKwargs.items():
-
-            # Check for characters
-            if k == "characters":
-                for iPlayer in range(2):
-                    for iChar in range(len(v[iPlayer]), maxCharToSelect):
-                        v[iPlayer].append("Random")
-
-            baseEnvKwargs[k] = v
-
-        self.envSettings = baseEnvKwargs
 
         output = ""
 
-        output += "envId"+            "+2+" + envId + "+"
-        output += "gameId"+           "+2+" + baseEnvKwargs["gameId"] + "+"
-        output += "romsPath"+         "+2+" + baseEnvKwargs["romsPath"] + "+"
-        output += "binaryPath"+       "+2+" + baseEnvKwargs["mamePath"] + "+"
-        output += "continueGame"+     "+3+" + str(baseEnvKwargs["continueGame"]) + "+"
-        output += "showFinal"+        "+0+" + str(int(baseEnvKwargs["showFinal"])) + "+"
-        output += "stepRatio"+        "+1+" + str(baseEnvKwargs["stepRatio"]) + "+"
-        output += "render"+           "+0+" + str(int(baseEnvKwargs["render"])) + "+"
-        output += "lockFps"+          "+0+" + str(int(baseEnvKwargs["lockFps"])) + "+"
-        output += "sound"+            "+0+" + str(int(baseEnvKwargs["sound"])) + "+"
-        output += "player"+           "+2+" + baseEnvKwargs["player"] + "+"
-        output += "difficulty"+       "+1+" + str(baseEnvKwargs["difficulty"]) + "+"
-        output += "character1"+       "+2+" + baseEnvKwargs["characters"][0][0] + "+"
-        output += "character2"+       "+2+" + baseEnvKwargs["characters"][1][0] + "+"
+        output += "envId"+            "+2+" + envSettings["envId"] + "+"
+        output += "gameId"+           "+2+" + envSettings["gameId"] + "+"
+        output += "romsPath"+         "+2+" + envSettings["romsPath"] + "+"
+        output += "binaryPath"+       "+2+" + envSettings["mamePath"] + "+"
+        output += "continueGame"+     "+3+" + str(envSettings["continueGame"]) + "+"
+        output += "showFinal"+        "+0+" + str(int(envSettings["showFinal"])) + "+"
+        output += "stepRatio"+        "+1+" + str(envSettings["stepRatio"]) + "+"
+        output += "render"+           "+0+" + str(int(envSettings["render"])) + "+"
+        output += "lockFps"+          "+0+" + str(int(envSettings["lockFps"])) + "+"
+        output += "sound"+            "+0+" + str(int(envSettings["sound"])) + "+"
+        output += "player"+           "+2+" + envSettings["player"] + "+"
+        output += "difficulty"+       "+1+" + str(envSettings["difficulty"]) + "+"
+        output += "character1"+       "+2+" + envSettings["characters"][0][0] + "+"
+        output += "character2"+       "+2+" + envSettings["characters"][1][0] + "+"
         for iChar in range(1, maxCharToSelect):
-            output += "character1_{}".format(iChar+1)+     "+2+" + baseEnvKwargs["characters"][0][iChar] + "+"
-            output += "character2_{}".format(iChar+1)+     "+2+" + baseEnvKwargs["characters"][1][iChar] + "+"
-        output += "charOutfits1"+     "+1+" + str(baseEnvKwargs["charOutfits"][0]) + "+"
-        output += "charOutfits2"+     "+1+" + str(baseEnvKwargs["charOutfits"][1]) + "+"
+            output += "character1_{}".format(iChar+1)+     "+2+" + envSettings["characters"][0][iChar] + "+"
+            output += "character2_{}".format(iChar+1)+     "+2+" + envSettings["characters"][1][iChar] + "+"
+        output += "charOutfits1"+     "+1+" + str(envSettings["charOutfits"][0]) + "+"
+        output += "charOutfits2"+     "+1+" + str(envSettings["charOutfits"][1]) + "+"
 
         # SFIII Specific
-        output += "superArt1"+        "+1+" + str(baseEnvKwargs["superArt"][0]) + "+"
-        output += "superArt2"+        "+1+" + str(baseEnvKwargs["superArt"][1]) + "+"
+        output += "superArt1"+        "+1+" + str(envSettings["superArt"][0]) + "+"
+        output += "superArt2"+        "+1+" + str(envSettings["superArt"][1]) + "+"
         # UMK3 Specific
-        output += "tower"+            "+1+" + str(baseEnvKwargs["tower"]) + "+"
+        output += "tower"+            "+1+" + str(envSettings["tower"]) + "+"
         # KOF Specific
-        output += "fightingStyle1"+   "+1+" + str(baseEnvKwargs["fightingStyle"][0]) + "+"
-        output += "fightingStyle2"+   "+1+" + str(baseEnvKwargs["fightingStyle"][1]) + "+"
+        output += "fightingStyle1"+   "+1+" + str(envSettings["fightingStyle"][0]) + "+"
+        output += "fightingStyle2"+   "+1+" + str(envSettings["fightingStyle"][1]) + "+"
         for idx in range(2):
-            output += "ultimateStyleDash"+str(idx+1)+  "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][0]) + "+"
-            output += "ultimateStyleEvade"+str(idx+1)+ "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][1]) + "+"
-            output += "ultimateStyleBar"+str(idx+1)+   "+1+" + str(baseEnvKwargs["ultimateStyle"][idx][2]) + "+"
+            output += "ultimateStyleDash"+str(idx+1)+  "+1+" + str(envSettings["ultimateStyle"][idx][0]) + "+"
+            output += "ultimateStyleEvade"+str(idx+1)+ "+1+" + str(envSettings["ultimateStyle"][idx][1]) + "+"
+            output += "ultimateStyleBar"+str(idx+1)+   "+1+" + str(envSettings["ultimateStyle"][idx][2]) + "+"
 
-        output += "headless"+         "+0+" + str(int(baseEnvKwargs["headless"])) + "+"
-        output += "displayNum"+       "+2+" + baseEnvKwargs["displayNum"] + "+"
-        output += "disableKeyboard"+  "+0+" + str(int(baseEnvKwargs["disableKeyboard"])) + "+"
-        output += "disableJoystick"+  "+0+" + str(int(baseEnvKwargs["disableJoystick"])) + "+"
-        output += "rank"+             "+1+" + str(baseEnvKwargs["rank"]) + "+"
-        output += "recordConfigFile"+ "+2+" + baseEnvKwargs["recordConfigFile"] + "+"
+        output += "headless"+         "+0+" + str(int(envSettings["headless"])) + "+"
+        output += "displayNum"+       "+2+" + envSettings["displayNum"] + "+"
+        output += "disableKeyboard"+  "+0+" + str(int(envSettings["disableKeyboard"])) + "+"
+        output += "disableJoystick"+  "+0+" + str(int(envSettings["disableJoystick"])) + "+"
+        output += "rank"+             "+1+" + str(envSettings["rank"]) + "+"
+        output += "recordConfigFile"+ "+2+" + envSettings["recordConfigFile"] + "+"
 
         return output
 

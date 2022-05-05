@@ -29,7 +29,10 @@ settings["actionSpace"] = ["discrete", "discrete"]
 # If to use attack buttons combinations actions
 settings["attackButCombination"] = [True, True]
 
-env = diambraArena.make("TestEnv", settings)
+# Envid
+settings["envId"] = "MultiPlayerEnv"
+
+env = diambraArena.make(settings)
 
 observation = env.reset()
 showGymObs(observation, env.charNames)
