@@ -11,27 +11,26 @@ class diambraGymHardCoreBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, envId, envSettings, rewNormFac, actionSpace, attackButCombination):
+    def __init__(self, envSettings):
         super(diambraGymHardCoreBase, self).__init__()
 
-        self.rewNormFac = rewNormFac
-        self.actionSpace = actionSpace
-        self.attackButCombination=attackButCombination
+        self.rewNormFac = envSettings["rewardNormalizationFactor"]
+        if envSettings["player"] != "P1P2":
+            self.actionSpace = envSettings["actionSpace"][0]
+        else:
+            self.actionSpace = envSettings["actionSpace"]
+        self.attackButCombination = envSettings["attackButCombination"]
 
         # Launch DIAMBRA Arena
-        self.diambraArena = diambraArenaLib(envId, envSettings)
+        self.diambraArena = diambraArenaLib(envSettings)
         self.envSettings = self.diambraArena.envSettings
 
         # Settings log
-        print("EnvId = {}".format(envId))
+        print("EnvId = {}".format(envSettings["envId"]))
         print("Environment settings: --- ")
         print("")
         for key in sorted(self.envSettings):
-            if key != "actionSpace" and key != "attackButCombination":
-                print("  \"{}\": {}".format(key, self.envSettings[key]))
-        print("   - ")
-        print("  \"actionSpace\": {}".format(self.actionSpace))
-        print("  \"attackButCombination\": {}".format(self.attackButCombination))
+            print("  \"{}\": {}".format(key, self.envSettings[key]))
         print("")
         print("------------------------- ")
 
@@ -166,10 +165,8 @@ class diambraGymHardCoreBase(gym.Env):
 
 # DIAMBRA Gym base class for single player mode
 class diambraGymHardCore1P(diambraGymHardCoreBase):
-    def __init__(self, envId, envSettings, rewNormFac=0.5,
-                 actionSpace="multiDiscrete", attackButCombination=True):
-        super().__init__( envId, envSettings, rewNormFac, actionSpace,
-                          [attackButCombination, attackButCombination])
+    def __init__(self, envSettings):
+        super().__init__(envSettings)
 
         # Define action and observation space
         # They must be gym.spaces objects
@@ -236,16 +233,13 @@ class diambraGymHardCore1P(diambraGymHardCoreBase):
 
 # DIAMBRA Gym base class for two players mode
 class diambraGymHardCore2P(diambraGymHardCoreBase):
-    def __init__(self, envId, envSettings, rewNormFac=0.5,
-                 actionSpace=["multiDiscrete", "multiDiscrete"],
-                 attackButCombination=[True, True]):
-        super().__init__( envId, envSettings, rewNormFac,
-                          actionSpace, attackButCombination)
+    def __init__(self, envSettings):
+        super().__init__( envSettings )
 
         # Define action spaces, they must be gym.spaces objects
         actionSpaceDict = {}
         for idx in range(2):
-            if actionSpace[idx] == "multiDiscrete":
+            if self.actionSpace[idx] == "multiDiscrete":
                 actionSpaceDict["P{}".format(idx+1)] =\
                     spaces.MultiDiscrete(self.nActions[idx])
             else:
@@ -313,9 +307,8 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
 
 # DIAMBRA Gym base class providing frame and additional info as observations
 class diambraGym1P(diambraGymHardCore1P):
-    def __init__(self, envId, envSettings, rewNormFac=0.5, actionSpace="multiDiscrete",
-                 attackButCombination=True):
-        super().__init__( envId, envSettings, rewNormFac, actionSpace, attackButCombination)
+    def __init__(self, envSettings):
+        super().__init__(envSettings)
 
         # Dictionary observation space
         observationSpaceDict = {}
@@ -408,11 +401,8 @@ class diambraGym1P(diambraGymHardCore1P):
 
 # DIAMBRA Gym base class providing frame and additional info as observations
 class diambraGym2P(diambraGymHardCore2P):
-    def __init__(self, envId, envSettings, rewNormFac=0.5,
-                 actionSpace=["multiDiscrete", "multiDiscrete"],
-                 attackButCombination=[True, True]):
-        super().__init__( envId, envSettings, rewNormFac, actionSpace,
-                          attackButCombination)
+    def __init__(self, envSettings):
+        super().__init__(envSettings)
 
         # Dictionary observation space
         observationSpaceDict = {}
@@ -512,20 +502,8 @@ class diambraGym2P(diambraGymHardCore2P):
 
         return observation
 
-def makeGymEnv(envPrefix, envSettings, gymSpecSettings, hardCore):
+def makeGymEnv(envSettings):
 
-    # Check mandatory parameters
-    mandatoryParams = ["gameId"]
-    for param in mandatoryParams:
-        if param not in envSettings:
-            raise RuntimeError("\"{}\" is a mandatory parameter.".format(param))
-
-    # Default to single player mode
-    if "player" not in envSettings:
-        envSettings["player"] = "Random"
-    # Default to not headless mode
-    if "headless" not in envSettings:
-        envSettings["headless"] = False
     # Retrieve roms path from ENV variables
     if "romsPath" not in envSettings:
         if os.getenv("DIAMBRAROMSPATH") == None:
@@ -554,14 +532,14 @@ def makeGymEnv(envPrefix, envSettings, gymSpecSettings, hardCore):
         envSettings["lockFps"]  = False
 
     if envSettings["player"] != "P1P2": #1P Mode
-        if hardCore:
-            env = diambraGymHardCore1P(envPrefix, envSettings, **gymSpecSettings)
+        if envSettings["hardCore"]:
+            env = diambraGymHardCore1P(envSettings)
         else:
-            env = diambraGym1P(envPrefix, envSettings, **gymSpecSettings)
+            env = diambraGym1P(envSettings)
     else: #2P Mode
-        if hardCore:
-            env = diambraGymHardCore2P(envPrefix, envSettings, **gymSpecSettings)
+        if envSettings["hardCore"]:
+            env = diambraGymHardCore2P(envSettings)
         else:
-            env = diambraGym2P(envPrefix, envSettings, **gymSpecSettings)
+            env = diambraGym2P(envSettings)
 
     return env, envSettings["player"]
