@@ -9,7 +9,6 @@ print(opt)
 
 # Mandatory settings
 settings = {}
-settings["gameId"] = "doapp"
 if opt.romsPath is not None:
     settings["romsPath"] = opt.romsPath
 
@@ -49,7 +48,7 @@ wrappersSettings["scaleMod"] = 0
 # Env ID
 settings["envId"] = "WrappersEnv"
 
-env = diambraArena.make(settings, wrappersSettings)
+env = diambraArena.make("doapp", settings, wrappersSettings)
 
 observation = env.reset()
 showWrapObs(observation, env.nActionsStack, env.charNames)

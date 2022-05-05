@@ -16,7 +16,6 @@ print(opt)
 
 # Mandatory parameters
 settings = {}
-settings["gameId"] = "doapp"
 if opt.romsPath is not None:
     settings["romsPath"] = opt.romsPath
 
@@ -25,7 +24,7 @@ settings["lockFps"] = False
 settings["render"] = False
 settings["envId"] = "SpeedTestEnv"
 
-env = diambraArena.make(settings)
+env = diambraArena.make("doapp", settings)
 
 observation = env.reset()
 

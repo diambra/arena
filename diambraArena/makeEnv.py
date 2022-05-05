@@ -65,12 +65,15 @@ def envSettingsCheck(envSettings):
     return defaultEnvSettings
 
 
-def make(envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42):
+def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
     :param wrappersSettings: (dict) the parameters for envWrapping function
     """
+
+    # Include gameId in envSettings
+    envSettings["gameId"] = gameId
 
     # Checking settings and setting up default ones
     envSettings = envSettingsCheck(envSettings)
