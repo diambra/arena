@@ -8,14 +8,12 @@ print(opt)
 
 # Settings
 settings = {}
-# Game Selection
-settings["gameId"] = "doapp"
 
 if opt.romsPath is not None:
     # Path to roms folder
     settings["romsPath"] = opt.romsPath
 
-env = diambraArena.make(settings)
+env = diambraArena.make("doapp", settings)
 
 observation = env.reset()
 

@@ -40,7 +40,6 @@ if __name__ == '__main__':
         if opt.libPath != "":
             settings["libPath"]  = opt.libPath
 
-        settings["gameId"]     = opt.gameId
         settings["player"]     = opt.player
         settings["characters"] = [[opt.character1, opt.character1_2, opt.character1_3],
                                   [opt.character2, opt.character2_2, opt.character2_3]]
@@ -67,8 +66,9 @@ if __name__ == '__main__':
         hardCore = False if opt.hardCore == 0 else True
         settings["hardCore"] = hardCore
 
-        envId = opt.gameId + "_randomTestGym"
-        env = diambraArena.make(envId, settings, wrappersSettings={"normalizeRewards": False},
+        settings["envId"] = opt.gameId + "_randomTestGym"
+
+        env = diambraArena.make(opt.gameId, settings, wrappersSettings={"normalizeRewards": False},
                                 seed=timeDepSeed)
 
         # Print environment obs and action spaces summary

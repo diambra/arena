@@ -32,7 +32,6 @@ if __name__ == '__main__':
         if opt.libPath != "":
             settings["libPath"]  = opt.libPath
 
-        settings["gameId"]     = opt.gameId
         settings["player"]     = opt.player
 
         settings["stepRatio"] = opt.stepRatio
@@ -64,8 +63,8 @@ if __name__ == '__main__':
         wrappersSettings["scale"] = True
         wrappersSettings["scaleMod"] = 0
 
-        envId = opt.gameId + "_speedTestWrappers"
-        env = diambraArena.make(envId, settings, wrappersSettings, trajRecSettings, seed=timeDepSeed)
+        settings["envId"] = opt.gameId + "_speedTestWrappers"
+        env = diambraArena.make(opt.gameId, settings, wrappersSettings, trajRecSettings, seed=timeDepSeed)
 
         observation = env.reset()
 
