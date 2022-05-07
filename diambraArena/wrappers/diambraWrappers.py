@@ -79,31 +79,33 @@ class ClipRewardEnv(gym.RewardWrapper):
         return np.sign(reward)
 
 class NormalizeRewardEnv(gym.RewardWrapper):
-    def __init__(self, env):
+    def __init__(self, env, normalizationFactor):
         """
         Normalize the reward dividing by the 50% of the maximum character health variadtion (max - min).
         :param env: (Gym Environment) the environment
         """
         gym.RewardWrapper.__init__(self, env)
+        self.env.rewardNormalizationFactor = normalizationFactor
 
     def reward(self, reward):
         """
         Nomralize reward dividing by reward normalization factor*maxDeltaHealth.
         :param reward: (float)
         """
-        return float(reward)/float(self.env.rewNormFac*self.env.maxDeltaHealth)
+        return float(reward)/float(self.env.rewardNormalizationFactor*self.env.maxDeltaHealth)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
 def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
-                normalizeRewards=True, frameStack=1, actionsStack=1, scale=False,
-                scaleMod = 0, hwcObsResize = [84, 84, 0], dilation=1, hardCore=False):
+                rewardNormalizationFactor=1.0, frameStack=1, actionsStack=1,
+                scale=False, scaleMod = 0, hwcObsResize = [84, 84, 0], dilation=1,
+                hardCore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
     :param player: player identification to discriminate between 1P and 2P games
     :param noOpMax: (int) wrap the environment to perform noOpMax no action steps at reset
     :param clipRewards: (bool) wrap the reward clipping wrapper
-    :param normalizeRewards: (bool) wrap the reward normalizing wrapper
+    :param rewardNormalizationFactor: (double) noramlization factor for reward normalization wrapper
     :param frameStack: (int) wrap the frame stacking wrapper using #frameStack frames
     :param dilation (frame stacking): (int) stack one frame every #dilation frames, useful
                                             to assure action every step considering a dilated
@@ -135,8 +137,8 @@ def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
        env = WarpFrame3C(env, hwcObsResize)
 
     # Normalize rewards
-    if normalizeRewards:
-       env = NormalizeRewardEnv(env)
+    if rewardNormalizationFactor != 1.0:
+       env = NormalizeRewardEnv(env, rewardNormalizationFactor)
 
     # Clip rewards using sign function
     if clipRewards:

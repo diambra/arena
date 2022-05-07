@@ -14,7 +14,7 @@ class diambraGymHardCoreBase(gym.Env):
     def __init__(self, envSettings):
         super(diambraGymHardCoreBase, self).__init__()
 
-        self.rewNormFac = envSettings["rewardNormalizationFactor"]
+        self.rewardNormalizationFactor = 1.0
         if envSettings["player"] != "P1P2":
             self.actionSpace = envSettings["actionSpace"][0]
         else:
@@ -73,8 +73,16 @@ class diambraGymHardCoreBase(gym.Env):
         # Number of characters of the game
         self.numberOfCharacters = int(envInfo[11])
 
+        # Number of characters used per round
+        self.nCharPerRound = int(envInfo[12])
+
+        # Min-Max reward
+        minReward = int(envInfo[13])
+        maxReward = int(envInfo[14])
+        self.minMaxReward = [minReward, maxReward]
+
         # Characters names list
-        currentIdx = 12
+        currentIdx = 15
         self.charNames = []
         for idx in range(currentIdx, currentIdx + self.numberOfCharacters):
             self.charNames.append(envInfo[idx])
@@ -134,6 +142,11 @@ class diambraGymHardCoreBase(gym.Env):
         print("Attack actions:")
         for k, v in self.printActionsDict[1].items():
             print(" {}: {}".format(k,v))
+
+    # Return min max rewards for the environment
+    def getMinMaxReward(self):
+        return [self.minMaxReward[0]/self.rewardNormalizationFactor*self.maxDeltaHealth,
+                self.minMaxReward[1]/self.rewardNormalizationFactor*self.maxDeltaHealth]
 
     # Step method to be implemented in derived classes
     def step(self, action):
@@ -195,11 +208,6 @@ class diambraGymHardCore1P(diambraGymHardCoreBase):
         else:
             raise Exception("Not recognized action space: {}".format(self.actionSpace))
 
-    # Return min max rewards for the environment
-    def minMaxRew(self):
-        coeff = 1.0/self.rewNormFac
-        return (-coeff*(self.maxStage-1)-2*coeff, self.maxStage*2*coeff)
-
     # Step the environment
     def stepComplete(self, action):
         # Actions initialization
@@ -247,11 +255,6 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
                     spaces.Discrete(self.nActions[idx][0] + self.nActions[idx][1] - 1)
 
         self.action_space = spaces.Dict(actionSpaceDict)
-
-    # Return min max rewards for the environment
-    def minMaxRew(self):
-        coeff = 1.0/self.rewNormFac
-        return (-2*coeff, 2*coeff)
 
     # Step the environment
     def stepComplete(self, action):
