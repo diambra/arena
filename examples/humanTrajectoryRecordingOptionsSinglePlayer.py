@@ -26,6 +26,7 @@ settings["envId"] = "HumanExperienceRecorderEnv"
 # Gym wrappers settings
 wrappersSettings = {}
 wrappersSettings["hwcObsResize"] = [128, 128, 1]
+wrappersSettings["rewardNormalizationFactor"] = 0.5
 wrappersSettings["frameStack"] = 4
 wrappersSettings["actionsStack"] = 12
 wrappersSettings["scale"] = True

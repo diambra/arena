@@ -78,7 +78,7 @@ if __name__ == '__main__':
         wrappersSettings["noOpMax"] = 0
         wrappersSettings["stickyActions"] = 1
         wrappersSettings["hwcObsResize"] = [128, 128, 1]
-        wrappersSettings["normalizeRewards"] = True
+        wrappersSettings["rewardNormalizationFactor"] = 0.5
         wrappersSettings["clipRewards"] = False
         wrappersSettings["frameStack"] = 4
         wrappersSettings["dilation"] = 1
