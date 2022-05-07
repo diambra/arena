@@ -48,6 +48,8 @@ class diambraArenaLib:
         # Mame path
         if "mamePath" not in diambraEnvKwargs:
             diambraEnvKwargs["mamePath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../mame/")
+        if "emuPipesPath" not in diambraEnvKwargs:
+            diambraEnvKwargs["emuPipesPath"] = diambraEnvKwargs["mamePath"]
 
         self.envSettings = diambraEnvKwargs
 
@@ -96,6 +98,7 @@ class diambraArenaLib:
         output += "gameId"+           "+2+" + envSettings["gameId"] + "+"
         output += "romsPath"+         "+2+" + envSettings["romsPath"] + "+"
         output += "binaryPath"+       "+2+" + envSettings["mamePath"] + "+"
+        output += "emuPipesPath"+     "+2+" + envSettings["emuPipesPath"] + "+"
         output += "continueGame"+     "+3+" + str(envSettings["continueGame"]) + "+"
         output += "showFinal"+        "+0+" + str(int(envSettings["showFinal"])) + "+"
         output += "stepRatio"+        "+1+" + str(envSettings["stepRatio"]) + "+"
