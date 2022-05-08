@@ -10,10 +10,6 @@ print(opt)
 
 # Mandatory settings
 settings = {}
-
-# Game selection
-settings["gameId"] = "doapp"
-
 if opt.romsPath is not None:
     # Path to roms folder
     settings["romsPath"] = opt.romsPath
@@ -29,7 +25,10 @@ settings["actionSpace"] = ["discrete", "discrete"]
 # If to use attack buttons combinations actions
 settings["attackButCombination"] = [True, True]
 
-env = diambraArena.make("TestEnv", settings)
+# Envid
+settings["envId"] = "MultiPlayerEnv"
+
+env = diambraArena.make("doapp", settings)
 
 observation = env.reset()
 showGymObs(observation, env.charNames, env.partnerNames)

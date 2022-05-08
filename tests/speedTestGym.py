@@ -32,7 +32,6 @@ if __name__ == '__main__':
         if opt.libPath != "":
             settings["libPath"]  = opt.libPath
 
-        settings["gameId"]     = opt.gameId
         settings["player"]     = opt.player
 
         settings["stepRatio"] = opt.stepRatio
@@ -48,8 +47,8 @@ if __name__ == '__main__':
             settings["actionSpace"] = settings["actionSpace"][0]
             settings["attackButCombination"] = settings["attackButCombination"][0]
 
-        envId = opt.gameId + "_speedTestGym"
-        env = diambraArena.make(envId, settings, seed=timeDepSeed)
+        settings["envId"] = opt.gameId + "_speedTestGym"
+        env = diambraArena.make(opt.gameId, settings, seed=timeDepSeed)
 
         observation = env.reset()
 
