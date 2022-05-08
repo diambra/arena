@@ -1,5 +1,6 @@
 import sys, platform, os
 import numpy as np
+import cv2
 import gym
 from gym import spaces
 from collections import deque
@@ -154,22 +155,20 @@ class diambraGymHardCoreBase(gym.Env):
 
     # Resetting the environment
     def resetComplete(self):
-        self.diambraArena.reset()
-        # Read playerSide after reset
-        self.playerSide = self.diambraArena.readResetInfo()
-        observation, data = self.diambraArena.readData()
+        frame, data = self.diambraArena.reset()
 
-        return observation, data
+        return frame, data
 
     # Resetting the environment
     def reset(self):
-        observation, data = self.resetComplete()
+        self.frame, data = self.resetComplete()
 
-        return observation
+        return self.frame
 
     # Rendering the environment
-    def render(self, mode='human'):
-        pass
+    def render(self, waitKey=1, mode='human'):
+        cv2.imshow("Frame", self.frame[:, :, ::-1]) #bgr 2 rgb
+        cv2.waitKey(waitKey)
 
     # Closing the environment
     def close(self):
@@ -222,20 +221,18 @@ class diambraGymHardCore1P(diambraGymHardCoreBase):
             # Discrete to multidiscrete conversion
             movAct, attAct = discreteToMultiDiscreteAction(action, self.nActions[0][0])
 
-        self.diambraArena.step(movAct, attAct)
-        self.diambraArena.readFlag()
-        observation, data = self.diambraArena.readData()
-        reward            = data["reward"]
-        done              = data["epDone"]
+        self.frame, data = self.diambraArena.step(movAct, attAct)
+        reward           = data["reward"]
+        done             = data["epDone"]
 
-        return observation, reward, done, data
+        return self.frame, reward, done, data
 
     # Step the environment
     def step(self, action):
 
-        observation, reward, done, data = self.stepComplete(action)
+        self.frame, reward, done, data = self.stepComplete(action)
 
-        return observation, reward, done,\
+        return self.frame, reward, done,\
                {"roundDone": data["roundDone"], "stageDone": data["stageDone"],\
                 "gameDone": data["gameDone"], "epDone": data["epDone"]}
 
@@ -292,19 +289,19 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
 
         self.diambraArena.step(movActP1, attActP1, movActP2, attActP2)
         self.diambraArena.readFlag()
-        observation, data = self.diambraArena.readData()
+        self.frame, data = self.diambraArena.readData()
         reward            = data["reward"]
         done              = data["gameDone"]
         #data["epDone"]   = done
 
-        return observation, reward, done, data
+        return self.frame, reward, done, data
 
     # Step the environment
     def step(self, action):
 
-        observation, reward, done, data = self.stepComplete(action)
+        self.frame, reward, done, data = self.stepComplete(action)
 
-        return observation, reward, done,\
+        return self.frame, reward, done,\
                {"roundDone": data["roundDone"], "stageDone": data["stageDone"],\
                 "gameDone": data["gameDone"], "epDone": data["epDone"]}
 
@@ -385,9 +382,9 @@ class diambraGym1P(diambraGymHardCore1P):
 
     def step(self, action):
 
-        frame, reward, done, data = self.stepComplete(action)
+        self.frame, reward, done, data = self.stepComplete(action)
 
-        observation = self.addObsIntegration(frame, data)
+        observation = self.addObsIntegration(self.frame, data)
 
         return observation, reward, done,\
                {"roundDone": data["roundDone"], "stageDone": data["stageDone"],\
@@ -396,9 +393,9 @@ class diambraGym1P(diambraGymHardCore1P):
     # Reset the environment
     def reset(self, **kwargs):
 
-        frame, data = self.resetComplete(**kwargs)
+        self.frame, data = self.resetComplete(**kwargs)
 
-        observation = self.addObsIntegration(frame, data)
+        observation = self.addObsIntegration(self.frame, data)
 
         return observation
 
@@ -488,9 +485,9 @@ class diambraGym2P(diambraGymHardCore2P):
     # Step the environment
     def step(self, action):
 
-        frame, reward, done, data = self.stepComplete(action)
+        self.frame, reward, done, data = self.stepComplete(action)
 
-        observation = self.addObsIntegration(frame, data)
+        observation = self.addObsIntegration(self.frame, data)
 
         return observation, reward, done,\
                {"roundDone": data["roundDone"], "stageDone": data["stageDone"],\
@@ -499,9 +496,9 @@ class diambraGym2P(diambraGymHardCore2P):
     # Reset the environment
     def reset(self, **kwargs):
 
-        frame, data = self.resetComplete(**kwargs)
+        self.frame, data = self.resetComplete(**kwargs)
 
-        observation = self.addObsIntegration(frame, data)
+        observation = self.addObsIntegration(self.frame, data)
 
         return observation
 
