@@ -4,7 +4,7 @@ import numpy as np
 import ctypes, ctypes.util
 
 import threading
-from diambraArena.diambraEnvLib.pipe import EnvData, Pipe, DataPipe
+from diambraArena.diambraEnvLib.pipe import Pipe, DataPipe
 from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
 
@@ -14,9 +14,7 @@ class diambraArenaLib:
 
     def __init__(self, diambraEnvKwargs):
 
-        self.envData = EnvData()
-
-        self.pipes_path = os.path.join("/tmp", "DIAMBRA")
+        self.pipesPath = os.path.join("/tmp", "DIAMBRA")
 
         # Launch diambra env core
         # Load library
@@ -34,15 +32,6 @@ class diambraArenaLib:
            sys.exit()
 
         diambraEnv = diambraEnvLib.diambraEnv
-        diambraEnv.argtypes = [
-                               # INPUTS
-                               ctypes.c_wchar_p, # EnvKwargs (envId+gameId+romsPath+binaryPath+ ...)
-                               ctypes.c_wchar_p, # pipes_path
-                               # OUTPUTS
-                               ctypes.POINTER(ctypes.c_int), # data STRUCTURE INT
-                               ctypes.POINTER(ctypes.c_bool), # data STRUCTURE BOOL
-                               np.ctypeslib.ndpointer(dtype='uint8', ndim=1, flags='C_CONTIGUOUS')] # unsigned char* frame
-
         diambraEnv.restype = ctypes.c_int
 
         # Mame path
@@ -53,12 +42,8 @@ class diambraArenaLib:
 
         self.envSettings = diambraEnvKwargs
 
-        envKwargsString = self.envKwargsToString(diambraEnvKwargs)
-        diambraEnvArgs = [envKwargsString, self.pipes_path,                                  # INPUTS
-                          self.envData.cIntData, self.envData.cBoolData, self.envData.frame] # OUTPUTS
-
         # Launch thread
-        self.diambraEnvThread = threading.Thread(target=diambraEnv, args=diambraEnvArgs)
+        self.diambraEnvThread = threading.Thread(target=diambraEnv)
         self.diambraEnvThread.start()
 
         # Splash Screen
@@ -67,15 +52,16 @@ class diambraArenaLib:
 
         # Signal file definition
         tmpPathFileName = "pipesTmp" + diambraEnvKwargs["envId"] + ".log"
-        tmpPath = Path(self.pipes_path).joinpath(tmpPathFileName)
+        tmpPath = Path(self.pipesPath).joinpath(tmpPathFileName)
 
         # Create Write Pipe
-        self.writePipe = Pipe(diambraEnvKwargs["envId"], "writeToDiambra", "w", self.pipes_path, tmpPath)
+        self.writePipe = Pipe(diambraEnvKwargs["envId"], "writeToDiambra", "w", self.pipesPath, tmpPath)
         # Create Read Pipe
-        self.readPipe = DataPipe(diambraEnvKwargs["envId"], "readFromDiambra", "r", self.pipes_path, tmpPath)
+        self.readPipe = DataPipe(diambraEnvKwargs["envId"], "readFromDiambra", "r", self.pipesPath, tmpPath)
 
         # Wait until the fifo file has been created and opened on Diambra Env side
         while (not tmpPath.exists()):
+            print("Waiting for file to be written, filename = ", tmpPath)
             time.sleep(1)
             if not self.diambraEnvThread.is_alive():
                 sys.exit(1)
@@ -87,53 +73,62 @@ class diambraArenaLib:
         # Open Read Pipe
         self.readPipe.open()
 
+        # Send environment settings
+        envSettingsString = self.envSettingsToString(self.envSettings)
+        print("Writing envSettings = ", envSettingsString)
+        self.writePipe.sendEnvSettings(envSettingsString)
+
     # Transforming env kwargs to string
-    def envKwargsToString(self, envSettings):
+    def envSettingsToString(self, envSettings):
 
         maxCharToSelect = 3
+        sep = ","
+        endChar = "+"
 
         output = ""
 
-        output += "envId"+            "+2+" + envSettings["envId"] + "+"
-        output += "gameId"+           "+2+" + envSettings["gameId"] + "+"
-        output += "romsPath"+         "+2+" + envSettings["romsPath"] + "+"
-        output += "binaryPath"+       "+2+" + envSettings["mamePath"] + "+"
-        output += "emuPipesPath"+     "+2+" + envSettings["emuPipesPath"] + "+"
-        output += "continueGame"+     "+3+" + str(envSettings["continueGame"]) + "+"
-        output += "showFinal"+        "+0+" + str(int(envSettings["showFinal"])) + "+"
-        output += "stepRatio"+        "+1+" + str(envSettings["stepRatio"]) + "+"
-        output += "render"+           "+0+" + str(int(envSettings["render"])) + "+"
-        output += "lockFps"+          "+0+" + str(int(envSettings["lockFps"])) + "+"
-        output += "sound"+            "+0+" + str(int(envSettings["sound"])) + "+"
-        output += "player"+           "+2+" + envSettings["player"] + "+"
-        output += "difficulty"+       "+1+" + str(envSettings["difficulty"]) + "+"
-        output += "character1"+       "+2+" + envSettings["characters"][0][0] + "+"
-        output += "character2"+       "+2+" + envSettings["characters"][1][0] + "+"
+        output += "envId"+            sep+"2"+sep + envSettings["envId"] + sep
+        output += "gameId"+           sep+"2"+sep + envSettings["gameId"] + sep
+        output += "romsPath"+         sep+"2"+sep + envSettings["romsPath"] + sep
+        output += "binaryPath"+       sep+"2"+sep + envSettings["mamePath"] + sep
+        output += "emuPipesPath"+     sep+"2"+sep + envSettings["emuPipesPath"] + sep
+        output += "continueGame"+     sep+"3"+sep + str(envSettings["continueGame"]) + sep
+        output += "showFinal"+        sep+"0"+sep + str(int(envSettings["showFinal"])) + sep
+        output += "stepRatio"+        sep+"1"+sep + str(envSettings["stepRatio"]) + sep
+        output += "render"+           sep+"0"+sep + str(int(envSettings["render"])) + sep
+        output += "lockFps"+          sep+"0"+sep + str(int(envSettings["lockFps"])) + sep
+        output += "sound"+            sep+"0"+sep + str(int(envSettings["sound"])) + sep
+        output += "player"+           sep+"2"+sep + envSettings["player"] + sep
+        output += "difficulty"+       sep+"1"+sep + str(envSettings["difficulty"]) + sep
+        output += "character1"+       sep+"2"+sep + envSettings["characters"][0][0] + sep
+        output += "character2"+       sep+"2"+sep + envSettings["characters"][1][0] + sep
         for iChar in range(1, maxCharToSelect):
-            output += "character1_{}".format(iChar+1)+     "+2+" + envSettings["characters"][0][iChar] + "+"
-            output += "character2_{}".format(iChar+1)+     "+2+" + envSettings["characters"][1][iChar] + "+"
-        output += "charOutfits1"+     "+1+" + str(envSettings["charOutfits"][0]) + "+"
-        output += "charOutfits2"+     "+1+" + str(envSettings["charOutfits"][1]) + "+"
+            output += "character1_{}".format(iChar+1)+     sep+"2"+sep + envSettings["characters"][0][iChar] + sep
+            output += "character2_{}".format(iChar+1)+     sep+"2"+sep + envSettings["characters"][1][iChar] + sep
+        output += "charOutfits1"+     sep+"1"+sep + str(envSettings["charOutfits"][0]) + sep
+        output += "charOutfits2"+     sep+"1"+sep + str(envSettings["charOutfits"][1]) + sep
 
         # SFIII Specific
-        output += "superArt1"+        "+1+" + str(envSettings["superArt"][0]) + "+"
-        output += "superArt2"+        "+1+" + str(envSettings["superArt"][1]) + "+"
+        output += "superArt1"+        sep+"1"+sep + str(envSettings["superArt"][0]) + sep
+        output += "superArt2"+        sep+"1"+sep + str(envSettings["superArt"][1]) + sep
         # UMK3 Specific
-        output += "tower"+            "+1+" + str(envSettings["tower"]) + "+"
+        output += "tower"+            sep+"1"+sep + str(envSettings["tower"]) + sep
         # KOF Specific
-        output += "fightingStyle1"+   "+1+" + str(envSettings["fightingStyle"][0]) + "+"
-        output += "fightingStyle2"+   "+1+" + str(envSettings["fightingStyle"][1]) + "+"
+        output += "fightingStyle1"+   sep+"1"+sep + str(envSettings["fightingStyle"][0]) + sep
+        output += "fightingStyle2"+   sep+"1"+sep + str(envSettings["fightingStyle"][1]) + sep
         for idx in range(2):
-            output += "ultimateStyleDash"+str(idx+1)+  "+1+" + str(envSettings["ultimateStyle"][idx][0]) + "+"
-            output += "ultimateStyleEvade"+str(idx+1)+ "+1+" + str(envSettings["ultimateStyle"][idx][1]) + "+"
-            output += "ultimateStyleBar"+str(idx+1)+   "+1+" + str(envSettings["ultimateStyle"][idx][2]) + "+"
+            output += "ultimateStyleDash"+str(idx+1)+  sep+"1"+sep + str(envSettings["ultimateStyle"][idx][0]) + sep
+            output += "ultimateStyleEvade"+str(idx+1)+ sep+"1"+sep + str(envSettings["ultimateStyle"][idx][1]) + sep
+            output += "ultimateStyleBar"+str(idx+1)+   sep+"1"+sep + str(envSettings["ultimateStyle"][idx][2]) + sep
 
-        output += "headless"+         "+0+" + str(int(envSettings["headless"])) + "+"
-        output += "displayNum"+       "+2+" + envSettings["displayNum"] + "+"
-        output += "disableKeyboard"+  "+0+" + str(int(envSettings["disableKeyboard"])) + "+"
-        output += "disableJoystick"+  "+0+" + str(int(envSettings["disableJoystick"])) + "+"
-        output += "rank"+             "+1+" + str(envSettings["rank"]) + "+"
-        output += "recordConfigFile"+ "+2+" + envSettings["recordConfigFile"] + "+"
+        output += "headless"+         sep+"0"+sep + str(int(envSettings["headless"])) + sep
+        output += "displayNum"+       sep+"2"+sep + envSettings["displayNum"] + sep
+        output += "disableKeyboard"+  sep+"0"+sep + str(int(envSettings["disableKeyboard"])) + sep
+        output += "disableJoystick"+  sep+"0"+sep + str(int(envSettings["disableJoystick"])) + sep
+        output += "rank"+             sep+"1"+sep + str(envSettings["rank"]) + sep
+        output += "recordConfigFile"+ sep+"2"+sep + envSettings["recordConfigFile"] + sep
+
+        output += endChar
 
         return output
 
@@ -143,34 +138,23 @@ class diambraArenaLib:
 
     # Get Env Int Data Vars List
     def readEnvIntDataVarsList(self):
-        envIntDataVarsList = self.readPipe.readEnvIntDataVarsList()
-        envIntDataVarsList.remove("")
-        self.envData.setIntDataVarsList(envIntDataVarsList)
+        self.readPipe.readEnvIntDataVarsList()
 
     # Set frame size
     def setFrameSize(self, hwcDim):
-        self.envData.setFrameSize(hwcDim)
         self.readPipe.setFrameSize(hwcDim)
-
-    # Reading flag
-    def readFlag(self):
-        return self.readPipe.readFlag()
-
-    # Reading reset info
-    def readResetInfo(self):
-        return self.readPipe.readResetInfo()
-
-    # Reading data
-    def readData(self):
-        return self.envData.readData()
-
-    # Step the environment
-    def step(self, movP1=0, attP1=0, movP2=0, attP2=0):
-        self.writePipe.sendComm(0, movP1, attP1, movP2, attP2);
 
     # Reset the environment
     def reset(self):
         self.writePipe.sendComm(1);
+        frame, data, self.playerSide = self.readPipe.readResetData()
+        return frame, data
+
+    # Step the environment
+    def step(self, movP1=0, attP1=0, movP2=0, attP2=0):
+        self.writePipe.sendComm(0, movP1, attP1, movP2, attP2);
+        frame, data = self.readPipe.readStepData()
+        return frame, data
 
     # Closing DIAMBRA Arena
     def close(self):
