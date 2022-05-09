@@ -7,8 +7,11 @@ from diambraArena.diambraEnvLib.pipe import Pipe, DataPipe
 from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
 
-def diambraApp(appPath, pipesPath, envId):
-    command = appPath + " --pipesPath {} --envId {}".format(pipesPath, envId)
+def diambraApp(pipesPath, envId, romsPath):
+    print("Args = ", pipesPath, envId, romsPath)
+    romsVol = '--mount src={},target="/opt/diambraArena/roms",type=bind '.format(romsPath)
+    command = 'docker run --user $(id -u) -it --rm --privileged {} --mount src="{}",target="{}",type=bind -v diambraService:/root/ --name diambraApp diambra/diambra-app:main sh -c "cd /opt/diambraArena/ && ./diambraApp --pipesPath {} --envId {}"'.format(romsVol, pipesPath, pipesPath, pipesPath, envId)
+    print("Command = ", command)
     os.system(command)
 
 # DIAMBRA Env Gym
@@ -17,7 +20,7 @@ class diambraArenaLib:
 
     def __init__(self, envSettings):
 
-        self.pipesPath = os.path.join("/tmp", "DIAMBRA")
+        self.pipesPath = os.path.join("/tmp", "DIAMBRA/")
 
         # Launch diambra App
         # Load library
@@ -29,13 +32,12 @@ class diambraArenaLib:
            sys.exit(1)
 
         # Mame path
-        if "mamePath" not in envSettings:
-            envSettings["mamePath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../mame/")
-        if "emuPipesPath" not in envSettings:
-            envSettings["emuPipesPath"] = envSettings["mamePath"]
+        envSettings["mamePath"] = "/opt/diambraArena/mame/"
+        envSettings["emuPipesPath"] = "/tmp/DIAMBRA"
 
         self.envSettings = envSettings
-        diambraEnvArgs = [envSettings["libPath"], self.pipesPath, envSettings["envId"]]
+        diambraEnvArgs = [self.pipesPath, envSettings["envId"], envSettings["romsPath"]]
+        envSettings["romsPath"] = "/opt/diambraArena/roms/"
 
         # Launch thread
         self.diambraEnvThread = threading.Thread(target=diambraApp, args=diambraEnvArgs)
@@ -46,8 +48,8 @@ class diambraArenaLib:
             DIAMBRASplashScreen()
 
         # Create pipes
-        self.writePipe = Pipe(self.envSettings["envId"], "writeToDiambra", "w", self.pipesPath)
-        self.readPipe = DataPipe(self.envSettings["envId"], "readFromDiambra", "r", self.pipesPath)
+        self.writePipe = Pipe(self.envSettings["envId"], "input", "w", self.pipesPath)
+        self.readPipe = DataPipe(self.envSettings["envId"], "output", "r", self.pipesPath)
 
         # Signal files definition
         tmpPathFileNameP2c = "pipesTmp" + self.envSettings["envId"] + "P2c.log"
