@@ -154,21 +154,20 @@ class diambraGymHardCoreBase(gym.Env):
         raise NotImplementedError()
 
     # Resetting the environment
-    def resetComplete(self):
-        frame, data = self.diambraArena.reset()
-
-        return frame, data
-
-    # Resetting the environment
     def reset(self):
-        self.frame, data = self.resetComplete()
-
+        self.frame, data, self.playerSide = self.diambraArena.reset()
         return self.frame
 
     # Rendering the environment
-    def render(self, waitKey=1, mode='human'):
-        cv2.imshow("Frame", self.frame[:, :, ::-1]) #bgr 2 rgb
-        cv2.waitKey(waitKey)
+    def render(self, mode='human', waitKey=1):
+
+        if mode == "human":
+            windowName = "DIAMBRA Arena - {} - ({})".format(self.envSettings["gameId"], self.envSettings["rank"])
+            cv2.namedWindow(windowName,cv2.WINDOW_GUI_NORMAL)
+            cv2.imshow(windowName, self.frame[:, :, ::-1])
+            cv2.waitKey(waitKey)
+        elif mode == "rgb_array":
+            return self.frame
 
     # Closing the environment
     def close(self):
@@ -287,9 +286,7 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
                 movActP1, attActP1 = discreteToMultiDiscreteAction(action[0], self.nActions[0][0])
                 movActP2, attActP2 = discreteToMultiDiscreteAction(action[1], self.nActions[1][0])
 
-        self.diambraArena.step(movActP1, attActP1, movActP2, attActP2)
-        self.diambraArena.readFlag()
-        self.frame, data = self.diambraArena.readData()
+        self.frame, data = self.diambraArena.step(movActP1, attActP1, movActP2, attActP2)
         reward            = data["reward"]
         done              = data["gameDone"]
         #data["epDone"]   = done
@@ -391,12 +388,10 @@ class diambraGym1P(diambraGymHardCore1P):
                 "gameDone": data["gameDone"], "epDone": data["epDone"]}
 
     # Reset the environment
-    def reset(self, **kwargs):
-
-        self.frame, data = self.resetComplete(**kwargs)
-
+    def reset(self):
+        self.frame, data, self.playerSide = self.diambraArena.reset()
+        print("after reset player side = ", self.playerSide)
         observation = self.addObsIntegration(self.frame, data)
-
         return observation
 
 # DIAMBRA Gym base class providing frame and additional info as observations
@@ -494,12 +489,9 @@ class diambraGym2P(diambraGymHardCore2P):
                 "gameDone": data["gameDone"], "epDone": data["epDone"]}
 
     # Reset the environment
-    def reset(self, **kwargs):
-
-        self.frame, data = self.resetComplete(**kwargs)
-
+    def reset(self):
+        self.frame, data, self.playerSide = self.diambraArena.reset()
         observation = self.addObsIntegration(self.frame, data)
-
         return observation
 
 def makeGymEnv(envSettings):

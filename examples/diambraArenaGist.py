@@ -13,8 +13,6 @@ if opt.romsPath is not None:
     # Path to roms folder
     settings["romsPath"] = opt.romsPath
 
-settings["envId"] = "temporaryEnvId" # TODO: remove
-
 env = diambraArena.make("doapp", settings)
 
 observation = env.reset()
