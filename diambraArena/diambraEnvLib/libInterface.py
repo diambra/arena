@@ -8,6 +8,7 @@ from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
 
 def diambraApp(pipesPath, envId, romsPath):
+    # TODO: add case for render active if linux
     print("Args = ", pipesPath, envId, romsPath)
     romsVol = '--mount src={},target="/opt/diambraArena/roms",type=bind '.format(romsPath)
     command = 'docker run --user $(id -u) -it --rm --privileged {} --mount src="{}",target="{}",type=bind -v diambraService:/root/ --name diambraApp diambra/diambra-app:main sh -c "cd /opt/diambraArena/ && ./diambraApp --pipesPath {} --envId {}"'.format(romsVol, pipesPath, pipesPath, pipesPath, envId)
@@ -40,6 +41,7 @@ class diambraArenaLib:
         envSettings["romsPath"] = "/opt/diambraArena/roms/"
 
         # Launch thread
+        # TODO: add case for local execution (envSettings["localExec"] = True)
         self.diambraEnvThread = threading.Thread(target=diambraApp, args=diambraEnvArgs)
         self.diambraEnvThread.start()
 
