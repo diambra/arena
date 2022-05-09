@@ -1,6 +1,6 @@
 include diambraArena/mame/mame
 recursive-include diambraArena/mame/nvram *
 recursive-include diambraArena/mame/plugins *
-include diambraArena/diambraEnvLib/libdiambraEnv.so
+include diambraArena/diambraEnvLib/diambraApp
 include diambraArena/utils/.splashScreen.gif
 include diambraArena/utils/integratedGames.json

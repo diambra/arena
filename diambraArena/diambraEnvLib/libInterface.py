@@ -1,12 +1,15 @@
 import sys, platform, os
 from pathlib import Path
 import numpy as np
-import ctypes, ctypes.util
 
 import threading
 from diambraArena.diambraEnvLib.pipe import Pipe, DataPipe
 from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
+
+def diambraApp(appPath, pipesPath, envId):
+    command = appPath + " --pipesPath {} --envId {}".format(pipesPath, envId)
+    os.system(command)
 
 # DIAMBRA Env Gym
 class diambraArenaLib:
@@ -16,25 +19,14 @@ class diambraArenaLib:
 
         self.pipesPath = os.path.join("/tmp", "DIAMBRA")
 
-        # Launch diambra env core
+        # Launch diambra App
         # Load library
         if "libPath" not in envSettings:
-            envSettings["libPath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "libdiambraEnv.so")
+            envSettings["libPath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diambraApp")
 
         if not envSettings["libPath"]:
            print("Unable to find the specified library: {}".format(envSettings["libPath"]))
-           sys.exit()
-
-        try:
-           diambraEnvLib = ctypes.CDLL(envSettings["libPath"])
-        except OSError as e:
-           print("Unable to load the system C library:", e)
-           sys.exit()
-
-        diambraEnv = diambraEnvLib.diambraEnv
-        diambraEnv.argtypes = [ctypes.c_wchar_p, # pipesPath
-                               ctypes.c_wchar_p] # envId
-        diambraEnv.restype = ctypes.c_int
+           sys.exit(1)
 
         # Mame path
         if "mamePath" not in envSettings:
@@ -43,10 +35,10 @@ class diambraArenaLib:
             envSettings["emuPipesPath"] = envSettings["mamePath"]
 
         self.envSettings = envSettings
-        diambraEnvArgs = [self.pipesPath, envSettings["envId"]]
+        diambraEnvArgs = [envSettings["libPath"], self.pipesPath, envSettings["envId"]]
 
         # Launch thread
-        self.diambraEnvThread = threading.Thread(target=diambraEnv, args=diambraEnvArgs)
+        self.diambraEnvThread = threading.Thread(target=diambraApp, args=diambraEnvArgs)
         self.diambraEnvThread.start()
 
         # Splash Screen
