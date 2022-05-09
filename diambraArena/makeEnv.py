@@ -33,12 +33,11 @@ def envSettingsCheck(envSettings):
     defaultEnvSettings["ultimateStyle"] = [[0, 0, 0], [0, 0, 0]]
 
     defaultEnvSettings["hardCore"] = False
-    defaultEnvSettings["headless"] = False
-    defaultEnvSettings["displayNum"] = ":1"
     defaultEnvSettings["disableKeyboard"] = True
     defaultEnvSettings["disableJoystick"] = True
     defaultEnvSettings["rank"] = 0
     defaultEnvSettings["recordConfigFile"] = ""
+    defaultEnvSettings["localExec"] = False
 
     for k, v in envSettings.items():
 
@@ -60,6 +59,8 @@ def envSettingsCheck(envSettings):
             if type(defaultEnvSettings[key]) != list:
                 defaultEnvSettings[key] = [defaultEnvSettings[key],
                                            defaultEnvSettings[key]]
+
+    # TODO: Add checks if Win or MacOS -> deactivate rendering
 
     return defaultEnvSettings
 

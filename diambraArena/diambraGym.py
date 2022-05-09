@@ -504,23 +504,11 @@ def makeGymEnv(envSettings):
                                " specify it via environment settings.")
         else:
             envSettings["romsPath"] = os.getenv("DIAMBRAROMSPATH")
-    else:
-        # Check if Docker execution
-        if os.getenv("DOCKER_EXEC") != None:
-
-            # Check if romsPath different than hardcoded path inside Docker
-            if envSettings["romsPath"] != "/opt/diambraArena/roms/":
-                print("WARNING: found a user-defined \"romsPath\" setting inside a Docker execution that differs from the required one:")
-                print("         User defined \"romsPath\" = {}".format(envSettings["romsPath"]))
-                print("         Required     \"romsPath\" = /opt/diambraArena/roms/")
-                print("         Forcing it to the correct value")
-                envSettings["romsPath"] = "/opt/diambraArena/roms/"
-
 
     # Check for OS var DISPLAY
     if os.getenv("DISPLAY") == None:
-        print("No DISPLAY environment variable detected, activating HEADLESS mode, and deactivating lockFps if active")
-        envSettings["headless"] = True
+        print("No DISPLAY environment variable detected, deactivating rendering and lockFps if active")
+        envSettings["render"] = False
         envSettings["lockFps"]  = False
 
     if envSettings["player"] != "P1P2": #1P Mode
