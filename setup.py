@@ -28,8 +28,8 @@ if(not(name == "Ubuntu") and not(name == "Linux Mint")):
 
 print("Distro test ok, testing version of your current flavor")
 #Diambra Lib commands
-cpLib20="cp diambraArena/diambraEnvLib/libdiambraEnv20.so diambraArena/diambraEnvLib/libdiambraEnv.so"
-cpLib18="cp diambraArena/diambraEnvLib/libdiambraEnv18.so diambraArena/diambraEnvLib/libdiambraEnv.so"
+cpApp20="cp diambraArena/diambraEnvLib/diambraApp20 diambraArena/diambraEnvLib/diambraApp"
+cpApp18="cp diambraArena/diambraEnvLib/diambraApp18 diambraArena/diambraEnvLib/diambraApp"
 #MAME Cmd
 unzipMameCmd="unzip diambraArena/mame/mame.zip -d diambraArena/mame"
 
@@ -39,10 +39,10 @@ if(name == "Ubuntu"):
         sys.exit(1)
     if(release > 20):
         print("LSB Groovy Gorilla or higher")
-        os.system(cpLib20)
+        os.system(cpApp20)
     else:
         print("LSB Bionic Beaver or higher")
-        os.system(cpLib18)
+        os.system(cpApp18)
 
 if(name == "Linux Mint"):
     if(release < 19):
@@ -50,10 +50,10 @@ if(name == "Linux Mint"):
         sys.exit(1)
     if(release > 20):
         print("Mint Ulyssa")
-        os.system(cpLib20)
+        os.system(cpApp20)
     else:
         print("Mint Tessa")
-        os.system(cpLib18)
+        os.system(cpApp18)
 
 os.system(unzipMameCmd)
 
@@ -93,8 +93,8 @@ setuptools.setup(
         )
 
 #DIAMBRA Lib Clear Cmd
-clearLibCmd="rm diambraArena/diambraEnvLib/libdiambraEnv.so"
-os.system(clearLibCmd)
+clearAppCmd="rm diambraArena/diambraEnvLib/diambraApp"
+os.system(clearAppCmd)
 #MAME Clear Cmd
 clearMameCmd="rm diambraArena/mame/mame"
 os.system(clearMameCmd)
