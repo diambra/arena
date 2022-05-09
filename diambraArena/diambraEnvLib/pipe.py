@@ -31,14 +31,13 @@ class StreamGobbler(threading.Thread):
     def stop(self):
         self.stopEvent.set()
 
-def openPipe(pipe_queue, path, mode):
-    pipe_queue.put(open(path, mode + "b"))
-
+def openPipe(pipeQueue, path, mode):
+    pipeQueue.put(open(path, mode + "b"))
 
 # A class used for creating and interacting with a Linux FIFO pipe
 class Pipe(object):
 
-    def __init__(self, env_id, pipe_id, mode, pipes_path, tmpPath):
+    def __init__(self, env_id, pipe_id, mode, pipes_path):
         self.pipeId = pipe_id + "Pipe"
         self.mode = mode
         self.pipes_path = Path(pipes_path)
@@ -52,11 +51,6 @@ class Pipe(object):
             self.path.unlink()
 
         os.mkfifo(str(self.path.absolute()))
-
-        # Signal file definition
-        self.tmpPath = tmpPath
-        if tmpPath.exists():
-            tmpPath.unlink()
 
     # Opens the pipe in the toolkit and in the Lua engine
     # When a pipe is opened in read mode, it will block the thread until the
@@ -115,8 +109,8 @@ class Pipe(object):
 # of the frame data and memory address values from the emulator
 class DataPipe(object):
 
-    def __init__(self, env_id, pipe_id, mode, pipes_path, tmpPath):
-        self.pipe = Pipe(env_id, pipe_id, mode, pipes_path, tmpPath)
+    def __init__(self, env_id, pipe_id, mode, pipes_path):
+        self.pipe = Pipe(env_id, pipe_id, mode, pipes_path)
         self.boolDataVarsList = ["roundDone", "stageDone", "gameDone", "epDone"]
 
     def open(self):
@@ -124,6 +118,13 @@ class DataPipe(object):
 
     def close(self):
         self.pipe.close()
+
+    # Initialize frame dims inside read pipe
+    def setFrameSize(self, hwcDim):
+        self.height = hwcDim[0]
+        self.width  = hwcDim[1]
+        self.nChan  = hwcDim[2]
+        self.frameDim = hwcDim[0] * hwcDim[1] * hwcDim[2]
 
     def readEnvInfo(self, timeout=None):
         line = self.pipe.readln(timeout=timeout)
@@ -135,13 +136,6 @@ class DataPipe(object):
         line = line.decode('utf-8')
         self.intDataVarsList = line.split(",")
         self.intDataVarsList.remove("")
-
-    # Initialize frame dims inside read pipe
-    def setFrameSize(self, hwcDim):
-        self.height = hwcDim[0]
-        self.width  = hwcDim[1]
-        self.nChan  = hwcDim[2]
-        self.frameDim = hwcDim[0] * hwcDim[1] * hwcDim[2]
 
     # Read data
     def readData (self, timeout=None):
@@ -160,7 +154,7 @@ class DataPipe(object):
             data[var] = bool(int(line[idx]))
             idx += 1
 
-        return data, line[-1]
+        return data, line[-2]
 
     # Read frame
     def readFrame(self, timeout=None):
@@ -171,11 +165,11 @@ class DataPipe(object):
     # Read reset data
     def readResetData(self, timeout=None):
         data, playerSide = self.readData(timeout)
-        frame = self.readFrame()
+        frame = self.readFrame(timeout)
         return frame, data, playerSide
 
     # Read step data
     def readStepData(self, timeout=None):
         data, _ = self.readData(timeout)
-        frame = self.readFrame()
+        frame = self.readFrame(timeout)
         return frame, data
