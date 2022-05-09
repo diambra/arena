@@ -9,10 +9,6 @@ print(opt)
 
 # Mandatory settings
 settings = {}
-
-# Game selection
-settings["gameId"] = "doapp"
-
 if opt.romsPath is not None:
     # Path to roms folder
     settings["romsPath"] = opt.romsPath
@@ -63,9 +59,9 @@ settings["actionSpace"] = "discrete"
 settings["attackButCombination"] = True
 
 # Environment ID, must be unique for every instance of the environment
-envId = "TestEnv"
+settings["envId"] = "SinglePlayerEnv"
 
-env = diambraArena.make(envId, settings)
+env = diambraArena.make("doapp", settings)
 
 observation = env.reset()
 showGymObs(observation, env.charNames, env.partnerNames)

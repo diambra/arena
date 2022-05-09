@@ -11,7 +11,6 @@ print(opt)
 
 # Mandatory settings
 settings = {}
-settings["gameId"]   = "doapp"
 if opt.romsPath is not None:
     settings["romsPath"] = opt.romsPath
 
@@ -22,6 +21,7 @@ settings["stepRatio"] = 1
 # Action space choice
 settings["actionSpace"] = "multiDiscrete"
 settings["attackButCombination"] = True
+settings["envId"] = "HumanExperienceRecorderEnv"
 
 # Gym wrappers settings
 wrappersSettings = {}
@@ -45,7 +45,7 @@ trajRecSettings["filePath"] = os.path.join(homeDir, "diambraArena/trajRecordings
 # only human trajectories while playing as a human against a RL agent)
 trajRecSettings["ignoreP2"] = 0
 
-env = diambraArena.make("TestEnv", settings, wrappersSettings, trajRecSettings)
+env = diambraArena.make("doapp", settings, wrappersSettings, trajRecSettings)
 
 # GamePad(s) initialization
 gamepad = diambraGamepad(env.actionList)
