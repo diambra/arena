@@ -496,24 +496,6 @@ class diambraGym2P(diambraGymHardCore2P):
 
 def makeGymEnv(envSettings):
 
-    # Retrieve roms path from ENV variables
-    if "romsPath" not in envSettings:
-        if os.getenv("DIAMBRAROMSPATH") == None:
-            raise RuntimeError("\"romsPath\" is a mandatory parameter, either add"+\
-                               " it to DIAMBRAROMSPATH environment variable or"+\
-                               " specify it via environment settings.")
-        else:
-            envSettings["romsPath"] = os.getenv("DIAMBRAROMSPATH")
-
-    # Check for OS var DISPLAY
-    if os.getenv("DISPLAY") == None:
-        print("No DISPLAY environment variable detected, deactivating rendering and lockFps if active")
-        envSettings["render"] = False
-        envSettings["lockFps"]  = False
-        envSettings["localExec"] = False
-
-    # TODO: Add checks if Win or MacOS -> deactivate rendering
-
     if envSettings["player"] != "P1P2": #1P Mode
         if envSettings["hardCore"]:
             env = diambraGymHardCore1P(envSettings)
