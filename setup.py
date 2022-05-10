@@ -8,6 +8,10 @@ if os.system("docker ps") != 0:
     print("Install it from https://docs.docker.com/get-docker/")
     print("---")
     sys.exit(1)
+else:
+    print("Downloading DIAMBRA Docker image")
+    #TODO: decomment
+    #os.system("docker pull diambra/diambraApp:main")
 
 try:
     from pip import main as pipmain

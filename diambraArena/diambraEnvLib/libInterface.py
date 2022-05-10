@@ -7,11 +7,18 @@ from diambraArena.diambraEnvLib.pipe import Pipe, DataPipe
 from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
 
-def diambraApp(pipesPath, envId, romsPath):
-    # TODO: add case for render active if linux
-    print("Args = ", pipesPath, envId, romsPath)
+def diambraApp(pipesPath, envId, romsPath, render):
+    print("Args = ", pipesPath, envId, romsPath, render)
+    x11exec = os.path.join(os.path.dirname(os.path.abspath(__file__)), "x11docker")
     romsVol = '--mount src={},target="/opt/diambraArena/roms",type=bind '.format(romsPath)
-    command = 'docker run --user $(id -u) -it --rm --privileged {} --mount src="{}",target="{}",type=bind -v diambraService:/root/ --name diambraApp diambra/diambra-app:main sh -c "cd /opt/diambraArena/ && ./diambraApp --pipesPath {} --envId {}"'.format(romsVol, pipesPath, pipesPath, pipesPath, envId)
+    if render:
+        command = '{} --cap-default --hostipc --network=host --name=diambraApp --wm=host --pulseaudio --size=1024x600'.format(x11exec)
+        command += ' -- --privileged {} --mount src="{}",target="{}",type=bind -v diambraService:/root/ -- diambra/diambra-app:main &>/dev/null & sleep 4s;'.format(romsVol, pipesPath, pipesPath)
+        command += ' docker exec -u $(id -u) --privileged -it diambraApp sh -c "set -m; cd /opt/diambraArena/ && ./diambraApp --pipesPath {} --envId {}";'.format(pipesPath, envId)
+        command += ' pkill -f "bash ./x11docker*"'
+    else:
+        command = 'docker run --user $(id -u) -it --rm --privileged {} --mount src="{}",target="{}",type=bind -v diambraService:/root/ --name diambraApp diambra/diambra-app:main sh -c "cd /opt/diambraArena/ && ./diambraApp --pipesPath {} --envId {}"'.format(romsVol, pipesPath, pipesPath, pipesPath, envId)
+
     print("Command = ", command)
     os.system(command)
 
@@ -37,7 +44,7 @@ class diambraArenaLib:
         envSettings["emuPipesPath"] = "/tmp/DIAMBRA"
 
         self.envSettings = envSettings
-        diambraEnvArgs = [self.pipesPath, envSettings["envId"], envSettings["romsPath"]]
+        diambraEnvArgs = [self.pipesPath, envSettings["envId"], envSettings["romsPath"], envSettings["render"]]
         envSettings["romsPath"] = "/opt/diambraArena/roms/"
 
         # Launch thread
@@ -46,8 +53,7 @@ class diambraArenaLib:
         self.diambraEnvThread.start()
 
         # Splash Screen
-        if not self.envSettings["headless"]:
-            DIAMBRASplashScreen()
+        DIAMBRASplashScreen()
 
         # Create pipes
         self.writePipe = Pipe(self.envSettings["envId"], "input", "w", self.pipesPath)
@@ -127,8 +133,6 @@ class diambraArenaLib:
             output += "ultimateStyleEvade"+str(idx+1)+ sep+"1"+sep + str(self.envSettings["ultimateStyle"][idx][1]) + sep
             output += "ultimateStyleBar"+str(idx+1)+   sep+"1"+sep + str(self.envSettings["ultimateStyle"][idx][2]) + sep
 
-        output += "headless"+         sep+"0"+sep + str(int(self.envSettings["headless"])) + sep
-        output += "displayNum"+       sep+"2"+sep + self.envSettings["displayNum"] + sep
         output += "disableKeyboard"+  sep+"0"+sep + str(int(self.envSettings["disableKeyboard"])) + sep
         output += "disableJoystick"+  sep+"0"+sep + str(int(self.envSettings["disableJoystick"])) + sep
         output += "rank"+             sep+"1"+sep + str(self.envSettings["rank"]) + sep
