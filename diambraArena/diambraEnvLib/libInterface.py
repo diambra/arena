@@ -7,17 +7,33 @@ from diambraArena.diambraEnvLib.pipe import Pipe, DataPipe
 from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
 
-def diambraApp(pipesPath, envId, romsPath, render):
-    print("Args = ", pipesPath, envId, romsPath, render)
-    x11exec = os.path.join(os.path.dirname(os.path.abspath(__file__)), "x11docker")
-    romsVol = '--mount src={},target="/opt/diambraArena/roms",type=bind '.format(romsPath)
-    if render:
-        command = '{} --cap-default --hostipc --network=host --name=diambraApp --wm=host --pulseaudio --size=1024x600'.format(x11exec)
-        command += ' -- --privileged {} --mount src="{}",target="{}",type=bind -v diambraService:/root/ -- diambra/diambra-app:main &>/dev/null & sleep 4s;'.format(romsVol, pipesPath, pipesPath)
-        command += ' docker exec -u $(id -u) --privileged -it diambraApp sh -c "set -m; cd /opt/diambraArena/ && ./diambraApp --pipesPath {} --envId {}";'.format(pipesPath, envId)
-        command += ' pkill -f "bash ./x11docker*"'
+def diambraApp(localExec, pipesPath, envId, romsPath, render):
+    print("Args = ", localExec, pipesPath, envId, romsPath, render)
+
+    if localExec:
+        diambraAppPath = os.getenv("diambraAppPath")
+        command = '{} --pipesPath {} --envId {}'.format(diambraAppPath, pipesPath, envId)
     else:
-        command = 'docker run --user $(id -u) -it --rm --privileged {} --mount src="{}",target="{}",type=bind -v diambraService:/root/ --name diambraApp diambra/diambra-app:main sh -c "cd /opt/diambraArena/ && ./diambraApp --pipesPath {} --envId {}"'.format(romsVol, pipesPath, pipesPath, pipesPath, envId)
+        dockerRomsFolder = "/opt/diambraArena/roms"
+        dockerPipesFolder = "/tmp/"
+        dockerImageName = "diambra/diambra-app:main"
+        romsVol = '--mount src={},target="{}",type=bind '.format(romsPath, dockerRomsFolder)
+        if render:
+            x11exec = os.path.join(pipesPath, "x11docker")
+            command  = '{} --cap-default --hostipc --network=host --name=diambraApp'.format(x11exec)
+            command += ' --wm=host --pulseaudio --size=1024x600 -- --privileged'
+            command += ' {} --mount src="{}",target="{}",type=bind'.format(romsVol,pipesPath, dockerPipesFolder)
+            command += ' -v diambraService:/root/ -- {} &>/dev/null & sleep 4s;'.format(dockerImageName)
+            command += ' docker exec -u $(id -u) --privileged -it diambraApp'
+            command += ' sh -c "set -m; cd /opt/diambraArena/ &&'
+            command += ' ./diambraApp --pipesPath {} --envId {}";'.format(dockerPipesFolder, envId)
+            command += ' pkill -f "bash {}*"'.format(x11exec)
+        else:
+            command  = 'docker run --user $(id -u) -it --rm --privileged {}'.format(romsVol)
+            command += ' --mount src="{}",target="{}",type=bind'.format(pipesPath, dockerPipesFolder)
+            command += ' -v diambraService:/root/ --name diambraApp {}'.format(dockerImageName)
+            command += ' sh -c "cd /opt/diambraArena/ &&'
+            command += ' ./diambraApp --pipesPath {} --envId {}"'.format(dockerPipesFolder, envId)
 
     print("Command = ", command)
     os.system(command)
@@ -28,24 +44,32 @@ class diambraArenaLib:
 
     def __init__(self, envSettings):
 
-        self.pipesPath = os.path.join("/tmp", "DIAMBRA/")
+        self.pipesPath = os.path.dirname(os.path.abspath(__file__))
 
         # Launch diambra App
-        # Load library
-        if "libPath" not in envSettings:
-            envSettings["libPath"] = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diambraApp")
+        diambraEnvArgs = [envSettings["localExec"], self.pipesPath, envSettings["envId"],\
+                          envSettings["romsPath"], envSettings["render"]]
+        if envSettings["localExec"]: # Ubuntu/Mint local execution (ONLY DEV!)
+            print("WARNING: local execution is only for dev purposes")
+            if os.getenv("diambraAppPath") == None:
+                print("ERROR: local execution requires specification of \"diambraAppPath\"")
+                print(" as environment variable but it was not provided")
+                sys.exit(1)
+            elif "mamePath" not in envSettings:
+                print("ERROR: local execution requires specification of \"mamePath\"")
+                print(" as environment settings but it was not provided")
+                sys.exit(1)
 
-        if not envSettings["libPath"]:
-           print("Unable to find the specified library: {}".format(envSettings["libPath"]))
-           sys.exit(1)
+        else: # Docker based execution
+            # Mame path for docker
+            envSettings["mamePath"] = "/opt/diambraArena/mame/"
+            # Roms path for docker
+            envSettings["romsPath"] = "/opt/diambraArena/roms/"
 
-        # Mame path
-        envSettings["mamePath"] = "/opt/diambraArena/mame/"
-        envSettings["emuPipesPath"] = "/tmp/DIAMBRA"
+        if "emuPipesPath" not in envSettings:
+            envSettings["emuPipesPath"] = "/tmp/DIAMBRA/"
 
         self.envSettings = envSettings
-        diambraEnvArgs = [self.pipesPath, envSettings["envId"], envSettings["romsPath"], envSettings["render"]]
-        envSettings["romsPath"] = "/opt/diambraArena/roms/"
 
         # Launch thread
         # TODO: add case for local execution (envSettings["localExec"] = True)
