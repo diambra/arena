@@ -60,8 +60,6 @@ def envSettingsCheck(envSettings):
                 defaultEnvSettings[key] = [defaultEnvSettings[key],
                                            defaultEnvSettings[key]]
 
-    # TODO: Add checks if Win or MacOS -> deactivate rendering
-
     return defaultEnvSettings
 
 

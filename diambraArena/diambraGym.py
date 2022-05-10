@@ -510,6 +510,9 @@ def makeGymEnv(envSettings):
         print("No DISPLAY environment variable detected, deactivating rendering and lockFps if active")
         envSettings["render"] = False
         envSettings["lockFps"]  = False
+        envSettings["localExec"] = False
+
+    # TODO: Add checks if Win or MacOS -> deactivate rendering
 
     if envSettings["player"] != "P1P2": #1P Mode
         if envSettings["hardCore"]:
