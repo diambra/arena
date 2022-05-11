@@ -46,11 +46,6 @@ class Pipe(object):
 
         # Pipe path definition
         self.path = self.pipes_path.joinpath(Path(pipe_id + "-" + str(env_id) + ".pipe"))
-        #print("Pipe: "+str(self.path.absolute()))
-        if self.path.exists():
-            self.path.unlink()
-
-        os.mkfifo(str(self.path.absolute()))
 
     # Opens the pipe in the toolkit and in the Lua engine
     # When a pipe is opened in read mode, it will block the thread until the

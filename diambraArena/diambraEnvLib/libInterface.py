@@ -83,13 +83,6 @@ class diambraArenaLib:
         self.writePipe = Pipe(self.envSettings["envId"], "input", "w", self.pipesPath)
         self.readPipe = DataPipe(self.envSettings["envId"], "output", "r", self.pipesPath)
 
-        # Signal files definition
-        tmpPathFileNameP2c = "pipesTmp" + self.envSettings["envId"] + "P2c.log"
-        tmpPathP2c = Path(self.pipesPath).joinpath(tmpPathFileNameP2c)
-
-        # Signal pipes are ready
-        os.system("touch " + str(tmpPathP2c))
-
         # Open pipes
         self.writePipe.open()
         self.readPipe.open()
