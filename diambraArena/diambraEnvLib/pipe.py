@@ -22,6 +22,8 @@ class StreamGobbler(threading.Thread):
             line = self.pipe.readline()
             while (line[-4:] != b"DeS\n"):
                 line += self.pipe.readline()
+                if self.stopEvent.is_set():
+                    break
             #if self.debug:
             #    print(line)
             self.queue.put(line[:-4])
