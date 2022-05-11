@@ -17,21 +17,22 @@ def diambraApp(localExec, pipesPath, envId, romsPath, render):
         dockerRomsFolder = "/opt/diambraArena/roms"
         dockerPipesFolder = "/tmp/"
         dockerImageName = "diambra/diambra-app:main"
+        dockerContainerName = "container"+envId
         romsVol = '--mount src={},target="{}",type=bind '.format(romsPath, dockerRomsFolder)
         if render:
             x11exec = os.path.join(pipesPath, "x11docker")
-            command  = '{} --cap-default --hostipc --network=host --name=diambraApp'.format(x11exec)
+            command  = '{} --cap-default --hostipc --network=host --name={}'.format(x11exec, dockerContainerName)
             command += ' --wm=host --pulseaudio --size=1024x600 -- --privileged'
-            command += ' {} --mount src="{}",target="{}",type=bind'.format(romsVol,pipesPath, dockerPipesFolder)
+            command += ' {} --mount src="{}",target="{}",type=bind'.format(romsVol, pipesPath, dockerPipesFolder)
             command += ' -v diambraService:/root/ -- {} &>/dev/null & sleep 4s;'.format(dockerImageName)
-            command += ' docker exec -u $(id -u) --privileged -it diambraApp'
+            command += ' docker exec -u $(id -u) --privileged -it {}'.format(dockerContainerName)
             command += ' sh -c "set -m; cd /opt/diambraArena/ &&'
             command += ' ./diambraApp --pipesPath {} --envId {}";'.format(dockerPipesFolder, envId)
             command += ' pkill -f "bash {}*"'.format(x11exec)
         else:
             command  = 'docker run --user $(id -u) -it --rm --privileged {}'.format(romsVol)
             command += ' --mount src="{}",target="{}",type=bind'.format(pipesPath, dockerPipesFolder)
-            command += ' -v diambraService:/root/ --name diambraApp {}'.format(dockerImageName)
+            command += ' -v diambraService:/root/ --name {} {}'.format(dockerContainerName, dockerImageName)
             command += ' sh -c "cd /opt/diambraArena/ &&'
             command += ' ./diambraApp --pipesPath {} --envId {}"'.format(dockerPipesFolder, envId)
 
@@ -72,7 +73,6 @@ class diambraArenaLib:
         self.envSettings = envSettings
 
         # Launch thread
-        # TODO: add case for local execution (envSettings["localExec"] = True)
         self.diambraEnvThread = threading.Thread(target=diambraApp, args=diambraEnvArgs)
         self.diambraEnvThread.start()
 
@@ -85,26 +85,10 @@ class diambraArenaLib:
 
         # Signal files definition
         tmpPathFileNameP2c = "pipesTmp" + self.envSettings["envId"] + "P2c.log"
-        tmpPathFileNameC2p = "pipesTmp" + self.envSettings["envId"] + "C2p.log"
         tmpPathP2c = Path(self.pipesPath).joinpath(tmpPathFileNameP2c)
-        tmpPathC2p = Path(self.pipesPath).joinpath(tmpPathFileNameC2p)
 
         # Signal pipes are ready
         os.system("touch " + str(tmpPathP2c))
-
-        # Wait C++ read pipe ready
-        counter = 0;
-        print("Waiting for library connection to be opened ...")
-        while (not tmpPathC2p.exists()):
-            time.sleep(1)
-            print("...")
-            counter += 1
-            if not self.diambraEnvThread.is_alive() or counter > 20:
-                sys.exit(1)
-        print("... done.")
-
-        # Remove pipes signal
-        os.system("rm {}".format(tmpPathC2p))
 
         # Open pipes
         self.writePipe.open()
