@@ -172,6 +172,7 @@ class diambraGymHardCoreBase(gym.Env):
     # Closing the environment
     def close(self):
         # Close DIAMBRA Arena
+        cv2.destroyAllWindows()
         self.diambraArena.close()
 
 # DIAMBRA Gym base class for single player mode
