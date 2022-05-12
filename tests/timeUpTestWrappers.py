@@ -14,7 +14,8 @@ if __name__ == '__main__':
         parser.add_argument('--continueGame',   type=float, default=0.0,     help='ContinueGame flag (-inf,+1.0]')
         parser.add_argument('--firstRoundAct',  type=int,   default=0,       help='Actions active for first round (0=False)')
         parser.add_argument('--interactiveViz', type=int,   default=0,       help='Interactive Visualization (0=False)')
-        parser.add_argument('--libPath',        type=str,   default="",      help='Path to diambraEnvLib')
+        parser.add_argument('--diambraAppPath', type=str,   default="",         help='Path to local Env Backend')
+        parser.add_argument('--mamePath',       type=str,   default="",         help='Path to local mame')
         opt = parser.parse_args()
         print(opt)
 
@@ -28,8 +29,8 @@ if __name__ == '__main__':
         # Settings
         settings = {}
         settings["romsPath"] = opt.romsPath
-        if opt.libPath != "":
-            settings["libPath"]  = opt.libPath
+        settings["diambraAppPath"] = opt.diambraAppPath
+        settings["mamePath"] = opt.mamePath
 
         settings["player"]     = "P1P2"
 

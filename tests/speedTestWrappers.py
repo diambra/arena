@@ -22,15 +22,16 @@ if __name__ == '__main__':
         parser.add_argument('--actionSpace', type=str, default="discrete", help='(discrete)/multidiscrete')
         parser.add_argument('--attButComb',  type=int, default=0,          help='If to use attack button combinations (0=False)/1=True')
         parser.add_argument('--targetSpeed', type=int, default=100,        help='Reference speed')
-        parser.add_argument('--libPath',     type=str, default="",         help='Path to diambraEnvLib')
+        parser.add_argument('--diambraAppPath', type=str,   default="",         help='Path to local Env Backend')
+        parser.add_argument('--mamePath',       type=str,   default="",         help='Path to local mame')
         opt = parser.parse_args()
         print(opt)
 
         # Settings
         settings = {}
         settings["romsPath"] = opt.romsPath
-        if opt.libPath != "":
-            settings["libPath"]  = opt.libPath
+        settings["diambraAppPath"] = opt.diambraAppPath
+        settings["mamePath"] = opt.mamePath
 
         settings["player"]     = opt.player
 
