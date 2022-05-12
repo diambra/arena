@@ -19,13 +19,14 @@ def diambraApp(localExec, pipesPath, envId, romsPath, render):
         dockerImageName = "diambra/diambra-app:main"
         dockerContainerName = "container"+envId
         romsVol = '--mount src={},target="{}",type=bind '.format(romsPath, dockerRomsFolder)
+        homeFolder = os.getenv("HOME")
         if render:
             x11exec = os.path.join(pipesPath, "x11docker")
             command  = '{} --cap-default --hostipc --network=host --name={}'.format(x11exec, dockerContainerName)
             command += ' --wm=host --pulseaudio --size=1024x600 -- --privileged'
             command += ' {} --mount src="{}",target="{}",type=bind'.format(romsVol, pipesPath, dockerPipesFolder)
-            command += ' -e HOME=/tmp/diambraService/'
-            command += ' -v diambraService:/tmp/diambraService/ -- {} &>/dev/null & sleep 4s;'.format(dockerImageName)
+            command += ' -e HOME=/tmp/ --mount src="{}/.diambraCred",target="/tmp/.diambraCred",type=bind'.format(homeFolder)
+            command += ' -- {} &>/dev/null & sleep 4s;'.format(dockerImageName)
             command += ' docker exec -u $(id -u) --privileged -it {}'.format(dockerContainerName)
             command += ' sh -c "set -m; cd /opt/diambraArena/ &&'
             command += ' ./diambraApp --pipesPath {} --envId {}";'.format(dockerPipesFolder, envId)
@@ -33,8 +34,8 @@ def diambraApp(localExec, pipesPath, envId, romsPath, render):
         else:
             command  = 'docker run --user $(id -u) -it --rm --privileged {}'.format(romsVol)
             command += ' --mount src="{}",target="{}",type=bind'.format(pipesPath, dockerPipesFolder)
-            command += ' -e HOME=/tmp/diambraService/'
-            command += ' -v diambraService:/tmp/diambraService/ --name {} {}'.format(dockerContainerName, dockerImageName)
+            command += ' -e HOME=/tmp/ --mount src="{}/.diambraCred",target="/tmp/.diambraCred",type=bind'.format(homeFolder)
+            command += ' --name {} {}'.format(dockerContainerName, dockerImageName)
             command += ' sh -c "cd /opt/diambraArena/ &&'
             command += ' ./diambraApp --pipesPath {} --envId {}"'.format(dockerPipesFolder, envId)
 
