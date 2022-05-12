@@ -7,11 +7,10 @@ from diambraArena.diambraEnvLib.pipe import Pipe, DataPipe
 from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import time
 
-def diambraApp(localExec, pipesPath, envId, romsPath, render):
-    print("Args = ", localExec, pipesPath, envId, romsPath, render)
+def diambraApp(diambraAppPath, pipesPath, envId, romsPath, render):
+    print("Args = ", diambraAppPath, pipesPath, envId, romsPath, render)
 
-    if localExec:
-        diambraAppPath = os.getenv("diambraAppPath")
+    if diambraAppPath != "":
         command = '{} --pipesPath {} --envId {}'.format(diambraAppPath, pipesPath, envId)
     else:
         dockerRomsFolder = "/opt/diambraArena/roms"
@@ -51,15 +50,11 @@ class diambraArenaLib:
         self.pipesPath = os.path.dirname(os.path.abspath(__file__))
 
         # Launch diambra App
-        diambraEnvArgs = [envSettings["localExec"], self.pipesPath, envSettings["envId"],\
+        diambraEnvArgs = [envSettings["diambraAppPath"], self.pipesPath, envSettings["envId"],\
                           envSettings["romsPath"], envSettings["render"]]
-        if envSettings["localExec"]: # Ubuntu/Mint local execution (ONLY DEV!)
+        if envSettings["diambraAppPath"] != "": # Ubuntu/Mint local execution (ONLY DEV!)
             print("WARNING: local execution is only for dev purposes")
-            if os.getenv("diambraAppPath") == None:
-                print("ERROR: local execution requires specification of \"diambraAppPath\"")
-                print(" as environment variable but it was not provided")
-                sys.exit(1)
-            elif "mamePath" not in envSettings:
+            if "mamePath" not in envSettings:
                 print("ERROR: local execution requires specification of \"mamePath\"")
                 print(" as environment settings but it was not provided")
                 sys.exit(1)

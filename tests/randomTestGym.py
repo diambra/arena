@@ -25,7 +25,8 @@ if __name__ == '__main__':
         parser.add_argument('--noAction',       type=int,   default=0,          help='If to use no action policy (0=False)')
         parser.add_argument('--hardCore',       type=int,   default=0,          help='Hard core mode (0=False)')
         parser.add_argument('--interactiveViz', type=int,   default=0,          help='Interactive Visualization (0=False)')
-        parser.add_argument('--libPath',        type=str,   default="",         help='Path to diambraEnvLib')
+        parser.add_argument('--diambraAppPath', type=str,   default="",         help='Path to local Env Backend')
+        parser.add_argument('--mamePath',       type=str,   default="",         help='Path to local mame')
         opt = parser.parse_args()
         print(opt)
 
@@ -37,8 +38,8 @@ if __name__ == '__main__':
         # Settings
         settings = {}
         settings["romsPath"] = opt.romsPath
-        if opt.libPath != "":
-            settings["libPath"]  = opt.libPath
+        settings["diambraAppPath"] = opt.diambraAppPath
+        settings["mamePath"] = opt.mamePath
 
         settings["player"]     = opt.player
         settings["characters"] = [[opt.character1, opt.character1_2, opt.character1_3],
@@ -68,8 +69,7 @@ if __name__ == '__main__':
 
         settings["envId"] = opt.gameId + "_randomTestGym"
 
-        env = diambraArena.make(opt.gameId, settings, wrappersSettings={"normalizeRewards": False},
-                                seed=timeDepSeed)
+        env = diambraArena.make(opt.gameId, settings, seed=timeDepSeed)
 
         # Print environment obs and action spaces summary
         envSpacesSummary(env)
