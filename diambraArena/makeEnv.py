@@ -61,15 +61,6 @@ def envSettingsCheck(envSettings):
                 defaultEnvSettings[key] = [defaultEnvSettings[key],
                                            defaultEnvSettings[key]]
 
-    # Retrieve roms path from ENV variables
-    if "romsPath" not in defaultEnvSettings:
-        if os.getenv("DIAMBRAROMSPATH") == None:
-            raise RuntimeError("\"romsPath\" is a mandatory parameter, either add"+\
-                               " it to DIAMBRAROMSPATH environment variable or"+\
-                               " specify it via environment settings.")
-        else:
-            defaultEnvSettings["romsPath"] = os.getenv("DIAMBRAROMSPATH")
-
     # Check for OS var DISPLAY
     if os.getenv("DISPLAY") == None:
         print("No DISPLAY environment variable detected, deactivating rendering and lockFps if active")
