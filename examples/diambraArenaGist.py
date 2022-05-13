@@ -1,17 +1,19 @@
+#!/usr/bin/env python3
 import diambraArena
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
+parser.add_argument('--pipesPath', type=str, required=True, help='Path to diambraApp pipes')
+parser.add_argument('--envId', type=str, required=True, help='envID')
+
 opt = parser.parse_args()
 print(opt)
 
 # Settings
-settings = {}
-
-if opt.romsPath is not None:
-    # Path to roms folder
-    settings["romsPath"] = opt.romsPath
+settings = {
+    "pipesPath": opt.pipesPath,
+    "envId": opt.envId,
+}
 
 env = diambraArena.make("doapp", settings)
 

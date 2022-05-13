@@ -49,37 +49,14 @@ class diambraArenaLib:
 
         self.pipesPath = os.path.dirname(os.path.abspath(__file__))
 
-        # Launch diambra App
-        diambraEnvArgs = [envSettings["diambraAppPath"], self.pipesPath, envSettings["envId"],\
-                          envSettings["romsPath"], envSettings["render"]]
-        if envSettings["diambraAppPath"] != "": # Ubuntu/Mint local execution (ONLY DEV!)
-            print("WARNING: local execution is only for dev purposes")
-            if "mamePath" not in envSettings:
-                print("ERROR: local execution requires specification of \"mamePath\"")
-                print(" as environment settings but it was not provided")
-                sys.exit(1)
-
-        else: # Docker based execution
-            # Mame path for docker
-            envSettings["mamePath"] = "/opt/diambraArena/mame/"
-            # Roms path for docker
-            envSettings["romsPath"] = "/opt/diambraArena/roms/"
-
-        if "emuPipesPath" not in envSettings:
-            envSettings["emuPipesPath"] = "/tmp/DIAMBRA/"
-
         self.envSettings = envSettings
-
-        # Launch thread
-        self.diambraEnvThread = threading.Thread(target=diambraApp, args=diambraEnvArgs)
-        self.diambraEnvThread.start()
 
         # Splash Screen
         DIAMBRASplashScreen()
 
         # Create pipes
-        self.writePipe = Pipe(self.envSettings["envId"], "input", "w", self.pipesPath)
-        self.readPipe = DataPipe(self.envSettings["envId"], "output", "r", self.pipesPath)
+        self.writePipe = Pipe(self.envSettings["envId"], "input", "w", self.envSettings["pipesPath"])
+        self.readPipe = DataPipe(self.envSettings["envId"], "output", "r", self.envSettings["pipesPath"])
 
         # Open pipes
         self.writePipe.open()
@@ -100,15 +77,9 @@ class diambraArenaLib:
 
         output += "envId"+            sep+"2"+sep + self.envSettings["envId"] + sep
         output += "gameId"+           sep+"2"+sep + self.envSettings["gameId"] + sep
-        output += "romsPath"+         sep+"2"+sep + self.envSettings["romsPath"] + sep
-        output += "binaryPath"+       sep+"2"+sep + self.envSettings["mamePath"] + sep
-        output += "emuPipesPath"+     sep+"2"+sep + self.envSettings["emuPipesPath"] + sep
         output += "continueGame"+     sep+"3"+sep + str(self.envSettings["continueGame"]) + sep
         output += "showFinal"+        sep+"0"+sep + str(int(self.envSettings["showFinal"])) + sep
         output += "stepRatio"+        sep+"1"+sep + str(self.envSettings["stepRatio"]) + sep
-        output += "render"+           sep+"0"+sep + str(int(self.envSettings["render"])) + sep
-        output += "lockFps"+          sep+"0"+sep + str(int(self.envSettings["lockFps"])) + sep
-        output += "sound"+            sep+"0"+sep + str(int(self.envSettings["sound"])) + sep
         output += "player"+           sep+"2"+sep + self.envSettings["player"] + sep
         output += "difficulty"+       sep+"1"+sep + str(self.envSettings["difficulty"]) + sep
         output += "character1"+       sep+"2"+sep + self.envSettings["characters"][0][0] + sep
