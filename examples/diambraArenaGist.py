@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import diambraArena
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--pipesPath', type=str, required=True, help='Path to diambraApp pipes')
-parser.add_argument('--envId', type=str, required=True, help='envID')
+parser.add_argument('--pipesPath', type=str, default=os.getenv('PIPES_PATH', ''), help='Path to diambraApp pipes')
+parser.add_argument('--envId', type=str, default='0', help='envID')
 
 opt = parser.parse_args()
 print(opt)
