@@ -22,9 +22,15 @@ class diambraGymHardCoreBase(gym.Env):
             self.actionSpace = envSettings["actionSpace"]
         self.attackButCombination = envSettings["attackButCombination"]
 
+        self.envSettings = envSettings
+
         # Launch DIAMBRA Arena
-        self.diambraArena = diambraArenaLib(envSettings)
-        self.envSettings = self.diambraArena.envSettings
+        self.diambraArena = diambraArenaLib()
+
+        # Send environment settings, retrieve environment info
+        envInfo = self.diambraArena.initEnv(self.envSettings)
+        self.envInfoProcess(envInfo)
+        self.playerSide = self.envSettings["player"]
 
         # Settings log
         print("EnvId = {}".format(envSettings["envId"]))
@@ -34,14 +40,6 @@ class diambraGymHardCoreBase(gym.Env):
             print("  \"{}\": {}".format(key, self.envSettings[key]))
         print("")
         print("------------------------- ")
-
-        # Get Env Info
-        envInfo = self.diambraArena.readEnvInfo()
-        self.envInfoProcess(envInfo)
-        self.playerSide = self.envSettings["player"]
-
-        # Read Env Int Data List
-        self.diambraArena.readEnvIntDataVarsList()
 
         # Image as input:
         self.observation_space = spaces.Box(low=0, high=255,
@@ -221,7 +219,7 @@ class diambraGymHardCore1P(diambraGymHardCoreBase):
             # Discrete to multidiscrete conversion
             movAct, attAct = discreteToMultiDiscreteAction(action, self.nActions[0][0])
 
-        self.frame, data = self.diambraArena.step(movAct, attAct)
+        self.frame, data = self.diambraArena.step1P(movAct, attAct)
         reward           = data["reward"]
         done             = data["epDone"]
 
@@ -287,7 +285,7 @@ class diambraGymHardCore2P(diambraGymHardCoreBase):
                 movActP1, attActP1 = discreteToMultiDiscreteAction(action[0], self.nActions[0][0])
                 movActP2, attActP2 = discreteToMultiDiscreteAction(action[1], self.nActions[1][0])
 
-        self.frame, data = self.diambraArena.step(movActP1, attActP1, movActP2, attActP2)
+        self.frame, data = self.diambraArena.step2P(movActP1, attActP1, movActP2, attActP2)
         reward            = data["reward"]
         done              = data["gameDone"]
         #data["epDone"]   = done
