@@ -28,7 +28,7 @@ class diambraGymHardCoreBase(gym.Env):
         self.diambraArena = diambraArenaLib()
 
         # Send environment settings, retrieve environment info
-        envInfo = self.diambraArena.initEnv(self.envSettings)
+        envInfo = self.diambraArena.envInit(self.envSettings)
         self.envInfoProcess(envInfo)
         self.playerSide = self.envSettings["player"]
 
@@ -389,7 +389,6 @@ class diambraGym1P(diambraGymHardCore1P):
     # Reset the environment
     def reset(self):
         self.frame, data, self.playerSide = self.diambraArena.reset()
-        print("after reset player side = ", self.playerSide)
         observation = self.addObsIntegration(self.frame, data)
         return observation
 
