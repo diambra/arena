@@ -61,7 +61,6 @@ if __name__ == '__main__':
         wrappersSettings["scale"] = True
         wrappersSettings["scaleMod"] = 0
 
-        settings["envId"] = opt.gameId + "_timeUpTestWrappers"
         env = diambraArena.make(opt.gameId, settings, wrappersSettings, trajRecSettings,
                                 seed=timeDepSeed)
 

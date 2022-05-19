@@ -8,7 +8,6 @@ def envSettingsCheck(envSettings):
     maxCharToSelect = 3
 
     defaultEnvSettings = {}
-    defaultEnvSettings["envId"] = "diambraArenaEnv"
     defaultEnvSettings["gameId"] = "doapp"
     defaultEnvSettings["player"] = "Random"
     defaultEnvSettings["continueGame"] = 0.0

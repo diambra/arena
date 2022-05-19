@@ -21,7 +21,6 @@ settings["stepRatio"] = 1
 # Action space choice
 settings["actionSpace"] = "multiDiscrete"
 settings["attackButCombination"] = True
-settings["envId"] = "HumanExperienceRecorderEnv"
 
 # Gym wrappers settings
 wrappersSettings = {}

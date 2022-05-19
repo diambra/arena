@@ -33,7 +33,6 @@ class diambraGymHardCoreBase(gym.Env):
         self.playerSide = self.envSettings["player"]
 
         # Settings log
-        print("EnvId = {}".format(envSettings["envId"]))
         print("Environment settings: --- ")
         print("")
         for key in sorted(self.envSettings):

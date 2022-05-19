@@ -94,7 +94,6 @@ if __name__ == '__main__':
         hardCore = False if opt.hardCore == 0 else True
         settings["hardCore"] = hardCore
 
-        settings["envId"] = opt.gameId + "_randomTestWrappers"
         env = diambraArena.make(opt.gameId, settings, wrappersSettings, trajRecSettings,
                                 seed=timeDepSeed)
 
