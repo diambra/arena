@@ -25,7 +25,7 @@ class diambraGymHardCoreBase(gym.Env):
         self.envSettings = envSettings
 
         # Launch DIAMBRA Arena
-        self.diambraArena = diambraArenaLib()
+        self.diambraArena = diambraArenaLib(envSettings["envAddress"])
 
         # Send environment settings, retrieve environment info
         envInfo = self.diambraArena.envInit(self.envSettings)
