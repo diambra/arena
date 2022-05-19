@@ -1,18 +1,21 @@
+#!/usr/bin/env python3
 import diambraArena
 from diambraArena.gymUtils import showGymObs
 import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
+parser.add_argument('--envAddress', type=str, default="localhost:50051", help='diambraEngine Address')
+parser.add_argument('--envId', type=str, default='0', help='envID')
+
 opt = parser.parse_args()
 print(opt)
 
-# Mandatory settings
-settings = {}
-if opt.romsPath is not None:
-    # Path to roms folder
-    settings["romsPath"] = opt.romsPath
+# Settings
+settings = {
+    "envAddress": opt.envAddress,
+    "envId": opt.envId,
+}
 
 # Additional settings
 # 2 Players game

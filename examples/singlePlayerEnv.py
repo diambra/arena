@@ -1,21 +1,24 @@
+#!/usr/bin/env python3
 import diambraArena
 from diambraArena.gymUtils import showGymObs
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
+parser.add_argument('--envAddress', type=str, default="localhost:50051", help='diambraEngine Address')
+parser.add_argument('--envId', type=str, default='0', help='envID')
+
 opt = parser.parse_args()
 print(opt)
 
-# Mandatory settings
-settings = {}
-if opt.romsPath is not None:
-    # Path to roms folder
-    settings["romsPath"] = opt.romsPath
+# Settings
+settings = {
+    "envAddress": opt.envAddress,
+    "envId": opt.envId,
+}
 
 # Additional settings
 # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
-settings["player"] = "Random"
+settings["player"] = "P2"
 
 # Renders the environment, deactivate for speedup
 settings["render"] = True
@@ -29,13 +32,10 @@ settings["sound"] = settings["lockFps"] and settings["render"]
 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 settings["stepRatio"] = 6
 
-# Allows to execute the environment in headless mode (for server-side executions)
-settings["headless"] = False
-
 # Game continue logic (0.0 by default):
 # - [0.0, 1.0]: probability of continuing game at game over
 # - int((-inf, -1.0]): number of continues at game over before episode to be considered done
-settings["continueGame"] = -1.0
+settings["continueGame"] = 0.0
 
 # If to show game final when game is completed
 settings["showFinal"] = False
