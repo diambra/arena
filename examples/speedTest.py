@@ -22,7 +22,6 @@ if opt.romsPath is not None:
 settings["stepRatio"] = 1
 settings["lockFps"] = False
 settings["render"] = False
-settings["envId"] = "SpeedTestEnv"
 
 env = diambraArena.make("doapp", settings)
 

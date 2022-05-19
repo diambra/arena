@@ -48,7 +48,6 @@ if __name__ == '__main__':
             settings["actionSpace"] = settings["actionSpace"][0]
             settings["attackButCombination"] = settings["attackButCombination"][0]
 
-        settings["envId"] = opt.gameId + "_speedTestGym"
         env = diambraArena.make(opt.gameId, settings, seed=timeDepSeed)
 
         observation = env.reset()

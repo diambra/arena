@@ -49,9 +49,6 @@ wrappersSettings["scale"] = True
 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 wrappersSettings["scaleMod"] = 0
 
-# Env ID
-settings["envId"] = "WrappersEnv"
-
 env = diambraArena.make("doapp", settings, wrappersSettings)
 
 observation = env.reset()

@@ -32,7 +32,6 @@ class diambraArenaLib:
 
         output = ""
 
-        output += "envId"+            sep+"2"+sep + envSettings["envId"] + sep
         output += "gameId"+           sep+"2"+sep + envSettings["gameId"] + sep
         output += "continueGame"+     sep+"3"+sep + str(envSettings["continueGame"]) + sep
         output += "showFinal"+        sep+"0"+sep + str(int(envSettings["showFinal"])) + sep
