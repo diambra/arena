@@ -3,8 +3,12 @@ import diambraArena
 import argparse
 import os
 
+envs = os.getenv("DIAMBRA_ENVS", "").split()
+if len(envs) >= 1:
+    defaultEnvAddress = envs[0]
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--envAddress', type=str, default="localhost:50051", help='diambraEngine Address')
+parser.add_argument('--envAddress', type=str, default=defaultEnvAddress, help='diambraEngine Address')
 
 opt = parser.parse_args()
 print(opt)
