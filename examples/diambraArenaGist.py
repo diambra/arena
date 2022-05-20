@@ -3,6 +3,7 @@ import diambraArena
 import argparse
 import os
 
+defaultEnvAddress = "localhost:50051"
 envs = os.getenv("DIAMBRA_ENVS", "").split()
 if len(envs) >= 1:
     defaultEnvAddress = envs[0]
