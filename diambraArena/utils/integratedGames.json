@@ -106,10 +106,11 @@
             "original_rom_name": "soulclbr.zip",
             "search_keywords": ["Soul Calibur", "soulclbr", "wowroms"],
             "notes": "",
-            "nvramSave": "",
+            "nvramSave": "at28c16",
             "sha256": "a07a1a19995d582b56f2865783c5d7adb7acb9a6ad995a26fc7c4cfecd821817",
-            "charList": ["Voldo","Ivy","Sophitia","Arthur","Kilik","Hwang","Maxi","Nightmare","Taki","Astaroth","Inferno"],
+            "charList": ["Voldo","Ivy","Sophitia","Arthur","Kilik","Hwang","Maxi","Nightmare","Taki","Astaroth",
+                        "Xianghua", "Yoshimitsu", "Lizard Man", "Siegfried", "Rock", "Seung Mina", "Edge Master","Inferno"],
             "difficulty": [1, 3, 5],
-            "cfg": {"WS": "But1", "SS": "But2", "K": "But3", "B": "But4"}
+            "cfg": {"HA": "But1", "VA": "But2", "K": "But3", "G": "But4"}
         }
 }
