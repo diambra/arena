@@ -252,7 +252,7 @@ def checkGameSha256(path, gameId=None):
             print("ERROR: ROM file not valid")
     else:
         if fileChecksum == gamesDict[gameId]["sha256"]:
-            print("Correct ROM file for {}, sha256 = {}".format(gamesDict[gameId]["name"], v["sha256"]))
+            print("Correct ROM file for {}, sha256 = {}".format(gamesDict[gameId]["name"], gamesDict[gameId]["sha256"]))
         else:
             print("Expected  SHA256 Checksum: {}".format(gamesDict[gameId]["sha256"]))
             print("Retrieved SHA256 Checksum: {}".format(fileChecksum))
