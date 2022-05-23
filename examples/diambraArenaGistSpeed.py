@@ -2,6 +2,14 @@
 import diambraArena
 import argparse
 import os, time
+import numpy as np
+
+def reject_outliers(data):
+    m = 2
+    u = np.mean(data)
+    s = np.std(data)
+    filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
+    return filtered
 
 defaultEnvAddress = "localhost:50051"
 envs = os.getenv("DIAMBRA_ENVS", "").split()
@@ -28,6 +36,8 @@ env = diambraArena.make("sfiii3n", settings)
 observation = env.reset()
 nStep = 0
 
+fpsVal = []
+
 while nStep < 1000:
 
     nStep+=1
@@ -36,15 +46,16 @@ while nStep < 1000:
     tic = time.time()
     observation, reward, done, info = env.step(actions)
     toc = time.time()
-    print(1/(toc-tic))
+    fps = 1/(toc-tic)
     tic = toc
+    fpsVal.append(fps)
 
     if done:
         observation = env.reset()
         break
-toc = time.time()
-print("Delta T = ", toc-tic)
-print("Nsteps = ", nStep)
-print("FPS = ", nStep/(toc-tic))
+
+fpsVal2 = reject_outliers(fpsVal)
+avgFps = np.mean(fpsVal2)
+print("avg FPS = ", avgFps)
 
 env.close()
