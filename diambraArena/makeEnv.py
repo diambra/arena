@@ -55,6 +55,24 @@ def envSettingsCheck(envSettings):
             if type(defaultEnvSettings[key]) != list:
                 defaultEnvSettings[key] = [defaultEnvSettings[key],
                                            defaultEnvSettings[key]]
+
+    # Check if DIAMBRA_ENVS var present
+    envs = os.getenv("DIAMBRA_ENVS", "").split()
+    if len(envs) >= 1: # If present
+        # Check if there are at least n envs as the prescribed rank
+        if len(envs) < defaultEnvSettings["rank"]+1:
+            print("ERROR: Rank of env client is higher than the available envs servers:")
+            print("       # of env servers: {}".format(len(envs)))
+            print("       # rank of client: {} (0-based index)".format(defaultEnvSettings["rank"]))
+            raise Exception("Wrong number of env servers vs clients")
+    else: # If not present, set default value
+        if "envAddress" not in defaultEnvSettings:
+            envs = ["localhost:50051"]
+        else:
+            envs = [defaultEnvSettings["envAddress"]]
+
+    defaultEnvSettings["envAddress"] = envs[defaultEnvSettings["rank"]]
+
     return defaultEnvSettings
 
 

@@ -1,31 +1,10 @@
 #!/usr/bin/env python3
 import diambraArena
 from diambraArena.gymUtils import showGymObs
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--envAddress', type=str, default="localhost:50051", help='diambraEngine Address')
-
-opt = parser.parse_args()
-print(opt)
-
-# Settings
-settings = {
-    "envAddress": opt.envAddress,
-}
 
 # Additional settings
 # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
 settings["player"] = "P2"
-
-# Renders the environment, deactivate for speedup
-settings["render"] = True
-
-# Locks execution to 60 FPS, deactivate for speedup
-settings["lockFps"] = False
-
-# Activate game sound
-settings["sound"] = settings["lockFps"] and settings["render"]
 
 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 settings["stepRatio"] = 6

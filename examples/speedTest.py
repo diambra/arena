@@ -9,19 +9,7 @@ def reject_outliers(data):
     filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
     return filtered
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
-opt = parser.parse_args()
-print(opt)
-
-# Mandatory parameters
-settings = {}
-if opt.romsPath is not None:
-    settings["romsPath"] = opt.romsPath
-
 settings["stepRatio"] = 1
-settings["lockFps"] = False
-settings["render"] = False
 
 env = diambraArena.make("doapp", settings)
 
