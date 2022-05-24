@@ -1,16 +1,5 @@
 import diambraArena
 from diambraArena.gymUtils import showWrapObs
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
-opt = parser.parse_args()
-print(opt)
-
-# Mandatory settings
-settings = {}
-if opt.romsPath is not None:
-    settings["romsPath"] = opt.romsPath
 
 # Gym wrappers settings
 wrappersSettings = {}

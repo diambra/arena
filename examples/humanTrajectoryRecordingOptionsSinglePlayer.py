@@ -4,16 +4,6 @@ from diambraArena.utils.diambraGamepad import diambraGamepad
 import argparse, os
 from os.path import expanduser
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--romsPath', type=str, required=False, help='Absolute path to roms')
-opt = parser.parse_args()
-print(opt)
-
-# Mandatory settings
-settings = {}
-if opt.romsPath is not None:
-    settings["romsPath"] = opt.romsPath
-
 # Additional settings
 settings["player"] = "Random"
 settings["stepRatio"] = 1

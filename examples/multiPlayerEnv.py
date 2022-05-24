@@ -2,18 +2,6 @@
 import diambraArena
 from diambraArena.gymUtils import showGymObs
 import numpy as np
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--envAddress', type=str, default="localhost:50051", help='diambraEngine Address')
-
-opt = parser.parse_args()
-print(opt)
-
-# Settings
-settings = {
-    "envAddress": opt.envAddress,
-}
 
 # Additional settings
 # 2 Players game

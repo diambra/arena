@@ -3,10 +3,10 @@ import diambraArena
 import os
 import multiprocessing
 
-def envExec(envAddress):
+def envExec(rank):
 
     # Settings
-    settings = {"envAddress": envAddress}
+    settings = {"rank": rank}
 
     env = diambraArena.make("doapp", settings)
 
@@ -28,10 +28,6 @@ def envExec(envAddress):
 if __name__ == '__main__':
 
     envs = os.getenv("DIAMBRA_ENVS", "").split()
-    print("Using the following environment addresses:")
-    for address in envs:
-        print(" - {}".format(address))
-
     p = multiprocessing.Pool(multiprocessing.cpu_count())
-    p.map(envExec, envs)
+    p.map(envExec, range(len(envs)))
 

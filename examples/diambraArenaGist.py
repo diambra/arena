@@ -1,25 +1,7 @@
 #!/usr/bin/env python3
 import diambraArena
-import argparse
-import os
 
-defaultEnvAddress = "localhost:50051"
-envs = os.getenv("DIAMBRA_ENVS", "").split()
-if len(envs) >= 1:
-    defaultEnvAddress = envs[0]
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--envAddress', type=str, default=defaultEnvAddress, help='diambraEngine Address')
-
-opt = parser.parse_args()
-print(opt)
-
-# Settings
-settings = {
-    "envAddress": opt.envAddress,
-}
-
-env = diambraArena.make("doapp", settings)
+env = diambraArena.make("doapp")
 
 observation = env.reset()
 
