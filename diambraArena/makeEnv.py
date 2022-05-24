@@ -1,6 +1,10 @@
 import os
 from diambraArena.diambraGym import makeGymEnv
 from diambraArena.wrappers.diambraWrappers import envWrapping
+from typing import NewType
+
+Address = NewType("Address", str)
+Rank = NewType("Rank", int)
 
 def envSettingsCheck(envSettings):
 
@@ -59,7 +63,7 @@ def envSettingsCheck(envSettings):
     return defaultEnvSettings
 
 
-def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42, rank=0):
+def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42, rank: Rank = 0):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -68,6 +72,8 @@ def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed
 
     # Include gameId in envSettings
     envSettings["gameId"] = gameId
+    envSettings["envAddress"] = EnvAddresses()[rank]
+    envSettings["rank"] = rank
 
     # Check if DIAMBRA_ENVS var present
     envAddresses = os.getenv("DIAMBRA_ENVS", "").split()
@@ -108,3 +114,9 @@ def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed
         env = TrajectoryRecorder(env, **trajRecSettings)
 
     return env
+
+def EnvAddresses() -> list[Address]:
+    return os.getenv("DIAMBRA_ENVS", "localhost:50051").split()
+
+def Ranks() -> list[Rank]:
+    return list(range(0, len(EnvAddresses())))
