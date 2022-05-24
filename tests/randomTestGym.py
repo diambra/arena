@@ -1,32 +1,36 @@
+#!/usr/bin/env python3
 import diambraArena
 from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction, showGymObs
-import argparse, time
+import argparse, time, os
 import numpy as np
+
+defaultEnvAddress = "localhost:50051"
+envs = os.getenv("DIAMBRA_ENVS", "").split()
+if len(envs) >= 1:
+    defaultEnvAddress = envs[0]
 
 if __name__ == '__main__':
     timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
 
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument('--romsPath',       type=str,   required=True,      help='Absolute path to roms')
-        parser.add_argument('--gameId',         type=str,   default="doapp",    help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
-        parser.add_argument('--player',         type=str,   default="Random",   help='Player [(Random), P1, P2, P1P2]')
-        parser.add_argument('--character1',     type=str,   default="Random",   help='Character P1 (Random)')
-        parser.add_argument('--character2',     type=str,   default="Random",   help='Character P2 (Random)')
-        parser.add_argument('--character1_2',   type=str,   default="Random",   help='Character P1_2 (Random)')
-        parser.add_argument('--character2_2',   type=str,   default="Random",   help='Character P2_2 (Random)')
-        parser.add_argument('--character1_3',   type=str,   default="Random",   help='Character P1_3 (Random)')
-        parser.add_argument('--character2_3',   type=str,   default="Random",   help='Character P2_3 (Random)')
-        parser.add_argument('--stepRatio',      type=int,   default=3,          help='Frame ratio')
-        parser.add_argument('--nEpisodes',      type=int,   default=1,          help='Number of episodes')
-        parser.add_argument('--continueGame',   type=float, default=-1.0,       help='ContinueGame flag (-inf,+1.0]')
-        parser.add_argument('--actionSpace',    type=str,   default="discrete", help='(discrete)/multiDiscrete')
-        parser.add_argument('--attButComb',     type=int,   default=0,          help='If to use attack button combinations (0=False)/1=True')
-        parser.add_argument('--noAction',       type=int,   default=0,          help='If to use no action policy (0=False)')
-        parser.add_argument('--hardCore',       type=int,   default=0,          help='Hard core mode (0=False)')
-        parser.add_argument('--interactiveViz', type=int,   default=0,          help='Interactive Visualization (0=False)')
-        parser.add_argument('--diambraAppPath', type=str,   default="",         help='Path to local Env Backend')
-        parser.add_argument('--mamePath',       type=str,   default="",         help='Path to local mame')
+        parser.add_argument('--envAddress',     type=str,   default=defaultEnvAddress, help='diambraEngine Address')
+        parser.add_argument('--gameId',         type=str,   default="doapp",           help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
+        parser.add_argument('--player',         type=str,   default="Random",          help='Player [(Random), P1, P2, P1P2]')
+        parser.add_argument('--character1',     type=str,   default="Random",          help='Character P1 (Random)')
+        parser.add_argument('--character2',     type=str,   default="Random",          help='Character P2 (Random)')
+        parser.add_argument('--character1_2',   type=str,   default="Random",          help='Character P1_2 (Random)')
+        parser.add_argument('--character2_2',   type=str,   default="Random",          help='Character P2_2 (Random)')
+        parser.add_argument('--character1_3',   type=str,   default="Random",          help='Character P1_3 (Random)')
+        parser.add_argument('--character2_3',   type=str,   default="Random",          help='Character P2_3 (Random)')
+        parser.add_argument('--stepRatio',      type=int,   default=3,                 help='Frame ratio')
+        parser.add_argument('--nEpisodes',      type=int,   default=1,                 help='Number of episodes')
+        parser.add_argument('--continueGame',   type=float, default=-1.0,              help='ContinueGame flag (-inf,+1.0]')
+        parser.add_argument('--actionSpace',    type=str,   default="discrete",        help='(discrete)/multiDiscrete')
+        parser.add_argument('--attButComb',     type=int,   default=0,                 help='If to use attack button combinations (0=False)/1=True')
+        parser.add_argument('--noAction',       type=int,   default=0,                 help='If to use no action policy (0=False)')
+        parser.add_argument('--hardCore',       type=int,   default=0,                 help='Hard core mode (0=False)')
+        parser.add_argument('--interactiveViz', type=int,   default=0,                 help='Interactive Visualization (0=False)')
         opt = parser.parse_args()
         print(opt)
 
@@ -37,18 +41,12 @@ if __name__ == '__main__':
 
         # Settings
         settings = {}
-        settings["romsPath"] = opt.romsPath
-        settings["diambraAppPath"] = opt.diambraAppPath
-        settings["mamePath"] = opt.mamePath
-
+        settings["envAddress"] = opt.envAddress
         settings["player"]     = opt.player
         settings["characters"] = [[opt.character1, opt.character1_2, opt.character1_3],
                                   [opt.character2, opt.character2_2, opt.character2_3]]
 
         settings["stepRatio"] = opt.stepRatio
-        settings["render"] = True
-        settings["lockFps"] = False
-
         settings["continueGame"] = opt.continueGame
         settings["showFinal"]    = False
 
@@ -181,7 +179,6 @@ if __name__ == '__main__':
         if opt.noAction == 1 and np.mean(cumulativeEpRewAll) > -nRounds*(maxContinue+1)*env.maxDeltaHealth+0.001:
             raise RuntimeError("NoAction policy and average reward different than {} ({})".format(-2*(maxContinue+1)*env.maxDeltaHealth, np.mean(cumulativeEpRewAll)))
 
-        print("ALL GOOD!")
     except Exception as e:
         print(e)
         print("ALL BAD")

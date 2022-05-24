@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import diambraArena
 from diambraArena.gymUtils import showWrapObs
 import argparse, os
