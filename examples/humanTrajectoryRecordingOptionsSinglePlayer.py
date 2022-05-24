@@ -4,11 +4,10 @@ from diambraArena.utils.diambraGamepad import diambraGamepad
 import argparse, os
 from os.path import expanduser
 
-# Additional settings
+# Environment Settings
+settings = {}
 settings["player"] = "Random"
 settings["stepRatio"] = 1
-
-# Action space choice
 settings["actionSpace"] = "multiDiscrete"
 settings["attackButCombination"] = True
 

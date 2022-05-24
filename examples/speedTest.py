@@ -9,7 +9,7 @@ def reject_outliers(data):
     filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
     return filtered
 
-settings["stepRatio"] = 1
+settings = {"stepRatio": 1}
 
 env = diambraArena.make("doapp", settings)
 
