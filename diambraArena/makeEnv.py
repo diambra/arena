@@ -59,32 +59,19 @@ def envSettingsCheck(envSettings):
     return defaultEnvSettings
 
 
-def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42, rank=0):
+def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42, address=os.getenv("DIAMBRA_ENVS", "localhost:50051").split()[0]):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
     :param wrappersSettings: (dict) the parameters for envWrapping function
     """
+    if address == "":
+        raise "either address argument or DIAMBRA_ENV env variable is required to be set"
 
     # Include gameId in envSettings
     envSettings["gameId"] = gameId
-
-    # Check if DIAMBRA_ENVS var present
-    envAddresses = os.getenv("DIAMBRA_ENVS", "").split()
-    if len(envAddresses) >= 1: # If present
-        # Check if there are at least n envAddresses as the prescribed rank
-        if len(envAddresses) < rank+1:
-            print("ERROR: Rank of env client is higher than the available envAddresses servers:")
-            print("       # of env servers: {}".format(len(envAddresses)))
-            print("       # rank of client: {} (0-based index)".format(rank))
-            raise Exception("Wrong number of env servers vs clients")
-    else: # If not present, set default value
-        if "envAddress" not in envSettings:
-            envAddresses = ["localhost:50051"]
-        else:
-            envAddresses = [envSettings["envAddress"]]
-
-    envSettings["envAddress"] = envAddresses[rank]
+    envSettings["envAddress"] = address
+    envSettings["rank"] = 0
 
     # Checking settings and setting up default ones
     envSettings = envSettingsCheck(envSettings)
@@ -108,3 +95,15 @@ def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed
         env = TrajectoryRecorder(env, **trajRecSettings)
 
     return env
+
+
+def makeAll(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42, addresses=os.getenv("DIAMBRA_ENVS", "").split()):
+    envs = []
+    for rank, address in enumerate(addresses):
+        settings = envSettings.copy()
+        settings["rank"] = rank
+        trajRecSettingsCopy = None
+        if trajRecSettings != None:
+            trajRecSettingsCopy = trajRecSettings.copy()
+        envs.append(make(gameId, settings, wrappersSettings.copy(), trajRecSettingsCopy, seed, address))
+    return envs
