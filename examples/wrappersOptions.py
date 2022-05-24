@@ -38,7 +38,7 @@ wrappersSettings["scale"] = True
 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 wrappersSettings["scaleMod"] = 0
 
-env = diambraArena.make("doapp", settings, wrappersSettings)
+env = diambraArena.make("doapp", {}, wrappersSettings)
 
 observation = env.reset()
 showWrapObs(observation, env.nActionsStack, env.charNames)

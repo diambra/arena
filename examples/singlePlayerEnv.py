@@ -2,7 +2,8 @@
 import diambraArena
 from diambraArena.gymUtils import showGymObs
 
-# Additional settings
+# Settings
+settings = {}
 # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
 settings["player"] = "P2"
 
@@ -28,7 +29,6 @@ settings["characters"]  = [["Random"], ["Random"]]
 # Character outfit
 settings["charOutfits"] = [2, 2]
 
-# Action space choice
 # If to use discrete or multiDiscrete action space
 settings["actionSpace"] = "discrete"
 

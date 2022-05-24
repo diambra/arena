@@ -3,11 +3,10 @@ import diambraArena
 from diambraArena.gymUtils import showGymObs
 import numpy as np
 
-# Additional settings
+# Environment Settings
+settings = {}
 # 2 Players game
 settings["player"] = "P1P2"
-
-# Action space choice
 # If to use discrete or multiDiscrete action space
 settings["actionSpace"] = ["discrete", "discrete"]
 
