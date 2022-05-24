@@ -13,9 +13,6 @@ def envSettingsCheck(envSettings):
     defaultEnvSettings["continueGame"] = 0.0
     defaultEnvSettings["showFinal"] = True
     defaultEnvSettings["stepRatio"] = 6
-    defaultEnvSettings["render"] = True
-    defaultEnvSettings["lockFps"] = True
-    defaultEnvSettings["sound"] = False
     defaultEnvSettings["difficulty"] = 3
     defaultEnvSettings["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
     defaultEnvSettings["charOutfits"] = [2, 2]
@@ -37,7 +34,6 @@ def envSettingsCheck(envSettings):
     defaultEnvSettings["disableJoystick"] = True
     defaultEnvSettings["rank"] = 0
     defaultEnvSettings["recordConfigFile"] = ""
-    defaultEnvSettings["localExec"] = False
 
     for k, v in envSettings.items():
 

@@ -1,21 +1,25 @@
+#!/usr/bin/env python3
 import diambraArena
 from diambraArena.gymUtils import envSpacesSummary, discreteToMultiDiscreteAction, showWrapObs
 import argparse, time, os
 from os.path import expanduser
 import numpy as np
 
+defaultEnvAddress = "localhost:50051"
+envs = os.getenv("DIAMBRA_ENVS", "").split()
+if len(envs) >= 1:
+    defaultEnvAddress = envs[0]
+
 if __name__ == '__main__':
     timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
 
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument('--romsPath',       type=str,   required=True,   help='Absolute path to roms')
+        parser.add_argument('--envAddress',     type=str,   default=defaultEnvAddress, help='diambraEngine Address')
         parser.add_argument('--gameId',         type=str,   default="doapp", help='Game ID')
         parser.add_argument('--continueGame',   type=float, default=0.0,     help='ContinueGame flag (-inf,+1.0]')
         parser.add_argument('--firstRoundAct',  type=int,   default=0,       help='Actions active for first round (0=False)')
         parser.add_argument('--interactiveViz', type=int,   default=0,       help='Interactive Visualization (0=False)')
-        parser.add_argument('--diambraAppPath', type=str,   default="",         help='Path to local Env Backend')
-        parser.add_argument('--mamePath',       type=str,   default="",         help='Path to local mame')
         opt = parser.parse_args()
         print(opt)
 
@@ -28,16 +32,10 @@ if __name__ == '__main__':
 
         # Settings
         settings = {}
-        settings["romsPath"] = opt.romsPath
-        settings["diambraAppPath"] = opt.diambraAppPath
-        settings["mamePath"] = opt.mamePath
-
+        settings["envAddress"] = opt.envAddress
         settings["player"]     = "P1P2"
-
+        settings["player"]     = "P1P2"
         settings["stepRatio"] = 3
-        settings["render"] = True
-        settings["lockFps"] = False
-
         settings["continueGame"] = opt.continueGame
         settings["showFinal"]    = False
 
