@@ -56,27 +56,10 @@ def envSettingsCheck(envSettings):
                 defaultEnvSettings[key] = [defaultEnvSettings[key],
                                            defaultEnvSettings[key]]
 
-    # Check if DIAMBRA_ENVS var present
-    envs = os.getenv("DIAMBRA_ENVS", "").split()
-    if len(envs) >= 1: # If present
-        # Check if there are at least n envs as the prescribed rank
-        if len(envs) < defaultEnvSettings["rank"]+1:
-            print("ERROR: Rank of env client is higher than the available envs servers:")
-            print("       # of env servers: {}".format(len(envs)))
-            print("       # rank of client: {} (0-based index)".format(defaultEnvSettings["rank"]))
-            raise Exception("Wrong number of env servers vs clients")
-    else: # If not present, set default value
-        if "envAddress" not in defaultEnvSettings:
-            envs = ["localhost:50051"]
-        else:
-            envs = [defaultEnvSettings["envAddress"]]
-
-    defaultEnvSettings["envAddress"] = envs[defaultEnvSettings["rank"]]
-
     return defaultEnvSettings
 
 
-def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42):
+def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42, rank=0):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -85,6 +68,23 @@ def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed
 
     # Include gameId in envSettings
     envSettings["gameId"] = gameId
+
+    # Check if DIAMBRA_ENVS var present
+    envAddresses = os.getenv("DIAMBRA_ENVS", "").split()
+    if len(envAddresses) >= 1: # If present
+        # Check if there are at least n envAddresses as the prescribed rank
+        if len(envAddresses) < rank+1:
+            print("ERROR: Rank of env client is higher than the available envAddresses servers:")
+            print("       # of env servers: {}".format(len(envAddresses)))
+            print("       # rank of client: {} (0-based index)".format(rank))
+            raise Exception("Wrong number of env servers vs clients")
+    else: # If not present, set default value
+        if "envAddress" not in envSettings:
+            envAddresses = ["localhost:50051"]
+        else:
+            envAddresses = [envSettings["envAddress"]]
+
+    envSettings["envAddress"] = envAddresses[rank]
 
     # Checking settings and setting up default ones
     envSettings = envSettingsCheck(envSettings)
