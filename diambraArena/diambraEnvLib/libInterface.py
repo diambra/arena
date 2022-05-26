@@ -3,7 +3,6 @@ from pathlib import Path
 import numpy as np
 import cv2
 
-from diambraArena.utils.splashScreen import DIAMBRASplashScreen
 import grpc
 import diambraArena.diambraEnvLib.diambra_pb2 as diambra_pb2
 import diambraArena.diambraEnvLib.diambra_pb2_grpc as diambra_pb2_grpc
@@ -21,7 +20,9 @@ class diambraArenaLib:
         self.stub = diambra_pb2_grpc.EnvServerStub(self.channel)
 
         # Splash Screen
-        DIAMBRASplashScreen()
+        if os.environ.get('DISPLAY'):
+            from diambraArena.utils.splashScreen import DIAMBRASplashScreen
+            DIAMBRASplashScreen()
 
     # Transforming env kwargs to string
     def envSettingsToString(self, envSettings):
