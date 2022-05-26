@@ -1,18 +1,5 @@
 import platform, sys, os
 
-# Check if docker is installed
-if os.system("docker ps") != 0:
-    print("---")
-    print("ERROR: It seems docker is not installed in your system.")
-    print("It is required to use DIAMBRA Arena.")
-    print("Install it from https://docs.docker.com/get-docker/")
-    print("---")
-    sys.exit(1)
-else:
-    print("Downloading DIAMBRA Docker image")
-    #TODO: decomment
-    #os.system("docker pull diambra/diambraApp:main")
-
 try:
     from pip import main as pipmain
 except ImportError:
