@@ -11,35 +11,24 @@ def reject_outliers(data):
     return filtered
 
 if __name__ == '__main__':
-    timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
 
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument('--gameId',      type=str, default="doapp",    help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
         parser.add_argument('--player',      type=str, default="Random",   help='Player [(Random), P1, P2, P1P2]')
-        parser.add_argument('--stepRatio',   type=int, default=1,          help='Frame ratio')
-        parser.add_argument('--nEpisodes',   type=int, default=1,          help='Number of episodes')
         parser.add_argument('--actionSpace', type=str, default="discrete", help='(discrete)/multidiscrete')
         parser.add_argument('--attButComb',  type=int, default=0,          help='If to use attack button combinations (0=False)/1=True')
         parser.add_argument('--targetSpeed', type=int, default=100,        help='Reference speed')
-        parser.add_argument('--envAddress',  type=str, default="",         help='diambraEngine Address')
         opt = parser.parse_args()
         print(opt)
 
         # Settings
         settings = {}
-        if opt.envAddress != "":
-            settings["envAddress"] = opt.envAddress
         settings["player"]         = opt.player
-        settings["stepRatio"]      = opt.stepRatio
-        settings["continueGame"]   = 0.0
-        settings["showFinal"]      = False
+        settings["stepRatio"]      = 1
 
-        settings["actionSpace"] = [opt.actionSpace, opt.actionSpace]
-        settings["attackButCombination"] = [opt.attButComb, opt.attButComb]
-        if settings["player"] != "P1P2":
-            settings["actionSpace"] = settings["actionSpace"][0]
-            settings["attackButCombination"] = settings["attackButCombination"][0]
+        settings["actionSpace"] = opt.actionSpace
+        settings["attackButCombination"] = opt.attButComb
 
         # Recording settings
         trajRecSettings = None
@@ -57,28 +46,19 @@ if __name__ == '__main__':
         wrappersSettings["scale"] = True
         wrappersSettings["scaleMod"] = 0
 
-        env = diambraArena.make(opt.gameId, settings, wrappersSettings, trajRecSettings, seed=timeDepSeed)
+        env = diambraArena.make(opt.gameId, settings, wrappersSettings, trajRecSettings)
 
         observation = env.reset()
+        nStep = 0
 
-        maxNumEp = opt.nEpisodes
-        currNumEp = 0
-
-        tic = time.time()
         fpsVal = []
 
-        while currNumEp < maxNumEp:
+        while nStep < 1000:
 
-            toc = time.time()
-            fps = 1/(toc - tic)
-            tic = toc
-            #print("FPS = {}".format(fps))
-            fpsVal.append(fps)
-
+            nStep+=1
             actions = [None, None]
             if settings["player"] != "P1P2":
                 actions = env.action_space.sample()
-
             else:
                 for idx in range(2):
                     actions[idx] = env.action_space["P{}".format(idx+1)].sample()
@@ -86,13 +66,15 @@ if __name__ == '__main__':
             if settings["player"] == "P1P2" or settings["actionSpace"] != "discrete":
                 actions = np.append(actions[0], actions[1])
 
+            tic = time.time()
             observation, reward, done, info = env.step(actions)
+            toc = time.time()
+            fps = 1/(toc-tic)
+            fpsVal.append(fps)
 
             if done:
-                currNumEp += 1
-                print("Ep. # = ", currNumEp)
-
                 observation = env.reset()
+                break
 
         env.close()
 
