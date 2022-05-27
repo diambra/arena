@@ -1,6 +1,6 @@
 import sys, os, time
 import numpy as np
-from threading import Thread
+from threading import Thread, Event
 from collections import defaultdict
 from inputs import devices
 import pickle
@@ -23,7 +23,9 @@ class diambraGamepad(Thread): # def class typr thread
                                             "But5", "But6", "But7", "But8") ),
                 cfg=["But1", "But2", "But3", "But4", "But5", "But6", "But7", "But8"],
                 gamepadNum=0, force=False, skipConfigure=False):
-      Thread.__init__(self)   # thread init class (don't forget this)
+      Thread.__init__(self, daemon=True)   # thread init class (don't forget this)
+
+      self.stopEvent = Event()
 
       self.startCode = ""
       self.selectCode = ""
@@ -555,7 +557,7 @@ class diambraGamepad(Thread): # def class typr thread
 
    # Retrieve gamepad events
    def run(self):      # run is a default Thread function
-      while True:   # loop for ever
+      while not self.stopEvent.is_set():   # loop until stop is called
          for event in self.gamepad.read():   # check events of gamepads, if not event, all is stop
             if event.ev_type == "Key":   # category of binary respond values
 
@@ -593,3 +595,7 @@ class diambraGamepad(Thread): # def class typr thread
 
                for elem in idx:
                    self.eventHashMove[elem] = eventState
+
+   # Stop the thread
+   def stop(self):
+      self.stopEvent.set()

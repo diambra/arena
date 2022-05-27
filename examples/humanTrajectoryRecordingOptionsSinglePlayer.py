@@ -53,4 +53,5 @@ while True:
         observation = env.reset()
         break
 
+gamepad.stop()
 env.close()
