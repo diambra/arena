@@ -175,6 +175,7 @@ if __name__ == '__main__':
         if opt.noAction == 1 and np.mean(cumulativeEpRewAll) > -nRounds*(maxContinue+1)*env.maxDeltaHealth+0.001:
             raise RuntimeError("NoAction policy and average reward different than {} ({})".format(-2*(maxContinue+1)*env.maxDeltaHealth, np.mean(cumulativeEpRewAll)))
 
+        print("ALL GOOD!")
     except Exception as e:
         print(e)
         print("ALL BAD")
