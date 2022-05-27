@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
 import diambraArena
-import argparse, time
+import os, time
 import numpy as np
 
 def reject_outliers(data):
@@ -9,32 +10,34 @@ def reject_outliers(data):
     filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
     return filtered
 
+# Settings
 settings = {"stepRatio": 1}
 
 env = diambraArena.make("doapp", settings)
 
 observation = env.reset()
+nStep = 0
 
-tic = time.time()
 fpsVal = []
 
-while True:
+while nStep < 1000:
 
+    nStep+=1
+    actions = env.action_space.sample()
+
+    tic = time.time()
+    observation, reward, done, info = env.step(actions)
     toc = time.time()
-    fps = 1/(toc - tic)
+    fps = 1/(toc-tic)
     tic = toc
     fpsVal.append(fps)
-
-    actions = [0, 0]
-
-    observation, reward, done, info = env.step(actions)
 
     if done:
         observation = env.reset()
         break
 
-env.close()
-
 fpsVal2 = reject_outliers(fpsVal)
 avgFps = np.mean(fpsVal2)
 print("Average speed = {} FPS, STD {} FPS".format(avgFps, np.std(fpsVal2)))
+
+env.close()
