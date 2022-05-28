@@ -13,11 +13,12 @@ wrappersSettings["stickyActions"] = 1
 # Frame resize operation spec (deactivated by default)
 wrappersSettings["hwcObsResize"] = [128, 128, 1]
 
-# Coefficient to be used for reward normalization
-# It is activated if different from 1.0,
+# Wrapper option for reward normalization
+# When activated, the reward normalization factor can be set (default = 0.5)
 # The normalization is performed by dividing the reward value
-# by the product of this coefficient times the value of the full health bar
+# by the product of the factor times the value of the full health bar
 # reward = reward / (C * fullHealthBarValue)
+wrappersSettings["rewardNormalization"] = True
 wrappersSettings["rewardNormalizationFactor"] = 0.5
 
 # If to clip rewards (False by default)
