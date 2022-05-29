@@ -15,7 +15,7 @@ class diambraGymHardCoreBase(gym.Env):
     def __init__(self, envSettings):
         super(diambraGymHardCoreBase, self).__init__()
 
-        self.rewardNormalizationFactor = 1.0
+        self.rewardNormalizationValue = 1.0
         if envSettings["player"] != "P1P2":
             self.actionSpace = envSettings["actionSpace"][0]
         else:
@@ -143,8 +143,8 @@ class diambraGymHardCoreBase(gym.Env):
 
     # Return min max rewards for the environment
     def getMinMaxReward(self):
-        return [self.minMaxReward[0]/self.rewardNormalizationFactor*self.maxDeltaHealth,
-                self.minMaxReward[1]/self.rewardNormalizationFactor*self.maxDeltaHealth]
+        return [self.minMaxReward[0]/(self.rewardNormalizationValue),
+                self.minMaxReward[1]/(self.rewardNormalizationValue)]
 
     # Step method to be implemented in derived classes
     def step(self, action):
