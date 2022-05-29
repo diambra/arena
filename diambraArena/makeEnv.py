@@ -33,7 +33,7 @@ def envSettingsCheck(envSettings):
     defaultEnvSettings["disableKeyboard"] = True
     defaultEnvSettings["disableJoystick"] = True
     defaultEnvSettings["rank"] = 0
-    defaultEnvSettings["recordConfigFile"] = ""
+    defaultEnvSettings["recordConfigFile"] = "\"\""
 
     for k, v in envSettings.items():
 
