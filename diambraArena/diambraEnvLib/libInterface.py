@@ -136,4 +136,3 @@ class diambraArenaLib:
     # Closing DIAMBRA Arena
     def close(self):
          self.stub.Close(diambra_pb2.Empty())
-         self.channel.close() # self.stub.close()
