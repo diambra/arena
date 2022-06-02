@@ -45,6 +45,9 @@ class diambraArenaLib:
             output += "character2_{}".format(iChar+1)+     sep+"2"+sep + envSettings["characters"][1][iChar] + sep
         output += "charOutfits1"+     sep+"1"+sep + str(envSettings["charOutfits"][0]) + sep
         output += "charOutfits2"+     sep+"1"+sep + str(envSettings["charOutfits"][1]) + sep
+        output += "frameShape1"+       sep+"1"+sep + str(envSettings["frameShape"][0]) + sep
+        output += "frameShape2"+       sep+"1"+sep + str(envSettings["frameShape"][1]) + sep
+        output += "frameShape3"+       sep+"1"+sep + str(envSettings["frameShape"][2]) + sep
 
         # SFIII Specific
         output += "superArt1"+        sep+"1"+sep + str(envSettings["superArt"][0]) + sep
@@ -137,3 +140,4 @@ class diambraArenaLib:
     # Closing DIAMBRA Arena
     def close(self):
          self.stub.Close(diambra_pb2.Empty())
+         self.channel.close()

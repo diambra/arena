@@ -16,6 +16,7 @@ def envSettingsCheck(envSettings):
     defaultEnvSettings["difficulty"] = 3
     defaultEnvSettings["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
     defaultEnvSettings["charOutfits"] = [2, 2]
+    defaultEnvSettings["frameShape"] = [0,0,0]
     defaultEnvSettings["actionSpace"] = "multiDiscrete"
     defaultEnvSettings["attackButCombination"] = True
 
