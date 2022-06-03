@@ -62,7 +62,6 @@ class diambraArenaLib:
         output += "disableKeyboard"+  sep+"0"+sep + str(int(envSettings["disableKeyboard"])) + sep
         output += "disableJoystick"+  sep+"0"+sep + str(int(envSettings["disableJoystick"])) + sep
         output += "rank"+             sep+"1"+sep + str(envSettings["rank"]) + sep
-        output += "recordConfigFile"+ sep+"2"+sep + envSettings["recordConfigFile"] + sep
 
         output += endChar
 
