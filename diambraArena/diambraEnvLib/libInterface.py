@@ -102,7 +102,8 @@ class diambraArenaLib:
     # Read frame
     def readFrame(self, frame):
         #return cv2.imdecode(np.frombuffer(frame, dtype='uint8'), cv2.IMREAD_COLOR)
-        return np.frombuffer(frame, dtype='uint8').reshape(self.height, self.width, self.nChan)
+        frame = np.frombuffer(frame, dtype='uint8').reshape(self.height, self.width, self.nChan+1)
+        return frame[:,:,:3]
 
     # Reset the environment
     def reset(self):
