@@ -161,7 +161,7 @@ class diambraGymHardCoreBase(gym.Env):
         if mode == "human":
             windowName = "DIAMBRA Arena - {} - ({})".format(self.envSettings["gameId"], self.envSettings["rank"])
             cv2.namedWindow(windowName,cv2.WINDOW_GUI_NORMAL)
-            cv2.imshow(windowName, self.frame[:, :, ::-1])
+            cv2.imshow(windowName, self.frame)
             cv2.waitKey(waitKey)
         elif mode == "rgb_array":
             return self.frame
