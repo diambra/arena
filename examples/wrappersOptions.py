@@ -11,6 +11,9 @@ wrappersSettings["noOpMax"] = 0
 wrappersSettings["stickyActions"] = 1
 
 # Frame resize operation spec (deactivated by default)
+# WARNING: for speedup, avoid frame warping wrappers,
+#          use environment's native frame wrapping through
+#          "frameShape" setting (see documentation for details).
 wrappersSettings["hwcObsResize"] = [128, 128, 1]
 
 # Wrapper option for reward normalization
