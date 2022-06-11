@@ -11,7 +11,7 @@ from gym import spaces
 # Functions
 def WarpFrame3CFunc(obs, width, height):
     obs["frame"] = cv2.resize(obs["frame"], (width, height),
-                              interpolation=cv2.INTER_AREA)[:,:,None]
+                              interpolation=cv2.INTER_LINEAR)[:,:,None]
     return obs
 
 def WarpFrameFunc(obs, width, height):

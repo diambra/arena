@@ -10,7 +10,7 @@ from gym import spaces
 # Functions
 def WarpFrame3CFunc(frame, width, height):
     frame = cv2.resize(frame, (width, height),
-                       interpolation=cv2.INTER_AREA)[:,:,None]
+                       interpolation=cv2.INTER_LINEAR)[:,:,None]
     return frame
 
 def WarpFrameFunc(frame, width, height):
