@@ -24,8 +24,9 @@ if __name__ == '__main__':
 
         # Settings
         settings = {}
-        settings["player"]         = opt.player
-        settings["stepRatio"]      = 1
+        settings["player"]     = opt.player
+        settings["stepRatio"]  = 1
+        settings["frameShape"] = [128, 128, 1]
 
         settings["actionSpace"] = opt.actionSpace
         settings["attackButCombination"] = opt.attButComb
@@ -37,7 +38,6 @@ if __name__ == '__main__':
         wrappersSettings = {}
         wrappersSettings["noOpMax"] = 0
         wrappersSettings["stickyActions"] = 1
-        wrappersSettings["hwcObsResize"] = [128, 128, 1]
         wrappersSettings["rewardNormalization"] = True
         wrappersSettings["clipRewards"] = False
         wrappersSettings["frameStack"] = 4
