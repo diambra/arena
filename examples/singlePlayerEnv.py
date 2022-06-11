@@ -10,6 +10,11 @@ settings["player"] = "P2"
 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 settings["stepRatio"] = 6
 
+# Native Frame resize operation
+settings["frameShape"] = [128, 128, 3] # RBG image with 128x128 size
+#settings["frameShape"] = [0, 0, 1] # Grayscale image with original size
+#settings["frameShape"] = [0, 0, 0] # No frame warping (RBG image with original size)
+
 # Game continue logic (0.0 by default):
 # - [0.0, 1.0]: probability of continuing game at game over
 # - int((-inf, -1.0]): number of continues at game over before episode to be considered done

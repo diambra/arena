@@ -27,6 +27,9 @@ class WarpFrame(gym.ObservationWrapper):
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
+        print("Warning: for speedup, avoid frame warping wrappers,")
+        print("         use environment's native frame wrapping through")
+        print("        \"frameShape\" setting (see documentation for details).")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hwObsResize[1]
         self.height = hwObsResize[0]
@@ -47,6 +50,9 @@ class WarpFrame3C(gym.ObservationWrapper):
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
+        print("Warning: for speedup, avoid frame warping wrappers,")
+        print("         use environment's native frame wrapping through")
+        print("        \"frameShape\" setting (see documentation for details).")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hwObsResize[1]
         self.height = hwObsResize[0]

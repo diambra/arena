@@ -7,12 +7,12 @@ from os.path import expanduser
 settings = {}
 settings["player"] = "Random"
 settings["stepRatio"] = 1
+settings["frameShape"] = [128, 128, 1]
 settings["actionSpace"] = "multiDiscrete"
 settings["attackButCombination"] = True
 
 # Gym wrappers settings
 wrappersSettings = {}
-wrappersSettings["hwcObsResize"] = [128, 128, 1]
 wrappersSettings["rewardNormalization"] = True
 wrappersSettings["frameStack"] = 4
 wrappersSettings["actionsStack"] = 12
