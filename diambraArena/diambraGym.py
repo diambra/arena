@@ -23,6 +23,7 @@ class diambraGymHardCoreBase(gym.Env):
         self.attackButCombination = envSettings["attackButCombination"]
 
         self.envSettings = envSettings
+        self.renderGuiStarted = False
 
         # Launch DIAMBRA Arena
         self.diambraArena = diambraArenaLib(envSettings["envAddress"])
@@ -152,6 +153,8 @@ class diambraGymHardCoreBase(gym.Env):
 
     # Resetting the environment
     def reset(self):
+        cv2.destroyAllWindows()
+        self.renderGuiStarted = False
         self.frame, data, self.playerSide = self.diambraArena.reset()
         return self.frame
 
@@ -159,9 +162,13 @@ class diambraGymHardCoreBase(gym.Env):
     def render(self, mode='human', waitKey=1):
 
         if mode == "human":
-            windowName = "DIAMBRA Arena - {} - ({})".format(self.envSettings["gameId"], self.envSettings["rank"])
-            cv2.namedWindow(windowName,cv2.WINDOW_GUI_NORMAL)
-            cv2.imshow(windowName, self.frame)
+            if (self.renderGuiStarted == False):
+                self.windowName = "DIAMBRA Arena - {} - ({})".format(self.envSettings["gameId"], self.envSettings["rank"])
+                cv2.namedWindow(self.windowName,cv2.WINDOW_GUI_NORMAL)
+                self.renderGuiStarted = True
+                waitKey = 100
+
+            cv2.imshow(self.windowName, self.frame)
             cv2.waitKey(waitKey)
         elif mode == "rgb_array":
             return self.frame
