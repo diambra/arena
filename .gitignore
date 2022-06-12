@@ -1,3 +1,5 @@
+diambraArena.egg-info/*
+build/*
 mame/history
 *.swp
 roms/*.zip
