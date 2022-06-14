@@ -4,13 +4,14 @@ from diambraArena.gymUtils import showGymObs
 
 # Settings
 settings = {}
+
 # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
 settings["player"] = "P2"
 
 # Number of steps performed by the game for every environment step, bounds: [1, 6]
 settings["stepRatio"] = 6
 
-# Native Frame resize operation
+# Native frame resize operation
 settings["frameShape"] = [128, 128, 3] # RBG image with 128x128 size
 #settings["frameShape"] = [0, 0, 1] # Grayscale image with original size
 #settings["frameShape"] = [0, 0, 0] # No frame warping (RBG image with original size)

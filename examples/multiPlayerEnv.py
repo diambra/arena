@@ -5,8 +5,10 @@ import numpy as np
 
 # Environment Settings
 settings = {}
+
 # 2 Players game
 settings["player"] = "P1P2"
+
 # If to use discrete or multiDiscrete action space
 settings["actionSpace"] = ["discrete", "discrete"]
 
