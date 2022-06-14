@@ -13,3 +13,4 @@ diambraArena/mame/cfg
 .ipynb*
 trajRecordings/*
 __pycache*
+dist/
