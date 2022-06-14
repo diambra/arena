@@ -1,21 +1,5 @@
-from setuptools import find_packages
-from diambra.arena import __version__
-import setuptools
-import sys
-import os
-
-# Check if docker is installed
-if os.system("docker ps") != 0:
-    print("---")
-    print("ERROR: It seems docker is not installed in your system.")
-    print("It is required to use DIAMBRA Arena.")
-    print("Install it from https://docs.docker.com/get-docker/")
-    print("---")
-    sys.exit(1)
-else:
-    print("Downloading DIAMBRA Docker image")
-    # TODO: decomment
-    # os.system("docker pull diambra/diambraApp:main")
+import setuptools, os
+from pathlib import Path
 
 try:
     from pip import main as pipmain
@@ -25,7 +9,7 @@ except ImportError:
 pipmain(['install', 'setuptools'])
 pipmain(['install', 'distro'])
 
-extras = {
+extras= {
     'core': []
 }
 
@@ -34,13 +18,13 @@ extras = {
 setuptools.setup(
     name='diambra-arena',
     url='https://github.com/diambra/arena',
-    version=__version__,
+    version=os.environ.get('VERSION', '0.0.0'),
     author="DIAMBRA Team",
     author_email="info@diambra.ai",
     description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
-    long_description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
-    long_description_content_type="Reinforcement Learning",
-    license='GNU Affero GPL',
+    long_description = (Path(__file__).parent / "README.md").read_text(),
+    long_description_content_type="text/markdown",
+    license='Custom',
     install_requires=[
             'pip>=21',
             'setuptools',
@@ -55,7 +39,7 @@ setuptools.setup(
             'opencv-python>=4.4.0.42',
             'grpcio',
             'grpcio-tools'],
-        packages=[package for package in find_packages(
+        packages=[package for package in setuptools.find_packages(
         ) if package.startswith("diambra")],
     include_package_data=True,
     extras_require=extras,
