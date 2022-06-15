@@ -12,7 +12,7 @@ settings["player"] = "P2"
 settings["stepRatio"] = 6
 
 # Native frame resize operation
-settings["frameShape"] = [128, 128, 3] # RBG image with 128x128 size
+settings["frameShape"] = [128, 128, 0] # RBG image with 128x128 size
 #settings["frameShape"] = [0, 0, 1] # Grayscale image with original size
 #settings["frameShape"] = [0, 0, 0] # No frame warping (RBG image with original size)
 
