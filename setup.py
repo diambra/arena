@@ -58,5 +58,16 @@ setuptools.setup(
         packages=[package for package in find_packages(
         ) if package.startswith("diambra")],
     include_package_data=True,
-    extras_require=extras
+    extras_require=extras,
+    classifiers=[
+        'Development Status :: 3 - Alpha',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
+        'Topic :: Scientific/Engineering :: Artificial Intelligence',
+        'Topic :: Scientific/Engineering :: Artificial Life',
+        'Topic :: Games/Entertainment',
+        'Topic :: Games/Entertainment :: Arcade',
+        'Topic :: Education',
+    ]
 )
