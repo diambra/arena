@@ -86,6 +86,7 @@ def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed
             envAddresses = [envSettings["envAddress"]]
 
     envSettings["envAddress"] = envAddresses[rank]
+    envSettings["rank"] = rank
 
     # Checking settings and setting up default ones
     envSettings = envSettingsCheck(envSettings)
