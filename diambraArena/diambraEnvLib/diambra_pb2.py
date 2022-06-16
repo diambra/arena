@@ -12,10 +12,7 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
-
-
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rdiambra.proto\x12\x07\x64iambra\"\x07\n\x05\x45mpty\"\x1f\n\x0b\x45nvSettings\x12\x10\n\x08settings\x18\x01 \x01(\t\"9\n\x11\x45nvInfoAndIntData\x12\x0f\n\x07\x65nvInfo\x18\x01 \x01(\t\x12\x13\n\x0bintDataList\x18\x02 \x01(\t\"z\n\x07\x43ommand\x12$\n\x02P1\x18\x01 \x01(\x0b\x32\x18.diambra.Command.actions\x12$\n\x02P2\x18\x02 \x01(\x0b\x32\x18.diambra.Command.actions\x1a#\n\x07\x61\x63tions\x12\x0b\n\x03mov\x18\x01 \x01(\x05\x12\x0b\n\x03\x61tt\x18\x02 \x01(\x05\"\xae\x01\n\x03Obs\x12\x0e\n\x06intVar\x18\x01 \x01(\t\x12.\n\x0e\x64oneConditions\x18\x02 \x01(\x0b\x32\x16.diambra.Obs.boolFlags\x12\x0e\n\x06player\x18\x03 \x01(\t\x12\r\n\x05\x66rame\x18\x04 \x01(\x0c\x1aH\n\tboolFlags\x12\r\n\x05round\x18\x01 \x01(\x08\x12\r\n\x05stage\x18\x02 \x01(\x08\x12\x0c\n\x04game\x18\x03 \x01(\x08\x12\x0f\n\x07\x65pisode\x18\x04 \x01(\x08\x32\xf6\x01\n\tEnvServer\x12=\n\x07\x45nvInit\x12\x14.diambra.EnvSettings\x1a\x1a.diambra.EnvInfoAndIntData\"\x00\x12\'\n\x05Reset\x12\x0e.diambra.Empty\x1a\x0c.diambra.Obs\"\x00\x12*\n\x06Step1P\x12\x10.diambra.Command\x1a\x0c.diambra.Obs\"\x00\x12*\n\x06Step2P\x12\x10.diambra.Command\x1a\x0c.diambra.Obs\"\x00\x12)\n\x05\x43lose\x12\x0e.diambra.Empty\x1a\x0e.diambra.Empty\"\x00\x42\x06\xa2\x02\x03HLWb\x06proto3')
-
 
 
 _EMPTY = DESCRIPTOR.message_types_by_name['Empty']
@@ -26,75 +23,73 @@ _COMMAND_ACTIONS = _COMMAND.nested_types_by_name['actions']
 _OBS = DESCRIPTOR.message_types_by_name['Obs']
 _OBS_BOOLFLAGS = _OBS.nested_types_by_name['boolFlags']
 Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
-  'DESCRIPTOR' : _EMPTY,
-  '__module__' : 'diambra_pb2'
-  # @@protoc_insertion_point(class_scope:diambra.Empty)
-  })
+    'DESCRIPTOR': _EMPTY,
+    '__module__': 'diambra_pb2'
+    # @@protoc_insertion_point(class_scope:diambra.Empty)
+})
 _sym_db.RegisterMessage(Empty)
 
 EnvSettings = _reflection.GeneratedProtocolMessageType('EnvSettings', (_message.Message,), {
-  'DESCRIPTOR' : _ENVSETTINGS,
-  '__module__' : 'diambra_pb2'
-  # @@protoc_insertion_point(class_scope:diambra.EnvSettings)
-  })
+    'DESCRIPTOR': _ENVSETTINGS,
+    '__module__': 'diambra_pb2'
+    # @@protoc_insertion_point(class_scope:diambra.EnvSettings)
+})
 _sym_db.RegisterMessage(EnvSettings)
 
 EnvInfoAndIntData = _reflection.GeneratedProtocolMessageType('EnvInfoAndIntData', (_message.Message,), {
-  'DESCRIPTOR' : _ENVINFOANDINTDATA,
-  '__module__' : 'diambra_pb2'
-  # @@protoc_insertion_point(class_scope:diambra.EnvInfoAndIntData)
-  })
+    'DESCRIPTOR': _ENVINFOANDINTDATA,
+    '__module__': 'diambra_pb2'
+    # @@protoc_insertion_point(class_scope:diambra.EnvInfoAndIntData)
+})
 _sym_db.RegisterMessage(EnvInfoAndIntData)
 
 Command = _reflection.GeneratedProtocolMessageType('Command', (_message.Message,), {
 
-  'actions' : _reflection.GeneratedProtocolMessageType('actions', (_message.Message,), {
-    'DESCRIPTOR' : _COMMAND_ACTIONS,
-    '__module__' : 'diambra_pb2'
-    # @@protoc_insertion_point(class_scope:diambra.Command.actions)
-    })
-  ,
-  'DESCRIPTOR' : _COMMAND,
-  '__module__' : 'diambra_pb2'
-  # @@protoc_insertion_point(class_scope:diambra.Command)
-  })
+    'actions': _reflection.GeneratedProtocolMessageType('actions', (_message.Message,), {
+        'DESCRIPTOR': _COMMAND_ACTIONS,
+        '__module__': 'diambra_pb2'
+        # @@protoc_insertion_point(class_scope:diambra.Command.actions)
+    }),
+    'DESCRIPTOR': _COMMAND,
+    '__module__': 'diambra_pb2'
+    # @@protoc_insertion_point(class_scope:diambra.Command)
+})
 _sym_db.RegisterMessage(Command)
 _sym_db.RegisterMessage(Command.actions)
 
 Obs = _reflection.GeneratedProtocolMessageType('Obs', (_message.Message,), {
 
-  'boolFlags' : _reflection.GeneratedProtocolMessageType('boolFlags', (_message.Message,), {
-    'DESCRIPTOR' : _OBS_BOOLFLAGS,
-    '__module__' : 'diambra_pb2'
-    # @@protoc_insertion_point(class_scope:diambra.Obs.boolFlags)
-    })
-  ,
-  'DESCRIPTOR' : _OBS,
-  '__module__' : 'diambra_pb2'
-  # @@protoc_insertion_point(class_scope:diambra.Obs)
-  })
+    'boolFlags': _reflection.GeneratedProtocolMessageType('boolFlags', (_message.Message,), {
+        'DESCRIPTOR': _OBS_BOOLFLAGS,
+        '__module__': 'diambra_pb2'
+        # @@protoc_insertion_point(class_scope:diambra.Obs.boolFlags)
+    }),
+    'DESCRIPTOR': _OBS,
+    '__module__': 'diambra_pb2'
+    # @@protoc_insertion_point(class_scope:diambra.Obs)
+})
 _sym_db.RegisterMessage(Obs)
 _sym_db.RegisterMessage(Obs.boolFlags)
 
 _ENVSERVER = DESCRIPTOR.services_by_name['EnvServer']
-if _descriptor._USE_C_DESCRIPTORS == False:
+if _descriptor._USE_C_DESCRIPTORS is False:
 
-  DESCRIPTOR._options = None
-  DESCRIPTOR._serialized_options = b'\242\002\003HLW'
-  _EMPTY._serialized_start=26
-  _EMPTY._serialized_end=33
-  _ENVSETTINGS._serialized_start=35
-  _ENVSETTINGS._serialized_end=66
-  _ENVINFOANDINTDATA._serialized_start=68
-  _ENVINFOANDINTDATA._serialized_end=125
-  _COMMAND._serialized_start=127
-  _COMMAND._serialized_end=249
-  _COMMAND_ACTIONS._serialized_start=214
-  _COMMAND_ACTIONS._serialized_end=249
-  _OBS._serialized_start=252
-  _OBS._serialized_end=426
-  _OBS_BOOLFLAGS._serialized_start=354
-  _OBS_BOOLFLAGS._serialized_end=426
-  _ENVSERVER._serialized_start=429
-  _ENVSERVER._serialized_end=675
+    DESCRIPTOR._options = None
+    DESCRIPTOR._serialized_options = b'\242\002\003HLW'
+    _EMPTY._serialized_start = 26
+    _EMPTY._serialized_end = 33
+    _ENVSETTINGS._serialized_start = 35
+    _ENVSETTINGS._serialized_end = 66
+    _ENVINFOANDINTDATA._serialized_start = 68
+    _ENVINFOANDINTDATA._serialized_end = 125
+    _COMMAND._serialized_start = 127
+    _COMMAND._serialized_end = 249
+    _COMMAND_ACTIONS._serialized_start = 214
+    _COMMAND_ACTIONS._serialized_end = 249
+    _OBS._serialized_start = 252
+    _OBS._serialized_end = 426
+    _OBS_BOOLFLAGS._serialized_start = 354
+    _OBS_BOOLFLAGS._serialized_end = 426
+    _ENVSERVER._serialized_start = 429
+    _ENVSERVER._serialized_end = 675
 # @@protoc_insertion_point(module_scope)

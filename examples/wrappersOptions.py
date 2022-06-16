@@ -4,7 +4,8 @@ from diambraArena.gymUtils import showWrapObs
 # Gym wrappers settings
 wrappersSettings = {}
 
-# Number of no-Op actions to be executed at the beginning of the episode (0 by default)
+# Number of no-Op actions to be executed
+# at the beginning of the episode (0 by default)
 wrappersSettings["noOpMax"] = 0
 
 # Number of steps for which the same action should be sent (1 by default)

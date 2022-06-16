@@ -2,6 +2,7 @@ import os
 from diambraArena.diambraGym import makeGymEnv
 from diambraArena.wrappers.diambraWrappers import envWrapping
 
+
 def envSettingsCheck(envSettings):
 
     # Default parameters
@@ -14,9 +15,10 @@ def envSettingsCheck(envSettings):
     defaultEnvSettings["showFinal"] = True
     defaultEnvSettings["stepRatio"] = 6
     defaultEnvSettings["difficulty"] = 3
-    defaultEnvSettings["characters"] = [["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
+    defaultEnvSettings["characters"] = [
+        ["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
     defaultEnvSettings["charOutfits"] = [2, 2]
-    defaultEnvSettings["frameShape"] = [0,0,0]
+    defaultEnvSettings["frameShape"] = [0, 0, 0]
     defaultEnvSettings["actionSpace"] = "multiDiscrete"
     defaultEnvSettings["attackButCombination"] = True
 
@@ -60,7 +62,8 @@ def envSettingsCheck(envSettings):
     return defaultEnvSettings
 
 
-def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed=42, rank=0):
+def make(gameId, envSettings={}, wrappersSettings={},
+         trajRecSettings=None, seed=42, rank=0):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -72,14 +75,16 @@ def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed
 
     # Check if DIAMBRA_ENVS var present
     envAddresses = os.getenv("DIAMBRA_ENVS", "").split()
-    if len(envAddresses) >= 1: # If present
+    if len(envAddresses) >= 1:  # If present
         # Check if there are at least n envAddresses as the prescribed rank
         if len(envAddresses) < rank+1:
-            print("ERROR: Rank of env client is higher than the available envAddresses servers:")
+            print(
+                "ERROR: Rank of env client is higher "
+                "than the available envAddresses servers:")
             print("       # of env servers: {}".format(len(envAddresses)))
             print("       # rank of client: {} (0-based index)".format(rank))
             raise Exception("Wrong number of env servers vs clients")
-    else: # If not present, set default value
+    else:  # If not present, set default value
         if "envAddress" not in envSettings:
             envAddresses = ["localhost:50051"]
         else:
@@ -98,7 +103,8 @@ def make(gameId, envSettings={}, wrappersSettings={}, trajRecSettings=None, seed
     env.seed(seed)
 
     # Apply environment wrappers
-    env = envWrapping(env, player, **wrappersSettings, hardCore=envSettings["hardCore"])
+    env = envWrapping(env, player, **wrappersSettings,
+                      hardCore=envSettings["hardCore"])
 
     # Apply trajectories recorder wrappers
     if trajRecSettings is not None:

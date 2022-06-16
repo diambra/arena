@@ -3,6 +3,8 @@ import numpy as np
 import random
 
 # No action policy
+
+
 class noActionPolicy(object):
 
     def __init__(self, name="No Action", actionSpace="multiDiscrete"):
@@ -28,6 +30,8 @@ class noActionPolicy(object):
         return action, prob
 
 # Random policy, sampling from the action space
+
+
 class randomPolicy(object):
 
     def __init__(self, nActions, name="Random", actionSpace="multiDiscrete"):
@@ -56,9 +60,12 @@ class randomPolicy(object):
         return action, prob
 
 # RL Policy, which uses a model to select the action
+
+
 class RLPolicy(object):
 
-    def __init__(self, model, deterministicFlag, nActions, name="Generic RL", actionSpace="multiDiscrete"):
+    def __init__(self, model, deterministicFlag,
+                 nActions, name="Generic RL", actionSpace="multiDiscrete"):
 
         self.nActions = nActions
         self.deterministicFlag = deterministicFlag
@@ -80,14 +87,17 @@ class RLPolicy(object):
     def act(self, observation, info=None):
         action_prob = self.model.action_probability(observation)
 
-        #if self.deterministicFlag:
+        # if self.deterministicFlag:
         #   action = np.argmax(action_prob)
-        #else:
+        # else:
         #   if self.actionSpace == "discrete":
-        #       action = np.random.choice([x for x in range(len(action_prob))], p=action_prob)
+        #       action = np.random.choice([x for x in range(len(action_prob))],
+        #                                 p=action_prob)
         #   else:
-        #       action = self.model.predict(observation, deterministic=self.deterministicFlag)
-        action, _ = self.model.predict(observation, deterministic=self.deterministicFlag)
+        #       action = self.model.predict(observation,
+        #                                   deterministic=self.deterministicFlag)
+        action, _ = self.model.predict(
+            observation, deterministic=self.deterministicFlag)
         action = action.tolist()
 
         prob = action_prob
@@ -100,13 +110,16 @@ class RLPolicy(object):
         else:
 
             prob = action_prob
-            #print("Warning!! Probabilities for MultiDiscrete are not correct!")
+            # print("Warning!! Probabilities for
+            #        MultiDiscrete are not correct!")
             # Can be ok doing nothing, but better to check
-            #raise Exception("To be checked")
+            # raise Exception("To be checked")
 
         return action, prob
 
 # Human policy, retrieved via GamePad
+
+
 class gamepadPolicy(object):
 
     def __init__(self, gamepadClass, name="Human"):
