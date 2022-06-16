@@ -149,7 +149,7 @@ def showGymObs(observation, charList, waitKey=1, viz=True):
             obs = np.array(observation).astype(np.float32)/255
 
     if viz:
-        cv2.imshow("Frame", obs) #bgr 2 rgb
+        cv2.imshow("Frame", obs[:, :, ::-1]) #rgb2bgr
         cv2.waitKey(waitKey)
 
 # Visualize Obs content
