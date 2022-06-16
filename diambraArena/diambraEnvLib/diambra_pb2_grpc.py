@@ -16,30 +16,30 @@ class EnvServerStub(object):
             channel: A grpc.Channel.
         """
         self.EnvInit = channel.unary_unary(
-                '/diambra.EnvServer/EnvInit',
-                request_serializer=diambra__pb2.EnvSettings.SerializeToString,
-                response_deserializer=diambra__pb2.EnvInfoAndIntData.FromString,
-                )
+            '/diambra.EnvServer/EnvInit',
+            request_serializer=diambra__pb2.EnvSettings.SerializeToString,
+            response_deserializer=diambra__pb2.EnvInfoAndIntData.FromString,
+        )
         self.Reset = channel.unary_unary(
-                '/diambra.EnvServer/Reset',
-                request_serializer=diambra__pb2.Empty.SerializeToString,
-                response_deserializer=diambra__pb2.Obs.FromString,
-                )
+            '/diambra.EnvServer/Reset',
+            request_serializer=diambra__pb2.Empty.SerializeToString,
+            response_deserializer=diambra__pb2.Obs.FromString,
+        )
         self.Step1P = channel.unary_unary(
-                '/diambra.EnvServer/Step1P',
-                request_serializer=diambra__pb2.Command.SerializeToString,
-                response_deserializer=diambra__pb2.Obs.FromString,
-                )
+            '/diambra.EnvServer/Step1P',
+            request_serializer=diambra__pb2.Command.SerializeToString,
+            response_deserializer=diambra__pb2.Obs.FromString,
+        )
         self.Step2P = channel.unary_unary(
-                '/diambra.EnvServer/Step2P',
-                request_serializer=diambra__pb2.Command.SerializeToString,
-                response_deserializer=diambra__pb2.Obs.FromString,
-                )
+            '/diambra.EnvServer/Step2P',
+            request_serializer=diambra__pb2.Command.SerializeToString,
+            response_deserializer=diambra__pb2.Obs.FromString,
+        )
         self.Close = channel.unary_unary(
-                '/diambra.EnvServer/Close',
-                request_serializer=diambra__pb2.Empty.SerializeToString,
-                response_deserializer=diambra__pb2.Empty.FromString,
-                )
+            '/diambra.EnvServer/Close',
+            request_serializer=diambra__pb2.Empty.SerializeToString,
+            response_deserializer=diambra__pb2.Empty.FromString,
+        )
 
 
 class EnvServerServicer(object):
@@ -47,14 +47,15 @@ class EnvServerServicer(object):
     """
 
     def EnvInit(self, request, context):
-        """Sends environment settings, receives back environment info and int data vars
+        """Sends env settings, receives back env info and int data vars
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def Reset(self, request, context):
-        """Call reset method, receives observation (containing also player ID in this case)
+        """Call reset method, receives observation
+        (containing also player ID in this case)
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -84,123 +85,139 @@ class EnvServerServicer(object):
 
 def add_EnvServerServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'EnvInit': grpc.unary_unary_rpc_method_handler(
-                    servicer.EnvInit,
-                    request_deserializer=diambra__pb2.EnvSettings.FromString,
-                    response_serializer=diambra__pb2.EnvInfoAndIntData.SerializeToString,
-            ),
-            'Reset': grpc.unary_unary_rpc_method_handler(
-                    servicer.Reset,
-                    request_deserializer=diambra__pb2.Empty.FromString,
-                    response_serializer=diambra__pb2.Obs.SerializeToString,
-            ),
-            'Step1P': grpc.unary_unary_rpc_method_handler(
-                    servicer.Step1P,
-                    request_deserializer=diambra__pb2.Command.FromString,
-                    response_serializer=diambra__pb2.Obs.SerializeToString,
-            ),
-            'Step2P': grpc.unary_unary_rpc_method_handler(
-                    servicer.Step2P,
-                    request_deserializer=diambra__pb2.Command.FromString,
-                    response_serializer=diambra__pb2.Obs.SerializeToString,
-            ),
-            'Close': grpc.unary_unary_rpc_method_handler(
-                    servicer.Close,
-                    request_deserializer=diambra__pb2.Empty.FromString,
-                    response_serializer=diambra__pb2.Empty.SerializeToString,
-            ),
+        'EnvInit': grpc.unary_unary_rpc_method_handler(
+            servicer.EnvInit,
+            request_deserializer=diambra__pb2.EnvSettings.FromString,
+            response_serializer=diambra__pb2.EnvInfoAndIntData.SerializeToString,
+        ),
+        'Reset': grpc.unary_unary_rpc_method_handler(
+            servicer.Reset,
+            request_deserializer=diambra__pb2.Empty.FromString,
+            response_serializer=diambra__pb2.Obs.SerializeToString,
+        ),
+        'Step1P': grpc.unary_unary_rpc_method_handler(
+            servicer.Step1P,
+            request_deserializer=diambra__pb2.Command.FromString,
+            response_serializer=diambra__pb2.Obs.SerializeToString,
+        ),
+        'Step2P': grpc.unary_unary_rpc_method_handler(
+            servicer.Step2P,
+            request_deserializer=diambra__pb2.Command.FromString,
+            response_serializer=diambra__pb2.Obs.SerializeToString,
+        ),
+        'Close': grpc.unary_unary_rpc_method_handler(
+            servicer.Close,
+            request_deserializer=diambra__pb2.Empty.FromString,
+            response_serializer=diambra__pb2.Empty.SerializeToString,
+        ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'diambra.EnvServer', rpc_method_handlers)
+        'diambra.EnvServer', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
+# This class is part of an EXPERIMENTAL API.
 
- # This class is part of an EXPERIMENTAL API.
+
 class EnvServer(object):
     """The DIAMBRA service definition.
     """
 
     @staticmethod
     def EnvInit(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/diambra.EnvServer/EnvInit',
-            diambra__pb2.EnvSettings.SerializeToString,
-            diambra__pb2.EnvInfoAndIntData.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+                target,
+                options=(),
+                channel_credentials=None,
+                call_credentials=None,
+                insecure=False,
+                compression=None,
+                wait_for_ready=None,
+                timeout=None,
+                metadata=None):
+        return grpc.experimental.unary_unary(request, target,
+                                             '/diambra.EnvServer/EnvInit',
+                                             diambra__pb2.EnvSettings.SerializeToString,
+                                             diambra__pb2.EnvInfoAndIntData.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials,
+                                             compression, wait_for_ready,
+                                             timeout, metadata)
 
     @staticmethod
     def Reset(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/diambra.EnvServer/Reset',
-            diambra__pb2.Empty.SerializeToString,
-            diambra__pb2.Obs.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+              target,
+              options=(),
+              channel_credentials=None,
+              call_credentials=None,
+              insecure=False,
+              compression=None,
+              wait_for_ready=None,
+              timeout=None,
+              metadata=None):
+        return grpc.experimental.unary_unary(request, target,
+                                             '/diambra.EnvServer/Reset',
+                                             diambra__pb2.Empty.SerializeToString,
+                                             diambra__pb2.Obs.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials,
+                                             compression, wait_for_ready,
+                                             timeout, metadata)
 
     @staticmethod
     def Step1P(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/diambra.EnvServer/Step1P',
-            diambra__pb2.Command.SerializeToString,
-            diambra__pb2.Obs.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+               target,
+               options=(),
+               channel_credentials=None,
+               call_credentials=None,
+               insecure=False,
+               compression=None,
+               wait_for_ready=None,
+               timeout=None,
+               metadata=None):
+        return grpc.experimental.unary_unary(request, target,
+                                             '/diambra.EnvServer/Step1P',
+                                             diambra__pb2.Command.SerializeToString,
+                                             diambra__pb2.Obs.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials,
+                                             compression, wait_for_ready,
+                                             timeout, metadata)
 
     @staticmethod
     def Step2P(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/diambra.EnvServer/Step2P',
-            diambra__pb2.Command.SerializeToString,
-            diambra__pb2.Obs.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+               target,
+               options=(),
+               channel_credentials=None,
+               call_credentials=None,
+               insecure=False,
+               compression=None,
+               wait_for_ready=None,
+               timeout=None,
+               metadata=None):
+        return grpc.experimental.unary_unary(request, target,
+                                             '/diambra.EnvServer/Step2P',
+                                             diambra__pb2.Command.SerializeToString,
+                                             diambra__pb2.Obs.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials,
+                                             compression, wait_for_ready,
+                                             timeout, metadata)
 
     @staticmethod
     def Close(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/diambra.EnvServer/Close',
-            diambra__pb2.Empty.SerializeToString,
-            diambra__pb2.Empty.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+              target,
+              options=(),
+              channel_credentials=None,
+              call_credentials=None,
+              insecure=False,
+              compression=None,
+              wait_for_ready=None,
+              timeout=None,
+              metadata=None):
+        return grpc.experimental.unary_unary(request, target,
+                                             '/diambra.EnvServer/Close',
+                                             diambra__pb2.Empty.SerializeToString,
+                                             diambra__pb2.Empty.FromString,
+                                             options, channel_credentials,
+                                             insecure, call_credentials,
+                                             compression, wait_for_ready,
+                                             timeout, metadata)

@@ -1,6 +1,7 @@
 import diambraArena
 from diambraArena.utils.diambraGamepad import diambraGamepad
-import argparse, os
+import argparse
+import os
 from os.path import expanduser
 
 # Environment Settings
@@ -27,7 +28,8 @@ trajRecSettings["userName"] = "Alex"
 
 # Path where to save recorderd trajectories
 gameId = "doapp"
-trajRecSettings["filePath"] = os.path.join(homeDir, "diambraArena/trajRecordings", gameId)
+trajRecSettings["filePath"] = os.path.join(
+    homeDir, "diambraArena/trajRecordings", gameId)
 
 # If to ignore P2 trajectory (useful when collecting
 # only human trajectories while playing as a human against a RL agent)

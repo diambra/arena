@@ -1,13 +1,19 @@
-import sys, platform, os
+import sys
+import platform
+import os
 import numpy as np
 import gym
 from gym import spaces
-import pickle, bz2
+import pickle
+import bz2
 import copy
 import cv2
-from diambraArena.gymUtils import standardDictToGymObsDict, discreteToMultiDiscreteAction
+from diambraArena.gymUtils import standardDictToGymObsDict,\
+    discreteToMultiDiscreteAction
 
 # Diambra imitation learning environment
+
+
 class diambraImitationLearningBase(gym.Env):
     """Diambra Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
@@ -17,7 +23,9 @@ class diambraImitationLearningBase(gym.Env):
 
         # Check for number of files
         if totalCpus > len(trajFilesList):
-            raise Exception("Number of requested CPUs > number of recorded experience available files")
+            raise Exception(
+                "Number of requested CPUs > number of "
+                "recorded experience available files")
 
         # List of RL trajectories files
         self.trajFilesList = trajFilesList
@@ -39,11 +47,11 @@ class diambraImitationLearningBase(gym.Env):
         infile.close()
 
         # Observation and action space
-        self.frameH          = self.TmpRLTrajDict["frameShp"][0]
-        self.frameW          = self.TmpRLTrajDict["frameShp"][1]
-        self.frameNChannels  = self.TmpRLTrajDict["frameShp"][2]
-        self.nActions        = self.TmpRLTrajDict["nActions"]
-        self.actionSpace     = self.TmpRLTrajDict["actionSpace"]
+        self.frameH = self.TmpRLTrajDict["frameShp"][0]
+        self.frameW = self.TmpRLTrajDict["frameShp"][1]
+        self.frameNChannels = self.TmpRLTrajDict["frameShp"][2]
+        self.nActions = self.TmpRLTrajDict["nActions"]
+        self.actionSpace = self.TmpRLTrajDict["actionSpace"]
         # ---
 
         # Define action and observation space
@@ -67,10 +75,12 @@ class diambraImitationLearningBase(gym.Env):
             #     e.g. NOOP = [0], ButA = [1], ButB = [2], ButA+ButB = [3]
             #     or ignored:
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
-            self.action_space = spaces.Discrete(self.nActions[0] + self.nActions[1] - 1)
+            self.action_space = spaces.Discrete(
+                self.nActions[0] + self.nActions[1] - 1)
             print("Using Discrete action space")
         else:
-            raise Exception("Not recognized action space: {}".format(self.actionSpace))
+            raise Exception(
+                "Not recognized action space: {}".format(self.actionSpace))
 
         # If run out of examples
         self.exhausted = False
@@ -86,7 +96,7 @@ class diambraImitationLearningBase(gym.Env):
 
         print(self.RLTrajDict.keys())
 
-        print("Ep. length = {}".format(self.RLTrajDict["epLen"] ))
+        print("Ep. length = {}".format(self.RLTrajDict["epLen"]))
 
         for key, value in self.RLTrajDict.items():
             if type(value) == list and len(value) > 2:
@@ -177,16 +187,18 @@ class diambraImitationLearningBase(gym.Env):
             self.nActionsStack = self.RLTrajDict["nActionsStack"]
             self.playerSide = self.RLTrajDict["playerSide"]
             assert self.nActions == self.RLTrajDict["nActions"],\
-                "Recorded episode has {} actions".format(self.RLTrajDict["nActions"])
+                "Recorded episode has {} actions".format(
+                    self.RLTrajDict["nActions"])
             assert self.actionSpace == self.RLTrajDict["actionSpace"],\
-                "Recorded episode has {} action space".format(self.RLTrajDict["actionSpace"])
+                "Recorded episode has {} action space".format(
+                    self.RLTrajDict["actionSpace"])
 
         if self.playerSide == "P1P2":
 
             print("Two players RL trajectory")
 
             if self.nReset == 0:
-            # First reset for this trajectory
+                # First reset for this trajectory
 
                 print("Loading P1 data for 2P trajectory")
 
@@ -200,13 +212,13 @@ class diambraImitationLearningBase(gym.Env):
                         self.RLTrajDict["actions"][idx] = self.RLTrajDict["actions"][idx][0]
                     else:
                         self.RLTrajDict["actions"][idx] = [self.RLTrajDict["actions"][idx][0],
-                                                     self.RLTrajDict["actions"][idx][1]]
+                                                           self.RLTrajDict["actions"][idx][1]]
 
                 # Update reset counter
                 self.nReset += 1
 
             else:
-            # Second reset for this trajectory
+                # Second reset for this trajectory
 
                 print("Loading P2 data for 2P trajectory")
 
@@ -241,7 +253,8 @@ class diambraImitationLearningBase(gym.Env):
         for idx in range(self.RLTrajDict["epLen"]):
 
             # Rewards (inverting sign)
-            self.RLTrajDictP2["rewards"][idx] = -self.RLTrajDict["rewards"][idx]
+            self.RLTrajDictP2["rewards"][idx] = - \
+                self.RLTrajDict["rewards"][idx]
 
             # Actions (inverting sides)
             if (self.actionSpace == "discrete"):
@@ -254,8 +267,9 @@ class diambraImitationLearningBase(gym.Env):
     def render(self, mode='human'):
 
         if mode == "human":
-            windowName = "Diambra Imitation Learning Environment - {}".format(self.rank)
-            cv2.namedWindow(windowName,cv2.WINDOW_GUI_NORMAL)
+            windowName = "Diambra Imitation Learning Environment - {}".format(
+                self.rank)
+            cv2.namedWindow(windowName, cv2.WINDOW_GUI_NORMAL)
             cv2.imshow(windowName, self.lastObs)
             cv2.waitKey(1)
         elif mode == "rgb_array":
@@ -263,17 +277,21 @@ class diambraImitationLearningBase(gym.Env):
             return output
 
 # Diambra imitation learning environment
+
+
 class diambraImitationLearningHardCore(diambraImitationLearningBase):
     def __init__(self, trajFilesList, rank=0, totalCpus=1):
         super().__init__(trajFilesList, rank, totalCpus)
 
         # Observation space
-        playerSide     = self.TmpRLTrajDict["playerSide"]
+        playerSide = self.TmpRLTrajDict["playerSide"]
         obsSpaceBounds = self.TmpRLTrajDict["obsSpaceBounds"]
 
         # Create the observation space
-        self.observation_space = spaces.Box(low=obsSpaceBounds[0], high=obsSpaceBounds[1],
-                                            shape=(self.frameH, self.frameW, self.frameNChannels),
+        self.observation_space = spaces.Box(low=obsSpaceBounds[0],
+                                            high=obsSpaceBounds[1],
+                                            shape=(self.frameH, self.frameW,
+                                                   self.frameNChannels),
                                             dtype=np.float32)
 
     # Specific observation retrieval
@@ -281,56 +299,62 @@ class diambraImitationLearningHardCore(diambraImitationLearningBase):
         # Observation retrieval
         observation = np.zeros((self.frameH, self.frameW, self.frameNChannels))
         for iFrame in range(self.frameNChannels):
-            observation[:,:,iFrame] = self.RLTrajDict["frames"][self.stepIdx +
-                                                               self.shiftCounter + iFrame - resetShift]
+            observation[:, :, iFrame] = self.RLTrajDict["frames"][self.stepIdx +
+                                                                  self.shiftCounter + iFrame - resetShift]
         # Storing last observation for rendering
-        self.lastObs = observation[:,:,self.frameNChannels-1]
+        self.lastObs = observation[:, :, self.frameNChannels-1]
 
         return observation
 
     # Black screen
     def blackScreen(self, observation):
 
-       observation = np.zeros((self.frameH, self.frameW, self.frameNChannels))
+        observation = np.zeros((self.frameH, self.frameW, self.frameNChannels))
 
-       return observation
+        return observation
 
 # Diambra imitation learning environment
+
+
 class diambraImitationLearning(diambraImitationLearningBase):
     def __init__(self, trajFilesList, rank=0, totalCpus=1):
-        super().__init__( trajFilesList, rank, totalCpus)
+        super().__init__(trajFilesList, rank, totalCpus)
 
         # Observation space
-        playerSide           = self.TmpRLTrajDict["playerSide"]
+        playerSide = self.TmpRLTrajDict["playerSide"]
         self.observationSpaceDict = self.TmpRLTrajDict["observationSpaceDict"]
         # Remove P2 sub space from Obs Space
         if playerSide == "P1P2":
             self.observationSpaceDict.pop("P2")
 
         # Create the observation space
-        self.observation_space = standardDictToGymObsDict(self.observationSpaceDict)
+        self.observation_space = standardDictToGymObsDict(
+            self.observationSpaceDict)
 
     # Specific observation retrieval
     def obsRetrieval(self, resetShift=0):
         # Observation retrieval
-        observation = self.RLTrajDict["addObs"][self.stepIdx + 1 - resetShift].copy()
+        observation = self.RLTrajDict["addObs"][self.stepIdx +
+                                                1 - resetShift].copy()
 
         # Frame
-        observation["frame"] = np.zeros((self.frameH, self.frameW, self.frameNChannels))
+        observation["frame"] = np.zeros(
+            (self.frameH, self.frameW, self.frameNChannels))
         for iFrame in range(self.frameNChannels):
-            observation["frame"][:,:,iFrame] = self.RLTrajDict["frames"][self.stepIdx +
-                                                                self.shiftCounter + iFrame -resetShift]
+            observation["frame"][:, :, iFrame] = self.RLTrajDict["frames"][self.stepIdx +
+                                                                           self.shiftCounter + iFrame - resetShift]
         # Storing last observation for rendering
-        self.lastObs = observation["frame"][:,:,self.frameNChannels-1]
+        self.lastObs = observation["frame"][:, :, self.frameNChannels-1]
 
         return observation
 
     # Black screen
     def blackScreen(self, observation):
 
-       observation["frame"] = np.zeros((self.frameH, self.frameW, self.frameNChannels))
+        observation["frame"] = np.zeros(
+            (self.frameH, self.frameW, self.frameNChannels))
 
-       return observation
+        return observation
 
     # Generate P2 Experience from P1 one
     def generateP2ExperienceFromP1(self):
@@ -347,4 +371,3 @@ class diambraImitationLearning(diambraImitationLearningBase):
         for addObs in self.RLTrajDict["addObs"]:
             addObs.pop("P2")
             addObs["stage"] = 0
-
