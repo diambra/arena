@@ -1,9 +1,13 @@
-import sys, os, time, random
+import sys
+import os
+import time
+import random
 import numpy as np
 from collections import deque
 
 import gym
 from gym import spaces
+
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, noOpMax=6):
@@ -26,7 +30,8 @@ class NoopResetEnv(gym.Wrapper):
         assert noOps > 0
         obs = None
         noopAction = [0, 0, 0, 0]
-        if (self.env.actionSpace[0] == "discrete") and self.env.playerSide != "P1P2":
+        if (self.env.actionSpace[0] == "discrete"
+                and self.env.playerSide != "P1P2"):
             noopAction = 0
         for _ in range(noOps):
             obs, _, done, _ = self.env.step(noopAction)
@@ -37,18 +42,22 @@ class NoopResetEnv(gym.Wrapper):
     def step(self, action):
         return self.env.step(action)
 
+
 class StickyActionsEnv(gym.Wrapper):
     def __init__(self, env, stickyActions):
         """
         Apply sticky actions
         :param env: (Gym Environment) the environment to wrap
-        :param stickyActions: (int) number of steps during which the same action is sent
+        :param stickyActions: (int) number of steps
+               during which the same action is sent
         """
         gym.Wrapper.__init__(self, env)
         self.stickyActions = stickyActions
 
-        assert self.env.envSettings["stepRatio"] == 1, "StickyActions can be activated "\
-                                                       "only when stepRatio is set equal to 1"
+        assert self.env.envSettings["stepRatio"] == 1, "StickyActions can "\
+                                                       "be activated only "\
+                                                       "when stepRatio is "\
+                                                       "set equal to 1"
 
     def step(self, action):
 
@@ -58,10 +67,11 @@ class StickyActionsEnv(gym.Wrapper):
 
             obs, rewStep, done, info = self.env.step(action)
             rew += rewStep
-            if info["roundDone"] == True:
+            if info["roundDone"] is True:
                 break
 
         return obs, rew, done, info
+
 
 class ClipRewardEnv(gym.RewardWrapper):
     def __init__(self, env):
@@ -78,40 +88,52 @@ class ClipRewardEnv(gym.RewardWrapper):
         """
         return np.sign(reward)
 
+
 class NormalizeRewardEnv(gym.RewardWrapper):
     def __init__(self, env, rewardNormalizationFactor):
         """
-        Normalize the reward dividing by the 50% of the maximum character health variadtion (max - min).
+        Normalize the reward dividing it by the product of
+        rewardNormalizationFactor multiplied by
+        the maximum character health variadtion (max - min).
         :param env: (Gym Environment) the environment
+        :param rewardNormalizationFactor: multiplication factor
         """
         gym.RewardWrapper.__init__(self, env)
         self.env.rewardNormalizationValue = rewardNormalizationFactor*self.env.maxDeltaHealth
 
     def reward(self, reward):
         """
-        Nomralize reward dividing by reward normalization factor*maxDeltaHealth.
+        Nomralize reward dividing by reward normalization factor*maxDeltaHealth
         :param reward: (float)
         """
         return float(reward)/float(self.env.rewardNormalizationValue)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
+
+
 def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
                 rewardNormalization=False, rewardNormalizationFactor=0.5,
-                frameStack=1, actionsStack=1, scale=False, scaleMod = 0,
-                hwcObsResize = [84, 84, 0], dilation=1, hardCore=False):
+                frameStack=1, actionsStack=1, scale=False, scaleMod=0,
+                hwcObsResize=[84, 84, 0], dilation=1, hardCore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
-    :param player: player identification to discriminate between 1P and 2P games
-    :param noOpMax: (int) wrap the environment to perform noOpMax no action steps at reset
+    :param player: player identification to discriminate
+                   between 1P and 2P games
+    :param noOpMax: (int) wrap the environment to perform
+                    noOpMax no action steps at reset
     :param clipRewards: (bool) wrap the reward clipping wrapper
     :param rewardNormalization: (bool) if to activate reward noramlization
-    :param rewardNormalizationFactor: (double) noramlization factor for reward normalization wrapper
-    :param frameStack: (int) wrap the frame stacking wrapper using #frameStack frames
-    :param dilation (frame stacking): (int) stack one frame every #dilation frames, useful
-                                            to assure action every step considering a dilated
-                                            subset of previous frames
-    :param actionsStack: (int) wrap the frame stacking wrapper using #frameStack frames
+    :param rewardNormalizationFactor: (double) noramlization factor
+                                      for reward normalization wrapper
+    :param frameStack: (int) wrap the frame stacking wrapper
+                       using #frameStack frames
+    :param dilation (frame stacking): (int) stack one frame every
+                                      #dilation frames, useful to assure
+                                      action every step considering
+                                      a dilated subset of previous frames
+    :param actionsStack: (int) wrap the frame stacking wrapper
+                         using #frameStack frames
     :param scale: (bool) wrap the scaling observation wrapper
     :param scaleMod: (int) them scaling method: 0->[0,1] 1->[-1,1]
     :return: (Gym Environment) the wrapped diambra environment
@@ -124,22 +146,26 @@ def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
         env = StickyActionsEnv(env, stickyActions=stickyActions)
 
     if hardCore:
-        from diambraArena.wrappers.obsWrapperHardCore import WarpFrame, WarpFrame3C, FrameStack, FrameStackDilated,\
-                                                             ScaledFloatObsNeg, ScaledFloatObs
+        from diambraArena.wrappers.obsWrapperHardCore import WarpFrame,\
+            WarpFrame3C, FrameStack, FrameStackDilated,\
+            ScaledFloatObsNeg, ScaledFloatObs
     else:
-        from diambraArena.wrappers.obsWrapper import WarpFrame, WarpFrame3C, FrameStack, FrameStackDilated,\
-                                                     ActionsStack, ScaledFloatObsNeg, ScaledFloatObs
+        from diambraArena.wrappers.obsWrapper import WarpFrame, \
+            WarpFrame3C, FrameStack, FrameStackDilated,\
+            ActionsStack, ScaledFloatObsNeg, ScaledFloatObs
 
     if hwcObsResize[2] == 1:
-       # Resizing observation from H x W x 3 to hwObsResize[0] x hwObsResize[1] x 1
-       env = WarpFrame(env, hwcObsResize)
+        # Resizing observation from H x W x 3 to
+        # hwObsResize[0] x hwObsResize[1] x 1
+        env = WarpFrame(env, hwcObsResize)
     elif hwcObsResize[2] == 3:
-       # Resizing observation from H x W x 3 to hwObsResize[0] x hwObsResize[1] x hwObsResize[2]
-       env = WarpFrame3C(env, hwcObsResize)
+        # Resizing observation from H x W x 3 to
+        # hwObsResize[0] x hwObsResize[1] x hwObsResize[2]
+        env = WarpFrame3C(env, hwcObsResize)
 
     # Normalize rewards
     if rewardNormalization:
-       env = NormalizeRewardEnv(env, rewardNormalizationFactor)
+        env = NormalizeRewardEnv(env, rewardNormalizationFactor)
 
     # Clip rewards using sign function
     if clipRewards:
@@ -163,13 +189,14 @@ def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
     # Scales observations normalizing them
     if scale:
         if scaleMod == 0:
-           # Between 0.0 and 1.0
-           env = ScaledFloatObs(env)
+            # Between 0.0 and 1.0
+            env = ScaledFloatObs(env)
         elif scaleMod == -1:
-           # Between -1.0 and 1.0
-           raise RuntimeError("Scaling between -1.0 and 1.0 currently not implemented")
-           env = ScaledFloatObsNeg(env)
+            # Between -1.0 and 1.0
+            raise RuntimeError(
+                "Scaling between -1.0 and 1.0 currently not implemented")
+            env = ScaledFloatObsNeg(env)
         else:
-           raise ValueError("Scale mod musto be either 0 or -1")
+            raise ValueError("Scale mod musto be either 0 or -1")
 
     return env

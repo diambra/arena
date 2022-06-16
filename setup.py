@@ -1,4 +1,10 @@
-import platform, sys, os
+import distro
+from setuptools import setup, find_packages
+from setuptools.command.install import install
+import setuptools
+import platform
+import sys
+import os
 
 # Check if docker is installed
 if os.system("docker ps") != 0:
@@ -10,8 +16,8 @@ if os.system("docker ps") != 0:
     sys.exit(1)
 else:
     print("Downloading DIAMBRA Docker image")
-    #TODO: decomment
-    #os.system("docker pull diambra/diambraApp:main")
+    # TODO: decomment
+    # os.system("docker pull diambra/diambraApp:main")
 
 try:
     from pip import main as pipmain
@@ -19,29 +25,25 @@ except ImportError:
     from pip._internal import main as pipmain
 
 pipmain(['install', 'setuptools'])
-import setuptools
-from setuptools.command.install import install
-from setuptools import setup, find_packages
 pipmain(['install', 'distro'])
-import distro
 
-extras= {
-	'core': []
-	}
+extras = {
+    'core': []
+}
 
-#NOTE Package data is inside MANIFEST.In
+# NOTE Package data is inside MANIFEST.In
 
 setuptools.setup(
-        name='diambraArena',
-        url='https://github.com/diambra/diambraArena',
-        version='1.0',
-        author="DIAMBRA Team",
-        author_email="info@diambra.ai",
-        description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
-        long_description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
-        long_description_content_type="Reinforcement Learning",
-        license='GNU Affero GPL',
-        install_requires=[
+    name='diambraArena',
+    url='https://github.com/diambra/diambraArena',
+    version='1.0',
+    author="DIAMBRA Team",
+    author_email="info@diambra.ai",
+    description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
+    long_description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
+    long_description_content_type="Reinforcement Learning",
+    license='GNU Affero GPL',
+    install_requires=[
             'pip>=21',
             'setuptools',
             'distro>=1',
@@ -55,8 +57,9 @@ setuptools.setup(
             'opencv-python>=4.4.0.42',
             'grpcio',
             'grpcio-tools'],
-        #packages=['diambraArena','diambraArena/wrappers','diambraArena/utils'],
-        packages=[package for package in find_packages() if package.startswith("diambraArena")],
-        include_package_data=True,
-        extras_require=extras
-        )
+    # packages=['diambraArena','diambraArena/wrappers','diambraArena/utils'],
+        packages=[package for package in find_packages(
+        ) if package.startswith("diambraArena")],
+    include_package_data=True,
+    extras_require=extras
+)

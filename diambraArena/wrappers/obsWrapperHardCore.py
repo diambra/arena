@@ -1,39 +1,48 @@
-import sys, os, time, random
+from gym import spaces
+import gym
+import sys
+import os
+import time
+import random
 import numpy as np
 from collections import deque
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
 
-import gym
-from gym import spaces
 
 # Functions
+
 def WarpFrame3CFunc(frame, width, height):
     frame = cv2.resize(frame, (width, height),
-                       interpolation=cv2.INTER_LINEAR)[:,:,None]
+                       interpolation=cv2.INTER_LINEAR)[:, :, None]
     return frame
+
 
 def WarpFrameFunc(frame, width, height):
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
     return WarpFrame3CFunc(frame, width, height)
 
+
 def ScaledFloatObsFunc(observation):
     return np.array(observation).astype(np.float32) / 255.0
 
 # Env Wrappers classes
+
+
 class WarpFrame(gym.ObservationWrapper):
-    def __init__(self, env, hwObsResize = [84, 84]):
+    def __init__(self, env, hwObsResize=[84, 84]):
         """
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
         print("Warning: for speedup, avoid frame warping wrappers,")
         print("         use environment's native frame wrapping through")
-        print("        \"frameShape\" setting (see documentation for details).")
+        print("        \"frameShape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hwObsResize[1]
         self.height = hwObsResize[0]
-        self.observation_space = spaces.Box(low=0, high=255, shape=(self.height, self.width, 1),
+        self.observation_space = spaces.Box(low=0, high=255,
+                                            shape=(self.height, self.width, 1),
                                             dtype=env.observation_space.dtype)
 
     def observation(self, frame):
@@ -44,19 +53,21 @@ class WarpFrame(gym.ObservationWrapper):
         """
         return WarpFrameFunc(frame, self.width, self.height)
 
+
 class WarpFrame3C(gym.ObservationWrapper):
-    def __init__(self, env, hwObsResize = [224, 224]):
+    def __init__(self, env, hwObsResize=[224, 224]):
         """
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
         print("Warning: for speedup, avoid frame warping wrappers,")
         print("         use environment's native frame wrapping through")
-        print("        \"frameShape\" setting (see documentation for details).")
+        print("        \"frameShape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hwObsResize[1]
         self.height = hwObsResize[0]
-        self.observation_space = spaces.Box(low=0, high=255, shape=(self.height, self.width, 3),
+        self.observation_space = spaces.Box(low=0, high=255,
+                                            shape=(self.height, self.width, 3),
                                             dtype=env.observation_space.dtype)
 
     def observation(self, frame):
@@ -82,7 +93,9 @@ class FrameStack(gym.Wrapper):
         self.nFrames = nFrames
         self.frames = deque([], maxlen=nFrames)
         shp = env.observation_space.shape
-        self.observation_space = spaces.Box(low=0, high=255, shape=(shp[0], shp[1], shp[2] * nFrames),
+        self.observation_space = spaces.Box(low=0, high=255,
+                                            shape=(shp[0], shp[1],
+                                                   shp[2] * nFrames),
                                             dtype=env.observation_space.dtype)
 
     def reset(self, **kwargs):
@@ -97,8 +110,10 @@ class FrameStack(gym.Wrapper):
         obs, reward, done, info = self.env.step(action)
         self.frames.append(obs)
 
-        # Add last obs nFrames - 1 times in case of new round / stage / continueGame
-        if (info["roundDone"] or info["stageDone"] or info["gameDone"]) and not done:
+        # Add last obs nFrames - 1 times in case of
+        # new round / stage / continueGame
+        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+                and not done):
             for _ in range(self.nFrames - 1):
                 self.frames.append(obs)
 
@@ -123,10 +138,13 @@ class FrameStackDilated(gym.Wrapper):
         gym.Wrapper.__init__(self, env)
         self.nFrames = nFrames
         self.dilation = dilation
-        self.frames = deque([], maxlen=nFrames*dilation) # Keeping all nFrames*dilation in memory,
-                                                          # then extract the subset given by the dilation factor
+        # Keeping all nFrames*dilation in memory,
+        self.frames = deque([], maxlen=nFrames*dilation)
+        # then extract the subset given by the dilation factor
         shp = env.observation_space.shape
-        self.observation_space = spaces.Box(low=0, high=255, shape=(shp[0], shp[1], shp[2] * nFrames),
+        self.observation_space = spaces.Box(low=0, high=255,
+                                            shape=(shp[0], shp[1],
+                                                   shp[2] * nFrames),
                                             dtype=env.observation_space.dtype)
 
     def reset(self, **kwargs):
@@ -139,8 +157,10 @@ class FrameStackDilated(gym.Wrapper):
         obs, reward, done, info = self.env.step(action)
         self.frames.append(obs)
 
-        # Add last obs nFrames - 1 times in case of new round / stage / continueGame
-        if (info["roundDone"] or info["stageDone"] or info["gameDone"]) and not done:
+        # Add last obs nFrames - 1 times in case of
+        # new round / stage / continueGame
+        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+                and not done):
             for _ in range(self.nFrames*self.dilation - 1):
                 self.frames.append(obs)
 
@@ -151,20 +171,26 @@ class FrameStackDilated(gym.Wrapper):
         assert len(framesSubset) == self.nFrames
         return LazyFrames(list(framesSubset))
 
+
 class ScaledFloatObsNeg(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
-        self.observation_space = spaces.Box(low=-1.0, high=1.0, shape=env.observation_space.shape, dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=-1.0, high=1.0,
+            shape=env.observation_space.shape, dtype=np.float32)
 
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
         return (np.array(observation).astype(np.float32) / 127.5) - 1.0
 
+
 class ScaledFloatObs(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
-        self.observation_space = spaces.Box(low=0, high=1.0, shape=env.observation_space.shape, dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=0, high=1.0,
+            shape=env.observation_space.shape, dtype=np.float32)
 
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
@@ -172,13 +198,15 @@ class ScaledFloatObs(gym.ObservationWrapper):
 
         return ScaledFloatObsFunc(observation)
 
+
 class LazyFrames(object):
     def __init__(self, frames):
         """
-        This object ensures that common frames between the observations are only stored once.
-        It exists purely to optimize memory usage which can be huge for DQN's 1M frames replay
-        buffers.
-        This object should only be converted to np.ndarray before being passed to the model.
+        This object ensures that common frames between the observations
+        are only stored once. It exists purely to optimize memory usage
+        which can be huge for DQN's 1M frames replay buffers.
+        This object should only be converted to np.ndarray
+        before being passed to the model.
         :param frames: ([int] or [float]) environment frames
         """
         self.frames = frames
