@@ -168,7 +168,7 @@ class diambraGymHardCoreBase(gym.Env):
                 self.renderGuiStarted = True
                 waitKey = 100
 
-            cv2.imshow(self.windowName, self.frame)
+            cv2.imshow(self.windowName, self.frame[:,:,::-1])
             cv2.waitKey(waitKey)
         elif mode == "rgb_array":
             return self.frame
