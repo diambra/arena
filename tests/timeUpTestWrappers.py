@@ -38,7 +38,6 @@ if __name__ == '__main__':
         if opt.envAddress != "":
             settings["envAddress"] = opt.envAddress
         settings["player"] = "P1P2"
-        settings["player"] = "P1P2"
         settings["stepRatio"] = 3
         settings["frameShape"] = [128, 128, 1]
         settings["continueGame"] = opt.continueGame
