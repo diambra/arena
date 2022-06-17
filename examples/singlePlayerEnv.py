@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import diambraArena
-from diambraArena.gymUtils import showGymObs
+from diambraArena.gymUtils import show_gym_obs
 
 # Settings
 settings = {}
@@ -46,21 +46,21 @@ settings["attackButCombination"] = True
 env = diambraArena.make("doapp", settings)
 
 observation = env.reset()
-showGymObs(observation, env.charNames)
+show_gym_obs(observation, env.charNames)
 
 while True:
 
     actions = env.action_space.sample()
 
     observation, reward, done, info = env.step(actions)
-    showGymObs(observation, env.charNames)
+    show_gym_obs(observation, env.charNames)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
 
     if done:
         observation = env.reset()
-        showGymObs(observation, env.charNames)
+        show_gym_obs(observation, env.charNames)
         break
 
 env.close()

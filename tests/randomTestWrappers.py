@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import diambraArena
-from diambraArena.gymUtils import envSpacesSummary,\
-    discreteToMultiDiscreteAction, showWrapObs
+from diambraArena.gymUtils import env_spaces_summary,\
+    discrete_to_multi_discrete_action, show_wrap_obs
 import argparse
 import time
 import os
@@ -9,7 +9,7 @@ from os.path import expanduser
 import numpy as np
 
 if __name__ == '__main__':
-    timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
+    time_dep_seed = int((time.time()-int(time.time()-0.5))*1000)
 
     try:
         parser = argparse.ArgumentParser()
@@ -52,12 +52,12 @@ if __name__ == '__main__':
         opt = parser.parse_args()
         print(opt)
 
-        vizFlag = bool(opt.interactiveViz)
-        waitKey = 1
-        if vizFlag:
-            waitKey = 0
+        viz_flag = bool(opt.interactiveViz)
+        wait_key = 1
+        if viz_flag:
+            wait_key = 0
 
-        homeDir = expanduser("~")
+        home_dir = expanduser("~")
 
         # Settings
         settings = {}
@@ -85,50 +85,50 @@ if __name__ == '__main__':
             settings["attackButCombination"] = settings["attackButCombination"][0]
 
         # Recording settings
-        trajRecSettings = {}
-        trajRecSettings["userName"] = "Alex"
-        trajRecSettings["filePath"] = os.path.join(
-            homeDir, "DIAMBRA/trajRecordings", opt.gameId)
-        trajRecSettings["ignoreP2"] = 0
-        trajRecSettings["commitHash"] = "0000000"
+        traj_rec_settings = {}
+        traj_rec_settings["userName"] = "Alex"
+        traj_rec_settings["filePath"] = os.path.join(
+            home_dir, "DIAMBRA/trajRecordings", opt.gameId)
+        traj_rec_settings["ignoreP2"] = 0
+        traj_rec_settings["commitHash"] = "0000000"
 
         if opt.recordTraj == 0:
-            trajRecSettings = None
+            traj_rec_settings = None
 
         # Env wrappers settings
-        wrappersSettings = {}
-        wrappersSettings["noOpMax"] = 0
-        wrappersSettings["stickyActions"] = 1
-        wrappersSettings["rewardNormalization"] = True
-        wrappersSettings["clipRewards"] = False
-        wrappersSettings["frameStack"] = 4
-        wrappersSettings["dilation"] = 1
-        wrappersSettings["actionsStack"] = 12
-        wrappersSettings["scale"] = True
-        wrappersSettings["scaleMod"] = 0
+        wrappers_settings = {}
+        wrappers_settings["noOpMax"] = 0
+        wrappers_settings["stickyActions"] = 1
+        wrappers_settings["rewardNormalization"] = True
+        wrappers_settings["clipRewards"] = False
+        wrappers_settings["frameStack"] = 4
+        wrappers_settings["dilation"] = 1
+        wrappers_settings["actionsStack"] = 12
+        wrappers_settings["scale"] = True
+        wrappers_settings["scaleMod"] = 0
 
-        nRounds = 2
+        n_rounds = 2
         if opt.gameId == "kof98umh":
-            nRounds = 3
+            n_rounds = 3
 
-        hardCore = False if opt.hardCore == 0 else True
-        settings["hardCore"] = hardCore
+        hard_core = False if opt.hard_core == 0 else True
+        settings["hardCore"] = hard_core
 
-        env = diambraArena.make(opt.gameId, settings, wrappersSettings,
-                                trajRecSettings, seed=timeDepSeed)
+        env = diambraArena.make(opt.gameId, settings, wrappers_settings,
+                                traj_rec_settings, seed=time_dep_seed)
 
         # Print environment obs and action spaces summary
-        envSpacesSummary(env)
+        env_spaces_summary(env)
 
         observation = env.reset()
 
-        cumulativeEpRew = 0.0
-        cumulativeEpRewAll = []
+        cumulative_ep_rew = 0.0
+        cumulative_ep_rew_all = []
 
-        maxNumEp = opt.nEpisodes
-        currNumEp = 0
+        max_num_ep = opt.nEpisodes
+        curr_num_ep = 0
 
-        while currNumEp < maxNumEp:
+        while curr_num_ep < max_num_ep:
 
             actions = [None, None]
             if settings["player"] != "P1P2":
@@ -136,19 +136,19 @@ if __name__ == '__main__':
 
                 if opt.noAction == 1:
                     if settings["actionSpace"] == "multiDiscrete":
-                        for iEl, _ in enumerate(actions):
-                            actions[iEl] = 0
+                        for iel, _ in enumerate(actions):
+                            actions[iel] = 0
                     else:
                         actions = 0
 
                 if settings["actionSpace"] == "discrete":
-                    moveAction, attAction = discreteToMultiDiscreteAction(
+                    move_action, att_action = discrete_to_multi_discrete_action(
                         actions, env.nActions[0][0])
                 else:
-                    moveAction, attAction = actions[0], actions[1]
+                    move_action, att_action = actions[0], actions[1]
 
-                print("(P1) {} {}".format(env.printActionsDict[0][moveAction],
-                                          env.printActionsDict[1][attAction]))
+                print("(P1) {} {}".format(env.printActionsDict[0][move_action],
+                                          env.printActionsDict[1][att_action]))
 
             else:
                 for idx in range(2):
@@ -157,19 +157,19 @@ if __name__ == '__main__':
 
                     if opt.noAction == 1 and idx == 0:
                         if settings["actionSpace"][idx] == "multiDiscrete":
-                            for iEl, _ in enumerate(actions[idx]):
-                                actions[idx][iEl] = 0
+                            for iel, _ in enumerate(actions[idx]):
+                                actions[idx][iel] = 0
                         else:
                             actions[idx] = 0
 
                     if settings["actionSpace"][idx] == "discrete":
-                        moveAction, attAction = discreteToMultiDiscreteAction(
+                        move_action, att_action = discrete_to_multi_discrete_action(
                             actions[idx], env.nActions[idx][0])
                     else:
-                        moveAction, attAction = actions[idx][0], actions[idx][1]
+                        move_action, att_action = actions[idx][0], actions[idx][1]
 
-                    print("(P{}) {} {}".format(idx+1, env.printActionsDict[0][moveAction],
-                                               env.printActionsDict[1][attAction]))
+                    print("(P{}) {} {}".format(idx+1, env.printActionsDict[0][move_action],
+                                               env.printActionsDict[1][att_action]))
 
             if (settings["player"] == "P1P2"
                     or settings["actionSpace"] != "discrete"):
@@ -177,37 +177,37 @@ if __name__ == '__main__':
 
             observation, reward, done, info = env.step(actions)
 
-            cumulativeEpRew += reward
+            cumulative_ep_rew += reward
             print("action =", actions)
             print("reward =", reward)
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showWrapObs(
-                observation, wrappersSettings["actionsStack"],
-                env.charNames, waitKey, vizFlag)
+            show_wrap_obs(
+                observation, wrappers_settings["actionsStack"],
+                env.charNames, wait_key, viz_flag)
             print("--")
-            print("Current Cumulative Reward =", cumulativeEpRew)
+            print("Current Cumulative Reward =", cumulative_ep_rew)
 
             print("----------")
 
             if done:
                 print("Resetting Env")
-                currNumEp += 1
-                print("Ep. # = ", currNumEp)
-                print("Ep. Cumulative Rew # = ", cumulativeEpRew)
-                cumulativeEpRewAll.append(cumulativeEpRew)
-                cumulativeEpRew = 0.0
+                curr_num_ep += 1
+                print("Ep. # = ", curr_num_ep)
+                print("Ep. Cumulative Rew # = ", cumulative_ep_rew)
+                cumulative_ep_rew_all.append(cumulative_ep_rew)
+                cumulative_ep_rew = 0.0
 
                 observation = env.reset()
-                showWrapObs(
-                    observation, wrappersSettings["actionsStack"],
-                    env.charNames, waitKey, vizFlag)
+                show_wrap_obs(
+                    observation, wrappers_settings["actionsStack"],
+                    env.charNames, wait_key, viz_flag)
 
             if np.any([info["roundDone"], info["stageDone"],
                        info["gameDone"], info["epDone"]]):
 
-                if not hardCore:
+                if hard_core is False:
                     # Side check
                     if env.playerSide == "P2":
                         if (observation["P1"]["ownSide"] != 1.0
@@ -225,8 +225,8 @@ if __name__ == '__main__':
                     obs = observation
 
                 # Frames equality check
-                for frameIdx in range(obs.shape[2]-1):
-                    if np.any(obs[:, :, frameIdx] != obs[:, :, frameIdx+1]):
+                for frame_idx in range(obs.shape[2]-1):
+                    if np.any(obs[:, :, frame_idx] != obs[:, :, frame_idx+1]):
                         raise RuntimeError("Frames inside observation after "
                                            "round/stage/game/episode done are "
                                            "not equal. Dones =",
@@ -235,29 +235,29 @@ if __name__ == '__main__':
                                            info["gameDone"],
                                            info["epDone"])
 
-        print("Cumulative reward = ", cumulativeEpRewAll)
-        print("Mean cumulative reward = ", np.mean(cumulativeEpRewAll))
-        print("Std cumulative reward = ", np.std(cumulativeEpRewAll))
+        print("Cumulative reward = ", cumulative_ep_rew_all)
+        print("Mean cumulative reward = ", np.mean(cumulative_ep_rew_all))
+        print("Std cumulative reward = ", np.std(cumulative_ep_rew_all))
 
         env.close()
 
-        if len(cumulativeEpRewAll) != maxNumEp:
+        if len(cumulative_ep_rew_all) != max_num_ep:
             raise RuntimeError("Not run all episodes")
 
         if opt.continueGame <= 0.0:
-            maxContinue = int(-opt.continueGame)
+            max_continue = int(-opt.continueGame)
         else:
-            maxContinue = 0
+            max_continue = 0
 
         if opt.gameId == "tektagt":
-            maxContinue = (maxContinue + 1) * 0.7 - 1
+            max_continue = (max_continue + 1) * 0.7 - 1
 
         if (opt.noAction == 1
-                and np.mean(cumulativeEpRewAll) > -(maxContinue+1)*2*nRounds+0.001):
+                and np.mean(cumulative_ep_rew_all) > -(max_continue+1)*2*n_rounds+0.001):
             raise RuntimeError("NoAction policy and average "
                                "reward different than {} ({})".format(
-                                   -(maxContinue+1)*2*nRounds,
-                                   np.mean(cumulativeEpRewAll)))
+                                   -(max_continue+1)*2*n_rounds,
+                                   np.mean(cumulative_ep_rew_all)))
 
         print("ALL GOOD!")
     except Exception as e:

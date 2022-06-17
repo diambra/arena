@@ -1,8 +1,5 @@
-import distro
-from setuptools import setup, find_packages
-from setuptools.command.install import install
+from setuptools import find_packages
 import setuptools
-import platform
 import sys
 import os
 

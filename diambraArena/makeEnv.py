@@ -3,116 +3,116 @@ from diambraArena.diambraGym import makeGymEnv
 from diambraArena.wrappers.diambraWrappers import envWrapping
 
 
-def envSettingsCheck(envSettings):
+def env_settings_check(env_settings):
 
     # Default parameters
-    maxCharToSelect = 3
+    max_char_to_select = 3
 
-    defaultEnvSettings = {}
-    defaultEnvSettings["gameId"] = "doapp"
-    defaultEnvSettings["player"] = "Random"
-    defaultEnvSettings["continueGame"] = 0.0
-    defaultEnvSettings["showFinal"] = True
-    defaultEnvSettings["stepRatio"] = 6
-    defaultEnvSettings["difficulty"] = 3
-    defaultEnvSettings["characters"] = [
-        ["Random" for iChar in range(maxCharToSelect)] for iPlayer in range(2)]
-    defaultEnvSettings["charOutfits"] = [2, 2]
-    defaultEnvSettings["frameShape"] = [0, 0, 0]
-    defaultEnvSettings["actionSpace"] = "multiDiscrete"
-    defaultEnvSettings["attackButCombination"] = True
+    defaultenv_settings = {}
+    defaultenv_settings["game_id"] = "doapp"
+    defaultenv_settings["player"] = "Random"
+    defaultenv_settings["continueGame"] = 0.0
+    defaultenv_settings["showFinal"] = True
+    defaultenv_settings["stepRatio"] = 6
+    defaultenv_settings["difficulty"] = 3
+    defaultenv_settings["characters"] = [
+        ["Random" for ichar in range(max_char_to_select)] for iplayer in range(2)]
+    defaultenv_settings["charOutfits"] = [2, 2]
+    defaultenv_settings["frameShape"] = [0, 0, 0]
+    defaultenv_settings["actionSpace"] = "multiDiscrete"
+    defaultenv_settings["attackButCombination"] = True
 
     # SFIII Specific
-    defaultEnvSettings["superArt"] = [0, 0]
+    defaultenv_settings["superArt"] = [0, 0]
 
     # UMK3 Specific
-    defaultEnvSettings["tower"] = 3
+    defaultenv_settings["tower"] = 3
 
     # KOF Specific
-    defaultEnvSettings["fightingStyle"] = [0, 0]
-    defaultEnvSettings["ultimateStyle"] = [[0, 0, 0], [0, 0, 0]]
+    defaultenv_settings["fightingStyle"] = [0, 0]
+    defaultenv_settings["ultimateStyle"] = [[0, 0, 0], [0, 0, 0]]
 
-    defaultEnvSettings["hardCore"] = False
-    defaultEnvSettings["disableKeyboard"] = True
-    defaultEnvSettings["disableJoystick"] = True
-    defaultEnvSettings["rank"] = 0
-    defaultEnvSettings["recordConfigFile"] = "\"\""
+    defaultenv_settings["hardCore"] = False
+    defaultenv_settings["disableKeyboard"] = True
+    defaultenv_settings["disableJoystick"] = True
+    defaultenv_settings["rank"] = 0
+    defaultenv_settings["recordConfigFile"] = "\"\""
 
-    for k, v in envSettings.items():
+    for k, v in env_settings.items():
 
         # Check for characters
         if k == "characters":
-            for iPlayer in range(2):
-                for iChar in range(len(v[iPlayer]), maxCharToSelect):
-                    v[iPlayer].append("Random")
+            for iplayer in range(2):
+                for ichar in range(len(v[iplayer]), max_char_to_select):
+                    v[iplayer].append("Random")
 
-        defaultEnvSettings[k] = v
+        defaultenv_settings[k] = v
 
-    if defaultEnvSettings["player"] != "P1P2":
-        defaultEnvSettings["actionSpace"] = [defaultEnvSettings["actionSpace"],
-                                             defaultEnvSettings["actionSpace"]]
-        defaultEnvSettings["attackButCombination"] = [defaultEnvSettings["attackButCombination"],
-                                                      defaultEnvSettings["attackButCombination"]]
+    if defaultenv_settings["player"] != "P1P2":
+        defaultenv_settings["actionSpace"] = [defaultenv_settings["actionSpace"],
+                                              defaultenv_settings["actionSpace"]]
+        defaultenv_settings["attackButCombination"] = [defaultenv_settings["attackButCombination"],
+                                                       defaultenv_settings["attackButCombination"]]
     else:
         for key in ["actionSpace", "attackButCombination"]:
-            if type(defaultEnvSettings[key]) != list:
-                defaultEnvSettings[key] = [defaultEnvSettings[key],
-                                           defaultEnvSettings[key]]
+            if type(defaultenv_settings[key]) != list:
+                defaultenv_settings[key] = [defaultenv_settings[key],
+                                            defaultenv_settings[key]]
 
-    return defaultEnvSettings
+    return defaultenv_settings
 
 
-def make(gameId, envSettings={}, wrappersSettings={},
-         trajRecSettings=None, seed=42, rank=0):
+def make(game_id, env_settings={}, wrappers_settings={},
+         traj_rec_settings=None, seed=42, rank=0):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
-    :param wrappersSettings: (dict) the parameters for envWrapping function
+    :param wrappers_settings: (dict) the parameters for envWrapping function
     """
 
-    # Include gameId in envSettings
-    envSettings["gameId"] = gameId
+    # Include game_id in env_settings
+    env_settings["game_id"] = game_id
 
     # Check if DIAMBRA_ENVS var present
-    envAddresses = os.getenv("DIAMBRA_ENVS", "").split()
-    if len(envAddresses) >= 1:  # If present
-        # Check if there are at least n envAddresses as the prescribed rank
-        if len(envAddresses) < rank+1:
+    env_addresses = os.getenv("DIAMBRA_ENVS", "").split()
+    if len(env_addresses) >= 1:  # If present
+        # Check if there are at least n env_addresses as the prescribed rank
+        if len(env_addresses) < rank+1:
             print(
                 "ERROR: Rank of env client is higher "
-                "than the available envAddresses servers:")
-            print("       # of env servers: {}".format(len(envAddresses)))
+                "than the available env_addresses servers:")
+            print("       # of env servers: {}".format(len(env_addresses)))
             print("       # rank of client: {} (0-based index)".format(rank))
             raise Exception("Wrong number of env servers vs clients")
     else:  # If not present, set default value
-        if "envAddress" not in envSettings:
-            envAddresses = ["localhost:50051"]
+        if "envAddress" not in env_settings:
+            env_addresses = ["localhost:50051"]
         else:
-            envAddresses = [envSettings["envAddress"]]
+            env_addresses = [env_settings["envAddress"]]
 
-    envSettings["envAddress"] = envAddresses[rank]
-    envSettings["rank"] = rank
+    env_settings["envAddress"] = env_addresses[rank]
+    env_settings["rank"] = rank
 
     # Checking settings and setting up default ones
-    envSettings = envSettingsCheck(envSettings)
+    env_settings = env_settings_check(env_settings)
 
     # Initialize random seed
-    env, player = makeGymEnv(envSettings)
+    env, player = makeGymEnv(env_settings)
 
     # Initialize random seed
     env.seed(seed)
 
     # Apply environment wrappers
-    env = envWrapping(env, player, **wrappersSettings,
-                      hardCore=envSettings["hardCore"])
+    env = envWrapping(env, player, **wrappers_settings,
+                      hardCore=env_settings["hardCore"])
 
     # Apply trajectories recorder wrappers
-    if trajRecSettings is not None:
-        if envSettings["hardCore"]:
+    if traj_rec_settings is not None:
+        if env_settings["hardCore"]:
             from diambraArena.wrappers.trajRecWrapperHardCore import TrajectoryRecorder
         else:
             from diambraArena.wrappers.trajRecWrapper import TrajectoryRecorder
 
-        env = TrajectoryRecorder(env, **trajRecSettings)
+        env = TrajectoryRecorder(env, **traj_rec_settings)
 
     return env

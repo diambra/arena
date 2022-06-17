@@ -5,12 +5,12 @@ import random
 # No action policy
 
 
-class noActionPolicy(object):
+class NoActionPolicy(object):
 
-    def __init__(self, name="No Action", actionSpace="multiDiscrete"):
+    def __init__(self, name="No Action", action_space="multiDiscrete"):
         self.id = "noAction"
         self.name = name
-        self.actionSpace = actionSpace
+        self.action_space = action_space
 
     def initialize(self):
         pass
@@ -20,7 +20,7 @@ class noActionPolicy(object):
 
     def act(self, observation, info=None):
 
-        if self.actionSpace == "multiDiscrete":
+        if self.action_space == "multiDiscrete":
             prob = [1.0, 1.0]
             action = [0, 0]
         else:
@@ -32,13 +32,13 @@ class noActionPolicy(object):
 # Random policy, sampling from the action space
 
 
-class randomPolicy(object):
+class RandomPolicy(object):
 
-    def __init__(self, nActions, name="Random", actionSpace="multiDiscrete"):
-        self.nActions = np.array(nActions)
+    def __init__(self, n_actions, name="Random", action_space="multiDiscrete"):
+        self.n_actions = np.array(n_actions)
         self.id = "random"
         self.name = name
-        self.actionSpace = actionSpace
+        self.action_space = action_space
 
     def initialize(self):
         pass
@@ -48,14 +48,14 @@ class randomPolicy(object):
 
     def act(self, observation, info=None):
 
-        prob = 1.0/self.nActions
+        prob = 1.0/self.n_actions
 
-        if self.actionSpace == "discrete":
-            action = random.randrange(self.nActions[0]+self.nActions[1]-1)
+        if self.action_space == "discrete":
+            action = random.randrange(self.n_actions[0]+self.n_actions[1]-1)
         else:
             action = []
-            for idx in range(self.nActions.shape[0]):
-                action.append(random.randrange(self.nActions[idx]))
+            for idx in range(self.n_actions.shape[0]):
+                action.append(random.randrange(self.n_actions[idx]))
 
         return action, prob
 
@@ -64,15 +64,15 @@ class randomPolicy(object):
 
 class RLPolicy(object):
 
-    def __init__(self, model, deterministicFlag,
-                 nActions, name="Generic RL", actionSpace="multiDiscrete"):
+    def __init__(self, model, deterministic_flag,
+                 n_actions, name="Generic RL", action_space="multiDiscrete"):
 
-        self.nActions = nActions
-        self.deterministicFlag = deterministicFlag
+        self.n_actions = n_actions
+        self.deterministic_flag = deterministic_flag
         self.model = model
         self.id = "rl"
         self.name = name
-        self.actionSpace = actionSpace
+        self.action_space = action_space
 
     def initialize(self):
         pass
@@ -80,30 +80,30 @@ class RLPolicy(object):
     def reset(self, observation):
         pass
 
-    def updateWeights(self, wPath):
-        print("Loading new weights: {}".format(wPath))
-        self.model.load_parameters(wPath)
+    def update_weights(self, weights_path):
+        print("Loading new weights: {}".format(weights_path))
+        self.model.load_parameters(weights_path)
 
     def act(self, observation, info=None):
         action_prob = self.model.action_probability(observation)
 
-        # if self.deterministicFlag:
+        # if self.deterministic_flag:
         #   action = np.argmax(action_prob)
         # else:
-        #   if self.actionSpace == "discrete":
+        #   if self.action_space == "discrete":
         #       action = np.random.choice([x for x in range(len(action_prob))],
         #                                 p=action_prob)
         #   else:
         #       action = self.model.predict(observation,
-        #                                   deterministic=self.deterministicFlag)
+        #                                   deterministic=self.deterministic_flag)
         action, _ = self.model.predict(
-            observation, deterministic=self.deterministicFlag)
+            observation, deterministic=self.deterministic_flag)
         action = action.tolist()
 
         prob = action_prob
-        if self.actionSpace == "discrete":
+        if self.action_space == "discrete":
 
-            if action >= self.nActions[0]:
+            if action >= self.n_actions[0]:
                 prob = [0.0, action_prob[action]]
             else:
                 prob = [action_prob[action], 0.0]
@@ -120,25 +120,25 @@ class RLPolicy(object):
 # Human policy, retrieved via GamePad
 
 
-class gamepadPolicy(object):
+class GamepadPolicy(object):
 
-    def __init__(self, gamepadClass, name="Human"):
-        self.gamePadClass = gamepadClass
+    def __init__(self, gamepad_class, name="Human"):
+        self.gamepad_class = gamepad_class
         self.id = "gamepad"
         self.initialized = False
         self.name = name
 
-    def initialize(self, actionList, gamepadNum=0):
+    def initialize(self, action_list, gamepad_num=0):
         if not self.initialized:
-            self.gamePad = self.gamePadClass(actionList=actionList,
-                                             gamepadNum=gamepadNum)
+            self.gamePad = self.gamepad_class(action_list=action_list,
+                                              gamepad_num=gamepad_num)
             self.gamePad.start()
             self.initialized = True
 
     def reset(self, observation):
         pass
 
-    def getActions(self):
+    def get_actions(self):
         return self.gamePad.getActions()
 
     def act(self, observation, info=None):
