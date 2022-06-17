@@ -5,7 +5,6 @@ import numpy as np
 import pickle
 import bz2
 import cv2
-import numpy as np
 import json
 from threading import Thread
 import hashlib
@@ -13,39 +12,39 @@ import hashlib
 # Save compressed pickle files in parallel
 
 
-class parallelPickleWriter(Thread):  # def class typr thread
-    def __init__(self, savePath, toSave):
+class ParallelPickleWriter(Thread):  # def class typr thread
+    def __init__(self, save_path, to_save):
         Thread.__init__(self)   # thread init class (don't forget this)
 
-        self.savePath = savePath
-        self.toSave = toSave
+        self.save_path = save_path
+        self.to_save = to_save
 
     def run(self):      # run is a default Thread function
-        outfile = bz2.BZ2File(self.savePath, 'w')
-        print("Writing RL Trajectory to {} ...".format(self.savePath))
-        pickle.dump(self.toSave, outfile)
+        outfile = bz2.BZ2File(self.save_path, 'w')
+        print("Writing RL Trajectory to {} ...".format(self.save_path))
+        pickle.dump(self.to_save, outfile)
         print("... done.")
         outfile.close()
 
 # Recursive nested dict print
 
 
-def nestedDictObsSpace(space, kList=[], level=0):
+def nested_dict_obs_space(space, k_list=[], level=0):
     for k in space.spaces:
         v = space[k]
         if isinstance(v, gym.spaces.dict.Dict):
-            kList = kList[0:level]
-            kList.append(k)
-            nestedDictObsSpace(v, kList, level=level+1)
+            k_list = k_list[0:level]
+            k_list.append(k)
+            nested_dict_obs_space(v, k_list, level=level+1)
         else:
-            kList = kList[0:level]
-            outString = "observation_space"
+            k_list = k_list[0:level]
+            out_string = "observation_space"
             indentation = "    "*level
-            for idK in kList:
-                outString += "[\"{}\"]".format(idK)
-            outString += "[\"{}\"]".format(k)
-            outString = indentation+outString+":"
-            print(outString, v)
+            for idk in k_list:
+                out_string += "[\"{}\"]".format(idk)
+            out_string += "[\"{}\"]".format(k)
+            out_string = indentation+out_string+":"
+            print(out_string, v)
             if isinstance(v, gym.spaces.MultiDiscrete):
                 print(indentation+"Space size:", v.nvec.shape)
             elif isinstance(v, gym.spaces.Discrete):
@@ -58,13 +57,13 @@ def nestedDictObsSpace(space, kList=[], level=0):
 
 
 # Print out environment spaces summary
-def envSpacesSummary(env):
+def env_spaces_summary(env):
 
     # Printing out observation space description
     print("Observation space:")
     print("")
     if isinstance(env.observation_space, gym.spaces.dict.Dict):
-        nestedDictObsSpace(env.observation_space)
+        nested_dict_obs_space(env.observation_space)
     else:
         print("observation_space:", env.observation_space)
         print("    Space type =", env.observation_space.dtype)
@@ -94,52 +93,52 @@ def envSpacesSummary(env):
 # Utility to convert a Gym compliant Dict Space to a standard Dict
 
 
-def gymObsDictSpaceToStandardDict(observationSpaceDict):
+def gym_obs_dict_space_to_standard_dict(observation_space_dict):
 
-    standardDict = {}
+    standard_dict = {}
 
     # Looping among all Dict items
-    for k, v in observationSpaceDict.spaces.items():
+    for k, v in observation_space_dict.spaces.items():
         if isinstance(v, gym.spaces.dict.Dict):
-            standardDict[k] = gymObsDictSpaceToStandardDict(v)
+            standard_dict[k] = gym_obs_dict_space_to_standard_dict(v)
         else:
-            standardDict[k] = v
+            standard_dict[k] = v
 
-    return standardDict
+    return standard_dict
 
 # Utility to create a Gym compliant Dict Space from the InternalObsDict
 
 
-def standardDictToGymObsDict(obsStandardDict):
+def standard_dict_to_gym_obs_dict(obsstandard_dict):
 
-    for k, v in obsStandardDict.items():
+    for k, v in obsstandard_dict.items():
         if isinstance(v, dict):
-            obsStandardDict[k] = standardDictToGymObsDict(v)
+            obsstandard_dict[k] = standard_dict_to_gym_obs_dict(v)
         else:
-            obsStandardDict[k] = v
+            obsstandard_dict[k] = v
 
-    return spaces.Dict(obsStandardDict)
+    return spaces.Dict(obsstandard_dict)
 
 
 # Discrete to multidiscrete action conversion
-def discreteToMultiDiscreteAction(action, nMoveActions):
+def discrete_to_multi_discrete_action(action, n_move_actions):
 
-    movAct = 0
-    attAct = 0
+    mov_act = 0
+    att_act = 0
 
-    if action <= nMoveActions - 1:
+    if action <= n_move_actions - 1:
         # Move action or no action
-        movAct = action  # For example, for DOA++ this can be 0 - 8
+        mov_act = action  # For example, for DOA++ this can be 0 - 8
     else:
         # Attack action
-        attAct = action - nMoveActions + 1  # E.g. for DOA++ this can be 1 - 7
+        att_act = action - n_move_actions + 1  # E.g. for DOA++ this can be 1 - 7
 
-    return movAct, attAct
+    return mov_act, att_act
 
 # Visualize Gym Obs content
 
 
-def showGymObs(observation, charList, waitKey=1, viz=True):
+def show_gym_obs(observation, char_list, wait_key=1, viz=True):
     if type(observation) == dict:
         for k, v in observation.items():
             if k != "frame":
@@ -147,7 +146,7 @@ def showGymObs(observation, charList, waitKey=1, viz=True):
                     for k2, v2 in v.items():
                         if "ownChar" in k2 or "oppChar" in k2:
                             print("observation[\"{}\"][\"{}\"]: {}".format(
-                                k, k2, charList[v2]))
+                                k, k2, char_list[v2]))
                         else:
                             print(
                                 "observation[\"{}\"][\"{}\"]: {}".format(k, k2, v2))
@@ -165,12 +164,12 @@ def showGymObs(observation, charList, waitKey=1, viz=True):
 
     if viz:
         cv2.imshow("Frame", obs[:, :, ::-1])  # rgb2bgr
-        cv2.waitKey(waitKey)
+        cv2.wait_key(wait_key)
 
 # Visualize Obs content
 
 
-def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
+def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True):
     if type(observation) == dict:
         for k, v in observation.items():
             if k != "frame":
@@ -181,10 +180,10 @@ def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
                                 print("observation[\"{}\"][\"{}\"][\"{}\"]:\n{}"
                                       .format(k, k2, k3,
                                               np.reshape(v3,
-                                                         [nActionsStack, -1])))
+                                                         [n_actions_stack, -1])))
                         elif "ownChar" in k2 or "oppChar" in k2:
                             print("observation[\"{}\"][\"{}\"]: {} / {}".format(k, k2, v2,
-                                                                                charList[np.where(v2 == 1)[0][0]]))
+                                                                                char_list[np.where(v2 == 1)[0][0]]))
                         else:
                             print(
                                 "observation[\"{}\"][\"{}\"]: {}".format(k, k2, v2))
@@ -204,21 +203,21 @@ def showWrapObs(observation, nActionsStack, charList, waitKey=1, viz=True):
         for idx in range(obs.shape[2]):
             cv2.imshow("Frame-"+str(idx), obs[:, :, idx])
 
-        cv2.waitKey(waitKey)
+        cv2.wait_key(wait_key)
 
 # List all available games
 
 
-def availableGames(printOut=True, details=False):
-    basePath = os.path.dirname(os.path.abspath(__file__))
-    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
-    gamesFile = open(gamesFilePath)
-    gamesDict = json.load(gamesFile)
+def available_games(print_out=True, details=False):
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    games_file_path = os.path.join(base_path, 'utils/integratedGames.json')
+    games_file = open(games_file_path)
+    games_dict = json.load(games_file)
 
-    if printOut:
-        for k, v in gamesDict.items():
+    if print_out:
+        for k, v in games_dict.items():
             print("")
-            print(" Title: {} - GameId: {}".format(v["name"], v["id"]))
+            print(" Title: {} - game_id: {}".format(v["name"], v["id"]))
             print(
                 "   Difficulty levels: Min {} - Max {}".format(v["difficulty"][0], v["difficulty"][1]))
             if details:
@@ -229,27 +228,27 @@ def availableGames(printOut=True, details=False):
                 if v["notes"] != "":
                     print("   " + "\033[91m\033[4m\033[1m" +
                           "Notes: {}".format(v["notes"]) + "\033[0m")
-                print("   Characters list: {}".format(v["charList"]))
+                print("   Characters list: {}".format(v["char_list"]))
     else:
-        return gamesDict
+        return games_dict
 
 # List sha256 per game
 
 
-def gameSha256(gameId=None):
+def game_sha_256(game_id=None):
 
-    basePath = os.path.dirname(os.path.abspath(__file__))
-    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
-    gamesFile = open(gamesFilePath)
-    gamesDict = json.load(gamesFile)
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    games_file_path = os.path.join(base_path, 'utils/integratedGames.json')
+    games_file = open(games_file_path)
+    games_dict = json.load(games_file)
 
-    if gameId is None:
-        for k, v in gamesDict.items():
+    if game_id is None:
+        for k, v in games_dict.items():
             print("")
             print(" Title: {}\n ID: {}\n SHA256: {}".format(
                 v["name"], v["id"], v["sha256"]))
     else:
-        v = gamesDict[gameId]
+        v = games_dict[game_id]
         print(" Title: {}\n ID: {}\n SHA256: {}".format(
             v["name"], v["id"], v["sha256"]))
 
@@ -264,20 +263,20 @@ def sha256_checksum(filename, block_size=65536):
     return sha256.hexdigest()
 
 
-def checkGameSha256(path, gameId=None):
+def checkgame_sha_256(path, game_id=None):
 
-    basePath = os.path.dirname(os.path.abspath(__file__))
-    gamesFilePath = os.path.join(basePath, 'utils/integratedGames.json')
-    gamesFile = open(gamesFilePath)
-    gamesDict = json.load(gamesFile)
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    games_file_path = os.path.join(base_path, 'utils/integratedGames.json')
+    games_file = open(games_file_path)
+    games_dict = json.load(games_file)
 
-    fileChecksum = sha256_checksum(path)
+    file_checksum = sha256_checksum(path)
 
-    if gameId is None:
+    if game_id is None:
 
         found = False
-        for k, v in gamesDict.items():
-            if fileChecksum == v["sha256"]:
+        for k, v in games_dict.items():
+            if file_checksum == v["sha256"]:
                 found = True
                 print("Correct ROM file for {}, sha256 = {}".format(
                     v["name"], v["sha256"]))
@@ -285,10 +284,10 @@ def checkGameSha256(path, gameId=None):
         if found is False:
             print("ERROR: ROM file not valid")
     else:
-        if fileChecksum == gamesDict[gameId]["sha256"]:
+        if file_checksum == games_dict[game_id]["sha256"]:
             print("Correct ROM file for {}, sha256 = {}".format(
-                gamesDict[gameId]["name"], gamesDict[gameId]["sha256"]))
+                games_dict[game_id]["name"], games_dict[game_id]["sha256"]))
         else:
             print("Expected  SHA256 Checksum: {}".format(
-                gamesDict[gameId]["sha256"]))
-            print("Retrieved SHA256 Checksum: {}".format(fileChecksum))
+                games_dict[game_id]["sha256"]))
+            print("Retrieved SHA256 Checksum: {}".format(file_checksum))

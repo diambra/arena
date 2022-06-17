@@ -1,15 +1,11 @@
-import sys
 import os
 import tkinter as tk
 import screeninfo
-import time
-import sys
-import os
 
-gifFilePath = os.path.join(os.path.dirname(__file__), ".splashScreen.gif")
+gif_file_path = os.path.join(os.path.dirname(__file__), ".splashScreen.gif")
 
 
-def getMonitorFromCoord(x, y):
+def get_monitor_from_coord(x, y):
     monitors = screeninfo.get_monitors()
 
     for m in reversed(monitors):
@@ -20,42 +16,42 @@ def getMonitorFromCoord(x, y):
 # Class to manage gampad
 
 
-class DIAMBRASplashScreen():
-    def __init__(self, timeInterval=100, timeout=5000):
+class DiambraSplashScreen():
+    def __init__(self, time_interval=100, timeout=5000):
 
         self.timeout = timeout
-        self.timeInterval = timeInterval
-        # self.labels = (t*"\u25AE" for t in range(int((timeout-750)/timeInterval)))
-        self.labels = (t*"" for t in range(int((timeout-750)/timeInterval)))
-        self.labelsEmpty = (int((timeout-750)/timeInterval)-1)*"\u25AF"
+        self.time_interval = time_interval
+        # self.labels = (t*"\u25AE" for t in range(int((timeout-750)/time_interval)))
+        self.labels = (t*"" for t in range(int((timeout-750)/time_interval)))
+        self.labelsEmpty = (int((timeout-750)/time_interval)-1)*"\u25AF"
 
         self.window = tk.Tk()
         self.window.overrideredirect(True)
         self.window.wm_attributes("-topmost", True)
 
         # Get the screen which contains top
-        currentScreen = getMonitorFromCoord(
+        current_screen = get_monitor_from_coord(
             self.window.winfo_x(), self.window.winfo_y())
 
         # Get the monitor's size
-        width = currentScreen.width
-        height = currentScreen.height
+        width = current_screen.width
+        height = current_screen.height
 
-        image = tk.PhotoImage(file=gifFilePath)
-        hwDim = [image.height(), image.width()]
+        image = tk.PhotoImage(file=gif_file_path)
+        hw_dim = [image.height(), image.width()]
         self.window.geometry(
-            '%dx%d+%d+%d' % (hwDim[1], hwDim[0],
-                             (width - hwDim[1])/2, (height - hwDim[0])/2))
+            '%dx%d+%d+%d' % (hw_dim[1], hw_dim[0],
+                             (width - hw_dim[1])/2, (height - hw_dim[0])/2))
 
         self.canvas = tk.Canvas(
-            self.window, height=hwDim[0], width=hwDim[1],
+            self.window, height=hw_dim[0], width=hw_dim[1],
             bg="brown", bd=0, highlightthickness=0)
-        self.canvas.create_image(hwDim[1]/2, hwDim[0]/2, image=image)
+        self.canvas.create_image(hw_dim[1]/2, hw_dim[0]/2, image=image)
         self.emptyText = self.canvas.create_text(
-            30, hwDim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
+            30, hw_dim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
         # self.canvas.itemconfigure(self.emptyText, text=self.labelsEmpty)
         self.loadText = self.canvas.create_text(
-            30, hwDim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
+            30, hw_dim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
 
         self.canvas.pack()
         self.updateText()
@@ -64,14 +60,14 @@ class DIAMBRASplashScreen():
 
         return
 
-    def updateText(self):
+    def update_text(self):
         try:
             self.canvas.itemconfigure(self.loadText, text=next(self.labels))
-            self.window.after(self.timeInterval, self.updateText)
+            self.window.after(self.time_interval, self.updateText)
         except StopIteration:
             pass
 
 
 if __name__ == "__main__":
 
-    splashScreen = DIAMBRASplashScreen()
+    splash_screen = DiambraSplashScreen()

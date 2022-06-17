@@ -2,12 +2,10 @@
 import diambraArena
 import argparse
 import time
-import os
 import numpy as np
 
 
 def reject_outliers(data):
-    m = 2
     u = np.mean(data)
     s = np.std(data)
     filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
@@ -41,31 +39,31 @@ if __name__ == '__main__':
         settings["attackButCombination"] = opt.attButComb
 
         # Recording settings
-        trajRecSettings = None
+        traj_rec_settings = None
 
         # Env wrappers settings
-        wrappersSettings = {}
-        wrappersSettings["noOpMax"] = 0
-        wrappersSettings["stickyActions"] = 1
-        wrappersSettings["rewardNormalization"] = True
-        wrappersSettings["clipRewards"] = False
-        wrappersSettings["frameStack"] = 4
-        wrappersSettings["dilation"] = 1
-        wrappersSettings["actionsStack"] = 12
-        wrappersSettings["scale"] = True
-        wrappersSettings["scaleMod"] = 0
+        wrappers_settings = {}
+        wrappers_settings["noOpMax"] = 0
+        wrappers_settings["stickyActions"] = 1
+        wrappers_settings["rewardNormalization"] = True
+        wrappers_settings["clipRewards"] = False
+        wrappers_settings["frameStack"] = 4
+        wrappers_settings["dilation"] = 1
+        wrappers_settings["actionsStack"] = 12
+        wrappers_settings["scale"] = True
+        wrappers_settings["scaleMod"] = 0
 
         env = diambraArena.make(opt.gameId, settings,
-                                wrappersSettings, trajRecSettings)
+                                wrappers_settings, traj_rec_settings)
 
         observation = env.reset()
-        nStep = 0
+        n_step = 0
 
-        fpsVal = []
+        fps_val = []
 
-        while nStep < 1000:
+        while n_step < 1000:
 
-            nStep += 1
+            n_step += 1
             actions = [None, None]
             if settings["player"] != "P1P2":
                 actions = env.action_space.sample()
@@ -82,7 +80,7 @@ if __name__ == '__main__':
             observation, reward, done, info = env.step(actions)
             toc = time.time()
             fps = 1/(toc-tic)
-            fpsVal.append(fps)
+            fps_val.append(fps)
 
             if done:
                 observation = env.reset()
@@ -90,15 +88,15 @@ if __name__ == '__main__':
 
         env.close()
 
-        fpsVal2 = reject_outliers(fpsVal)
-        avgFps = np.mean(fpsVal2)
+        fps_val2 = reject_outliers(fps_val)
+        avg_fps = np.mean(fps_val2)
         print("Average speed = "
-              "{} FPS, STD {} FPS".format(avgFps, np.std(fpsVal2)))
+              "{} FPS, STD {} FPS".format(avg_fps, np.std(fps_val2)))
 
-        if abs(avgFps - opt.targetSpeed) > opt.targetSpeed*0.025:
+        if abs(avg_fps - opt.targetSpeed) > opt.targetSpeed*0.025:
             raise RuntimeError(
                 "Fps different than expected: "
-                "{} VS {}".format(avgFps, opt.targetSpeed))
+                "{} VS {}".format(avg_fps, opt.targetSpeed))
 
         print("ALL GOOD!")
     except Exception as e:

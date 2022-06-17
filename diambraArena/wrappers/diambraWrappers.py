@@ -1,40 +1,34 @@
-import sys
-import os
-import time
 import random
 import numpy as np
-from collections import deque
-
 import gym
-from gym import spaces
 
 
 class NoopResetEnv(gym.Wrapper):
-    def __init__(self, env, noOpMax=6):
+    def __init__(self, env, no_op_max=6):
         """
         Sample initial states by taking random number of no-ops on reset.
         No-op is assumed to be first action (0).
         :param env: (Gym Environment) the environment to wrap
-        :param noOpMax: (int) the maximum value of no-ops to run
+        :param no_op_max: (int) the maximum value of no-ops to run
         """
         gym.Wrapper.__init__(self, env)
-        self.noOpMax = noOpMax
-        self.overrideNumNoOps = None
+        self.no_op_max = no_op_max
+        self.overrideNumno_ops = None
 
     def reset(self, **kwargs):
         self.env.reset(**kwargs)
-        if self.overrideNumNoOps is not None:
-            noOps = self.overrideNumNoOps
+        if self.overrideNumno_ops is not None:
+            no_ops = self.overrideNumno_ops
         else:
-            noOps = random.randint(1, self.noOpMax + 1)
-        assert noOps > 0
+            no_ops = random.randint(1, self.no_op_max + 1)
+        assert no_ops > 0
         obs = None
-        noopAction = [0, 0, 0, 0]
+        no_op_action = [0, 0, 0, 0]
         if (self.env.actionSpace[0] == "discrete"
                 and self.env.playerSide != "P1P2"):
-            noopAction = 0
-        for _ in range(noOps):
-            obs, _, done, _ = self.env.step(noopAction)
+            no_op_action = 0
+        for _ in range(no_ops):
+            obs, _, done, _ = self.env.step(no_op_action)
             if done:
                 obs = self.env.reset(**kwargs)
         return obs
@@ -44,17 +38,17 @@ class NoopResetEnv(gym.Wrapper):
 
 
 class StickyActionsEnv(gym.Wrapper):
-    def __init__(self, env, stickyActions):
+    def __init__(self, env, sticky_actions):
         """
         Apply sticky actions
         :param env: (Gym Environment) the environment to wrap
-        :param stickyActions: (int) number of steps
+        :param sticky_actions: (int) number of steps
                during which the same action is sent
         """
         gym.Wrapper.__init__(self, env)
-        self.stickyActions = stickyActions
+        self.sticky_actions = sticky_actions
 
-        assert self.env.envSettings["stepRatio"] == 1, "StickyActions can "\
+        assert self.env.envSettings["stepRatio"] == 1, "sticky_actions can "\
                                                        "be activated only "\
                                                        "when stepRatio is "\
                                                        "set equal to 1"
@@ -63,10 +57,10 @@ class StickyActionsEnv(gym.Wrapper):
 
         rew = 0.0
 
-        for _ in range(self.stickyActions):
+        for _ in range(self.sticky_actions):
 
-            obs, rewStep, done, info = self.env.step(action)
-            rew += rewStep
+            obs, rew_step, done, info = self.env.step(action)
+            rew += rew_step
             if info["roundDone"] is True:
                 break
 
@@ -90,7 +84,7 @@ class ClipRewardEnv(gym.RewardWrapper):
 
 
 class NormalizeRewardEnv(gym.RewardWrapper):
-    def __init__(self, env, rewardNormalizationFactor):
+    def __init__(self, env, reward_normalization_factor):
         """
         Normalize the reward dividing it by the product of
         rewardNormalizationFactor multiplied by
@@ -99,7 +93,7 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         :param rewardNormalizationFactor: multiplication factor
         """
         gym.RewardWrapper.__init__(self, env)
-        self.env.rewardNormalizationValue = rewardNormalizationFactor*self.env.maxDeltaHealth
+        self.env.rewardNormalizationValue = reward_normalization_factor*self.env.maxDeltaHealth
 
     def reward(self, reward):
         """
@@ -111,17 +105,17 @@ class NormalizeRewardEnv(gym.RewardWrapper):
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
 
 
-def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
-                rewardNormalization=False, rewardNormalizationFactor=0.5,
-                frameStack=1, actionsStack=1, scale=False, scaleMod=0,
-                hwcObsResize=[84, 84, 0], dilation=1, hardCore=False):
+def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
+                 reward_normalization=False, reward_normalization_factor=0.5,
+                 frame_stack=1, actions_stack=1, scale=False, scale_mod=0,
+                 hwc_obs_resize=[84, 84, 0], dilation=1, hard_core=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
     :param player: player identification to discriminate
                    between 1P and 2P games
-    :param noOpMax: (int) wrap the environment to perform
-                    noOpMax no action steps at reset
+    :param no_op_max: (int) wrap the environment to perform
+                    no_op_max no action steps at reset
     :param clipRewards: (bool) wrap the reward clipping wrapper
     :param rewardNormalization: (bool) if to activate reward noramlization
     :param rewardNormalizationFactor: (double) noramlization factor
@@ -139,13 +133,13 @@ def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
     :return: (Gym Environment) the wrapped diambra environment
     """
 
-    if noOpMax > 0:
-        env = NoopResetEnv(env, noOpMax=noOpMax)
+    if no_op_max > 0:
+        env = NoopResetEnv(env, no_op_max=no_op_max)
 
-    if stickyActions > 1:
-        env = StickyActionsEnv(env, stickyActions=stickyActions)
+    if sticky_actions > 1:
+        env = StickyActionsEnv(env, sticky_actions=sticky_actions)
 
-    if hardCore:
+    if hard_core:
         from diambraArena.wrappers.obsWrapperHardCore import WarpFrame,\
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ScaledFloatObsNeg, ScaledFloatObs
@@ -154,44 +148,44 @@ def envWrapping(env, player, noOpMax=0, stickyActions=1, clipRewards=False,
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ActionsStack, ScaledFloatObsNeg, ScaledFloatObs
 
-    if hwcObsResize[2] == 1:
+    if hwc_obs_resize[2] == 1:
         # Resizing observation from H x W x 3 to
         # hwObsResize[0] x hwObsResize[1] x 1
-        env = WarpFrame(env, hwcObsResize)
-    elif hwcObsResize[2] == 3:
+        env = WarpFrame(env, hwc_obs_resize)
+    elif hwc_obs_resize[2] == 3:
         # Resizing observation from H x W x 3 to
         # hwObsResize[0] x hwObsResize[1] x hwObsResize[2]
-        env = WarpFrame3C(env, hwcObsResize)
+        env = WarpFrame3C(env, hwc_obs_resize)
 
     # Normalize rewards
-    if rewardNormalization:
-        env = NormalizeRewardEnv(env, rewardNormalizationFactor)
+    if reward_normalization:
+        env = NormalizeRewardEnv(env, reward_normalization_factor)
 
     # Clip rewards using sign function
-    if clipRewards:
+    if clip_rewards:
         env = ClipRewardEnv(env)
 
     # Stack #frameStack frames together
-    if frameStack > 1:
+    if frame_stack > 1:
         if dilation == 1:
-            env = FrameStack(env, frameStack)
+            env = FrameStack(env, frame_stack)
         else:
             print("Using frame stacking with dilation = {}".format(dilation))
-            env = FrameStackDilated(env, frameStack, dilation)
+            env = FrameStackDilated(env, frame_stack, dilation)
 
     # Stack #actionsStack actions together
-    if actionsStack > 1 and not hardCore:
+    if actions_stack > 1 and not hard_core:
         if player != "P1P2":
-            env = ActionsStack(env, actionsStack)
+            env = ActionsStack(env, actions_stack)
         else:
-            env = ActionsStack(env, actionsStack, nPlayers=2)
+            env = ActionsStack(env, actions_stack, nPlayers=2)
 
     # Scales observations normalizing them
     if scale:
-        if scaleMod == 0:
+        if scale_mod == 0:
             # Between 0.0 and 1.0
             env = ScaledFloatObs(env)
-        elif scaleMod == -1:
+        elif scale_mod == -1:
             # Between -1.0 and 1.0
             raise RuntimeError(
                 "Scaling between -1.0 and 1.0 currently not implemented")
