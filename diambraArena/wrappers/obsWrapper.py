@@ -168,8 +168,8 @@ class FrameStackDilated(gym.Wrapper):
         self.nFrames = nFrames
         self.dilation = dilation
         # Keeping all nFrames*dilation in memory,
-        self.frames = deque([], maxlen=nFrames*dilation)
         # then extract the subset given by the dilation factor
+        self.frames = deque([], maxlen=nFrames*dilation)
         shp = self.observation_space["frame"].shape
         self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
                                                             shape=(
