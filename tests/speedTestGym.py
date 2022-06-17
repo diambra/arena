@@ -2,12 +2,10 @@
 import diambraArena
 import argparse
 import time
-import os
 import numpy as np
 
 
 def reject_outliers(data):
-    m = 2
     u = np.mean(data)
     s = np.std(data)
     filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
@@ -42,13 +40,13 @@ if __name__ == '__main__':
         env = diambraArena.make(opt.gameId, settings)
 
         observation = env.reset()
-        nStep = 0
+        n_step = 0
 
-        fpsVal = []
+        fps_val = []
 
-        while nStep < 1000:
+        while n_step < 1000:
 
-            nStep += 1
+            n_step += 1
             actions = [None, None]
             if settings["player"] != "P1P2":
                 actions = env.action_space.sample()
@@ -65,7 +63,7 @@ if __name__ == '__main__':
             observation, reward, done, info = env.step(actions)
             toc = time.time()
             fps = 1/(toc-tic)
-            fpsVal.append(fps)
+            fps_val.append(fps)
 
             if done:
                 observation = env.reset()
@@ -73,15 +71,15 @@ if __name__ == '__main__':
 
         env.close()
 
-        fpsVal2 = reject_outliers(fpsVal)
-        avgFps = np.mean(fpsVal2)
+        fps_val2 = reject_outliers(fps_val)
+        avg_fps = np.mean(fps_val2)
         print("Average speed "
-              "= {} FPS, STD {} FPS".format(avgFps, np.std(fpsVal2)))
+              "= {} FPS, STD {} FPS".format(avg_fps, np.std(fps_val2)))
 
-        if abs(avgFps - opt.targetSpeed) > opt.targetSpeed*0.025:
+        if abs(avg_fps - opt.targetSpeed) > opt.targetSpeed*0.025:
             raise RuntimeError(
                 "Fps different than expected: "
-                "{} VS {}".format(avgFps, opt.targetSpeed))
+                "{} VS {}".format(avg_fps, opt.targetSpeed))
 
         print("ALL GOOD!")
     except Exception as e:

@@ -1,4 +1,4 @@
 from diambraArena.makeEnv import make
-from diambraArena.diambraImitationLearningGym import diambraImitationLearning as imitationLearning
-from diambraArena.diambraImitationLearningGym import diambraImitationLearningHardCore as imitationLearningHardCore
-from diambraArena.gymUtils import availableGames, gameSha256, checkGameSha256
+from diambraArena.diambraImitationLearningGym import DiambraImitationLearning as ImitationLearning
+from diambraArena.diambraImitationLearningGym import DiambraImitationLearningHardCore as ImitationLearningHardCore
+from diambraArena.gymUtils import available_games, game_sha_256, check_game_sha_256

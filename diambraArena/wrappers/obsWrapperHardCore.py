@@ -1,9 +1,5 @@
 from gym import spaces
 import gym
-import sys
-import os
-import time
-import random
 import numpy as np
 from collections import deque
 import cv2  # pytype:disable=import-error
@@ -12,25 +8,25 @@ cv2.ocl.setUseOpenCL(False)
 
 # Functions
 
-def WarpFrame3CFunc(frame, width, height):
+def warp_frame_3c_func(frame, width, height):
     frame = cv2.resize(frame, (width, height),
                        interpolation=cv2.INTER_LINEAR)[:, :, None]
     return frame
 
 
-def WarpFrameFunc(frame, width, height):
+def warp_frame_func(frame, width, height):
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-    return WarpFrame3CFunc(frame, width, height)
+    return warp_frame_3c_func(frame, width, height)
 
 
-def ScaledFloatObsFunc(observation):
+def scaled_float_obs_func(observation):
     return np.array(observation).astype(np.float32) / 255.0
 
 # Env Wrappers classes
 
 
 class WarpFrame(gym.ObservationWrapper):
-    def __init__(self, env, hwObsResize=[84, 84]):
+    def __init__(self, env, hw_obs_resize=[84, 84]):
         """
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
@@ -39,8 +35,8 @@ class WarpFrame(gym.ObservationWrapper):
         print("         use environment's native frame wrapping through")
         print("        \"frameShape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
-        self.width = hwObsResize[1]
-        self.height = hwObsResize[0]
+        self.width = hw_obs_resize[1]
+        self.height = hw_obs_resize[0]
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(self.height, self.width, 1),
                                             dtype=env.observation_space.dtype)
@@ -51,11 +47,11 @@ class WarpFrame(gym.ObservationWrapper):
         :param frame: ([int] or [float]) environment frame
         :return: ([int] or [float]) the observation
         """
-        return WarpFrameFunc(frame, self.width, self.height)
+        return warp_frame_func(frame, self.width, self.height)
 
 
 class WarpFrame3C(gym.ObservationWrapper):
-    def __init__(self, env, hwObsResize=[224, 224]):
+    def __init__(self, env, hw_obs_resize=[224, 224]):
         """
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
@@ -64,8 +60,8 @@ class WarpFrame3C(gym.ObservationWrapper):
         print("         use environment's native frame wrapping through")
         print("        \"frameShape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
-        self.width = hwObsResize[1]
-        self.height = hwObsResize[0]
+        self.width = hw_obs_resize[1]
+        self.height = hw_obs_resize[0]
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(self.height, self.width, 3),
                                             dtype=env.observation_space.dtype)
@@ -76,100 +72,100 @@ class WarpFrame3C(gym.ObservationWrapper):
         :param frame: ([int] or [float]) environment frame
         :return: ([int] or [float]) the observation
         """
-        return WarpFrame3CFunc(frame, self.width, self.height)
+        return warp_frame_3c_func(frame, self.width, self.height)
 
 
 class FrameStack(gym.Wrapper):
-    def __init__(self, env, nFrames):
-        """Stack nFrames last frames.
+    def __init__(self, env, n_frames):
+        """Stack n_frames last frames.
         Returns lazy array, which is much more memory efficient.
         See Also
         --------
         stable_baselines.common.atari_wrappers.LazyFrames
         :param env: (Gym Environment) the environment
-        :param nFrames: (int) the number of frames to stack
+        :param n_frames: (int) the number of frames to stack
         """
         gym.Wrapper.__init__(self, env)
-        self.nFrames = nFrames
-        self.frames = deque([], maxlen=nFrames)
+        self.n_frames = n_frames
+        self.frames = deque([], maxlen=n_frames)
         shp = env.observation_space.shape
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(shp[0], shp[1],
-                                                   shp[2] * nFrames),
+                                                   shp[2] * n_frames),
                                             dtype=env.observation_space.dtype)
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
         # Fill the stack upon reset to avoid black frames
-        for _ in range(self.nFrames):
+        for _ in range(self.n_frames):
             self.frames.append(obs)
 
-        return self.getOb()
+        return self.get_ob()
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         self.frames.append(obs)
 
-        # Add last obs nFrames - 1 times in case of
+        # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
         if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
                 and not done):
             for _ in range(self.nFrames - 1):
                 self.frames.append(obs)
 
-        return self.getOb(), reward, done, info
+        return self.get_ob(), reward, done, info
 
-    def getOb(self):
-        assert len(self.frames) == self.nFrames
+    def get_ob(self):
+        assert len(self.frames) == self.n_frames
         return LazyFrames(list(self.frames))
 
 
 class FrameStackDilated(gym.Wrapper):
-    def __init__(self, env, nFrames, dilation):
-        """Stack nFrames last frames with dilation factor.
+    def __init__(self, env, n_frames, dilation):
+        """Stack n_frames last frames with dilation factor.
         Returns lazy array, which is much more memory efficient.
         See Also
         --------
         stable_baselines.common.atari_wrappers.LazyFrames
         :param env: (Gym Environment) the environment
-        :param nFrames: (int) the number of frames to stack
+        :param n_frames: (int) the number of frames to stack
         :param dilation: (int) the dilation factor
         """
         gym.Wrapper.__init__(self, env)
-        self.nFrames = nFrames
+        self.n_frames = n_frames
         self.dilation = dilation
-        # Keeping all nFrames*dilation in memory,
+        # Keeping all n_frames*dilation in memory,
         # then extract the subset given by the dilation factor
-        self.frames = deque([], maxlen=nFrames*dilation)
+        self.frames = deque([], maxlen=n_frames*dilation)
         shp = env.observation_space.shape
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(shp[0], shp[1],
-                                                   shp[2] * nFrames),
+                                                   shp[2] * n_frames),
                                             dtype=env.observation_space.dtype)
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
-        for _ in range(self.nFrames*self.dilation):
+        for _ in range(self.n_frames*self.dilation):
             self.frames.append(obs)
-        return self.getOb()
+        return self.get_ob()
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         self.frames.append(obs)
 
-        # Add last obs nFrames - 1 times in case of
+        # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
         if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
                 and not done):
-            for _ in range(self.nFrames*self.dilation - 1):
+            for _ in range(self.n_frames*self.dilation - 1):
                 self.frames.append(obs)
 
-        return self.getOb(), reward, done, info
+        return self.get_ob(), reward, done, info
 
-    def getOb(self):
-        framesSubset = list(self.frames)[self.dilation-1::self.dilation]
-        assert len(framesSubset) == self.nFrames
-        return LazyFrames(list(framesSubset))
+    def get_ob(self):
+        frames_subset = list(self.frames)[self.dilation-1::self.dilation]
+        assert len(frames_subset) == self.n_frames
+        return LazyFrames(list(frames_subset))
 
 
 class ScaledFloatObsNeg(gym.ObservationWrapper):
@@ -196,7 +192,7 @@ class ScaledFloatObs(gym.ObservationWrapper):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
 
-        return ScaledFloatObsFunc(observation)
+        return scaled_float_obs_func(observation)
 
 
 class LazyFrames(object):

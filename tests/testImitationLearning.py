@@ -21,22 +21,22 @@ try:
     opt = parser.parse_args()
     print(opt)
 
-    vizFlag = True if opt.viz == 1 else False
+    viz_flag = True if opt.viz == 1 else False
 
     # Show files in folder
-    trajRecFolder = opt.path
-    trajectoriesFiles = [os.path.join(trajRecFolder, f) for f in listdir(
-        trajRecFolder) if os.path.isfile(os.path.join(trajRecFolder, f))]
-    print(trajectoriesFiles)
+    traj_rec_folder = opt.path
+    trajectories_files = [os.path.join(traj_rec_folder, f) for f in listdir(
+        traj_rec_folder) if os.path.isfile(os.path.join(traj_rec_folder, f))]
+    print(trajectories_files)
 
-    diambraILSettings = {}
-    diambraILSettings["trajFilesList"] = trajectoriesFiles
-    diambraILSettings["totalCpus"] = opt.nProc
+    diambra_il_settings = {}
+    diambra_il_settings["trajFilesList"] = trajectories_files
+    diambra_il_settings["totalCpus"] = opt.nProc
 
     if opt.hardCore == 0:
-        env = diambraArena.imitationLearning(**diambraILSettings)
+        env = diambraArena.imitationLearning(**diambra_il_settings)
     else:
-        env = diambraArena.imitationLearningHardCore(**diambraILSettings)
+        env = diambraArena.imitationLearningHardCore(**diambra_il_settings)
 
     observation = env.reset()
     env.render(mode="human")
@@ -44,18 +44,18 @@ try:
     env.trajSummary()
 
     showWrapObs(observation, env.nActionsStack,
-                env.charNames, opt.waitKey, vizFlag)
+                env.charNames, opt.waitKey, viz_flag)
 
-    cumulativeEpRew = 0.0
-    cumulativeEpRewAll = []
+    cumulative_ep_rew = 0.0
+    cumulative_ep_rew_all = []
 
-    maxNumEp = 10
-    currNumEp = 0
+    max_num_ep = 10
+    curr_num_ep = 0
 
-    while currNumEp < maxNumEp:
+    while curr_num_ep < max_num_ep:
 
-        dummyActions = 0
-        observation, reward, done, info = env.step(dummyActions)
+        dummy_actions = 0
+        observation, reward, done, info = env.step(dummy_actions)
         env.render(mode="human")
 
         action = info["action"]
@@ -66,21 +66,21 @@ try:
         for k, v in info.items():
             print("info[\"{}\"] = {}".format(k, v))
         showWrapObs(observation, env.nActionsStack,
-                    env.charNames, opt.waitKey, vizFlag)
+                    env.charNames, opt.waitKey, viz_flag)
 
         print("----------")
 
         # if done:
         #    observation = info[procIdx]["terminal_observation"]
 
-        cumulativeEpRew += reward
+        cumulative_ep_rew += reward
 
         if (np.any([info["roundDone"], info["stageDone"], info["gameDone"]])
                 and not done):
             # Frames equality check
             if opt.hardCore == 0:
-                for frameIdx in range(observation["frame"].shape[2]-1):
-                    if np.any(observation["frame"][:, :, frameIdx] != observation["frame"][:, :, frameIdx+1]):
+                for frame_idx in range(observation["frame"].shape[2]-1):
+                    if np.any(observation["frame"][:, :, frame_idx] != observation["frame"][:, :, frame_idx+1]):
                         raise RuntimeError("Frames inside observation after "
                                            "round/stage/game/episode done are "
                                            "not equal. Dones =",
@@ -89,8 +89,8 @@ try:
                                            info["gameDone"],
                                            info["epone"])
             else:
-                for frameIdx in range(observation.shape[2]-1):
-                    if np.any(observation[:, :, frameIdx] != observation[:, :, frameIdx+1]):
+                for frame_idx in range(observation.shape[2]-1):
+                    if np.any(observation[:, :, frame_idx] != observation[:, :, frame_idx+1]):
                         raise RuntimeError("Frames inside observation after "
                                            "round/stage/game/episode done are "
                                            "not equal. Dones =",
@@ -103,22 +103,22 @@ try:
             break
 
         if done:
-            currNumEp += 1
-            print("Ep. # = ", currNumEp)
-            print("Ep. Cumulative Rew # = ", cumulativeEpRew)
+            curr_num_ep += 1
+            print("Ep. # = ", curr_num_ep)
+            print("Ep. Cumulative Rew # = ", cumulative_ep_rew)
 
-            cumulativeEpRewAll.append(cumulativeEpRew)
-            cumulativeEpRew = 0.0
+            cumulative_ep_rew_all.append(cumulative_ep_rew)
+            cumulative_ep_rew = 0.0
 
             observation = env.reset()
             env.render(mode="human")
             showWrapObs(observation, env.nActionsStack,
-                        env.charNames, opt.waitKey, vizFlag)
+                        env.charNames, opt.waitKey, viz_flag)
 
-    if diambraILSettings["totalCpus"] == 1:
-        print("All ep. rewards =", cumulativeEpRewAll)
-        print("Mean cumulative reward =", np.mean(cumulativeEpRewAll))
-        print("Std cumulative reward =", np.std(cumulativeEpRewAll))
+    if diambra_il_settings["totalCpus"] == 1:
+        print("All ep. rewards =", cumulative_ep_rew_all)
+        print("Mean cumulative reward =", np.mean(cumulative_ep_rew_all))
+        print("Std cumulative reward =", np.std(cumulative_ep_rew_all))
 
     env.close()
 

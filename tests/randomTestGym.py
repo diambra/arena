@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 import diambraArena
-from diambraArena.gymUtils import envSpacesSummary,\
-    discreteToMultiDiscreteAction, showGymObs
+from diambraArena.gymUtils import env_spaces_summary,\
+    discrete_to_multi_discrete_action, show_gym_obs
 import argparse
 import time
-import os
 import numpy as np
 
 if __name__ == '__main__':
-    timeDepSeed = int((time.time()-int(time.time()-0.5))*1000)
+    time_dep_seed = int((time.time()-int(time.time()-0.5))*1000)
 
     try:
         parser = argparse.ArgumentParser()
@@ -49,10 +48,10 @@ if __name__ == '__main__':
         opt = parser.parse_args()
         print(opt)
 
-        vizFlag = bool(opt.interactiveViz)
-        waitKey = 1
-        if vizFlag:
-            waitKey = 0
+        viz_flag = bool(opt.interactiveViz)
+        wait_key = 1
+        if viz_flag:
+            wait_key = 0
 
         # Settings
         settings = {}
@@ -78,27 +77,27 @@ if __name__ == '__main__':
             settings["actionSpace"] = settings["actionSpace"][0]
             settings["attackButCombination"] = settings["attackButCombination"][0]
 
-        nRounds = 2
+        n_rounds = 2
         if opt.gameId == "kof98umh":
-            nRounds = 3
+            n_rounds = 3
 
-        hardCore = False if opt.hardCore == 0 else True
-        settings["hardCore"] = hardCore
+        hard_core = False if opt.hard_core == 0 else True
+        settings["hardCore"] = hard_core
 
-        env = diambraArena.make(opt.gameId, settings, seed=timeDepSeed)
+        env = diambraArena.make(opt.gameId, settings, seed=time_dep_seed)
 
         # Print environment obs and action spaces summary
-        envSpacesSummary(env)
+        env_spaces_summary(env)
 
         observation = env.reset()
 
-        cumulativeEpRew = 0.0
-        cumulativeEpRewAll = []
+        cumulative_ep_rew = 0.0
+        cumulative_ep_rew_all = []
 
-        maxNumEp = opt.nEpisodes
-        currNumEp = 0
+        max_num_ep = opt.nEpisodes
+        curr_num_ep = 0
 
-        while currNumEp < maxNumEp:
+        while curr_num_ep < max_num_ep:
 
             actions = [None, None]
             if settings["player"] != "P1P2":
@@ -106,19 +105,19 @@ if __name__ == '__main__':
 
                 if opt.noAction == 1:
                     if settings["actionSpace"] == "multiDiscrete":
-                        for iEl, _ in enumerate(actions):
-                            actions[iEl] = 0
+                        for iel, _ in enumerate(actions):
+                            actions[iel] = 0
                     else:
                         actions = 0
 
                 if settings["actionSpace"] == "discrete":
-                    moveAction, attAction = discreteToMultiDiscreteAction(
+                    move_action, att_action = discrete_to_multi_discrete_action(
                         actions, env.nActions[0][0])
                 else:
-                    moveAction, attAction = actions[0], actions[1]
+                    move_action, att_action = actions[0], actions[1]
 
-                print("(P1) {} {}".format(env.printActionsDict[0][moveAction],
-                                          env.printActionsDict[1][attAction]))
+                print("(P1) {} {}".format(env.printActionsDict[0][move_action],
+                                          env.printActionsDict[1][att_action]))
 
             else:
                 for idx in range(2):
@@ -127,19 +126,19 @@ if __name__ == '__main__':
 
                     if opt.noAction == 1 and idx == 0:
                         if settings["actionSpace"][idx] == "multiDiscrete":
-                            for iEl, _ in enumerate(actions[idx]):
-                                actions[idx][iEl] = 0
+                            for iel, _ in enumerate(actions[idx]):
+                                actions[idx][iel] = 0
                         else:
                             actions[idx] = 0
 
                     if settings["actionSpace"][idx] == "discrete":
-                        moveAction, attAction = discreteToMultiDiscreteAction(
+                        move_action, att_action = discrete_to_multi_discrete_action(
                             actions[idx], env.nActions[idx][0])
                     else:
-                        moveAction, attAction = actions[idx][0], actions[idx][1]
+                        move_action, att_action = actions[idx][0], actions[idx][1]
 
-                    print("(P{}) {} {}".format(idx+1, env.printActionsDict[0][moveAction],
-                                               env.printActionsDict[1][attAction]))
+                    print("(P{}) {} {}".format(idx+1, env.printActionsDict[0][move_action],
+                                               env.printActionsDict[1][att_action]))
 
             if (settings["player"] == "P1P2"
                     or settings["actionSpace"] != "discrete"):
@@ -147,33 +146,33 @@ if __name__ == '__main__':
 
             observation, reward, done, info = env.step(actions)
 
-            cumulativeEpRew += reward
+            cumulative_ep_rew += reward
             print("action =", actions)
             print("reward =", reward)
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            showGymObs(observation, env.charNames, waitKey, vizFlag)
+            show_gym_obs(observation, env.charNames, wait_key, viz_flag)
             print("--")
-            print("Current Cumulative Reward =", cumulativeEpRew)
+            print("Current Cumulative Reward =", cumulative_ep_rew)
 
             print("----------")
 
             if done:
                 print("Resetting Env")
-                currNumEp += 1
-                print("Ep. # = ", currNumEp)
-                print("Ep. Cumulative Rew # = ", cumulativeEpRew)
-                cumulativeEpRewAll.append(cumulativeEpRew)
-                cumulativeEpRew = 0.0
+                curr_num_ep += 1
+                print("Ep. # = ", curr_num_ep)
+                print("Ep. Cumulative Rew # = ", cumulative_ep_rew)
+                cumulative_ep_rew_all.append(cumulative_ep_rew)
+                cumulative_ep_rew = 0.0
 
                 observation = env.reset()
-                showGymObs(observation, env.charNames, waitKey, vizFlag)
+                show_gym_obs(observation, env.charNames, wait_key, viz_flag)
 
             if np.any([info["roundDone"], info["stageDone"],
                        info["gameDone"], info["epDone"]]):
 
-                if not hardCore:
+                if hard_core is False:
                     # Side check
                     if env.playerSide == "P2":
                         if observation["P1"]["ownSide"] != 1.0 or observation["P1"]["oppSide"] != 0.0:
@@ -184,30 +183,30 @@ if __name__ == '__main__':
                             raise RuntimeError("Wrong starting side:", observation["P1"]["ownSide"],
                                                observation["P1"]["oppSide"])
 
-        print("Cumulative reward = ", cumulativeEpRewAll)
-        print("Mean cumulative reward = ", np.mean(cumulativeEpRewAll))
-        print("Std cumulative reward = ", np.std(cumulativeEpRewAll))
+        print("Cumulative reward = ", cumulative_ep_rew_all)
+        print("Mean cumulative reward = ", np.mean(cumulative_ep_rew_all))
+        print("Std cumulative reward = ", np.std(cumulative_ep_rew_all))
 
         env.close()
 
-        if len(cumulativeEpRewAll) != maxNumEp:
+        if len(cumulative_ep_rew_all) != max_num_ep:
             raise RuntimeError("Not run all episodes")
 
         if opt.continueGame <= 0.0:
-            maxContinue = int(-opt.continueGame)
+            max_continue = int(-opt.continueGame)
         else:
-            maxContinue = 0
+            max_continue = 0
 
         if opt.gameId == "tektagt":
-            maxContinue = (maxContinue + 1) * 0.7 - 1
+            max_continue = (max_continue + 1) * 0.7 - 1
 
         if (opt.noAction == 1
-                and (np.mean(cumulativeEpRewAll) > -nRounds*(maxContinue+1) *
+                and (np.mean(cumulative_ep_rew_all) > -n_rounds*(max_continue+1) *
                      env.maxDeltaHealth+0.001)):
             raise RuntimeError("NoAction policy and average "
                                "reward different than {} ({})".format(
-                                   -nRounds*(maxContinue+1)*env.maxDeltaHealth,
-                                   np.mean(cumulativeEpRewAll)))
+                                   -n_rounds*(max_continue+1)*env.maxDeltaHealth,
+                                   np.mean(cumulative_ep_rew_all)))
 
         print("ALL GOOD!")
     except Exception as e:

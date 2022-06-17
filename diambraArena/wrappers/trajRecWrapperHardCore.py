@@ -1,43 +1,39 @@
-import sys
 import os
-import time
-import random
 import numpy as np
-from collections import deque
 import datetime
 
 import gym
-from gym import spaces
-from diambraArena.gymUtils import parallelPickleWriter
+from diambraArena.gymUtils import ParallelPickleWriter
 
 # Trajectory recorder wrapper
 
 
 class TrajectoryRecorder(gym.Wrapper):
-    def __init__(self, env, filePath, userName,
-                 ignoreP2, commitHash="0000000"):
+    def __init__(self, env, file_path, user_name,
+                 ignore_p2, commit_hash="0000000"):
         """
         Record trajectories to use them for imitation learning
         :param env: (Gym Environment) the environment to wrap
-        :param filePath: (str) file path specifying where to
-                         store the trajectory file
+        :param file_path: (str) file path specifying where to
+               store the trajectory file
         """
         gym.Wrapper.__init__(self, env)
-        self.filePath = filePath
-        self.userName = userName
-        self.ignoreP2 = ignoreP2
-        self.frameShp = self.env.observation_space.shape
-        self.commitHash = commitHash
+        self.file_path = file_path
+        self.user_name = user_name
+        self.ignore_p2 = ignore_p2
+        self.frameShp = self.env.observation_space["frame"].shape
+        self.commit_hash = commit_hash
 
         if (self.env.playerSide == "P1P2"):
             if ((self.env.attackButCombination[0] != self.env.attackButCombination[1])
                     or (self.env.actionSpace[0] != self.env.actionSpace[1])):
+                print(self.env.actionSpace, self.env.attackButCombination)
                 raise Exception("Different attack buttons combinations and/or "
-                                "different action spaces not supported for "
-                                "2P experience recordings")
+                                "different action spaces not supported for 2P "
+                                "experience recordings")
 
-        print("Recording trajectories in \"{}\"".format(self.filePath))
-        os.makedirs(self.filePath, exist_ok=True)
+        print("Recording trajectories in \"{}\"".format(self.file_path))
+        os.makedirs(self.file_path, exist_ok=True)
 
     def reset(self, **kwargs):
         """
@@ -85,47 +81,47 @@ class TrajectoryRecorder(gym.Wrapper):
         self.cumulativeRew += reward
 
         if done:
-            toSave = {}
-            toSave["commitHash"] = self.commitHash
-            toSave["userName"] = self.userName
-            toSave["playerSide"] = self.env.playerSide
+            to_save = {}
+            to_save["commit_hash"] = self.commit_hash
+            to_save["user_name"] = self.user_name
+            to_save["playerSide"] = self.env.playerSide
             if self.env.playerSide != "P1P2":
-                toSave["difficulty"] = self.env.difficulty
-                toSave["actionSpace"] = self.env.actionSpace
+                to_save["difficulty"] = self.env.difficulty
+                to_save["actionSpace"] = self.env.actionSpace
             else:
-                toSave["actionSpace"] = self.env.actionSpace[0]
-            toSave["nActions"] = self.env.nActions[0]
-            toSave["attackButComb"] = self.env.attackButCombination[0]
-            toSave["frameShp"] = self.frameShp
-            toSave["ignoreP2"] = self.ignoreP2
-            toSave["charNames"] = self.env.charNames
-            toSave["nActionsStack"] = 0
-            toSave["epLen"] = len(self.rewardsHist)
-            toSave["cumRew"] = self.cumulativeRew
-            toSave["frames"] = self.lastFrameHist
-            toSave["rewards"] = self.rewardsHist
-            toSave["actions"] = self.actionsHist
-            toSave["doneFlags"] = self.flagHist
-            toSave["obsSpaceBounds"] = [self.env.observation_space.low[0][0][0],
-                                        self.env.observation_space.high[0][0][0]]
+                to_save["actionSpace"] = self.env.actionSpace[0]
+            to_save["nActions"] = self.env.nActions[0]
+            to_save["attackButComb"] = self.env.attackButCombination[0]
+            to_save["frameShp"] = self.frameShp
+            to_save["ignore_p2"] = self.ignore_p2
+            to_save["charNames"] = self.env.charNames
+            to_save["nActionsStack"] = 0
+            to_save["epLen"] = len(self.rewardsHist)
+            to_save["cumRew"] = self.cumulativeRew
+            to_save["frames"] = self.lastFrameHist
+            to_save["rewards"] = self.rewardsHist
+            to_save["actions"] = self.actionsHist
+            to_save["doneFlags"] = self.flagHist
+            to_save["obsSpaceBounds"] = [self.env.observation_space.low[0][0][0],
+                                         self.env.observation_space.high[0][0][0]]
 
             # Characters name
             # If 2P mode
-            if self.env.playerSide == "P1P2" and self.ignoreP2 == 0:
-                savePath = "HC_mod" + str(self.ignoreP2) + "_" +\
+            if self.env.playerSide == "P1P2" and self.ignore_p2 == 0:
+                save_path = "HC_mod" + str(self.ignore_p2) + "_" +\
                            self.env.playerSide + "_rew" +\
                            str(np.round(self.cumulativeRew, 3)) + "_" +\
                            datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             # If 1P mode
             else:
-                savePath = "HC_mod" + str(self.ignoreP2) + "_" +\
+                save_path = "HC_mod" + str(self.ignore_p2) + "_" +\
                            self.env.playerSide + "_diff" +\
                            str(self.env.difficulty) + "_rew" +\
                            str(np.round(self.cumulativeRew, 3)) + "_" +\
                            datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
-            pickleWriter = parallelPickleWriter(
-                os.path.join(self.filePath, savePath), toSave)
-            pickleWriter.start()
+            pickle_writer = ParallelPickleWriter(
+                os.path.join(self.file_path, save_path), to_save)
+            pickle_writer.start()
 
         return obs, reward, done, info
