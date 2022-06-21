@@ -1,6 +1,6 @@
 import os
-from diambraArena.diambraGym import makeGymEnv
-from diambraArena.wrappers.diambraWrappers import envWrapping
+from diambraArena.diambraGym import make_gym_env
+from diambraArena.wrappers.diambraWrappers import env_wrapping
 
 
 def env_settings_check(env_settings):
@@ -97,14 +97,14 @@ def make(game_id, env_settings={}, wrappers_settings={},
     env_settings = env_settings_check(env_settings)
 
     # Initialize random seed
-    env, player = makeGymEnv(env_settings)
+    env, player = make_gym_env(env_settings)
 
     # Initialize random seed
     env.seed(seed)
 
     # Apply environment wrappers
-    env = envWrapping(env, player, **wrappers_settings,
-                      hardCore=env_settings["hardCore"])
+    env = env_wrapping(env, player, **wrappers_settings,
+                       hard_core=env_settings["hardCore"])
 
     # Apply trajectories recorder wrappers
     if traj_rec_settings is not None:
