@@ -31,8 +31,8 @@ extras = {
 # NOTE Package data is inside MANIFEST.In
 
 setuptools.setup(
-    name='diambraArena',
-    url='https://github.com/diambra/diambraArena',
+    name='diambra-arena',
+    url='https://github.com/diambra/arena',
     version='1.0',
     author="DIAMBRA Team",
     author_email="info@diambra.ai",
@@ -54,9 +54,8 @@ setuptools.setup(
             'opencv-python>=4.4.0.42',
             'grpcio',
             'grpcio-tools'],
-    # packages=['diambraArena','diambraArena/wrappers','diambraArena/utils'],
         packages=[package for package in find_packages(
-        ) if package.startswith("diambraArena")],
+        ) if package.startswith("diambra")],
     include_package_data=True,
     extras_require=extras
 )

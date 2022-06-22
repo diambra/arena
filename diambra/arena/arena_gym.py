@@ -2,8 +2,8 @@ import numpy as np
 import cv2
 import gym
 from gym import spaces
-from diambraArena.gymUtils import discreteToMultiDiscreteAction
-from diambraArena.diambraEnvLib.libInterface import diambraArenaLib
+from diambra.arena.utils.gym_utils import discrete_to_multi_discrete_action
+from diambra.arena.engine.interface import DiambraEngine
 
 # DIAMBRA Env Gym
 
@@ -26,10 +26,10 @@ class DiambraGymHardCoreBase(gym.Env):
         self.renderGuiStarted = False
 
         # Launch DIAMBRA Arena
-        self.diambraArena = diambraArenaLib(env_settings["envAddress"])
+        self.arena_engine = DiambraEngine(env_settings["envAddress"])
 
         # Send environment settings, retrieve environment info
-        env_info = self.diambraArena.envInit(self.env_settings)
+        env_info = self.arena_engine.env_init(self.env_settings)
         self.env_info_process(env_info)
         self.player_side = self.env_settings["player"]
 
@@ -61,7 +61,7 @@ class DiambraGymHardCoreBase(gym.Env):
 
         # Frame height, width and channel dimensions
         self.hwcDim = [int(env_info[4]), int(env_info[5]), int(env_info[6])]
-        self.diambraArena.setFrameSize(self.hwcDim)
+        self.arena_engine.set_frame_size(self.hwcDim)
 
         # Maximum difference in players health
         self.maxDeltaHealth = int(env_info[7]) - int(env_info[8])
@@ -160,7 +160,7 @@ class DiambraGymHardCoreBase(gym.Env):
     def reset(self):
         cv2.destroyAllWindows()
         self.renderGuiStarted = False
-        self.frame, data, self.player_side = self.diambraArena.reset()
+        self.frame, data, self.player_side = self.arena_engine.reset()
         return self.frame
 
     # Rendering the environment
@@ -175,7 +175,7 @@ class DiambraGymHardCoreBase(gym.Env):
                 wait_key = 100
 
             cv2.imshow(self.windowName, self.frame[:, :, ::-1])
-            cv2.wait_key(wait_key)
+            cv2.waitKey(wait_key)
         elif mode == "rgb_array":
             return self.frame
 
@@ -183,7 +183,7 @@ class DiambraGymHardCoreBase(gym.Env):
     def close(self):
         # Close DIAMBRA Arena
         cv2.destroyAllWindows()
-        self.diambraArena.close()
+        self.arena_engine.close()
 
 # DIAMBRA Gym base class for single player mode
 
@@ -236,7 +236,7 @@ class DiambraGymHardCore1P(DiambraGymHardCoreBase):
             mov_act, att_act = discreteToMultiDiscreteAction(
                 action, self.nActions[0][0])
 
-        self.frame, data = self.diambraArena.step1P(mov_act, att_act)
+        self.frame, data = self.arena_engine.step_1p(mov_act, att_act)
         reward = data["reward"]
         done = data["epDone"]
 
@@ -311,7 +311,7 @@ class DiambraGymHardCore2P(DiambraGymHardCoreBase):
                 mov_act_p2, att_act_p2 = discreteToMultiDiscreteAction(
                     action[1], self.nActions[1][0])
 
-        self.frame, data = self.diambraArena.step2P(
+        self.frame, data = self.arena_engine.step_2p(
             mov_act_p1, att_act_p1, mov_act_p2, att_act_p2)
         reward = data["reward"]
         done = data["gameDone"]
@@ -422,7 +422,7 @@ class DiambraGym1P(DiambraGymHardCore1P):
 
     # Reset the environment
     def reset(self):
-        self.frame, data, self.player_side = self.diambraArena.reset()
+        self.frame, data, self.player_side = self.arena_engine.reset()
         observation = self.add_obs_integration(self.frame, data)
         return observation
 
@@ -527,7 +527,7 @@ class DiambraGym2P(DiambraGymHardCore2P):
 
     # Reset the environment
     def reset(self):
-        self.frame, data, self.player_side = self.diambraArena.reset()
+        self.frame, data, self.player_side = self.arena_engine.reset()
         observation = self.add_obs_integration(self.frame, data)
         return observation
 

@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
-import diambraArena
+# WORKING
+from diambra.arena.make_env import make
+env = make("doapp")
 
-env = diambraArena.make("doapp")
+# NOT WORKING
+# from diambra import arena
+# env = arena.make_env.make("doapp")
+
+# NOT WORKING (after modifying __init.py__ in diambra/arena/ folder)
+# from diambra import arena
+# env = arena.make("doapp")
 
 observation = env.reset()
 
