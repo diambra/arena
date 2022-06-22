@@ -1,6 +1,6 @@
 *.vscode
 .idea
-diambraArena.egg-info/*
+diambra_arena.egg-info/*
 build/*
 mame/history
 *.swp

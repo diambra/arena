@@ -210,7 +210,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
 
 def available_games(print_out=True, details=False):
     base_path = os.path.dirname(os.path.abspath(__file__))
-    games_file_path = os.path.join(base_path, 'utils/integratedGames.json')
+    games_file_path = os.path.join(base_path, 'integratedGames.json')
     games_file = open(games_file_path)
     games_dict = json.load(games_file)
 
@@ -263,7 +263,7 @@ def sha256_checksum(filename, block_size=65536):
     return sha256.hexdigest()
 
 
-def checkgame_sha_256(path, game_id=None):
+def check_game_sha_256(path, game_id=None):
 
     base_path = os.path.dirname(os.path.abspath(__file__))
     games_file_path = os.path.join(base_path, 'utils/integratedGames.json')

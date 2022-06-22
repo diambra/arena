@@ -140,11 +140,11 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
         env = StickyActionsEnv(env, sticky_actions=sticky_actions)
 
     if hard_core:
-        from diambraArena.wrappers.obsWrapperHardCore import WarpFrame,\
+        from diambra.arena.wrappers.obs_wrapper_hard_core import WarpFrame,\
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ScaledFloatObsNeg, ScaledFloatObs
     else:
-        from diambraArena.wrappers.obsWrapper import WarpFrame, \
+        from diambra.arena.wrappers.obs_wrapper import WarpFrame, \
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ActionsStack, ScaledFloatObsNeg, ScaledFloatObs
 

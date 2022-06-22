@@ -1,14 +1,14 @@
 import numpy as np
 
-from diambraArena.utils.splashScreen import DIAMBRASplashScreen
+from ..utils.splash_screen import SplashScreen
 import grpc
-import diambraArena.diambraEnvLib.diambra_pb2 as diambra_pb2
-import diambraArena.diambraEnvLib.diambra_pb2_grpc as diambra_pb2_grpc
+import diambra.arena.engine.interface_pb2 as interface_pb2
+import diambra.arena.engine.interface_pb2_grpc as interface_pb2_grpc
 
 # DIAMBRA Env Gym
 
 
-class DiambraArenaLib:
+class DiambraEngine:
     """Diambra Environment gym interface"""
 
     def __init__(self, env_address):
@@ -18,10 +18,10 @@ class DiambraArenaLib:
 
         # Opening gRPC channel
         self.channel = grpc.insecure_channel(env_address)
-        self.stub = diambra_pb2_grpc.EnvServerStub(self.channel)
+        self.stub = interface_pb2_grpc.EnvServerStub(self.channel)
 
         # Splash Screen
-        DIAMBRASplashScreen()
+        SplashScreen()
 
     # Transforming env kwargs to string
     def env_settings_to_string(self, env_settings):
@@ -99,9 +99,9 @@ class DiambraArenaLib:
 
     # Send env settings, retrieve env info and int variables list
     def env_init(self, env_settings):
-        env_settings_string = self.env_settingsToString(env_settings)
+        env_settings_string = self.env_settings_to_string(env_settings)
         response = self.stub.EnvInit(
-            diambra_pb2.env_settings(settings=env_settings_string))
+            interface_pb2.EnvSettings(settings=env_settings_string))
         self.intDataVarsList = response.intDataList.split(",")
         self.intDataVarsList.remove("")
         return response.envInfo.split(",")
@@ -139,34 +139,34 @@ class DiambraArenaLib:
 
     # Reset the environment
     def reset(self):
-        response = self.stub.Reset(diambra_pb2.Empty())
-        data = self.readData(response.intVar, response.doneConditions)
-        frame = self.readFrame(response.frame)
+        response = self.stub.Reset(interface_pb2.Empty())
+        data = self.read_data(response.intVar, response.doneConditions)
+        frame = self.read_frame(response.frame)
         return frame, data, response.player
 
     # Step the environment (1P)
     def step_1p(self, mov_p1, att_p1):
-        command = diambra_pb2.Command()
+        command = interface_pb2.Command()
         command.P1.mov = mov_p1
         command.P1.att = att_p1
         response = self.stub.Step1P(command)
-        data = self.readData(response.intVar, response.doneConditions)
-        frame = self.readFrame(response.frame)
+        data = self.read_data(response.intVar, response.doneConditions)
+        frame = self.read_frame(response.frame)
         return frame, data
 
     # Step the environment (2P)
     def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
-        command = diambra_pb2.Command()
+        command = interface_pb2.Command()
         command.P1.mov = mov_p1
         command.P1.att = att_p1
         command.P2.mov = mov_p2
         command.P2.att = att_p2
         response = self.stub.Step2P(command)
-        data = self.readData(response.intVar, response.doneConditions)
-        frame = self.readFrame(response.frame)
+        data = self.read_data(response.intVar, response.doneConditions)
+        frame = self.read_frame(response.frame)
         return frame, data
 
     # Closing DIAMBRA Arena
     def close(self):
-        self.stub.Close(diambra_pb2.Empty())
+        self.stub.Close(interface_pb2.Empty())
         self.channel.close()

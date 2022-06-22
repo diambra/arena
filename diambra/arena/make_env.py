@@ -1,6 +1,6 @@
 import os
-from diambraArena.diambraGym import make_gym_env
-from diambraArena.wrappers.diambraWrappers import env_wrapping
+from .arena_gym import make_gym_env
+from .wrappers.arena_wrappers import env_wrapping
 
 
 def env_settings_check(env_settings):
@@ -9,7 +9,7 @@ def env_settings_check(env_settings):
     max_char_to_select = 3
 
     defaultenv_settings = {}
-    defaultenv_settings["game_id"] = "doapp"
+    defaultenv_settings["gameId"] = "doapp"
     defaultenv_settings["player"] = "Random"
     defaultenv_settings["continueGame"] = 0.0
     defaultenv_settings["showFinal"] = True
@@ -71,7 +71,7 @@ def make(game_id, env_settings={}, wrappers_settings={},
     """
 
     # Include game_id in env_settings
-    env_settings["game_id"] = game_id
+    env_settings["gameId"] = game_id
 
     # Check if DIAMBRA_ENVS var present
     env_addresses = os.getenv("DIAMBRA_ENVS", "").split()
@@ -109,9 +109,9 @@ def make(game_id, env_settings={}, wrappers_settings={},
     # Apply trajectories recorder wrappers
     if traj_rec_settings is not None:
         if env_settings["hardCore"]:
-            from diambraArena.wrappers.trajRecWrapperHardCore import TrajectoryRecorder
+            from diambra.arena.wrappers.trajRecWrapperHardCore import TrajectoryRecorder
         else:
-            from diambraArena.wrappers.trajRecWrapper import TrajectoryRecorder
+            from diambra.arena.wrappers.trajRecWrapper import TrajectoryRecorder
 
         env = TrajectoryRecorder(env, **traj_rec_settings)
 
