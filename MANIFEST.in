@@ -1,3 +1,2 @@
-include diambraArena/utils/.splashScreen.gif
-include diambraArena/utils/integratedGames.json
-include diambraArena/diambraEnvLib/x11docker
+include diambra/arena/utils/.splashScreen.gif
+include diambra/arena/utils/integratedGames.json

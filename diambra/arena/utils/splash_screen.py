@@ -16,7 +16,7 @@ def get_monitor_from_coord(x, y):
 # Class to manage gampad
 
 
-class DiambraSplashScreen():
+class SplashScreen():
     def __init__(self, time_interval=100, timeout=5000):
 
         self.timeout = timeout
@@ -54,7 +54,7 @@ class DiambraSplashScreen():
             30, hw_dim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
 
         self.canvas.pack()
-        self.updateText()
+        self.update_text()
         self.window.after(self.timeout, self.window.destroy)
         self.window.mainloop()
 
@@ -63,11 +63,11 @@ class DiambraSplashScreen():
     def update_text(self):
         try:
             self.canvas.itemconfigure(self.loadText, text=next(self.labels))
-            self.window.after(self.time_interval, self.updateText)
+            self.window.after(self.time_interval, self.update_text)
         except StopIteration:
             pass
 
 
 if __name__ == "__main__":
 
-    splash_screen = DiambraSplashScreen()
+    splash_screen = SplashScreen()

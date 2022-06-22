@@ -3,8 +3,7 @@ import numpy as np
 import datetime
 
 import gym
-from diambraArena.gymUtils import gymObsDictSpaceToStandardDict,\
-    ParallelPickleWriter
+from diambra.arena.gymUtils import ParallelPickleWriter
 
 # Trajectory recorder wrapper
 
@@ -44,7 +43,6 @@ class TrajectoryRecorder(gym.Wrapper):
 
         # Items to store
         self.lastFrameHist = []
-        self.addObsHist = []
         self.rewardsHist = []
         self.actionsHist = []
         self.flagHist = []
@@ -53,12 +51,7 @@ class TrajectoryRecorder(gym.Wrapper):
         obs = self.env.reset(**kwargs)
 
         for idx in range(self.frameShp[2]):
-            self.lastFrameHist.append(obs["frame"][:, :, idx])
-
-        # Store the whole obs without the frame
-        tmp_obs = obs.copy()
-        tmp_obs.pop("frame")
-        self.addObsHist.append(tmp_obs)
+            self.lastFrameHist.append(obs[:, :, idx])
 
         return obs
 
@@ -72,20 +65,14 @@ class TrajectoryRecorder(gym.Wrapper):
 
         obs, reward, done, info = self.env.step(action)
 
-        self.lastFrameHist.append(obs["frame"][:, :, self.frameShp[2]-1])
+        self.lastFrameHist.append(obs[:, :, self.frameShp[2]-1])
 
         # Add last obs nFrames - 1 times in case of
         # new round / stage / continue_game
         if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
                 and not done):
             for _ in range(self.frameShp[2]-1):
-                self.lastFrameHist.append(
-                    obs["frame"][:, :, self.frameShp[2]-1])
-
-        # Store the whole obs without the frame
-        tmp_obs = obs.copy()
-        tmp_obs.pop("frame")
-        self.addObsHist.append(tmp_obs)
+                self.lastFrameHist.append(obs[:, :, self.frameShp[2]-1])
 
         self.rewardsHist.append(reward)
         self.actionsHist.append(action)
@@ -108,28 +95,26 @@ class TrajectoryRecorder(gym.Wrapper):
             to_save["frameShp"] = self.frameShp
             to_save["ignore_p2"] = self.ignore_p2
             to_save["charNames"] = self.env.charNames
-            to_save["nActionsStack"] = int(
-                self.env.observation_space["P1"]["actions"]["move"].nvec.shape[0]/self.env.nActions[0][0])
+            to_save["nActionsStack"] = 0
             to_save["epLen"] = len(self.rewardsHist)
             to_save["cumRew"] = self.cumulativeRew
             to_save["frames"] = self.lastFrameHist
-            to_save["addObs"] = self.addObsHist
             to_save["rewards"] = self.rewardsHist
             to_save["actions"] = self.actionsHist
             to_save["doneFlags"] = self.flagHist
-            to_save["observationSpaceDict"] = gymObsDictSpaceToStandardDict(
-                self.env.observation_space)
+            to_save["obsSpaceBounds"] = [self.env.observation_space.low[0][0][0],
+                                         self.env.observation_space.high[0][0][0]]
 
             # Characters name
             # If 2P mode
             if self.env.playerSide == "P1P2" and self.ignore_p2 == 0:
-                save_path = "mod" + str(self.ignore_p2) + "_" +\
-                    self.env.playerSide + "_rew" +\
-                    str(np.round(self.cumulativeRew, 3)) +\
-                    "_" + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                save_path = "HC_mod" + str(self.ignore_p2) + "_" +\
+                           self.env.playerSide + "_rew" +\
+                           str(np.round(self.cumulativeRew, 3)) + "_" +\
+                           datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             # If 1P mode
             else:
-                save_path = "mod" + str(self.ignore_p2) + "_" +\
+                save_path = "HC_mod" + str(self.ignore_p2) + "_" +\
                            self.env.playerSide + "_diff" +\
                            str(self.env.difficulty) + "_rew" +\
                            str(np.round(self.cumulativeRew, 3)) + "_" +\

@@ -5,18 +5,18 @@ import pickle
 import bz2
 import copy
 import cv2
-from diambraArena.gymUtils import standardDictToGymObsDict,\
-    discreteToMultiDiscreteAction
+from diambra.arena.utils.gym_utils import standard_dict_to_gym_obs_dict,\
+    discrete_to_multi_discrete_action
 
 # Diambra imitation learning environment
 
 
-class DiambraImitationLearningBase(gym.Env):
+class ImitationLearningBase(gym.Env):
     """Diambra Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
 
     def __init__(self, traj_files_list, rank=0, total_cpus=1):
-        super(DiambraImitationLearningBase, self).__init__()
+        super(ImitationLearningBase, self).__init__()
 
         # Check for number of files
         if total_cpus > len(traj_files_list):
@@ -276,7 +276,7 @@ class DiambraImitationLearningBase(gym.Env):
 # Diambra imitation learning environment
 
 
-class DiambraImitationLearningHardCore(DiambraImitationLearningBase):
+class ImitationLearningHardCore(ImitationLearningBase):
     def __init__(self, traj_files_list, rank=0, total_cpus=1):
         super().__init__(traj_files_list, rank, total_cpus)
 
@@ -312,7 +312,7 @@ class DiambraImitationLearningHardCore(DiambraImitationLearningBase):
 # Diambra imitation learning environment
 
 
-class DiambraImitationLearning(DiambraImitationLearningBase):
+class ImitationLearning(ImitationLearningBase):
     def __init__(self, traj_files_list, rank=0, total_cpus=1):
         super().__init__(traj_files_list, rank, total_cpus)
 
