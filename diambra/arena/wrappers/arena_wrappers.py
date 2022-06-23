@@ -24,8 +24,7 @@ class NoopResetEnv(gym.Wrapper):
         assert no_ops > 0
         obs = None
         no_op_action = [0, 0, 0, 0]
-        if (self.env.actionSpace[0] == "discrete"
-                and self.env.playerSide != "P1P2"):
+        if isinstance(self.action_space, gym.spaces.Discrete):
             no_op_action = 0
         for _ in range(no_ops):
             obs, _, done, _ = self.env.step(no_op_action)
@@ -61,7 +60,7 @@ class StickyActionsEnv(gym.Wrapper):
 
             obs, rew_step, done, info = self.env.step(action)
             rew += rew_step
-            if info["roundDone"] is True:
+            if info["round_done"] is True:
                 break
 
         return obs, rew, done, info
@@ -93,11 +92,11 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         :param rewardNormalizationFactor: multiplication factor
         """
         gym.RewardWrapper.__init__(self, env)
-        self.env.rewardNormalizationValue = reward_normalization_factor*self.env.maxDeltaHealth
+        self.env.rewardNormalizationValue = reward_normalization_factor*self.env.max_delta_health
 
     def reward(self, reward):
         """
-        Nomralize reward dividing by reward normalization factor*maxDeltaHealth
+        Nomralize reward dividing by reward normalization factor*max_delta_health
         :param reward: (float)
         """
         return float(reward)/float(self.env.rewardNormalizationValue)
