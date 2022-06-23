@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import diambraArena
+from diambra.arena.make_env import make
 import argparse
 import time
 import numpy as np
@@ -32,29 +32,28 @@ if __name__ == '__main__':
         # Settings
         settings = {}
         settings["player"] = opt.player
-        settings["stepRatio"] = 1
-        settings["frameShape"] = [128, 128, 1]
+        settings["step_ratio"] = 1
+        settings["frame_shape"] = [128, 128, 1]
 
-        settings["actionSpace"] = opt.actionSpace
-        settings["attackButCombination"] = opt.attButComb
+        settings["action_space"] = opt.actionSpace
+        settings["attack_but_combination"] = opt.attButComb
 
         # Recording settings
         traj_rec_settings = None
 
         # Env wrappers settings
         wrappers_settings = {}
-        wrappers_settings["noOpMax"] = 0
-        wrappers_settings["stickyActions"] = 1
-        wrappers_settings["rewardNormalization"] = True
-        wrappers_settings["clipRewards"] = False
-        wrappers_settings["frameStack"] = 4
+        wrappers_settings["no_op_max"] = 0
+        wrappers_settings["sticky_actions"] = 1
+        wrappers_settings["reward_normalization"] = True
+        wrappers_settings["clip_rewards"] = False
+        wrappers_settings["frame_stack"] = 4
         wrappers_settings["dilation"] = 1
-        wrappers_settings["actionsStack"] = 12
+        wrappers_settings["actions_stack"] = 12
         wrappers_settings["scale"] = True
-        wrappers_settings["scaleMod"] = 0
+        wrappers_settings["scale_mod"] = 0
 
-        env = diambraArena.make(opt.gameId, settings,
-                                wrappers_settings, traj_rec_settings)
+        env = make(opt.gameId, settings, wrappers_settings, traj_rec_settings)
 
         observation = env.reset()
         n_step = 0
@@ -73,7 +72,7 @@ if __name__ == '__main__':
                         idx+1)].sample()
 
             if (settings["player"] == "P1P2"
-                    or settings["actionSpace"] != "discrete"):
+                    or settings["action_space"] != "discrete"):
                 actions = np.append(actions[0], actions[1])
 
             tic = time.time()

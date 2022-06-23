@@ -1,24 +1,21 @@
-import diambraArena
-from diambraArena.utils.diambraGamepad import DiambraGamepad
-import prova
+from diambra.arena.make_env import make
+from diambra.arena.utils.gamepad import DiambraGamepad
 import os
 from os.path import expanduser
-
-prova.ciao()
 
 # Environment Settings
 settings = {}
 settings["player"] = "Random"
-settings["stepRatio"] = 1
-settings["frameShape"] = [128, 128, 1]
-settings["actionSpace"] = "multiDiscrete"
-settings["attackButCombination"] = True
+settings["step_ratio"] = 1
+settings["frame_shape"] = [128, 128, 1]
+settings["action_space"] = "multi_discrete"
+settings["attack_but_combination"] = True
 
 # Gym wrappers settings
 wrappers_settings = {}
-wrappers_settings["rewardNormalization"] = True
-wrappers_settings["frameStack"] = 4
-wrappers_settings["actionsStack"] = 12
+wrappers_settings["reward_normalization"] = True
+wrappers_settings["frame_stack"] = 4
+wrappers_settings["actions_stack"] = 12
 wrappers_settings["scale"] = True
 
 # Gym trajectory recording wrapper kwargs
@@ -26,22 +23,21 @@ traj_rec_settings = {}
 home_dir = expanduser("~")
 
 # Username
-traj_rec_settings["userName"] = "Alex"
+traj_rec_settings["user_name"] = "Alex"
 
 # Path where to save recorderd trajectories
 game_id = "doapp"
-traj_rec_settings["filePath"] = os.path.join(
+traj_rec_settings["file_path"] = os.path.join(
     home_dir, "diambraArena/trajRecordings", game_id)
 
 # If to ignore P2 trajectory (useful when collecting
 # only human trajectories while playing as a human against a RL agent)
-traj_rec_settings["ignoreP2"] = 0
+traj_rec_settings["ignore_p2"] = 0
 
-env = diambraArena.make(game_id, settings,
-                        wrappers_settings, traj_rec_settings)
+env = make(game_id, settings, wrappers_settings, traj_rec_settings)
 
 # GamePad(s) initialization
-gamepad = DiambraGamepad(env.actionList)
+gamepad = DiambraGamepad(env.action_list)
 gamepad.start()
 
 observation = env.reset()
