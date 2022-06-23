@@ -5,17 +5,17 @@ import numpy as np
 
 # Show files in folder
 base_path = os.path.dirname(os.path.abspath(__file__))
-recorded_trajectories_folder = os.path.join(base_path, "recordedTrajectories")
-recorded_trajectories_files = [os.path.join(recorded_trajectories_folder, f)
-                               for f in os.listdir(recorded_trajectories_folder)
-                               if os.path.isfile(os.path.join(recorded_trajectories_folder, f))]
-print(recorded_trajectories_files)
+recorded_traj_folder = os.path.join(base_path, "recordedTrajectories")
+recorded_traj_files = [os.path.join(recorded_traj_folder, f)
+                       for f in os.listdir(recorded_traj_folder)
+                       if os.path.isfile(os.path.join(recorded_traj_folder, f))]
+print(recorded_traj_files)
 
 # Imitation learning settings
 settings = {}
 
 # List of recorded trajectories files
-settings["traj_files_list"] = recorded_trajectories_files
+settings["traj_files_list"] = recorded_traj_files
 
 # Number of parallel Imitation Learning environments that will be run
 settings["total_cpus"] = 2
