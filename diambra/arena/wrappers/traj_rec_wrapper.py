@@ -3,7 +3,7 @@ import numpy as np
 import datetime
 
 import gym
-from diambra.arena.utils.gym_utils import gym_obs_dict_space_to_standard_dict,\
+from ..utils.gym_utils import gym_obs_dict_space_to_standard_dict,\
     ParallelPickleWriter
 
 # Trajectory recorder wrapper
@@ -123,7 +123,7 @@ class TrajectoryRecorder(gym.Wrapper):
             to_save["rewards"] = self.rewards_hist
             to_save["actions"] = self.actions_hist
             to_save["done_flags"] = self.flag_hist
-            to_save["observation_space_dict"] = gymObsDictSpaceToStandardDict(
+            to_save["observation_space_dict"] = gym_obs_dict_space_to_standard_dict(
                 self.env.observation_space)
 
             # Characters name

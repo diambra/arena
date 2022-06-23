@@ -3,7 +3,7 @@ import numpy as np
 import datetime
 
 import gym
-from diambra.arena.utils.gym_utils import ParallelPickleWriter
+from ..utils.gym_utils import ParallelPickleWriter
 
 # Trajectory recorder wrapper
 

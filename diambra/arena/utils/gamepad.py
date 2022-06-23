@@ -45,9 +45,9 @@ class DiambraGamepad(Thread):  # def class typr thread
             home_dir, '.diambra/config/gamepadConfig.cfg')
 
         self.all_actions_list = (("NoMove", "Left", "UpLeft", "Up", "UpRight",
-                                "Right", "DownRight", "Down", "DownLeft"),
-                               ("But0", "But1", "But2", "But3", "But4",
-                                "But5", "But6", "But7", "But8"))
+                                  "Right", "DownRight", "Down", "DownLeft"),
+                                 ("But0", "But1", "But2", "But3", "But4",
+                                  "But5", "But6", "But7", "But8"))
         self.action_list = action_list
 
         self.cfg = cfg
@@ -238,7 +238,7 @@ class DiambraGamepad(Thread):  # def class typr thread
                     # Read "Absolute" info DIGITAL
                     for item in cfg_file_dict["absoluteValuesListDigital"]:
                         self.gamepad_dict["Absolute"][item[0]][item[1]] = [item[2],
-                                                                            abs(item[1])]
+                                                                           abs(item[1])]
 
                     # Read "Absolute" info ANALOG
                     for item in cfg_file_dict["absoluteValuesListAnalog"]:
