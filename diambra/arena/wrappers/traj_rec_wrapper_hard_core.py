@@ -21,7 +21,7 @@ class TrajectoryRecorder(gym.Wrapper):
         self.file_path = file_path
         self.user_name = user_name
         self.ignore_p2 = ignore_p2
-        self.frame_shp = self.env.observation_space["frame"].shape
+        self.frame_shp = self.env.observation_space.shape
         self.commit_hash = commit_hash
 
         if (self.env.player_side == "P1P2"):

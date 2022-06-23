@@ -96,7 +96,7 @@ def make(game_id, env_settings={}, wrappers_settings={},
     # Checking settings and setting up default ones
     env_settings = env_settings_check(env_settings)
 
-    # Initialize random seed
+    # Make environment
     env, player = make_gym_env(env_settings)
 
     # Initialize random seed
