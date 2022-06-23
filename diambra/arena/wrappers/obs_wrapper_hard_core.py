@@ -110,7 +110,7 @@ class FrameStack(gym.Wrapper):
         # new round / stage / continueGame
         if ((info["round_done"] or info["stage_done"] or info["game_done"])
                 and not done):
-            for _ in range(self.nFrames - 1):
+            for _ in range(self.n_frames - 1):
                 self.frames.append(obs)
 
         return self.get_ob(), reward, done, info
