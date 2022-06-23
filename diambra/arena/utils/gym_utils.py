@@ -242,7 +242,7 @@ def available_games(print_out=True, details=False):
 def game_sha_256(game_id=None):
 
     base_path = os.path.dirname(os.path.abspath(__file__))
-    games_file_path = os.path.join(base_path, 'utils/integratedGames.json')
+    games_file_path = os.path.join(base_path, 'integratedGames.json')
     games_file = open(games_file_path)
     games_dict = json.load(games_file)
 
