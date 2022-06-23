@@ -99,8 +99,8 @@ class DiambraEngine:
         env_settings_string = self.env_settings_to_string(env_settings)
         response = self.stub.EnvInit(
             interface_pb2.EnvSettings(settings=env_settings_string))
-        self.intDataVarsList = response.intDataList.split(",")
-        self.intDataVarsList.remove("")
+        self.int_data_vars_list = response.intDataList.split(",")
+        self.int_data_vars_list.remove("")
         return response.envInfo.split(",")
 
     # Set frame size
@@ -120,7 +120,7 @@ class DiambraEngine:
                 "ep_done": done_conds.episode}
 
         idx = 0
-        for var in self.intDataVarsList:
+        for var in self.int_data_vars_list:
             data[var] = int(int_var[idx])
             idx += 1
 
