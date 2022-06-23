@@ -13,12 +13,12 @@ class NoopResetEnv(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         self.no_op_max = no_op_max
-        self.overrideNumno_ops = None
+        self.override_num_no_ops = None
 
     def reset(self, **kwargs):
         self.env.reset(**kwargs)
-        if self.overrideNumno_ops is not None:
-            no_ops = self.overrideNumno_ops
+        if self.override_num_no_ops is not None:
+            no_ops = self.override_num_no_ops
         else:
             no_ops = random.randint(1, self.no_op_max + 1)
         assert no_ops > 0
@@ -47,10 +47,10 @@ class StickyActionsEnv(gym.Wrapper):
         gym.Wrapper.__init__(self, env)
         self.sticky_actions = sticky_actions
 
-        assert self.env.envSettings["stepRatio"] == 1, "sticky_actions can "\
-                                                       "be activated only "\
-                                                       "when stepRatio is "\
-                                                       "set equal to 1"
+        assert self.env.env_settings["stepRatio"] == 1, "sticky_actions can "\
+                                                        "be activated only "\
+                                                        "when stepRatio is "\
+                                                        "set equal to 1"
 
     def step(self, action):
 

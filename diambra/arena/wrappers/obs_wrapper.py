@@ -208,12 +208,12 @@ class ActionsStack(gym.Wrapper):
         gym.Wrapper.__init__(self, env)
         self.n_actions_stack = n_actions_stack
         self.n_players = n_players
-        self.moveActionStack = []
-        self.attackActionStack = []
+        self.move_action_stack = []
+        self.attack_action_stack = []
         for iplayer in range(self.n_players):
-            self.moveActionStack.append(
+            self.move_action_stack.append(
                 deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
-            self.attackActionStack.append(
+            self.attack_action_stack.append(
                 deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
             self.observation_space.spaces["P{}".format(iplayer+1)].spaces["actions"].spaces["move"] =\
                 spaces.MultiDiscrete([self.n_actions[iplayer][0]]*n_actions_stack)
@@ -224,8 +224,8 @@ class ActionsStack(gym.Wrapper):
         # Fill the actions stack with no action after reset
         for _ in range(self.n_actions_stack):
             for iplayer in range(self.n_players):
-                self.moveActionStack[iplayer].append(value)
-                self.attackActionStack[iplayer].append(value)
+                self.move_action_stack[iplayer].append(value)
+                self.attack_action_stack[iplayer].append(value)
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
@@ -233,17 +233,17 @@ class ActionsStack(gym.Wrapper):
 
         for iplayer in range(self.n_players):
             obs["P{}".format(
-                iplayer+1)]["actions"]["move"] = self.moveActionStack[iplayer]
+                iplayer+1)]["actions"]["move"] = self.move_action_stack[iplayer]
             obs["P{}".format(
-                iplayer+1)]["actions"]["attack"] = self.attackActionStack[iplayer]
+                iplayer+1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
         return obs
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         for iplayer in range(self.n_players):
-            self.moveActionStack[iplayer].append(
+            self.move_action_stack[iplayer].append(
                 obs["P{}".format(iplayer+1)]["actions"]["move"])
-            self.attackActionStack[iplayer].append(
+            self.attack_action_stack[iplayer].append(
                 obs["P{}".format(iplayer+1)]["actions"]["attack"])
 
         # Add noAction for n_actions_stack - 1 times
@@ -254,9 +254,9 @@ class ActionsStack(gym.Wrapper):
 
         for iplayer in range(self.n_players):
             obs["P{}".format(
-                iplayer+1)]["actions"]["move"] = self.moveActionStack[iplayer]
+                iplayer+1)]["actions"]["move"] = self.move_action_stack[iplayer]
             obs["P{}".format(
-                iplayer+1)]["actions"]["attack"] = self.attackActionStack[iplayer]
+                iplayer+1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
         return obs, reward, done, info
 
 
