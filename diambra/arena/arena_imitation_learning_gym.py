@@ -5,7 +5,8 @@ import pickle
 import bz2
 import copy
 import cv2
-from diambra.arena.utils.gym_utils import standard_dict_to_gym_obs_dict,\
+from .utils.splash_screen import SplashScreen
+from .utils.gym_utils import standard_dict_to_gym_obs_dict,\
     discrete_to_multi_discrete_action
 
 # Diambra imitation learning environment
@@ -23,6 +24,9 @@ class ImitationLearningBase(gym.Env):
             raise Exception(
                 "Number of requested CPUs > number of "
                 "recorded experience available files")
+
+        # Splash Screen
+        SplashScreen()
 
         # List of RL trajectories files
         self.traj_files_list = traj_files_list
@@ -271,10 +275,10 @@ class ImitationLearningBase(gym.Env):
             window_name = "Diambra Imitation Learning Environment - {}".format(
                 self.rank)
             cv2.namedWindow(window_name, cv2.WINDOW_GUI_NORMAL)
-            cv2.imshow(window_name, self.lastObs)
+            cv2.imshow(window_name, self.last_obs)
             cv2.waitKey(1)
         elif mode == "rgb_array":
-            output = np.expand_dims(self.lastObs, axis=2)
+            output = np.expand_dims(self.last_obs, axis=2)
             return output
 
 # Diambra imitation learning environment
@@ -302,7 +306,7 @@ class ImitationLearningHardCore(ImitationLearningBase):
             observation[:, :, iframe] = self.rl_traj_dict["frames"][self.step_idx +
                                                                     self.shift_counter + iframe - reset_shift]
         # Storing last observation for rendering
-        self.lastObs = observation[:, :, self.frame_n_channels-1]
+        self.last_obs = observation[:, :, self.frame_n_channels-1]
 
         return observation
 
@@ -344,7 +348,7 @@ class ImitationLearning(ImitationLearningBase):
             observation["frame"][:, :, iframe] = self.rl_traj_dict["frames"][self.step_idx +
                                                                              self.shift_counter + iframe - reset_shift]
         # Storing last observation for rendering
-        self.lastObs = observation["frame"][:, :, self.frame_n_channels-1]
+        self.last_obs = observation["frame"][:, :, self.frame_n_channels-1]
 
         return observation
 
