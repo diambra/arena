@@ -92,14 +92,14 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         :param rewardNormalizationFactor: multiplication factor
         """
         gym.RewardWrapper.__init__(self, env)
-        self.env.rewardNormalizationValue = reward_normalization_factor*self.env.max_delta_health
+        self.env.reward_normalization_value = reward_normalization_factor*self.env.max_delta_health
 
     def reward(self, reward):
         """
         Nomralize reward dividing by reward normalization factor*max_delta_health
         :param reward: (float)
         """
-        return float(reward)/float(self.env.rewardNormalizationValue)
+        return float(reward)/float(self.env.reward_normalization_value)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
 

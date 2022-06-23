@@ -8,35 +8,35 @@ def env_settings_check(env_settings):
     # Default parameters
     max_char_to_select = 3
 
-    defaultenv_settings = {}
-    defaultenv_settings["game_id"] = "doapp"
-    defaultenv_settings["player"] = "Random"
-    defaultenv_settings["continue_game"] = 0.0
-    defaultenv_settings["show_final"] = True
-    defaultenv_settings["step_ratio"] = 6
-    defaultenv_settings["difficulty"] = 3
-    defaultenv_settings["characters"] = [
+    default_env_settings = {}
+    default_env_settings["game_id"] = "doapp"
+    default_env_settings["player"] = "Random"
+    default_env_settings["continue_game"] = 0.0
+    default_env_settings["show_final"] = True
+    default_env_settings["step_ratio"] = 6
+    default_env_settings["difficulty"] = 3
+    default_env_settings["characters"] = [
         ["Random" for ichar in range(max_char_to_select)] for iplayer in range(2)]
-    defaultenv_settings["char_outfits"] = [2, 2]
-    defaultenv_settings["frame_shape"] = [0, 0, 0]
-    defaultenv_settings["action_space"] = "multi_discrete"
-    defaultenv_settings["attack_but_combination"] = True
+    default_env_settings["char_outfits"] = [2, 2]
+    default_env_settings["frame_shape"] = [0, 0, 0]
+    default_env_settings["action_space"] = "multi_discrete"
+    default_env_settings["attack_but_combination"] = True
 
     # SFIII Specific
-    defaultenv_settings["super_art"] = [0, 0]
+    default_env_settings["super_art"] = [0, 0]
 
     # UMK3 Specific
-    defaultenv_settings["tower"] = 3
+    default_env_settings["tower"] = 3
 
     # KOF Specific
-    defaultenv_settings["fighting_style"] = [0, 0]
-    defaultenv_settings["ultimate_style"] = [[0, 0, 0], [0, 0, 0]]
+    default_env_settings["fighting_style"] = [0, 0]
+    default_env_settings["ultimate_style"] = [[0, 0, 0], [0, 0, 0]]
 
-    defaultenv_settings["hard_core"] = False
-    defaultenv_settings["disable_keyboard"] = True
-    defaultenv_settings["disable_joystick"] = True
-    defaultenv_settings["rank"] = 0
-    defaultenv_settings["record_config_file"] = "\"\""
+    default_env_settings["hard_core"] = False
+    default_env_settings["disable_keyboard"] = True
+    default_env_settings["disable_joystick"] = True
+    default_env_settings["rank"] = 0
+    default_env_settings["record_config_file"] = "\"\""
 
     for k, v in env_settings.items():
 
@@ -46,20 +46,20 @@ def env_settings_check(env_settings):
                 for ichar in range(len(v[iplayer]), max_char_to_select):
                     v[iplayer].append("Random")
 
-        defaultenv_settings[k] = v
+        default_env_settings[k] = v
 
-    if defaultenv_settings["player"] != "P1P2":
-        defaultenv_settings["action_space"] = [defaultenv_settings["action_space"],
-                                               defaultenv_settings["action_space"]]
-        defaultenv_settings["attack_but_combination"] = [defaultenv_settings["attack_but_combination"],
-                                                         defaultenv_settings["attack_but_combination"]]
+    if default_env_settings["player"] != "P1P2":
+        default_env_settings["action_space"] = [default_env_settings["action_space"],
+                                                default_env_settings["action_space"]]
+        default_env_settings["attack_but_combination"] = [default_env_settings["attack_but_combination"],
+                                                          default_env_settings["attack_but_combination"]]
     else:
         for key in ["action_space", "attack_but_combination"]:
-            if type(defaultenv_settings[key]) != list:
-                defaultenv_settings[key] = [defaultenv_settings[key],
-                                            defaultenv_settings[key]]
+            if type(default_env_settings[key]) != list:
+                default_env_settings[key] = [default_env_settings[key],
+                                             default_env_settings[key]]
 
-    return defaultenv_settings
+    return default_env_settings
 
 
 def make(game_id, env_settings={}, wrappers_settings={},
