@@ -177,7 +177,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
         if player != "P1P2":
             env = ActionsStack(env, actions_stack)
         else:
-            env = ActionsStack(env, actions_stack, nPlayers=2)
+            env = ActionsStack(env, actions_stack, n_players=2)
 
     # Scales observations normalizing them
     if scale:

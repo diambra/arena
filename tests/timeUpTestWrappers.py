@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import diambraArena
-from diambraArena.gymUtils import env_spaces_summary, show_wrap_obs
+from diambra.arena.make_env import make
+from diambra.arena.utils.gym_utils import env_spaces_summary, show_wrap_obs
 import argparse
 import time
 from os.path import expanduser
@@ -34,34 +34,34 @@ if __name__ == '__main__':
         # Settings
         settings = {}
         if opt.envAddress != "":
-            settings["envAddress"] = opt.envAddress
+            settings["env_address"] = opt.envAddress
         settings["player"] = "P1P2"
-        settings["stepRatio"] = 3
-        settings["frameShape"] = [128, 128, 1]
-        settings["continueGame"] = opt.continueGame
-        settings["showFinal"] = False
+        settings["step_ratio"] = 3
+        settings["frame_shape"] = [128, 128, 1]
+        settings["continue_game"] = opt.continueGame
+        settings["show_final"] = False
 
-        settings["actionSpace"] = ["discrete", "discrete"]
-        settings["attackButCombination"] = [False, False]
+        settings["action_space"] = ["discrete", "discrete"]
+        settings["attack_but_combination"] = [False, False]
 
-        settings["hardCore"] = False
+        settings["hard_core"] = False
 
         traj_rec_settings = None
 
         # Env wrappers settings
         wrappers_settings = {}
-        wrappers_settings["noOpMax"] = 0
-        wrappers_settings["stickyActions"] = 1
-        wrappers_settings["rewardNormalization"] = True
-        wrappers_settings["clipRewards"] = False
-        wrappers_settings["frameStack"] = 4
+        wrappers_settings["no_op_max"] = 0
+        wrappers_settings["sticky_actions"] = 1
+        wrappers_settings["reward_normalization"] = True
+        wrappers_settings["clip_rewards"] = False
+        wrappers_settings["frame_stack"] = 4
         wrappers_settings["dilation"] = 1
-        wrappers_settings["actionsStack"] = 12
+        wrappers_settings["actions_stack"] = 12
         wrappers_settings["scale"] = True
-        wrappers_settings["scaleMod"] = 0
+        wrappers_settings["scale_mod"] = 0
 
-        env = diambraArena.make(opt.gameId, settings, wrappers_settings,
-                                traj_rec_settings, seed=time_dep_seed)
+        env = make(opt.gameId, settings, wrappers_settings,
+                   traj_rec_settings, seed=time_dep_seed)
 
         # Print environment obs and action spaces summary
         env_spaces_summary(env)
@@ -90,16 +90,16 @@ if __name__ == '__main__':
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
             show_wrap_obs(
-                observation, wrappers_settings["actionsStack"],
-                env.charNames, wait_key, viz_flag)
+                observation, wrappers_settings["actions_stack"],
+                env.char_names, wait_key, viz_flag)
             print("----------")
 
             if done:
                 print("Resetting Env")
                 observation = env.reset()
                 show_wrap_obs(
-                    observation, wrappers_settings["actionsStack"],
-                    env.charNames, wait_key, viz_flag)
+                    observation, wrappers_settings["actions_stack"],
+                    env.char_names, wait_key, viz_flag)
                 break
 
         env.close()
