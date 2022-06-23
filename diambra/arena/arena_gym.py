@@ -2,8 +2,8 @@ import numpy as np
 import cv2
 import gym
 from gym import spaces
-from diambra.arena.utils.gym_utils import discrete_to_multi_discrete_action
-from diambra.arena.engine.interface import DiambraEngine
+from .utils.gym_utils import discrete_to_multi_discrete_action
+from .engine.interface import DiambraEngine
 
 # DIAMBRA Env Gym
 
@@ -15,7 +15,7 @@ class DiambraGymHardCoreBase(gym.Env):
     def __init__(self, env_settings):
         super(DiambraGymHardCoreBase, self).__init__()
 
-        self.rewardNormalizationValue = 1.0
+        self.reward_normalization_value = 1.0
         self.attack_but_combination = env_settings["attack_but_combination"]
 
         self.env_settings = env_settings
@@ -145,8 +145,8 @@ class DiambraGymHardCoreBase(gym.Env):
 
     # Return min max rewards for the environment
     def get_min_max_reward(self):
-        return [self.minmax_reward[0]/(self.rewardNormalizationValue),
-                self.minmax_reward[1]/(self.rewardNormalizationValue)]
+        return [self.minmax_reward[0]/(self.reward_normalization_value),
+                self.minmax_reward[1]/(self.reward_normalization_value)]
 
     # Step method to be implemented in derived classes
     def step(self, action):
@@ -164,13 +164,13 @@ class DiambraGymHardCoreBase(gym.Env):
 
         if mode == "human":
             if (self.render_gui_started is False):
-                self.windowName = "DIAMBRA Arena - {} - ({})".format(
+                self.window_name = "DIAMBRA Arena - {} - ({})".format(
                     self.env_settings["game_id"], self.env_settings["rank"])
-                cv2.namedWindow(self.windowName, cv2.WINDOW_GUI_NORMAL)
+                cv2.namedWindow(self.window_name, cv2.WINDOW_GUI_NORMAL)
                 self.render_gui_started = True
                 wait_key = 100
 
-            cv2.imshow(self.windowName, self.frame[:, :, ::-1])
+            cv2.imshow(self.window_name, self.frame[:, :, ::-1])
             cv2.waitKey(wait_key)
         elif mode == "rgb_array":
             return self.frame
