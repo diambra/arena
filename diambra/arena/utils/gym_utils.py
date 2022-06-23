@@ -57,6 +57,8 @@ def nested_dict_obs_space(space, k_list=[], level=0):
 
 
 # Print out environment spaces summary
+
+
 def env_spaces_summary(env):
 
     # Printing out observation space description
@@ -121,6 +123,8 @@ def standard_dict_to_gym_obs_dict(obsstandard_dict):
 
 
 # Discrete to multidiscrete action conversion
+
+
 def discrete_to_multi_discrete_action(action, n_move_actions):
 
     mov_act = 0

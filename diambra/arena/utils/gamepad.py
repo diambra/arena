@@ -33,18 +33,18 @@ class DiambraGamepad(Thread):  # def class typr thread
         # thread init class (don't forget this)
         Thread.__init__(self, daemon=True)
 
-        self.stopEvent = Event()
+        self.stop_event = Event()
 
-        self.startCode = ""
-        self.selectCode = ""
-        self.startBut = 0
-        self.selectBut = 0
-        self.eventHashMove = np.zeros(4)
-        self.eventHashAttack = np.zeros(8)
-        self.gamepadConfigFileName = os.path.join(
+        self.start_code = ""
+        self.select_code = ""
+        self.start_but = 0
+        self.select_bBut = 0
+        self.event_hash_move = np.zeros(4)
+        self.event_hash_attack = np.zeros(8)
+        self.gamepad_config_file_name = os.path.join(
             home_dir, '.diambra/config/gamepadConfig.cfg')
 
-        self.allActionsList = (("NoMove", "Left", "UpLeft", "Up", "UpRight",
+        self.all_actions_list = (("NoMove", "Left", "UpLeft", "Up", "UpRight",
                                 "Right", "DownRight", "Down", "DownLeft"),
                                ("But0", "But1", "But2", "But3", "But4",
                                 "But5", "But6", "But7", "But8"))
@@ -82,7 +82,7 @@ class DiambraGamepad(Thread):  # def class typr thread
                 ans = input("Want to test the configuration? (n/y): ")
 
                 if ans == "y":
-                    self.initaction_list(self.allActionsList)
+                    self.initaction_list(self.all_actions_list)
                     self.config_test()
                     self.initaction_list(self.action_list)
 
@@ -123,26 +123,26 @@ class DiambraGamepad(Thread):  # def class typr thread
 
         # Keys
         key_list_dict = []
-        for key, value in self.gamePadDict["Key"].items():
+        for key, value in self.game_pad_dict["Key"].items():
             key_list_dict.append([key, value])
 
         cfg_dict_to_save["key_valuesList"] = key_list_dict
 
         # Start and select
         start_select_list = ["", ""]
-        start_select_list[0] = self.startCode
-        start_select_list[1] = self.selectCode
+        start_select_list[0] = self.start_code
+        start_select_list[1] = self.select_code
 
         cfg_dict_to_save["start_select_list"] = start_select_list
 
         # Digital and Analog moves
         abs_list_dict_digital = []
         abs_list_dict_analog = []
-        for key1, value1 in self.gamePadDict["Absolute"].items():
+        for key1, value1 in self.game_pad_dict["Absolute"].items():
 
             if "ABS_HAT0" in key1:
                 # Digital moves
-                for key2, value2 in self.gamePadDict["Absolute"][key1].items():
+                for key2, value2 in self.game_pad_dict["Absolute"][key1].items():
                     abs_list_dict_digital.append([key1, key2, value2[0]])
 
             else:
@@ -158,7 +158,7 @@ class DiambraGamepad(Thread):  # def class typr thread
     # Save gamepad configuration
     def save_gamepad_configuration(self):
 
-        print("Saving configuration in {}".format(self.gamepadConfigFileName))
+        print("Saving configuration in {}".format(self.gamepad_config_file_name))
 
         # Convert gamepad config dictionary
         cfg_dict_to_save = self.process_gamepad_dict_for_save()
@@ -176,7 +176,7 @@ class DiambraGamepad(Thread):  # def class typr thread
         cfg_file_dict_list.append(cfg_dict_to_save)
 
         # Open file (new or overwrite previous one)
-        cfg_file = open(self.gamepadConfigFileName, "wb")
+        cfg_file = open(self.gamepad_config_file_name, "wb")
         pickle.dump(cfg_file_dict_list, cfg_file)
         cfg_file.close()
 
@@ -184,7 +184,7 @@ class DiambraGamepad(Thread):  # def class typr thread
     def load_all_gamepad_configurations(self):
 
         try:
-            cfg_file = open(self.gamepadConfigFileName, "rb")
+            cfg_file = open(self.gamepad_config_file_name, "rb")
 
             # Load Pickle Dict
             cfg_file_dict_list = pickle.load(cfg_file)
@@ -216,34 +216,33 @@ class DiambraGamepad(Thread):  # def class typr thread
 
                 try:
                     # Initialize GamePad dict
-                    self.gamePadDict = {}
-                    self.gamePadDict["Key"] = defaultdict(lambda: 7)
-                    self.gamePadDict["Absolute"] = defaultdict(
+                    self.game_pad_dict = {}
+                    self.game_pad_dict["Key"] = defaultdict(lambda: 7)
+                    self.game_pad_dict["Absolute"] = defaultdict(
                         lambda: defaultdict(lambda: [[], 0]))
-                    self.gamePadDict["Absolute"]["ABS_HAT0Y"] = defaultdict(
+                    self.game_pad_dict["Absolute"]["ABS_HAT0Y"] = defaultdict(
                         lambda: [[], 0])  # No-op action = 0
-                    self.gamePadDict["Absolute"]["ABS_HAT0X"] = defaultdict(
+                    self.game_pad_dict["Absolute"]["ABS_HAT0X"] = defaultdict(
                         lambda: [[], 0])  # No-op action = 0
-                    self.gamePadDict["Absolute"]["ABS_HAT0Y"][0] = [[0, 2], 0]
-                    self.gamePadDict["Absolute"]["ABS_HAT0X"][0] = [[1, 3], 0]
+                    self.game_pad_dict["Absolute"]["ABS_HAT0Y"][0] = [[0, 2], 0]
+                    self.game_pad_dict["Absolute"]["ABS_HAT0X"][0] = [[1, 3], 0]
 
                     # Read Start/Select info
-                    self.startCode = cfg_file_dict["start_select_list"][0]
-                    self.selectCode = cfg_file_dict["start_select_list"][1]
+                    self.start_code = cfg_file_dict["start_select_list"][0]
+                    self.select_code = cfg_file_dict["start_select_list"][1]
 
                     # Read "Key" info
                     for item in cfg_file_dict["key_valuesList"]:
-                        self.gamePadDict["Key"][item[0]] = item[1]
+                        self.game_pad_dict["Key"][item[0]] = item[1]
 
                     # Read "Absolute" info DIGITAL
                     for item in cfg_file_dict["absoluteValuesListDigital"]:
-                        self.gamePadDict["Absolute"][item[0]
-                                                     ][item[1]] = [item[2],
-                                                                   abs(item[1])]
+                        self.game_pad_dict["Absolute"][item[0]][item[1]] = [item[2],
+                                                                            abs(item[1])]
 
                     # Read "Absolute" info ANALOG
                     for item in cfg_file_dict["absoluteValuesListAnalog"]:
-                        self.gamePadDict["Absolute"][item[0]] = [
+                        self.game_pad_dict["Absolute"][item[0]] = [
                             item[1], item[2], item[3], item[4]]
 
                     config_found = True
@@ -286,9 +285,9 @@ class DiambraGamepad(Thread):  # def class typr thread
         print("NB: Be sure to have your analog switch on before starting.")
         print("")
 
-        self.gamePadDict = {}
-        self.gamePadDict["Key"] = defaultdict(lambda: 7)
-        self.gamePadDict["Absolute"] = defaultdict(
+        self.game_pad_dict = {}
+        self.game_pad_dict["Key"] = defaultdict(lambda: 7)
+        self.game_pad_dict["Absolute"] = defaultdict(
             lambda: defaultdict(lambda: [[], 0]))
 
         # Buttons configuration
@@ -300,7 +299,7 @@ class DiambraGamepad(Thread):  # def class typr thread
             for event in self.gamepad.read():
                 if event.ev_type == "Key":
                     if event.state == 1:
-                        self.startCode = event.code
+                        self.start_code = event.code
                         print("Start associated with {}".format(event.code))
                     else:
                         but_not_set = False
@@ -311,12 +310,12 @@ class DiambraGamepad(Thread):  # def class typr thread
         while but_not_set:
             for event in self.gamepad.read():
                 if event.ev_type == "Key":
-                    if event.code != self.startCode and event.state == 1:
-                        self.selectCode = event.code
+                    if event.code != self.start_code and event.state == 1:
+                        self.select_code = event.code
                         print("Select associated with {}".format(event.code))
                     else:
                         but_not_set = False
-                        if event.code == self.startCode:
+                        if event.code == self.start_code:
                             print("Select association skipped")
                         break
 
@@ -338,12 +337,12 @@ class DiambraGamepad(Thread):  # def class typr thread
 
                 for event in self.gamepad.read():
                     if event.ev_type == "Key":
-                        if (event.code != self.startCode
-                                and event.code != self.selectCode):
+                        if (event.code != self.start_code
+                                and event.code != self.select_code):
                             if event.state == 1:
                                 print("Button B{}, event code = {}".format(
                                     idx+1, event.code))
-                                self.gamePadDict["Key"][event.code] = idx
+                                self.game_pad_dict["Key"][event.code] = idx
                             elif event.state == 0:
                                 but_not_set = False
                         else:
@@ -358,12 +357,12 @@ class DiambraGamepad(Thread):  # def class typr thread
         print("Configuring digital move")
         moves_list = ["UP", "RIGHT", "DOWN", "LEFT"]
         event_codes_list = ["Y", "X", "Y", "X"]
-        self.gamePadDict["Absolute"]["ABS_HAT0Y"] = defaultdict(lambda: [
+        self.game_pad_dict["Absolute"]["ABS_HAT0Y"] = defaultdict(lambda: [
                                                                 [], 0])
-        self.gamePadDict["Absolute"]["ABS_HAT0X"] = defaultdict(lambda: [
+        self.game_pad_dict["Absolute"]["ABS_HAT0X"] = defaultdict(lambda: [
                                                                 [], 0])
-        self.gamePadDict["Absolute"]["ABS_HAT0Y"][0] = [[0, 2], 0]
-        self.gamePadDict["Absolute"]["ABS_HAT0X"][0] = [[1, 3], 0]
+        self.game_pad_dict["Absolute"]["ABS_HAT0Y"][0] = [[0, 2], 0]
+        self.game_pad_dict["Absolute"]["ABS_HAT0X"][0] = [[1, 3], 0]
 
         for idx, move in enumerate(moves_list):
 
@@ -386,7 +385,7 @@ class DiambraGamepad(Thread):  # def class typr thread
                             if abs(event.state) == 1:
                                 print("{} move event code = {}, event state = {}".format(
                                     move, event.code, event.state))
-                                self.gamePadDict["Absolute"][event.code][event.state] = [
+                                self.game_pad_dict["Absolute"][event.code][event.state] = [
                                     idx, abs(event.state)]
                             elif event.state == 0:
                                 but_not_set = False
@@ -398,8 +397,8 @@ class DiambraGamepad(Thread):  # def class typr thread
                                 end_flag = True
                                 break
                     else:
-                        if (event.code == self.startCode
-                                or event.code == self.selectCode):
+                        if (event.code == self.start_code
+                                or event.code == self.select_code):
                             if event.state == 0:
                                 print("Digital Move Stick configuration skipped")
                                 end_flag = True
@@ -410,8 +409,8 @@ class DiambraGamepad(Thread):  # def class typr thread
         print("Configuring analog move")
         moves_list = ["UP", "RIGHT", "DOWN", "LEFT"]
         event_codes_list = ["Y", "X", "Y", "X"]
-        self.maxAnalogVal = {}
-        self.originAnalogVal = {}
+        self.max_analog_val = {}
+        self.origin_analog_val = {}
 
         for idx, move in enumerate(moves_list):
 
@@ -420,7 +419,7 @@ class DiambraGamepad(Thread):  # def class typr thread
 
             but_not_set = True
 
-            self.maxAnalogVal[move] = 0
+            self.max_analog_val[move] = 0
 
             while but_not_set:
 
@@ -428,55 +427,54 @@ class DiambraGamepad(Thread):  # def class typr thread
 
                     if event.ev_type == "Absolute":
                         if event.code == "ABS_" + event_codes_list[idx]:
-                            self.maxAnalogVal[move] = event.state
+                            self.max_analog_val[move] = event.state
                     else:
-                        if event.code == self.startCode:
+                        if event.code == self.start_code:
                             if event.state == 0:
                                 but_not_set = False
                                 break
 
         # Setting origin value, analog at rest
         for idx in range(2):
-            self.originAnalogVal[moves_list[idx]] = int(
-                (self.maxAnalogVal[moves_list[idx]] +
-                 self.maxAnalogVal[moves_list[idx+2]]) / 2.0)
-            self.originAnalogVal[moves_list[idx+2]
-                                 ] = self.originAnalogVal[moves_list[idx]]
+            self.origin_analog_val[moves_list[idx]] = int(
+                (self.max_analog_val[moves_list[idx]] +
+                 self.max_analog_val[moves_list[idx+2]]) / 2.0)
+            self.origin_analog_val[moves_list[idx+2]] = self.origin_analog_val[moves_list[idx]]
 
         # Setting threshold to discriminate between analog values
         thresh_perc = 0.5
-        self.deltaPerc = {}
+        self.delta_perc = {}
         for idx in range(2):
-            self.deltaPerc[idx] = (self.maxAnalogVal[moves_list[idx]] -
-                                   self.originAnalogVal[moves_list[idx]]) * thresh_perc
-            self.deltaPerc[idx+2] = -self.deltaPerc[idx]
+            self.delta_perc[idx] = (self.max_analog_val[moves_list[idx]] -
+                                    self.origin_analog_val[moves_list[idx]]) * thresh_perc
+            self.delta_perc[idx+2] = -self.delta_perc[idx]
 
-        print("Delta perc = ", self.deltaPerc)
+        print("Delta perc = ", self.delta_perc)
 
         # Addressing Y-X axis
         for idx in range(2):
             print("{} move event code = ABS_{}, ".format(moves_list[idx],
                                                          event_codes_list[idx]) +
-                  "event state = {}".format(self.maxAnalogVal[moves_list[idx]]))
+                  "event state = {}".format(self.max_analog_val[moves_list[idx]]))
             print("{} move event code = ABS_{}, ".format(moves_list[idx+2],
                                                          event_codes_list[idx+2]) +
-                  " event state = {}".format(self.maxAnalogVal[moves_list[idx+2]]))
+                  " event state = {}".format(self.max_analog_val[moves_list[idx+2]]))
             print("NO {}-{} move event code =".format(moves_list[idx],
                                                       moves_list[idx+2]) +
                   " ABS_{}, ".format(event_codes_list[idx]) +
-                  "event state = {}".format(self.originAnalogVal[moves_list[idx]]))
+                  "event state = {}".format(self.origin_analog_val[moves_list[idx]]))
 
             event_code = "ABS_{}".format(event_codes_list[idx])
-            if self.deltaPerc[idx] > 0:
-                self.gamePadDict["Absolute"][event_code] = [
-                    [self.originAnalogVal[moves_list[idx]] - self.deltaPerc[idx],
-                        self.originAnalogVal[moves_list[idx]] + self.deltaPerc[idx]],
+            if self.delta_perc[idx] > 0:
+                self.game_pad_dict["Absolute"][event_code] = [
+                    [self.origin_analog_val[moves_list[idx]] - self.delta_perc[idx],
+                        self.origin_analog_val[moves_list[idx]] + self.delta_perc[idx]],
                     [[idx+2], 1], [[idx, idx+2], 0], [[idx], 1]]
 
-            elif self.deltaPerc[idx] < 0:
-                self.gamePadDict["Absolute"][event_code] = [
-                    [self.originAnalogVal[moves_list[idx]] - self.deltaPerc[idx+2],
-                        self.originAnalogVal[moves_list[idx]] + self.deltaPerc[idx+2]],
+            elif self.delta_perc[idx] < 0:
+                self.game_pad_dict["Absolute"][event_code] = [
+                    [self.origin_analog_val[moves_list[idx]] - self.delta_perc[idx+2],
+                        self.origin_analog_val[moves_list[idx]] + self.delta_perc[idx+2]],
                     [[idx], 1], [[idx, idx+2], 0], [[idx+2], 1]]
 
             else:
@@ -484,8 +482,8 @@ class DiambraGamepad(Thread):  # def class typr thread
                     "Not admissible values found in analog stick configuration, skipping")
 
         print("Gamepad dict : ")
-        print("Buttons (Keys) dict : ", self.gamePadDict["Key"])
-        print("Moves (Absolute) dict : ", self.gamePadDict["Absolute"])
+        print("Buttons (Keys) dict : ", self.game_pad_dict["Key"])
+        print("Moves (Absolute) dict : ", self.game_pad_dict["Absolute"])
 
         print("Configuration completed.")
 
@@ -507,10 +505,10 @@ class DiambraGamepad(Thread):  # def class typr thread
 
             if actions[0] != 0:
                 print("Move action = {}. (Press START to end configuration test).".format(
-                    self.allActionsList[0][actions[0]]))
+                    self.all_actions_list[0][actions[0]]))
             if actions[1] != 0:
                 print("Attack action = {}. (Press START to end configuration test).".format(
-                    self.allActionsList[1][actions[1]]))
+                    self.all_actions_list[1][actions[1]]))
             if actions[2] != 0:
                 break
 
@@ -533,8 +531,8 @@ class DiambraGamepad(Thread):  # def class typr thread
     # Initializa action list
     def initaction_list(self, action_list):
 
-        self.actionDictMove = defaultdict(lambda: 0)  # No-op action = 0
-        self.actionDictAttack = defaultdict(lambda: 0)  # No-op action = 0
+        self.action_dict_move = defaultdict(lambda: 0)  # No-op action = 0
+        self.action_dict_attack = defaultdict(lambda: 0)  # No-op action = 0
 
         move_action_name_to_hash_dict = {}
         move_action_name_to_hash_dict["NoMove"] = [0, 0, 0, 0]
@@ -578,19 +576,19 @@ class DiambraGamepad(Thread):  # def class typr thread
         for idx, action in enumerate(action_list[0]):
 
             hash_val = move_action_name_to_hash_dict[action]
-            self.actionDictMove[tuple(hash_val)] = idx
+            self.action_dict_move[tuple(hash_val)] = idx
 
         # Attack actions
         for idx, action in enumerate(action_list[1]):
 
             hash_val = attack_action_name_to_hash_dict[action]
-            self.actionDictAttack[tuple(hash_val)] = idx
+            self.action_dict_attack[tuple(hash_val)] = idx
 
     # Retrieve all gamepad actions
     def get_all_actions(self):
-        return [self.actionDictMove[tuple(self.eventHashMove)],
-                self.actionDictAttack[tuple(self.eventHashAttack)],
-                self.startBut, self.selectBut]
+        return [self.action_dict_move[tuple(self.event_hash_move)],
+                self.action_dict_attack[tuple(self.event_hash_attack)],
+                self.start_but, self.select_bBut]
 
     # Retrieve gamepad actions
     def get_actions(self):
@@ -598,34 +596,34 @@ class DiambraGamepad(Thread):  # def class typr thread
 
     # Retrieve gamepad events
     def run(self):      # run is a default Thread function
-        while not self.stopEvent.is_set():   # loop until stop is called
+        while not self.stop_event.is_set():   # loop until stop is called
             for event in self.gamepad.read():   # check events of gamepads, if not event, all is stop
                 if event.ev_type == "Key":   # category of binary respond values
 
                     # Select
-                    if event.code == self.selectCode:
-                        self.selectBut = event.state
+                    if event.code == self.select_code:
+                        self.select_bBut = event.state
                     # Start
-                    elif event.code == self.startCode:
-                        self.startBut = event.state
+                    elif event.code == self.start_code:
+                        self.start_but = event.state
                     else:
-                        self.eventHashAttack[self.gamePadDict[event.ev_type]
-                                             [event.code]] = event.state
+                        self.event_hash_attack[self.game_pad_dict[event.ev_type]
+                                               [event.code]] = event.state
 
                 # category of move values (digital moves)
                 elif "ABS_HAT0" in event.code:
 
-                    idx = self.gamePadDict[event.ev_type][event.code][event.state][0]
-                    event_state = self.gamePadDict[event.ev_type][event.code][event.state][1]
-                    self.eventHashMove[idx] = event_state
+                    idx = self.game_pad_dict[event.ev_type][event.code][event.state][0]
+                    event_state = self.game_pad_dict[event.ev_type][event.code][event.state][1]
+                    self.event_hash_move[idx] = event_state
 
                 # category of move values (analog left stick)
                 elif event.code == "ABS_X" or event.code == "ABS_Y":
 
-                    thresh_values = self.gamePadDict[event.ev_type][event.code][0]
-                    min_act = self.gamePadDict[event.ev_type][event.code][1]
-                    centr_act = self.gamePadDict[event.ev_type][event.code][2]
-                    max_act = self.gamePadDict[event.ev_type][event.code][3]
+                    thresh_values = self.game_pad_dict[event.ev_type][event.code][0]
+                    min_act = self.game_pad_dict[event.ev_type][event.code][1]
+                    centr_act = self.game_pad_dict[event.ev_type][event.code][2]
+                    max_act = self.game_pad_dict[event.ev_type][event.code][3]
 
                     if event.state < thresh_values[0]:
                         idx = min_act[0]
@@ -638,8 +636,8 @@ class DiambraGamepad(Thread):  # def class typr thread
                         event_state = centr_act[1]
 
                     for elem in idx:
-                        self.eventHashMove[elem] = event_state
+                        self.event_hash_move[elem] = event_state
 
     # Stop the thread
     def stop(self):
-        self.stopEvent.set()
+        self.stop_event.set()

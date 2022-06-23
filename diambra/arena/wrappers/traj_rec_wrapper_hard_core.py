@@ -3,7 +3,7 @@ import numpy as np
 import datetime
 
 import gym
-from diambra.arena.gymUtils import ParallelPickleWriter
+from diambra.arena.utils.gym_utils import ParallelPickleWriter
 
 # Trajectory recorder wrapper
 
@@ -21,13 +21,13 @@ class TrajectoryRecorder(gym.Wrapper):
         self.file_path = file_path
         self.user_name = user_name
         self.ignore_p2 = ignore_p2
-        self.frameShp = self.env.observation_space["frame"].shape
+        self.frame_shp = self.env.observation_space["frame"].shape
         self.commit_hash = commit_hash
 
-        if (self.env.playerSide == "P1P2"):
-            if ((self.env.attackButCombination[0] != self.env.attackButCombination[1])
-                    or (self.env.actionSpace[0] != self.env.actionSpace[1])):
-                print(self.env.actionSpace, self.env.attackButCombination)
+        if (self.env.player_side == "P1P2"):
+            if ((self.env.attack_but_combination[0] != self.env.attack_but_combination[1])
+                    or (self.env.action_space["P1"] != self.env.action_space["P2"])):
+                print(self.env.action_space, self.env.attack_but_combination)
                 raise Exception("Different attack buttons combinations and/or "
                                 "different action spaces not supported for 2P "
                                 "experience recordings")
@@ -42,16 +42,16 @@ class TrajectoryRecorder(gym.Wrapper):
         """
 
         # Items to store
-        self.lastFrameHist = []
-        self.rewardsHist = []
-        self.actionsHist = []
-        self.flagHist = []
-        self.cumulativeRew = 0
+        self.last_frame_hist = []
+        self.rewards_hist = []
+        self.actions_hist = []
+        self.flag_hist = []
+        self.cumulative_rew = 0
 
         obs = self.env.reset(**kwargs)
 
-        for idx in range(self.frameShp[2]):
-            self.lastFrameHist.append(obs[:, :, idx])
+        for idx in range(self.frame_shp[2]):
+            self.last_frame_hist.append(obs[:, :, idx])
 
         return obs
 
@@ -65,59 +65,65 @@ class TrajectoryRecorder(gym.Wrapper):
 
         obs, reward, done, info = self.env.step(action)
 
-        self.lastFrameHist.append(obs[:, :, self.frameShp[2]-1])
+        self.last_frame_hist.append(obs[:, :, self.frame_shp[2]-1])
 
         # Add last obs nFrames - 1 times in case of
         # new round / stage / continue_game
-        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+        if ((info["round_done"] or info["stage_done"] or info["game_done"])
                 and not done):
-            for _ in range(self.frameShp[2]-1):
-                self.lastFrameHist.append(obs[:, :, self.frameShp[2]-1])
+            for _ in range(self.frame_shp[2]-1):
+                self.last_frame_hist.append(obs[:, :, self.frame_shp[2]-1])
 
-        self.rewardsHist.append(reward)
-        self.actionsHist.append(action)
-        self.flagHist.append([info["roundDone"], info["stageDone"],
-                              info["gameDone"], info["epDone"]])
-        self.cumulativeRew += reward
+        self.rewards_hist.append(reward)
+        self.actions_hist.append(action)
+        self.flag_hist.append([info["round_done"], info["stage_done"],
+                              info["game_done"], info["ep_done"]])
+        self.cumulative_rew += reward
 
         if done:
             to_save = {}
             to_save["commit_hash"] = self.commit_hash
             to_save["user_name"] = self.user_name
-            to_save["playerSide"] = self.env.playerSide
-            if self.env.playerSide != "P1P2":
+            to_save["player_side"] = self.env.player_side
+            if self.env.player_side != "P1P2":
                 to_save["difficulty"] = self.env.difficulty
-                to_save["actionSpace"] = self.env.actionSpace
+                if isinstance(self.env.action_space, gym.spaces.Discrete):
+                    to_save["action_space"] = "discrete"
+                else:
+                    to_save["action_space"] = "multi_discrete"
             else:
-                to_save["actionSpace"] = self.env.actionSpace[0]
-            to_save["nActions"] = self.env.nActions[0]
-            to_save["attackButComb"] = self.env.attackButCombination[0]
-            to_save["frameShp"] = self.frameShp
+                if isinstance(self.env.action_space["P1"], gym.spaces.Discrete):
+                    to_save["action_space"] = "discrete"
+                else:
+                    to_save["action_space"] = "multi_discrete"
+            to_save["n_actions"] = self.env.n_actions[0]
+            to_save["attack_but_comb"] = self.env.attack_but_combination[0]
+            to_save["frame_shp"] = self.frame_shp
             to_save["ignore_p2"] = self.ignore_p2
-            to_save["charNames"] = self.env.charNames
-            to_save["nActionsStack"] = 0
-            to_save["epLen"] = len(self.rewardsHist)
-            to_save["cumRew"] = self.cumulativeRew
-            to_save["frames"] = self.lastFrameHist
-            to_save["rewards"] = self.rewardsHist
-            to_save["actions"] = self.actionsHist
-            to_save["doneFlags"] = self.flagHist
-            to_save["obsSpaceBounds"] = [self.env.observation_space.low[0][0][0],
-                                         self.env.observation_space.high[0][0][0]]
+            to_save["char_names"] = self.env.char_names
+            to_save["n_actions_stack"] = 0
+            to_save["ep_len"] = len(self.rewards_hist)
+            to_save["cum_rew"] = self.cumulative_rew
+            to_save["frames"] = self.last_frame_hist
+            to_save["rewards"] = self.rewards_hist
+            to_save["actions"] = self.actions_hist
+            to_save["done_flags"] = self.flag_hist
+            to_save["obs_space_bounds"] = [self.env.observation_space.low[0][0][0],
+                                           self.env.observation_space.high[0][0][0]]
 
             # Characters name
             # If 2P mode
-            if self.env.playerSide == "P1P2" and self.ignore_p2 == 0:
+            if self.env.player_side == "P1P2" and self.ignore_p2 == 0:
                 save_path = "HC_mod" + str(self.ignore_p2) + "_" +\
-                           self.env.playerSide + "_rew" +\
-                           str(np.round(self.cumulativeRew, 3)) + "_" +\
+                           self.env.player_side + "_rew" +\
+                           str(np.round(self.cumulative_rew, 3)) + "_" +\
                            datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             # If 1P mode
             else:
                 save_path = "HC_mod" + str(self.ignore_p2) + "_" +\
-                           self.env.playerSide + "_diff" +\
+                           self.env.player_side + "_diff" +\
                            str(self.env.difficulty) + "_rew" +\
-                           str(np.round(self.cumulativeRew, 3)) + "_" +\
+                           str(np.round(self.cumulative_rew, 3)) + "_" +\
                            datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
             pickle_writer = ParallelPickleWriter(
