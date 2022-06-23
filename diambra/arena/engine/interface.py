@@ -13,9 +13,6 @@ class DiambraEngine:
 
     def __init__(self, env_address):
 
-        self.boolDataVarsList = ["roundDone",
-                                 "stageDone", "gameDone", "epDone"]
-
         # Opening gRPC channel
         self.channel = grpc.insecure_channel(env_address)
         self.stub = interface_pb2_grpc.EnvServerStub(self.channel)
@@ -32,13 +29,13 @@ class DiambraEngine:
 
         output = ""
 
-        output += "gameId" + sep+"2"+sep + env_settings["gameId"] + sep
+        output += "gameId" + sep+"2"+sep + env_settings["game_id"] + sep
         output += "continueGame" + sep+"3"+sep + \
-            str(env_settings["continueGame"]) + sep
+            str(env_settings["continue_game"]) + sep
         output += "showFinal" + sep+"0"+sep + \
-            str(int(env_settings["showFinal"])) + sep
+            str(int(env_settings["show_final"])) + sep
         output += "stepRatio" + sep+"1"+sep + \
-            str(env_settings["stepRatio"]) + sep
+            str(env_settings["step_ratio"]) + sep
         output += "player" + sep+"2"+sep + env_settings["player"] + sep
         output += "difficulty" + sep+"1"+sep + \
             str(env_settings["difficulty"]) + sep
@@ -52,46 +49,46 @@ class DiambraEngine:
             output += "character2_{}".format(i_char+1) + sep + \
                 "2"+sep + env_settings["characters"][1][i_char] + sep
         output += "charOutfits1" + sep+"1"+sep + \
-            str(env_settings["charOutfits"][0]) + sep
+            str(env_settings["char_outfits"][0]) + sep
         output += "charOutfits2" + sep+"1"+sep + \
-            str(env_settings["charOutfits"][1]) + sep
+            str(env_settings["char_outfits"][1]) + sep
         output += "frameShape1" + sep+"1"+sep + \
-            str(env_settings["frameShape"][0]) + sep
+            str(env_settings["frame_shape"][0]) + sep
         output += "frameShape2" + sep+"1"+sep + \
-            str(env_settings["frameShape"][1]) + sep
+            str(env_settings["frame_shape"][1]) + sep
         output += "frameShape3" + sep+"1"+sep + \
-            str(env_settings["frameShape"][2]) + sep
+            str(env_settings["frame_shape"][2]) + sep
 
         # SFIII Specific
         output += "superArt1" + sep+"1"+sep + \
-            str(env_settings["superArt"][0]) + sep
+            str(env_settings["super_art"][0]) + sep
         output += "superArt2" + sep+"1"+sep + \
-            str(env_settings["superArt"][1]) + sep
+            str(env_settings["super_art"][1]) + sep
         # UMK3 Specific
         output += "tower" + sep+"1"+sep + str(env_settings["tower"]) + sep
         # KOF Specific
         output += "fightingStyle1" + sep+"1"+sep + \
-            str(env_settings["fightingStyle"][0]) + sep
+            str(env_settings["fighting_style"][0]) + sep
         output += "fightingStyle2" + sep+"1"+sep + \
-            str(env_settings["fightingStyle"][1]) + sep
+            str(env_settings["fighting_style"][1]) + sep
         for idx in range(2):
             output += "ultimateStyleDash" + \
                 str(idx+1) + sep+"1"+sep + \
-                str(env_settings["ultimateStyle"][idx][0]) + sep
+                str(env_settings["ultimate_style"][idx][0]) + sep
             output += "ultimateStyleEvade" + \
                 str(idx+1) + sep+"1"+sep + \
-                str(env_settings["ultimateStyle"][idx][1]) + sep
+                str(env_settings["ultimate_style"][idx][1]) + sep
             output += "ultimateStyleBar" + \
                 str(idx+1) + sep+"1"+sep + \
-                str(env_settings["ultimateStyle"][idx][2]) + sep
+                str(env_settings["ultimate_style"][idx][2]) + sep
 
         output += "disableKeyboard" + sep+"0"+sep + \
-            str(int(env_settings["disableKeyboard"])) + sep
+            str(int(env_settings["disable_keyboard"])) + sep
         output += "disableJoystick" + sep+"0"+sep + \
-            str(int(env_settings["disableJoystick"])) + sep
+            str(int(env_settings["disable_joystick"])) + sep
         output += "rank" + sep+"1"+sep + str(env_settings["rank"]) + sep
         output += "recordConfigFile" + sep+"2"+sep + \
-            env_settings["recordConfigFile"] + sep
+            env_settings["record_config_file"] + sep
 
         output += end_char
 
@@ -110,17 +107,17 @@ class DiambraEngine:
     def set_frame_size(self, hwc_dim):
         self.height = hwc_dim[0]
         self.width = hwc_dim[1]
-        self.nChan = hwc_dim[2]
+        self.n_chan = hwc_dim[2]
         self.frame_dim = hwc_dim[0] * hwc_dim[1] * hwc_dim[2]
 
     # Read data
     def read_data(self, int_var, done_conds):
         int_var = int_var.split(",")
 
-        data = {"roundDone": done_conds.round,
-                "stageDone": done_conds.stage,
-                "gameDone": done_conds.game,
-                "epDone": done_conds.episode}
+        data = {"round_done": done_conds.round,
+                "stage_done": done_conds.stage,
+                "game_done": done_conds.game,
+                "ep_done": done_conds.episode}
 
         idx = 0
         for var in self.intDataVarsList:
@@ -135,7 +132,7 @@ class DiambraEngine:
         #                     cv2.IMREAD_COLOR)
         return np.frombuffer(frame, dtype='uint8').reshape(self.height,
                                                            self.width,
-                                                           self.nChan)
+                                                           self.n_chan)
 
     # Reset the environment
     def reset(self):

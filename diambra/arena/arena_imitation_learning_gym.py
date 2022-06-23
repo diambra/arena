@@ -32,28 +32,27 @@ class ImitationLearningBase(gym.Env):
         self.total_cpus = total_cpus
 
         # Idx of trajectory file to read
-        self.trajIdx = self.rank
-        self.RLTrajDict = None
+        self.traj_idx = self.rank
+        self.rl_traj_dict = None
 
         # Open the first file to retrieve env info: ---
-        tmp_rl_traj_file = self.traj_files_list[self.trajIdx]
+        tmp_rl_traj_file = self.traj_files_list[self.traj_idx]
 
         # Read compressed RL Traj file
         infile = bz2.BZ2File(tmp_rl_traj_file, 'r')
-        self.TmpRLTrajDict = pickle.load(infile)
+        self.tmp_rl_traj_dict = pickle.load(infile)
         infile.close()
 
         # Observation and action space
-        self.frame_h = self.TmpRLTrajDict["frameShp"][0]
-        self.frameW = self.TmpRLTrajDict["frameShp"][1]
-        self.frameNChannels = self.TmpRLTrajDict["frameShp"][2]
-        self.nActions = self.TmpRLTrajDict["nActions"]
-        self.actionSpace = self.TmpRLTrajDict["actionSpace"]
+        self.frame_h = self.tmp_rl_traj_dict["frame_shp"][0]
+        self.frame_w = self.tmp_rl_traj_dict["frame_shp"][1]
+        self.frame_n_channels = self.tmp_rl_traj_dict["frame_shp"][2]
+        self.n_actions = self.tmp_rl_traj_dict["n_actions"]
         # ---
 
         # Define action and observation space
         # They must be gym.spaces objects
-        if self.actionSpace == "multiDiscrete":
+        if self.tmp_rl_traj_dict["action_space"] == "multi_discrete":
             # MultiDiscrete actions:
             # - Arrows -> One discrete set
             # - Buttons -> One discrete set
@@ -62,9 +61,9 @@ class ImitationLearningBase(gym.Env):
             #     e.g. NOOP = [0], ButA = [1], ButB = [2], ButA+ButB = [3]
             #     or ignored:
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
-            self.action_space = spaces.MultiDiscrete(self.nActions)
+            self.action_space = spaces.MultiDiscrete(self.n_actions)
             print("Using MultiDiscrete action space")
-        elif self.actionSpace == "discrete":
+        elif self.tmp_rl_traj_dict["action_space"] == "discrete":
             # Discrete actions:
             # - Arrows U Buttons -> One discrete set
             # NB: use the convention NOOP = 0, and buttons combinations
@@ -73,29 +72,29 @@ class ImitationLearningBase(gym.Env):
             #     or ignored:
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
             self.action_space = spaces.Discrete(
-                self.nActions[0] + self.nActions[1] - 1)
+                self.n_actions[0] + self.n_actions[1] - 1)
             print("Using Discrete action space")
         else:
             raise Exception(
-                "Not recognized action space: {}".format(self.actionSpace))
+                "Not recognized action space: {}".format(self.tmp_rl_traj_dict["action_space"]))
 
         # If run out of examples
         self.exhausted = False
 
         # Reset flag
-        self.nReset = 0
+        self.n_reset = 0
 
         # Observations shift counter (for new round/stage/game)
-        self.shiftCounter = 1
+        self.shift_counter = 1
 
     # Print Episode summary
     def traj_summary(self):
 
-        print(self.RLTrajDict.keys())
+        print(self.rl_traj_dict.keys())
 
-        print("Ep. length = {}".format(self.RLTrajDict["epLen"]))
+        print("Ep. length = {}".format(self.rl_traj_dict["ep_len"]))
 
-        for key, value in self.RLTrajDict.items():
+        for key, value in self.rl_traj_dict.items():
             if type(value) == list and len(value) > 2:
                 print("len({}): {}".format(key, len(value)))
             else:
@@ -106,41 +105,41 @@ class ImitationLearningBase(gym.Env):
 
         # Done retrieval
         done = False
-        if self.stepIdx == self.RLTrajDict["epLen"] - 1:
+        if self.step_idx == self.rl_traj_dict["ep_len"] - 1:
             done = True
 
         # Done flags retrieval
-        done_flags = self.RLTrajDict["done_flags"][self.stepIdx]
+        done_flags = self.rl_traj_dict["done_flags"][self.step_idx]
 
         if (done_flags[0] or done_flags[1] or done_flags[2]) and not done:
-            self.shiftCounter += self.frameNChannels-1
+            self.shift_counter += self.frame_n_channels-1
 
         # Observation retrieval
         observation = self.obs_retrieval()
 
         # Reward retrieval
-        reward = self.RLTrajDict["rewards"][self.stepIdx]
+        reward = self.rl_traj_dict["rewards"][self.step_idx]
 
         # Action retrieval
-        action = self.RLTrajDict["actions"][self.stepIdx]
-        if (self.actionSpace == "discrete"):
-            action_new = discreteToMultiDiscreteAction(action, self.nActions[0])
+        action = self.rl_traj_dict["actions"][self.step_idx]
+        if isinstance(self.action_space, gym.spaces.Discrete):
+            action_new = discrete_to_multi_discrete_action(action, self.n_actions[0])
         else:
             action_new = action
 
         action = [action_new[0], action_new[1]]
         info = {}
         info["action"] = action
-        info["roundDone"] = done_flags[0]
-        info["stageDone"] = done_flags[1]
-        info["gameDone"] = done_flags[2]
-        info["episodeDone"] = done_flags[3]
+        info["round_done"] = done_flags[0]
+        info["stage_done"] = done_flags[1]
+        info["game_done"] = done_flags[2]
+        info["episode_done"] = done_flags[3]
 
         if np.any(done):
             print("(Rank {}) Episode done".format(self.rank))
 
         # Update step idx
-        self.stepIdx += 1
+        self.step_idx += 1
 
         return observation, reward, done, info
 
@@ -148,53 +147,58 @@ class ImitationLearningBase(gym.Env):
     def reset(self):
 
         # Reset run step
-        self.stepIdx = 0
+        self.step_idx = 0
 
         # Observations shift counter (for new round/stage/game)
-        self.shiftCounter = 1
+        self.shift_counter = 1
 
         # Manage ignoreP2 flag for recorded P1P2 trajectory (e.g. when HUMvsAI)
-        if self.nReset != 0 and self.RLTrajDict["ignoreP2"] == 1:
+        if self.n_reset != 0 and self.rl_traj_dict["ignore_p2"] == 1:
 
             print("Skipping P2 trajectory for 2P games (e.g. HUMvsAI)")
-            # Resetting nReset
-            self.nReset = 0
+            # Resetting n_reset
+            self.n_reset = 0
             # Move traj idx to the next to be read
-            self.trajIdx += self.total_cpus
+            self.traj_idx += self.total_cpus
 
         # Check if run out of traj files
-        if self.trajIdx >= len(self.traj_files_list):
+        if self.traj_idx >= len(self.traj_files_list):
             print("(Rank {}) Resetting env".format(self.rank))
             self.exhausted = True
             observation = {}
             observation = self.black_screen(observation)
             return observation
 
-        if self.nReset == 0:
-            rl_traj_file = self.traj_files_list[self.trajIdx]
+        if self.n_reset == 0:
+            rl_traj_file = self.traj_files_list[self.traj_idx]
 
             # Read compressed RL Traj file
             infile = bz2.BZ2File(rl_traj_file, 'r')
-            self.RLTrajDict = pickle.load(infile)
+            self.rl_traj_dict = pickle.load(infile)
             infile.close()
 
             # Storing env info
-            self.nChars = len(self.RLTrajDict["charNames"])
-            self.charNames = self.RLTrajDict["charNames"]
-            self.nActionsStack = self.RLTrajDict["nActionsStack"]
-            self.player_side = self.RLTrajDict["player_side"]
-            assert self.nActions == self.RLTrajDict["nActions"],\
+            self.n_chars = len(self.rl_traj_dict["char_names"])
+            self.char_names = self.rl_traj_dict["char_names"]
+            self.n_actions_stack = self.rl_traj_dict["n_actions_stack"]
+            self.player_side = self.rl_traj_dict["player_side"]
+            assert self.n_actions == self.rl_traj_dict["n_actions"],\
                 "Recorded episode has {} actions".format(
-                    self.RLTrajDict["nActions"])
-            assert self.actionSpace == self.RLTrajDict["actionSpace"],\
-                "Recorded episode has {} action space".format(
-                    self.RLTrajDict["actionSpace"])
+                    self.rl_traj_dict["n_actions"])
+            if isinstance(self.action_space, gym.spaces.Discrete):
+                assert self.rl_traj_dict["action_space"] == "discrete",\
+                    "Recorded episode has {} action space".format(
+                        self.rl_traj_dict["action_space"])
+            else:
+                assert self.rl_traj_dict["action_space"] == "multi_discrete",\
+                    "Recorded episode has {} action space".format(
+                        self.rl_traj_dict["action_space"])
 
         if self.player_side == "P1P2":
 
             print("Two players RL trajectory")
 
-            if self.nReset == 0:
+            if self.n_reset == 0:
                 # First reset for this trajectory
 
                 print("Loading P1 data for 2P trajectory")
@@ -203,16 +207,16 @@ class ImitationLearningBase(gym.Env):
                 self.generate_p2_experience_from_p1()
 
                 # For each step, isolate P1 actions from P1P2 experience
-                for idx in range(self.RLTrajDict["epLen"]):
+                for idx in range(self.rl_traj_dict["ep_len"]):
                     # Actions (inverting sides)
-                    if (self.actionSpace == "discrete"):
-                        self.RLTrajDict["actions"][idx] = self.RLTrajDict["actions"][idx][0]
+                    if self.rl_traj_dict["action_space"] == "discrete":
+                        self.rl_traj_dict["actions"][idx] = self.rl_traj_dict["actions"][idx][0]
                     else:
-                        self.RLTrajDict["actions"][idx] = [self.RLTrajDict["actions"][idx][0],
-                                                           self.RLTrajDict["actions"][idx][1]]
+                        self.rl_traj_dict["actions"][idx] = [self.rl_traj_dict["actions"][idx][0],
+                                                             self.rl_traj_dict["actions"][idx][1]]
 
                 # Update reset counter
-                self.nReset += 1
+                self.n_reset += 1
 
             else:
                 # Second reset for this trajectory
@@ -220,20 +224,20 @@ class ImitationLearningBase(gym.Env):
                 print("Loading P2 data for 2P trajectory")
 
                 # OverWrite P1 RL trajectory with the one calculated for P2
-                self.RLTrajDict = self.RLTrajDictP2
+                self.rl_traj_dict = self.rl_traj_dict_p2
 
                 # Reset reset counter
-                self.nReset = 0
+                self.n_reset = 0
 
                 # Move traj idx to the next to be read
-                self.trajIdx += self.total_cpus
+                self.traj_idx += self.total_cpus
 
         else:
 
             print("One player RL trajectory")
 
             # Move traj idx to the next to be read
-            self.trajIdx += self.total_cpus
+            self.traj_idx += self.total_cpus
 
         # Observation retrieval
         observation = self.obs_retrieval(reset_shift=1)
@@ -244,21 +248,21 @@ class ImitationLearningBase(gym.Env):
     def generate_p2_experience_from_p1(self):
 
         # Copy P1 Trajectory
-        self.RLTrajDictP2 = copy.deepcopy(self.RLTrajDict)
+        self.rl_traj_dict_p2 = copy.deepcopy(self.rl_traj_dict)
 
         # For each step, convert P1 into P2 experience
-        for idx in range(self.RLTrajDict["epLen"]):
+        for idx in range(self.rl_traj_dict["ep_len"]):
 
             # Rewards (inverting sign)
-            self.RLTrajDictP2["rewards"][idx] = - \
-                self.RLTrajDict["rewards"][idx]
+            self.rl_traj_dict_p2["rewards"][idx] = - \
+                self.rl_traj_dict["rewards"][idx]
 
             # Actions (inverting sides)
-            if (self.actionSpace == "discrete"):
-                self.RLTrajDictP2["actions"][idx] = self.RLTrajDict["actions"][idx][1]
+            if self.rl_traj_dict["action_space"] == "discrete":
+                self.rl_traj_dict_p2["actions"][idx] = self.rl_traj_dict["actions"][idx][1]
             else:
-                self.RLTrajDictP2["actions"][idx] = [self.RLTrajDict["actions"][idx][2],
-                                                     self.RLTrajDict["actions"][idx][3]]
+                self.rl_traj_dict_p2["actions"][idx] = [self.rl_traj_dict["actions"][idx][2],
+                                                        self.rl_traj_dict["actions"][idx][3]]
 
     # Rendering the environment
     def render(self, mode='human'):
@@ -281,31 +285,31 @@ class ImitationLearningHardCore(ImitationLearningBase):
         super().__init__(traj_files_list, rank, total_cpus)
 
         # Observation space
-        obs_space_bounds = self.TmpRLTrajDict["obs_space_bounds"]
+        obs_space_bounds = self.tmp_rl_traj_dict["obs_space_bounds"]
 
         # Create the observation space
         self.observation_space = spaces.Box(low=obs_space_bounds[0],
                                             high=obs_space_bounds[1],
-                                            shape=(self.frame_h, self.frameW,
-                                                   self.frameNChannels),
+                                            shape=(self.frame_h, self.frame_w,
+                                                   self.frame_n_channels),
                                             dtype=np.float32)
 
     # Specific observation retrieval
     def obs_retrieval(self, reset_shift=0):
         # Observation retrieval
-        observation = np.zeros((self.frame_h, self.frameW, self.frameNChannels))
-        for iframe in range(self.frameNChannels):
-            observation[:, :, iframe] = self.RLTrajDict["frames"][self.stepIdx +
-                                                                  self.shiftCounter + iframe - reset_shift]
+        observation = np.zeros((self.frame_h, self.frame_w, self.frame_n_channels))
+        for iframe in range(self.frame_n_channels):
+            observation[:, :, iframe] = self.rl_traj_dict["frames"][self.step_idx +
+                                                                    self.shift_counter + iframe - reset_shift]
         # Storing last observation for rendering
-        self.lastObs = observation[:, :, self.frameNChannels-1]
+        self.lastObs = observation[:, :, self.frame_n_channels-1]
 
         return observation
 
     # Black screen
     def black_screen(self, observation):
 
-        observation = np.zeros((self.frame_h, self.frameW, self.frameNChannels))
+        observation = np.zeros((self.frame_h, self.frame_w, self.frame_n_channels))
 
         return observation
 
@@ -317,30 +321,30 @@ class ImitationLearning(ImitationLearningBase):
         super().__init__(traj_files_list, rank, total_cpus)
 
         # Observation space
-        player_side = self.TmpRLTrajDict["player_side"]
-        self.observationSpaceDict = self.TmpRLTrajDict["observationSpaceDict"]
+        player_side = self.tmp_rl_traj_dict["player_side"]
+        self.observation_space_dict = self.tmp_rl_traj_dict["observation_space_dict"]
         # Remove P2 sub space from Obs Space
         if player_side == "P1P2":
-            self.observationSpaceDict.pop("P2")
+            self.observation_space_dict.pop("P2")
 
         # Create the observation space
-        self.observation_space = standardDictToGymObsDict(
-            self.observationSpaceDict)
+        self.observation_space = standard_dict_to_gym_obs_dict(
+            self.observation_space_dict)
 
     # Specific observation retrieval
     def obs_retrieval(self, reset_shift=0):
         # Observation retrieval
-        observation = self.RLTrajDict["add_obs"][self.stepIdx +
-                                                 1 - reset_shift].copy()
+        observation = self.rl_traj_dict["add_obs"][self.step_idx +
+                                                   1 - reset_shift].copy()
 
         # Frame
         observation["frame"] = np.zeros(
-            (self.frame_h, self.frameW, self.frameNChannels))
-        for iframe in range(self.frameNChannels):
-            observation["frame"][:, :, iframe] = self.RLTrajDict["frames"][self.stepIdx +
-                                                                           self.shiftCounter + iframe - reset_shift]
+            (self.frame_h, self.frame_w, self.frame_n_channels))
+        for iframe in range(self.frame_n_channels):
+            observation["frame"][:, :, iframe] = self.rl_traj_dict["frames"][self.step_idx +
+                                                                             self.shift_counter + iframe - reset_shift]
         # Storing last observation for rendering
-        self.lastObs = observation["frame"][:, :, self.frameNChannels-1]
+        self.lastObs = observation["frame"][:, :, self.frame_n_channels-1]
 
         return observation
 
@@ -348,7 +352,7 @@ class ImitationLearning(ImitationLearningBase):
     def black_screen(self, observation):
 
         observation["frame"] = np.zeros(
-            (self.frame_h, self.frameW, self.frameNChannels))
+            (self.frame_h, self.frame_w, self.frame_n_channels))
 
         return observation
 
@@ -358,12 +362,12 @@ class ImitationLearning(ImitationLearningBase):
         super().generate_p2_experience_from_p1()
 
         # Process Additiona Obs for P2 (copy them in P1 position)
-        for add_obs in self.RLTrajDictP2["add_obs"]:
+        for add_obs in self.rl_traj_dict_p2["add_obs"]:
             add_obs.pop("P1")
             add_obs["P1"] = add_obs.pop("P2")
             add_obs["stage"] = 0
 
         # Remove P2 info from P1 Observation
-        for add_obs in self.RLTrajDict["add_obs"]:
+        for add_obs in self.rl_traj_dict["add_obs"]:
             add_obs.pop("P2")
             add_obs["stage"] = 0

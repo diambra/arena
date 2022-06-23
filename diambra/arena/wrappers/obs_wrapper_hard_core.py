@@ -108,7 +108,7 @@ class FrameStack(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+        if ((info["round_done"] or info["stage_done"] or info["game_done"])
                 and not done):
             for _ in range(self.nFrames - 1):
                 self.frames.append(obs)
@@ -155,7 +155,7 @@ class FrameStackDilated(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+        if ((info["round_done"] or info["stage_done"] or info["game_done"])
                 and not done):
             for _ in range(self.n_frames*self.dilation - 1):
                 self.frames.append(obs)

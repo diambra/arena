@@ -136,7 +136,7 @@ class FrameStack(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+        if ((info["round_done"] or info["stage_done"] or info["game_done"])
                 and not done):
             for _ in range(self.n_frames - 1):
                 self.frames.append(obs["frame"])
@@ -185,7 +185,7 @@ class FrameStackDilated(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+        if ((info["round_done"] or info["stage_done"] or info["game_done"])
                 and not done):
             for _ in range(self.n_frames*self.dilation - 1):
                 self.frames.append(obs["frame"])
@@ -248,7 +248,7 @@ class ActionsStack(gym.Wrapper):
 
         # Add noAction for n_actions_stack - 1 times
         # in case of new round / stage / continueGame
-        if ((info["roundDone"] or info["stageDone"] or info["gameDone"])
+        if ((info["round_done"] or info["stage_done"] or info["game_done"])
                 and not done):
             self.fill_stack()
 
@@ -282,7 +282,7 @@ def scaled_float_obs_space_func(obs_dict):
     for k, v in obs_dict.spaces.items():
 
         if isinstance(v, spaces.dict.Dict):
-            scaled_float_obs_func(v)
+            scaled_float_obs_space_func(v)
         else:
             if isinstance(v, spaces.MultiDiscrete):
                 # One hot encoding x nStack
@@ -301,14 +301,14 @@ class ScaledFloatObs(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
 
-        self.originalObservationSpace = deepcopy(self.observation_space)
+        self.original_observation_space = deepcopy(self.observation_space)
         scaled_float_obs_space_func(self.observation_space)
 
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
 
-        return scaled_float_obs_func(observation, self.originalObservationSpace)
+        return scaled_float_obs_func(observation, self.original_observation_space)
 
 
 class LazyFrames(object):
