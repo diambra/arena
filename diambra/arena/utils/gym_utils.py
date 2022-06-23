@@ -164,7 +164,7 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
 
     if viz:
         cv2.imshow("Frame", obs[:, :, ::-1])  # rgb2bgr
-        cv2.wait_key(wait_key)
+        cv2.waitKey(wait_key)
 
 # Visualize Obs content
 
@@ -203,7 +203,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
         for idx in range(obs.shape[2]):
             cv2.imshow("Frame-"+str(idx), obs[:, :, idx])
 
-        cv2.wait_key(wait_key)
+        cv2.waitKey(wait_key)
 
 # List all available games
 
