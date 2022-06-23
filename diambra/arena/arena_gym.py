@@ -233,7 +233,7 @@ class DiambraGymHardCore1P(DiambraGymHardCoreBase):
             att_act = action[1]
         else:
             # Discrete to multidiscrete conversion
-            mov_act, att_act = discreteToMultiDiscreteAction(
+            mov_act, att_act = discrete_to_multi_discrete_action(
                 action, self.nActions[0][0])
 
         self.frame, data = self.arena_engine.step_1p(mov_act, att_act)
@@ -290,7 +290,7 @@ class DiambraGymHardCore2P(DiambraGymHardCoreBase):
                 mov_act_p2 = action[2]
                 att_act_p2 = action[3]
             else:  # P2 Discrete Action Space
-                mov_act_p2, att_act_p2 = discreteToMultiDiscreteAction(
+                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(
                     action[2], self.nActions[1][0])
 
         else:  # P1 Discrete Action Space
@@ -299,16 +299,16 @@ class DiambraGymHardCore2P(DiambraGymHardCoreBase):
             if self.actionSpace[1] == "multiDiscrete":
                 # P1
                 # Discrete to multidiscrete conversion
-                mov_act_p1, att_act_p1 = discreteToMultiDiscreteAction(
+                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(
                     action[0], self.nActions[0][0])
                 mov_act_p2 = action[1]
                 att_act_p2 = action[2]
             else:  # P2 Discrete Action Space
                 # P1
                 # Discrete to multidiscrete conversion
-                mov_act_p1, att_act_p1 = discreteToMultiDiscreteAction(
+                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(
                     action[0], self.nActions[0][0])
-                mov_act_p2, att_act_p2 = discreteToMultiDiscreteAction(
+                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(
                     action[1], self.nActions[1][0])
 
         self.frame, data = self.arena_engine.step_2p(
