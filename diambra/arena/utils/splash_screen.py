@@ -23,7 +23,7 @@ class SplashScreen():
         self.time_interval = time_interval
         # self.labels = (t*"\u25AE" for t in range(int((timeout-750)/time_interval)))
         self.labels = (t*"" for t in range(int((timeout-750)/time_interval)))
-        self.labelsEmpty = (int((timeout-750)/time_interval)-1)*"\u25AF"
+        self.labels_empty = (int((timeout-750)/time_interval)-1)*"\u25AF"
 
         self.window = tk.Tk()
         self.window.overrideredirect(True)
@@ -47,9 +47,9 @@ class SplashScreen():
             self.window, height=hw_dim[0], width=hw_dim[1],
             bg="brown", bd=0, highlightthickness=0)
         self.canvas.create_image(hw_dim[1]/2, hw_dim[0]/2, image=image)
-        self.emptyText = self.canvas.create_text(
+        self.empty_text = self.canvas.create_text(
             30, hw_dim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
-        # self.canvas.itemconfigure(self.emptyText, text=self.labelsEmpty)
+        # self.canvas.itemconfigure(self.empty_text, text=self.labels_empty)
         self.loadText = self.canvas.create_text(
             30, hw_dim[0]-12, anchor="w", fill="#911503", font="Verdana 10")
 

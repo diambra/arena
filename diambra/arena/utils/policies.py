@@ -130,20 +130,20 @@ class GamepadPolicy(object):
 
     def initialize(self, action_list, gamepad_num=0):
         if not self.initialized:
-            self.gamePad = self.gamepad_class(action_list=action_list,
+            self.gamepad = self.gamepad_class(action_list=action_list,
                                               gamepad_num=gamepad_num)
-            self.gamePad.start()
+            self.gamepad.start()
             self.initialized = True
 
     def reset(self, observation):
         pass
 
     def get_actions(self):
-        return self.gamePad.getActions()
+        return self.gamepad.get_actions()
 
     def act(self, observation, info=None):
 
         prob = [1.0, 1.0]
-        action = self.gamePad.getActions()
+        action = self.gamepad.get_actions()
 
         return action, prob
