@@ -1,5 +1,5 @@
-import diambraArena
-from diambraArena.gymUtils import show_wrap_obs
+from diambra.arena.arena_imitation_learning_gym import ImitationLearning
+from diambra.arena.utils.gym_utils import show_wrap_obs
 import os
 import numpy as np
 
@@ -15,29 +15,29 @@ print(recorded_trajectories_files)
 settings = {}
 
 # List of recorded trajectories files
-settings["trajFilesList"] = recorded_trajectories_files
+settings["traj_files_list"] = recorded_trajectories_files
 
 # Number of parallel Imitation Learning environments that will be run
-settings["totalCpus"] = 2
+settings["total_cpus"] = 2
 
 # Rank of the created environment
 settings["rank"] = 0
 
-env = diambraArena.imitationLearning(**settings)
+env = ImitationLearning(**settings)
 
 observation = env.reset()
 env.render(mode="human")
-show_wrap_obs(observation, env.nActionsStack, env.charNames)
+show_wrap_obs(observation, env.n_actions_stack, env.char_names)
 
 # Show trajectory summary
-env.trajSummary()
+env.traj_summary()
 
 while True:
 
     dummy_actions = 0
     observation, reward, done, info = env.step(dummy_actions)
     env.render(mode="human")
-    show_wrap_obs(observation, env.nActionsStack, env.charNames)
+    show_wrap_obs(observation, env.n_actions_stack, env.char_names)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
@@ -48,6 +48,6 @@ while True:
     if done:
         observation = env.reset()
         env.render(mode="human")
-        show_wrap_obs(observation, env.nActionsStack, env.charNames)
+        show_wrap_obs(observation, env.n_actions_stack, env.char_names)
 
 env.close()

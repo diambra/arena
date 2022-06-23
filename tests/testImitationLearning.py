@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import diambraArena
-from diambraArena.gymUtils import showWrapObs
+from diambra.arena.arena_imitation_learning_gym import ImitationLearning
+from diambra.arena.utils.gym_utils import show_wrap_obs
 import argparse
 import os
 from os import listdir
@@ -30,21 +30,21 @@ try:
     print(trajectories_files)
 
     diambra_il_settings = {}
-    diambra_il_settings["trajFilesList"] = trajectories_files
-    diambra_il_settings["totalCpus"] = opt.nProc
+    diambra_il_settings["traj_files_list"] = trajectories_files
+    diambra_il_settings["total_cpus"] = opt.nProc
 
     if opt.hardCore == 0:
-        env = diambraArena.imitationLearning(**diambra_il_settings)
+        env = ImitationLearning(**diambra_il_settings)
     else:
-        env = diambraArena.imitationLearningHardCore(**diambra_il_settings)
+        env = ImitationLearning(**diambra_il_settings)
 
     observation = env.reset()
     env.render(mode="human")
 
-    env.trajSummary()
+    env.traj_summary()
 
-    showWrapObs(observation, env.nActionsStack,
-                env.charNames, opt.waitKey, viz_flag)
+    show_wrap_obs(observation, env.n_actions_stack,
+                  env.char_names, opt.waitKey, viz_flag)
 
     cumulative_ep_rew = 0.0
     cumulative_ep_rew_all = []
@@ -65,8 +65,8 @@ try:
         print("done = ", done)
         for k, v in info.items():
             print("info[\"{}\"] = {}".format(k, v))
-        showWrapObs(observation, env.nActionsStack,
-                    env.charNames, opt.waitKey, viz_flag)
+        show_wrap_obs(observation, env.n_actions_stack,
+                      env.char_names, opt.waitKey, viz_flag)
 
         print("----------")
 
@@ -75,7 +75,7 @@ try:
 
         cumulative_ep_rew += reward
 
-        if (np.any([info["roundDone"], info["stageDone"], info["gameDone"]])
+        if (np.any([info["round_done"], info["stage_done"], info["game_done"]])
                 and not done):
             # Frames equality check
             if opt.hardCore == 0:
@@ -84,20 +84,20 @@ try:
                         raise RuntimeError("Frames inside observation after "
                                            "round/stage/game/episode done are "
                                            "not equal. Dones =",
-                                           info["roundDone"],
-                                           info["stageDone"],
-                                           info["gameDone"],
-                                           info["epone"])
+                                           info["round_done"],
+                                           info["stage_done"],
+                                           info["game_done"],
+                                           info["ep_done"])
             else:
                 for frame_idx in range(observation.shape[2]-1):
                     if np.any(observation[:, :, frame_idx] != observation[:, :, frame_idx+1]):
                         raise RuntimeError("Frames inside observation after "
                                            "round/stage/game/episode done are "
                                            "not equal. Dones =",
-                                           info["roundDone"],
-                                           info["stageDone"],
-                                           info["gameDone"],
-                                           info["epone"])
+                                           info["round_done"],
+                                           info["stage_done"],
+                                           info["game_done"],
+                                           info["ep_done"])
 
         if np.any(env.exhausted):
             break
@@ -112,10 +112,10 @@ try:
 
             observation = env.reset()
             env.render(mode="human")
-            showWrapObs(observation, env.nActionsStack,
-                        env.charNames, opt.waitKey, viz_flag)
+            show_wrap_obs(observation, env.n_actions_stack,
+                          env.char_names, opt.waitKey, viz_flag)
 
-    if diambra_il_settings["totalCpus"] == 1:
+    if diambra_il_settings["total_cpus"] == 1:
         print("All ep. rewards =", cumulative_ep_rew_all)
         print("Mean cumulative reward =", np.mean(cumulative_ep_rew_all))
         print("Std cumulative reward =", np.std(cumulative_ep_rew_all))

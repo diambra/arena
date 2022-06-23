@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import diambraArena
+from diambra.arena.make_env import make
 import argparse
 import time
 import numpy as np
@@ -32,12 +32,12 @@ if __name__ == '__main__':
         # Settings
         settings = {}
         settings["player"] = opt.player
-        settings["stepRatio"] = 1
+        settings["step_ratio"] = 1
 
-        settings["actionSpace"] = opt.actionSpace
-        settings["attackButCombination"] = opt.attButComb
+        settings["action_space"] = opt.actionSpace
+        settings["attack_but_combination"] = opt.attButComb
 
-        env = diambraArena.make(opt.gameId, settings)
+        env = make(opt.gameId, settings)
 
         observation = env.reset()
         n_step = 0
@@ -56,7 +56,7 @@ if __name__ == '__main__':
                         idx+1)].sample()
 
             if (settings["player"] == "P1P2"
-                    or settings["actionSpace"] != "discrete"):
+                    or settings["action_space"] != "discrete"):
                 actions = np.append(actions[0], actions[1])
 
             tic = time.time()

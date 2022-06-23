@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import diambraArena
-from diambraArena.gymUtils import env_spaces_summary,\
+from diambra.arena.make_env import make
+from diambra.arena.utils.gym_utils import env_spaces_summary,\
     discrete_to_multi_discrete_action, show_gym_obs
 import argparse
 import time
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         parser.add_argument('--continueGame', type=float,
                             default=-1.0, help='ContinueGame flag (-inf,+1.0]')
         parser.add_argument('--actionSpace', type=str,
-                            default="discrete", help='discrete/multiDiscrete')
+                            default="discrete", help='discrete/multi_discrete')
         parser.add_argument('--attButComb', type=int,   default=0,
                             help='Use attack button combinations (0=F)/1=T')
         parser.add_argument('--noAction', type=int,   default=0,
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         # Settings
         settings = {}
         if opt.envAddress != "":
-            settings["envAddress"] = opt.envAddress
+            settings["env_address"] = opt.envAddress
         settings["player"] = opt.player
         settings["characters"] = [[opt.character1,
                                    opt.character1_2,
@@ -65,26 +65,26 @@ if __name__ == '__main__':
                                    opt.character2_2,
                                    opt.character2_3]]
 
-        settings["stepRatio"] = opt.stepRatio
-        settings["continueGame"] = opt.continueGame
-        settings["showFinal"] = False
+        settings["step_ratio"] = opt.stepRatio
+        settings["continue_game"] = opt.continueGame
+        settings["show_final"] = False
 
-        settings["charOutfits"] = [2, 2]
+        settings["char_outfits"] = [2, 2]
 
-        settings["actionSpace"] = [opt.actionSpace, opt.actionSpace]
-        settings["attackButCombination"] = [opt.attButComb, opt.attButComb]
+        settings["action_space"] = [opt.actionSpace, opt.actionSpace]
+        settings["attack_but_combination"] = [opt.attButComb, opt.attButComb]
         if settings["player"] != "P1P2":
-            settings["actionSpace"] = settings["actionSpace"][0]
-            settings["attackButCombination"] = settings["attackButCombination"][0]
+            settings["action_space"] = settings["action_space"][0]
+            settings["attack_but_combination"] = settings["attack_but_combination"][0]
 
         n_rounds = 2
         if opt.gameId == "kof98umh":
             n_rounds = 3
 
-        hard_core = False if opt.hard_core == 0 else True
-        settings["hardCore"] = hard_core
+        hard_core = False if opt.hardCore == 0 else True
+        settings["hard_core"] = hard_core
 
-        env = diambraArena.make(opt.gameId, settings, seed=time_dep_seed)
+        env = make(opt.gameId, settings, seed=time_dep_seed)
 
         # Print environment obs and action spaces summary
         env_spaces_summary(env)
@@ -104,20 +104,20 @@ if __name__ == '__main__':
                 actions = env.action_space.sample()
 
                 if opt.noAction == 1:
-                    if settings["actionSpace"] == "multiDiscrete":
+                    if settings["action_space"] == "multi_discrete":
                         for iel, _ in enumerate(actions):
                             actions[iel] = 0
                     else:
                         actions = 0
 
-                if settings["actionSpace"] == "discrete":
+                if settings["action_space"] == "discrete":
                     move_action, att_action = discrete_to_multi_discrete_action(
-                        actions, env.nActions[0][0])
+                        actions, env.n_actions[0][0])
                 else:
                     move_action, att_action = actions[0], actions[1]
 
-                print("(P1) {} {}".format(env.printActionsDict[0][move_action],
-                                          env.printActionsDict[1][att_action]))
+                print("(P1) {} {}".format(env.print_actions_dict[0][move_action],
+                                          env.print_actions_dict[1][att_action]))
 
             else:
                 for idx in range(2):
@@ -125,23 +125,23 @@ if __name__ == '__main__':
                         idx+1)].sample()
 
                     if opt.noAction == 1 and idx == 0:
-                        if settings["actionSpace"][idx] == "multiDiscrete":
+                        if settings["action_space"][idx] == "multi_discrete":
                             for iel, _ in enumerate(actions[idx]):
                                 actions[idx][iel] = 0
                         else:
                             actions[idx] = 0
 
-                    if settings["actionSpace"][idx] == "discrete":
+                    if settings["action_space"][idx] == "discrete":
                         move_action, att_action = discrete_to_multi_discrete_action(
-                            actions[idx], env.nActions[idx][0])
+                            actions[idx], env.n_actions[idx][0])
                     else:
                         move_action, att_action = actions[idx][0], actions[idx][1]
 
-                    print("(P{}) {} {}".format(idx+1, env.printActionsDict[0][move_action],
-                                               env.printActionsDict[1][att_action]))
+                    print("(P{}) {} {}".format(idx+1, env.print_actions_dict[0][move_action],
+                                               env.print_actions_dict[1][att_action]))
 
             if (settings["player"] == "P1P2"
-                    or settings["actionSpace"] != "discrete"):
+                    or settings["action_space"] != "discrete"):
                 actions = np.append(actions[0], actions[1])
 
             observation, reward, done, info = env.step(actions)
@@ -152,7 +152,7 @@ if __name__ == '__main__':
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            show_gym_obs(observation, env.charNames, wait_key, viz_flag)
+            show_gym_obs(observation, env.char_names, wait_key, viz_flag)
             print("--")
             print("Current Cumulative Reward =", cumulative_ep_rew)
 
@@ -167,14 +167,14 @@ if __name__ == '__main__':
                 cumulative_ep_rew = 0.0
 
                 observation = env.reset()
-                show_gym_obs(observation, env.charNames, wait_key, viz_flag)
+                show_gym_obs(observation, env.char_names, wait_key, viz_flag)
 
-            if np.any([info["roundDone"], info["stageDone"],
-                       info["gameDone"], info["epDone"]]):
+            if np.any([info["round_done"], info["stage_done"],
+                       info["game_done"], info["ep_done"]]):
 
                 if hard_core is False:
                     # Side check
-                    if env.playerSide == "P2":
+                    if env.player_side == "P2":
                         if observation["P1"]["ownSide"] != 1.0 or observation["P1"]["oppSide"] != 0.0:
                             raise RuntimeError("Wrong starting side:", observation["P1"]["ownSide"],
                                                observation["P1"]["oppSide"])
@@ -205,7 +205,7 @@ if __name__ == '__main__':
                      env.maxDeltaHealth+0.001)):
             raise RuntimeError("NoAction policy and average "
                                "reward different than {} ({})".format(
-                                   -n_rounds*(max_continue+1)*env.maxDeltaHealth,
+                                   -n_rounds*(max_continue+1)*env.max_delta_health,
                                    np.mean(cumulative_ep_rew_all)))
 
         print("ALL GOOD!")
