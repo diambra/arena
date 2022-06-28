@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from diambra.arena.make_env import make
+import diambra.arena
 from diambra.arena.utils.gym_utils import env_spaces_summary,\
     discrete_to_multi_discrete_action, show_gym_obs
 import argparse
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         hardcore = False if opt.hardcore == 0 else True
         settings["hardcore"] = hardcore
 
-        env = make(opt.gameId, settings, seed=time_dep_seed)
+        env = diambra.arena.make(opt.gameId, settings, seed=time_dep_seed)
 
         # Print environment obs and action spaces summary
         env_spaces_summary(env)
