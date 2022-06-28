@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from diambra.arena.make_env import make
+import diambra.arena
 import argparse
 import time
 import numpy as np
@@ -37,7 +37,7 @@ if __name__ == '__main__':
         settings["action_space"] = opt.actionSpace
         settings["attack_but_combination"] = opt.attButComb
 
-        env = make(opt.gameId, settings)
+        env = diambra.arena.make(opt.gameId, settings)
 
         observation = env.reset()
         n_step = 0

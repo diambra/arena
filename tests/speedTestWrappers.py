@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from diambra.arena.make_env import make
+import diambra.arena
 import argparse
 import time
 import numpy as np
@@ -53,7 +53,7 @@ if __name__ == '__main__':
         wrappers_settings["scale"] = True
         wrappers_settings["scale_mod"] = 0
 
-        env = make(opt.gameId, settings, wrappers_settings, traj_rec_settings)
+        env = diambra.arena.make(opt.gameId, settings, wrappers_settings, traj_rec_settings)
 
         observation = env.reset()
         n_step = 0

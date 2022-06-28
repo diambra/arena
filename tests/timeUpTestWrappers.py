@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from diambra.arena.make_env import make
+import diambra.arena
 from diambra.arena.utils.gym_utils import env_spaces_summary, show_wrap_obs
 import argparse
 import time
@@ -60,8 +60,8 @@ if __name__ == '__main__':
         wrappers_settings["scale"] = True
         wrappers_settings["scale_mod"] = 0
 
-        env = make(opt.gameId, settings, wrappers_settings,
-                   traj_rec_settings, seed=time_dep_seed)
+        env = diambra.arena.make(opt.gameId, settings, wrappers_settings,
+                                 traj_rec_settings, seed=time_dep_seed)
 
         # Print environment obs and action spaces summary
         env_spaces_summary(env)
