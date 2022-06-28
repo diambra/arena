@@ -32,7 +32,7 @@ def env_settings_check(env_settings):
     default_env_settings["fighting_style"] = [0, 0]
     default_env_settings["ultimate_style"] = [[0, 0, 0], [0, 0, 0]]
 
-    default_env_settings["hard_core"] = False
+    default_env_settings["hardcore"] = False
     default_env_settings["disable_keyboard"] = True
     default_env_settings["disable_joystick"] = True
     default_env_settings["rank"] = 0
@@ -104,12 +104,12 @@ def make(game_id, env_settings={}, wrappers_settings={},
 
     # Apply environment wrappers
     env = env_wrapping(env, player, **wrappers_settings,
-                       hard_core=env_settings["hard_core"])
+                       hardcore=env_settings["hardcore"])
 
     # Apply trajectories recorder wrappers
     if traj_rec_settings is not None:
-        if env_settings["hard_core"]:
-            from diambra.arena.wrappers.traj_rec_wrapper_hard_core import TrajectoryRecorder
+        if env_settings["hardcore"]:
+            from diambra.arena.wrappers.traj_rec_wrapper_hardcore import TrajectoryRecorder
         else:
             from diambra.arena.wrappers.traj_rec_wrapper import TrajectoryRecorder
 
