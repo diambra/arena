@@ -1,4 +1,4 @@
-from diambra.arena.arena_imitation_learning_gym import ImitationLearning
+import diambra.arena
 from diambra.arena.utils.gym_utils import show_wrap_obs
 import os
 import numpy as np

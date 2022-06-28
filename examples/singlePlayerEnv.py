@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from diambra.arena.make_env import make
+import diambra.arena
 from diambra.arena.utils.gym_utils import show_gym_obs
 
 # Settings
@@ -43,7 +43,7 @@ settings["action_space"] = "discrete"
 # If to use attack buttons combinations actions
 settings["attack_but_combination"] = True
 
-env = make("doapp", settings)
+env = diambra.arena.make("doapp", settings)
 
 observation = env.reset()
 show_gym_obs(observation, env.char_names)
