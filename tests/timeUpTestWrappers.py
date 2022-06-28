@@ -44,7 +44,7 @@ if __name__ == '__main__':
         settings["action_space"] = ["discrete", "discrete"]
         settings["attack_but_combination"] = [False, False]
 
-        settings["hard_core"] = False
+        settings["hardcore"] = False
 
         traj_rec_settings = None
 
