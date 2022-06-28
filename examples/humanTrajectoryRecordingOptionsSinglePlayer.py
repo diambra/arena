@@ -1,7 +1,7 @@
-from diambra.arena.make_env import make
-from diambra.arena.utils.gamepad import DiambraGamepad
 import os
 from os.path import expanduser
+import diambra.arena
+from diambra.arena.utils.gamepad import DiambraGamepad
 
 # Environment Settings
 settings = {}
@@ -34,7 +34,7 @@ traj_rec_settings["file_path"] = os.path.join(
 # only human trajectories while playing as a human against a RL agent)
 traj_rec_settings["ignore_p2"] = 0
 
-env = make(game_id, settings, wrappers_settings, traj_rec_settings)
+env = diambra.arena.make(game_id, settings, wrappers_settings, traj_rec_settings)
 
 # GamePad(s) initialization
 gamepad = DiambraGamepad(env.action_list)

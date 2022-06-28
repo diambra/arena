@@ -1,4 +1,4 @@
-from diambra.arena.make_env import make
+import diambra.arena
 from diambra.arena.utils.gym_utils import show_wrap_obs
 
 # Gym wrappers settings
@@ -43,7 +43,7 @@ wrappers_settings["scale"] = True
 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 wrappers_settings["scale_mod"] = 0
 
-env = make("doapp", {}, wrappers_settings)
+env = diambra.arena.make("doapp", {}, wrappers_settings)
 
 observation = env.reset()
 show_wrap_obs(observation, env.n_actions_stack, env.char_names)
