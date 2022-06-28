@@ -12,7 +12,7 @@ try:
                         help='Path where recorded files are stored')
     parser.add_argument('--nProc',    type=int, default=1,
                         help='Number of processors [(1), 2]')
-    parser.add_argument('--hardCore', type=int, default=0,
+    parser.add_argument('--hardcore', type=int, default=0,
                         help='Hard Core Mode [(0=False), 1=True]')
     parser.add_argument('--viz',      type=int, default=0,
                         help='Visualization [(0=False), 1=True]')
@@ -33,7 +33,7 @@ try:
     diambra_il_settings["traj_files_list"] = trajectories_files
     diambra_il_settings["total_cpus"] = opt.nProc
 
-    if opt.hardCore == 0:
+    if opt.hardcore == 0:
         env = ImitationLearning(**diambra_il_settings)
     else:
         env = ImitationLearning(**diambra_il_settings)
@@ -78,7 +78,7 @@ try:
         if (np.any([info["round_done"], info["stage_done"], info["game_done"]])
                 and not done):
             # Frames equality check
-            if opt.hardCore == 0:
+            if opt.hardcore == 0:
                 for frame_idx in range(observation["frame"].shape[2]-1):
                     if np.any(observation["frame"][:, :, frame_idx] != observation["frame"][:, :, frame_idx+1]):
                         raise RuntimeError("Frames inside observation after "

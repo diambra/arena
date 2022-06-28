@@ -107,7 +107,7 @@ class NormalizeRewardEnv(gym.RewardWrapper):
 def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
                  reward_normalization=False, reward_normalization_factor=0.5,
                  frame_stack=1, actions_stack=1, scale=False, scale_mod=0,
-                 hwc_obs_resize=[84, 84, 0], dilation=1, hard_core=False):
+                 hwc_obs_resize=[84, 84, 0], dilation=1, hardcore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
@@ -138,8 +138,8 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     if sticky_actions > 1:
         env = StickyActionsEnv(env, sticky_actions=sticky_actions)
 
-    if hard_core:
-        from diambra.arena.wrappers.obs_wrapper_hard_core import WarpFrame,\
+    if hardcore:
+        from diambra.arena.wrappers.obs_wrapper_hardcore import WarpFrame,\
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ScaledFloatObsNeg, ScaledFloatObs
     else:
@@ -173,7 +173,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
             env = FrameStackDilated(env, frame_stack, dilation)
 
     # Stack #actionsStack actions together
-    if actions_stack > 1 and not hard_core:
+    if actions_stack > 1 and not hardcore:
         if player != "P1P2":
             env = ActionsStack(env, actions_stack)
         else:

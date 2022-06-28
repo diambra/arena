@@ -39,7 +39,7 @@ if __name__ == '__main__':
                             help='Use attack button combinations (0=F)/1=T')
         parser.add_argument('--noAction', type=int,   default=0,
                             help='If to use no action policy (0=False)')
-        parser.add_argument('--hardCore', type=int,
+        parser.add_argument('--hardcore', type=int,
                             default=0, help='Hard core mode (0=False)')
         parser.add_argument('--interactiveViz', type=int,   default=0,
                             help='Interactive Visualization (0=False)')
@@ -81,8 +81,8 @@ if __name__ == '__main__':
         if opt.gameId == "kof98umh":
             n_rounds = 3
 
-        hard_core = False if opt.hardCore == 0 else True
-        settings["hard_core"] = hard_core
+        hardcore = False if opt.hardcore == 0 else True
+        settings["hardcore"] = hardcore
 
         env = make(opt.gameId, settings, seed=time_dep_seed)
 
@@ -172,7 +172,7 @@ if __name__ == '__main__':
             if np.any([info["round_done"], info["stage_done"],
                        info["game_done"], info["ep_done"]]):
 
-                if hard_core is False:
+                if hardcore is False:
                     # Side check
                     if env.player_side == "P2":
                         if observation["P1"]["ownSide"] != 1.0 or observation["P1"]["oppSide"] != 0.0:

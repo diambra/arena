@@ -8,12 +8,12 @@ from .engine.interface import DiambraEngine
 # DIAMBRA Env Gym
 
 
-class DiambraGymHardCoreBase(gym.Env):
+class DiambraGymHardcoreBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
 
     def __init__(self, env_settings):
-        super(DiambraGymHardCoreBase, self).__init__()
+        super(DiambraGymHardcoreBase, self).__init__()
 
         self.reward_normalization_value = 1.0
         self.attack_but_combination = env_settings["attack_but_combination"]
@@ -184,7 +184,7 @@ class DiambraGymHardCoreBase(gym.Env):
 # DIAMBRA Gym base class for single player mode
 
 
-class DiambraGymHardCore1P(DiambraGymHardCoreBase):
+class DiambraGymHardcore1P(DiambraGymHardcoreBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
@@ -251,7 +251,7 @@ class DiambraGymHardCore1P(DiambraGymHardCoreBase):
 # DIAMBRA Gym base class for two players mode
 
 
-class DiambraGymHardCore2P(DiambraGymHardCoreBase):
+class DiambraGymHardcore2P(DiambraGymHardcoreBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
@@ -328,7 +328,7 @@ class DiambraGymHardCore2P(DiambraGymHardCoreBase):
 # DIAMBRA Gym base class providing frame and additional info as observations
 
 
-class DiambraGym1P(DiambraGymHardCore1P):
+class DiambraGym1P(DiambraGymHardcore1P):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
@@ -426,7 +426,7 @@ class DiambraGym1P(DiambraGymHardCore1P):
 # DIAMBRA Gym base class providing frame and additional info as observations
 
 
-class DiambraGym2P(DiambraGymHardCore2P):
+class DiambraGym2P(DiambraGymHardcore2P):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
@@ -532,13 +532,13 @@ class DiambraGym2P(DiambraGymHardCore2P):
 def make_gym_env(env_settings):
 
     if env_settings["player"] != "P1P2":  # 1P Mode
-        if env_settings["hard_core"]:
-            env = DiambraGymHardCore1P(env_settings)
+        if env_settings["hardcore"]:
+            env = DiambraGymHardcore1P(env_settings)
         else:
             env = DiambraGym1P(env_settings)
     else:  # 2P Mode
-        if env_settings["hard_core"]:
-            env = DiambraGymHardCore2P(env_settings)
+        if env_settings["hardcore"]:
+            env = DiambraGymHardcore2P(env_settings)
         else:
             env = DiambraGym2P(env_settings)
 
