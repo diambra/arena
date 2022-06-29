@@ -23,7 +23,7 @@ settings["total_cpus"] = 2
 # Rank of the created environment
 settings["rank"] = 0
 
-env = ImitationLearning(**settings)
+env = diambra.arena.ImitationLearning(**settings)
 
 observation = env.reset()
 env.render(mode="human")

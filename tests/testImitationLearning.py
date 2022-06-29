@@ -34,9 +34,9 @@ try:
     diambra_il_settings["total_cpus"] = opt.nProc
 
     if opt.hardcore == 0:
-        env = ImitationLearning(**diambra_il_settings)
+        env = diambra.arena.ImitationLearning(**diambra_il_settings)
     else:
-        env = ImitationLearningHardcore(**diambra_il_settings)
+        env = diambra.arena.ImitationLearningHardcore(**diambra_il_settings)
 
     observation = env.reset()
     env.render(mode="human")

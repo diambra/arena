@@ -202,7 +202,7 @@ if __name__ == '__main__':
 
         if (opt.noAction == 1
                 and (np.mean(cumulative_ep_rew_all) > -n_rounds*(max_continue+1) *
-                     env.maxDeltaHealth+0.001)):
+                     env.max_delta_health+0.001)):
             raise RuntimeError("NoAction policy and average "
                                "reward different than {} ({})".format(
                                    -n_rounds*(max_continue+1)*env.max_delta_health,
