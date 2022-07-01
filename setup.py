@@ -1,4 +1,5 @@
 from setuptools import find_packages
+from diambra.arena import __version__
 import setuptools
 import sys
 import os
@@ -33,7 +34,7 @@ extras = {
 setuptools.setup(
     name='diambra-arena',
     url='https://github.com/diambra/arena',
-    version='1.0',
+    version=__version__,
     author="DIAMBRA Team",
     author_email="info@diambra.ai",
     description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
