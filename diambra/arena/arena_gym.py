@@ -261,10 +261,15 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
             if env_settings["action_space"][idx] == "multi_discrete":
                 action_space_dict["P{}".format(idx+1)] =\
                     spaces.MultiDiscrete(self.n_actions[idx])
-            else:
+                print("Using MultiDiscrete action space for P{}".format(idx+1))
+            elif env_settings["action_space"][idx] == "discrete":
                 action_space_dict["P{}".format(idx+1)] =\
                     spaces.Discrete(
                         self.n_actions[idx][0] + self.n_actions[idx][1] - 1)
+                print("Using Discrete action space for P{}".format(idx+1))
+            else:
+                raise Exception(
+                    "Not recognized action space: {}".format(env_settings["action_space"][idx]))
 
         self.action_space = spaces.Dict(action_space_dict)
 
