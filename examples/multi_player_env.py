@@ -9,7 +9,7 @@ settings = {}
 # 2 Players game
 settings["player"] = "P1P2"
 
-# If to use discrete or multiDiscrete action space
+# If to use discrete or multi_discrete action space
 settings["action_space"] = ["discrete", "discrete"]
 
 # If to use attack buttons combinations actions

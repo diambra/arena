@@ -37,7 +37,7 @@ settings["characters"] = [["Random"], ["Random"]]
 # Character outfit
 settings["char_outfits"] = [2, 2]
 
-# If to use discrete or multiDiscrete action space
+# If to use discrete or multi_discrete action space
 settings["action_space"] = "discrete"
 
 # If to use attack buttons combinations actions
