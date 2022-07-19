@@ -26,12 +26,15 @@ settings["continue_game"] = 0.0
 # If to show game final when game is completed
 settings["show_final"] = False
 
+# If to use hardcore mode in which observations are only made of game frame
+settings["hardcore"] = False
+
 # Game-specific options (see documentation for details)
 # Game difficulty level
 settings["difficulty"] = 3
 
 # Character to be used, automatically extended with "Random" for games
-# requiring to select more than one character (e.g. Tekken Tag Tournament)
+# required to select more than one character (e.g. Tekken Tag Tournament)
 settings["characters"] = [["Random"], ["Random"]]
 
 # Character outfit
