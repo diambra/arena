@@ -8,14 +8,15 @@
   <a href="https://www.linkedin.com/company/diambra">Linkedin</a> •
   <a href="https://discord.gg/tFDS2UN5sv">Discord</a> •
   <a href="https://www.twitch.tv/diambra_ai">Twitch</a> •
-  <a href="https://www.youtube.com/c/diambra_ai">YouTube</a>
+  <a href="https://www.youtube.com/c/diambra_ai">YouTube</a> •
+  <a href="https://twitter.com/diambra_ai">Twitter</a>
 </p>
 
 # DIAMBRA Arena
 
-DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It acts as an interface towards popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym standard**, that makes its adoption smooth and straightforward.
+DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It provides a standard interface to popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym format**, that makes its adoption smooth and straightforward.
 
-It **supports all major Operating Systems: Linux, Windows and MacOS**, most of them via Docker, with a step by step installation guide available in this manual. It is **completely free to use**, the user only needs to <a href="https://diambra.ai/register/" target="_blank">register on the official website</a>.
+It **supports all major Operating Systems** (Linux, Windows and MacOS) and **can be easily installed via Python PIP**, as described in the **[installation section](#installation)** below. It is **completely free to use**, the user only needs to <a href="https://diambra.ai/register/" target="_blank">register on the official website</a>.
 
 In addition, it comes with a <a href="https://docs.diambra.ai" target="_blank">comprehensive documentation</a>, and this repository provides a **collection of examples** covering main use cases of interest **that can be run in just a few steps**.
 
@@ -55,19 +56,13 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 ## Installation
 
-DIAMBRA Arena runs on all major Operating Systems: Linux, Windows and MacOS. It is natively supported on Linux Ubuntu 18.04 or newer and Linux Mint 19 or newer, where it can be installed directly from sources. For all other options (different Linux distributions, Windows and MacOS), it leverages Docker technology.
+- <a href="https://diambra.ai/register/" target="_blank">Create an account on our website</a>, it requires just a few clicks and is 100% free
 
-Docker installation is quick and controlled, with equal (if not better) performances in terms of environment execution speed, when compared with installation from source. It even allows, on every OS, to run all environments with rendering active, showing game frames on screen in real time.
+- Install Docker Desktop: <a href="https://docs.docker.com/desktop/install/linux-install/" target="_blank">Linux</a> | <a href="https://docs.docker.com/desktop/windows/install/" target="_blank">Windows</a> | <a href="https://docs.docker.com/desktop/mac/install/" target="_blank">MacOS</a>
 
-The installation takes only a few steps, **<a href="https://docs.diambra.ai/installation/" target="_blank">refer to the dedicated section</a> of our Documentation** where they are clearly explained.
+- Install DIAMBRA Command Line Interface (system wide, <span style="color:#333333; font-weight:bolder;">not using</span> a virtual environment): `pip install diambra`
 
-#### Prerequisites
-
-In order to use DIAMBRA Arena, it is needed to:
- - Have an active internet connection
- - **<a href="https://diambra.ai/register/" target="_blank">Create an account on our website</a>**, it requires just a few clicks and is 100% free
-
-Credentials (email/user id and password) will be asked at the first environment execution.
+- Install DIAMBRA Arena (<span style="color:#333333; font-weight:bolder;">using</span> a virtual environment is strongly suggested): `pip install diambra-arena`
 
 ## Quickstart & Examples
 
@@ -77,30 +72,40 @@ DIAMBRA Arena usage follows the standard RL interaction framework: the agent sen
 <img src="https://raw.githubusercontent.com/diambra/diambraArena/main/img/basicUsage.png" alt="rlScheme" width="75%"/>
 </p>
 
-The shortest snippet for a complete basic execution of an environment consists of just a few lines of code, and is presented in the code block below:
+#### Download Game ROM(s) and Check Validity
 
-```python
-import diambraArena
+#### Base script
 
-# Mandatory settings
-settings = {}
-settings["gameId"] = "doapp" # Game selection
-settings["romsPath"] = "/path/to/roms/" # Path to roms folder
+Running a complete episode with a random agent requires less than 20 python lines:
 
-env = diambraArena.make("TestEnv", settings)
-observation = env.reset()
+```python {linenos=inline}
+ import diambra.arena
 
-while True:
+ env = diambra.arena.make("doapp")
 
-    actions = env.action_space.sample()
-    observation, reward, done, info = env.step(actions)
+ observation = env.reset()
 
-    if done:
-        observation = env.reset()
-        break
+ while True:
+     env.render()
 
-env.close()
+     actions = env.action_space.sample()
+
+     observation, reward, done, info = env.step(actions)
+
+     if done:
+         observation = env.reset()
+         break
+
+ env.close()
 ```
+
+To execute the script run:
+
+```
+diambra run -r your/roms/local/path python script.py
+```
+
+ Additional details and use cases are provided in the <a href="https://docs.diambra.ai/gettingstarted/" target="_blank">Getting Started</a> section of the documentation.
 
 ### Examples
 
@@ -128,13 +133,13 @@ Our very first AI Tournament **has been an amazing experience!** Participants tr
 
 ## References
 
- - Documentation: <a href="https://docs.diambra.ai" target="_blank">https://docs.diambra.ai</a>
- - Docker Repository: <a href="https://hub.docker.com/r/diambra/diambra-arena" target="_blank">https://hub.docker.com/r/diambra/diambra-arena</a>
+ - Documentation: <a href="https://docs.diambra.ai" target="_blank">https://docs.diambra.ai</a> 
  - Website: <a href="https://diambra.ai" target="_blank">https://diambra.ai</a>
- - Discord Server: <a href="https://discord.gg/tFDS2UN5sv" target="_blank">https://discord.gg/tFDS2UN5sv</a>
- - Linkedin: <a href="https://www.linkedin.com/company/diambrav" target="_blank">https://www.linkedin.com/company/diambra</a>
- - Twitch Channel: <a href="https://www.twitch.tv/diambra_ai" target="_blank">https://www.twitch.tv/diambra_ai</a>
- - YouTube Channel: <a href="https://www.youtube.com/c/diambra_ai" target="_blank">https://www.youtube.com/c/diambra_ai</a>
+ - Discord: <a href="https://discord.gg/tFDS2UN5sv" target="_blank">https://discord.gg/tFDS2UN5sv</a>
+ - Linkedin: <a href="https://www.linkedin.com/company/diambra" target="_blank">https://www.linkedin.com/company/diambra</a>
+ - Twitch: <a href="https://www.twitch.tv/diambra_ai" target="_blank">https://www.twitch.tv/diambra_ai</a>
+ - YouTube: <a href="https://www.youtube.com/c/diambra_ai" target="_blank">https://www.youtube.com/c/diambra_ai</a>
+ - Twitter: <a href="https://twitter.com/diambra_ai" target="_blank">https://twitter.com/diambra_ai</a>
 
 ## Support, Feature Requests & Bugs Reports
 
