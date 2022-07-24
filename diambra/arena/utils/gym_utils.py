@@ -270,7 +270,7 @@ def sha256_checksum(filename, block_size=65536):
 def check_game_sha_256(path, game_id=None):
 
     base_path = os.path.dirname(os.path.abspath(__file__))
-    games_file_path = os.path.join(base_path, 'utils/integratedGames.json')
+    games_file_path = os.path.join(base_path, 'integratedGames.json')
     games_file = open(games_file_path)
     games_dict = json.load(games_file)
 
