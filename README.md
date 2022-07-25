@@ -60,9 +60,11 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 - Install Docker Desktop: <a href="https://docs.docker.com/desktop/install/linux-install/" target="_blank">Linux</a> | <a href="https://docs.docker.com/desktop/windows/install/" target="_blank">Windows</a> | <a href="https://docs.docker.com/desktop/mac/install/" target="_blank">MacOS</a>
 
-- Install DIAMBRA Command Line Interface (system wide, <span style="color:#333333; font-weight:bolder;">not using</span> a virtual environment): `pip install diambra`
+- Install DIAMBRA Command Line Interface (**avoid using** a virtual environment*): `python3 -m pip install diambra`
 
-- Install DIAMBRA Arena (<span style="color:#333333; font-weight:bolder;">using</span> a virtual environment is strongly suggested): `pip install diambra-arena`
+- Install DIAMBRA Arena (**using** a virtual environment is strongly suggested): `python3 -m pip install diambra-arena`
+
+*: If you use [ana]conda and have the base environment active, make sure to deactivate it with `conda deactivate`
 
 ## Quickstart & Examples
 
@@ -73,6 +75,43 @@ DIAMBRA Arena usage follows the standard RL interaction framework: the agent sen
 </p>
 
 #### Download Game ROM(s) and Check Validity
+
+Check available games with the following command:                               
+                                                                                
+```                                                                    
+diambra arena list-roms                                                         
+```                                                                             
+                                                                                
+Output example:                                                                 
+                                                                                
+```shell                                                                        
+[...]                                                                           
+ Title: Dead Or Alive ++ - GameId: doapp                                        
+   Difficulty levels: Min 1 - Max 4                                             
+   SHA256 sum: d95855c7d8596a90f0b8ca15725686567d767a9a3f93a8896b489a160e705c4e 
+   Original ROM name: doapp.zip                                                 
+   Search keywords: ['DEAD OR ALIVE ++ [JAPAN]', 'dead-or-alive-japan', '80781', 'wowroms']
+   Characters list: ['Kasumi', 'Zack', 'Hayabusa', 'Bayman', 'Lei-Fang', 'Raidou', 'Gen-Fu', 'Tina', 'Bass', 'Jann-Lee', 'Ayane']
+[...]                                                                           
+```                                                                             
+                                                                                
+Search ROMs on the web using **Search Keywords** provided by the game list command reported above. **Pay attention, follow game-specific notes reported there, and store all ROMs in the same folder, whose absolute path will be referred in the following as** `your/roms/local/path`.
+                                                                                                                                             
+**Specific game ROM files are required, check validity of the downloaded ROMs as follows.**                                                               
+                                                                                
+Check ROM(s) validity running:                                                  
+                                                                                
+```                                                                       
+diambra arena check-roms your/roms/local/path/romFileName.zip                   
+```                                                                             
+                                                                                
+The output for a valid ROM file would look like the following:                  
+                                                                                
+```                                                                       
+Correct ROM file for Dead Or Alive ++, sha256 = d95855c7d8596a90f0b8ca15725686567d767a9a3f93a8896b489a160e705c4e
+```                                                                             
+                                                                                                                                      
+**Make sure to check out our <a href="https://diambra.ai/terms" target="_blank">Terms of Use</a>, and in particular Section 7. By using the software, you accept the in full.</span>**
 
 #### Base script
 
