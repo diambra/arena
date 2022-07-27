@@ -88,8 +88,6 @@ class DiambraEngine:
         output += "disableJoystick" + sep + "0" + sep + \
             str(int(env_settings["disable_joystick"])) + sep
         output += "rank" + sep + "1" + sep + str(env_settings["rank"]) + sep
-        output += "recordConfigFile" + sep + "2" + sep + \
-            env_settings["record_config_file"] + sep
 
         output += end_char
 
