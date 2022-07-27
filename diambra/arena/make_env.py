@@ -36,7 +36,6 @@ def env_settings_check(env_settings):
     default_env_settings["disable_keyboard"] = True
     default_env_settings["disable_joystick"] = True
     default_env_settings["rank"] = 0
-    default_env_settings["record_config_file"] = "\"\""
 
     for k, v in env_settings.items():
 
