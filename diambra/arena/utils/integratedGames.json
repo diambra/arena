@@ -12,6 +12,12 @@
                          "Lei-Fang", "Raidou", "Gen-Fu", "Tina",              
                          "Bass", "Jann-Lee", "Ayane"],
             "difficulty": [1, 4, 3],
+            "difficulty_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Medium",
+                "4": "Hard"
+            },
             "cfg": {"H": "But6", "P": "But1", "K": "But2"}
         },
     "sfiii3n": 
@@ -27,6 +33,16 @@
                          "Ibuki", "Chun-Li", "Dudley", "Necro", "Q", "Oro",    
                          "Urien", "Remy", "Ryu", "Gouki", "Yun", "Yang", "Ken", "Gill"],
             "difficulty": [1, 8, 6],
+            "difficulty_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Easy",
+                "4": "Easy",
+                "5": "Medium",
+                "6": "Medium",
+                "7": "Hard",
+                "8": "Hard"
+            },
             "cfg": {"LP": "But4", "MP": "But1", "HP": "But5", "LK": "But3", "MK": "But2", "HK": "But6"}
         },
     "tektagt":
@@ -46,6 +62,17 @@
                          "Roger", "Tetsujin", "Panda", "Tiger", "Angel", "Alex",
                          "Mokujin", "Unknown"],
             "difficulty": [1, 9, 7],
+            "difficulty_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Easy",
+                "4": "Easy",
+                "5": "Easy",
+                "6": "Medium",
+                "7": "Medium",
+                "8": "Hard",
+                "9": "Hard"
+            },
             "cfg": {"LP": "But4", "RP": "But1", "LK": "But3", "RK": "But2", "TAG": "But6"}
         },
     "umk3":
@@ -63,6 +90,13 @@
                          "Jade", "Sub-Zero", "Kung Lao", "Smoke", "Skorpion",  
                          "Human Smoke", "Noob Saibot", "Motaro", "Shao Kahn"],
             "difficulty": [1, 5, 4],
+            "difficulty_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Easy",
+                "4": "Medium",
+                "5": "Hard"
+            },
             "cfg": {"HP": "But1", "HK": "But2", "LK": "But3",  "LP": "But4", "RUN": "But5", "BLK": "But6"}
         },
     "samsh5sp":
@@ -80,6 +114,16 @@
                          "Shizumaru", "Kazuki", "Tamtam", "Rasetsumaru", "Rimururu",
                          "Mina", "Zankuro", "Nakoruru", "Rera", "Yunfei", "Basara", "Mizuki"],
             "difficulty": [1, 8, 6],
+            "difficulty_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Easy",
+                "4": "Easy",
+                "5": "Medium",
+                "6": "Medium",
+                "7": "Hard",
+                "8": "Hard"
+            },
             "cfg": {"WS": "But1", "MS": "But2", "K": "But3", "M": "But4"}
         },
     "kof98umh":
@@ -97,6 +141,16 @@
                          "Iori","Mature","Vice","Heidern","Takuma","Saisyu","Heavy-D!","Lucky","Brian",
                          "Eiji","Kasumi","Shingo","Rugal","Geese","Krauser","Mr.Big","Goenitz","Orochi"],
             "difficulty": [1, 8, 6],
+            "difficulty_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Easy",
+                "4": "Easy",
+                "5": "Medium",
+                "6": "Medium",
+                "7": "Hard",
+                "8": "Hard"
+            },
             "cfg": {"WP": "But1", "WK": "But2", "SP": "But3", "SK": "But4"}
         }
 }
