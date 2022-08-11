@@ -15,6 +15,11 @@ class EnvServerStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.GetError = channel.unary_unary(
+                '/interface.EnvServer/GetError',
+                request_serializer=interface__pb2.Empty.SerializeToString,
+                response_deserializer=interface__pb2.ErrorMessage.FromString,
+                )
         self.EnvInit = channel.unary_unary(
                 '/interface.EnvServer/EnvInit',
                 request_serializer=interface__pb2.EnvSettings.SerializeToString,
@@ -45,6 +50,13 @@ class EnvServerStub(object):
 class EnvServerServicer(object):
     """The DIAMBRA service definition.
     """
+
+    def GetError(self, request, context):
+        """Receives back environment error message
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def EnvInit(self, request, context):
         """Sends environment settings, receives back environment info and int data vars
@@ -84,6 +96,11 @@ class EnvServerServicer(object):
 
 def add_EnvServerServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'GetError': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetError,
+                    request_deserializer=interface__pb2.Empty.FromString,
+                    response_serializer=interface__pb2.ErrorMessage.SerializeToString,
+            ),
             'EnvInit': grpc.unary_unary_rpc_method_handler(
                     servicer.EnvInit,
                     request_deserializer=interface__pb2.EnvSettings.FromString,
@@ -119,6 +136,23 @@ def add_EnvServerServicer_to_server(servicer, server):
 class EnvServer(object):
     """The DIAMBRA service definition.
     """
+
+    @staticmethod
+    def GetError(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/GetError',
+            interface__pb2.Empty.SerializeToString,
+            interface__pb2.ErrorMessage.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def EnvInit(request,
