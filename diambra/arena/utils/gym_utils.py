@@ -35,18 +35,18 @@ def nested_dict_obs_space(space, k_list=[], level=0):
         if isinstance(v, gym.spaces.dict.Dict):
             k_list = k_list[0:level]
             k_list.append(k)
-            nested_dict_obs_space(v, k_list, level=level+1)
+            nested_dict_obs_space(v, k_list, level=level + 1)
         else:
             k_list = k_list[0:level]
             out_string = "observation_space"
-            indentation = "    "*level
+            indentation = "    " * level
             for idk in k_list:
                 out_string += "[\"{}\"]".format(idk)
             out_string += "[\"{}\"]".format(k)
-            out_string = indentation+out_string+":"
+            out_string = indentation + out_string + ":"
             print(out_string, v)
             if isinstance(v, gym.spaces.MultiDiscrete):
-                print(indentation+"Space size:", v.nvec.shape)
+                print(indentation + "Space size:", v.nvec.shape)
             elif isinstance(v, gym.spaces.Discrete):
                 pass
             elif isinstance(v, gym.spaces.Box):
@@ -161,10 +161,10 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
                       observation["frame"].shape)
 
         if viz:
-            obs = np.array(observation["frame"]).astype(np.float32)/255
+            obs = np.array(observation["frame"]).astype(np.float32) / 255
     else:
         if viz:
-            obs = np.array(observation).astype(np.float32)/255
+            obs = np.array(observation).astype(np.float32) / 255
 
     if viz:
         cv2.imshow("Frame", obs[:, :, ::-1])  # rgb2bgr
@@ -205,7 +205,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
 
     if viz:
         for idx in range(obs.shape[2]):
-            cv2.imshow("Frame-"+str(idx), obs[:, :, idx])
+            cv2.imshow("Frame-" + str(idx), obs[:, :, idx])
 
         cv2.waitKey(wait_key)
 
