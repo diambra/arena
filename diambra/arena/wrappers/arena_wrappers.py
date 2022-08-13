@@ -92,14 +92,14 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         :param rewardNormalizationFactor: multiplication factor
         """
         gym.RewardWrapper.__init__(self, env)
-        self.env.reward_normalization_value = reward_normalization_factor*self.env.max_delta_health
+        self.env.reward_normalization_value = reward_normalization_factor * self.env.max_delta_health
 
     def reward(self, reward):
         """
         Nomralize reward dividing by reward normalization factor*max_delta_health
         :param reward: (float)
         """
-        return float(reward)/float(self.env.reward_normalization_value)
+        return float(reward) / float(self.env.reward_normalization_value)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
 
@@ -107,7 +107,8 @@ class NormalizeRewardEnv(gym.RewardWrapper):
 def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
                  reward_normalization=False, reward_normalization_factor=0.5,
                  frame_stack=1, actions_stack=1, scale=False, scale_mod=0,
-                 hwc_obs_resize=[84, 84, 0], dilation=1, hardcore=False):
+                 hwc_obs_resize=[84, 84, 0], dilation=1, flatten_dict=False,
+                 hardcore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
@@ -145,7 +146,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     else:
         from diambra.arena.wrappers.obs_wrapper import WarpFrame, \
             WarpFrame3C, FrameStack, FrameStackDilated,\
-            ActionsStack, ScaledFloatObsNeg, ScaledFloatObs
+            ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenDictObs
 
     if hwc_obs_resize[2] == 1:
         # Resizing observation from H x W x 3 to
@@ -191,5 +192,8 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
             env = ScaledFloatObsNeg(env)
         else:
             raise ValueError("Scale mod musto be either 0 or -1")
+
+    if flatten_dict:
+        env = FlattenDictObs(env)
 
     return env
