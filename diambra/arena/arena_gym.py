@@ -105,28 +105,28 @@ class DiambraGymHardcoreBase(gym.Env):
         # Action dict
         move_dict = {}
         for idx in range(current_idx,
-                         current_idx + 2*self.n_actions_but_comb[0], 2):
-            move_dict[int(env_info[idx])] = env_info[idx+1]
+                         current_idx + 2 * self.n_actions_but_comb[0], 2):
+            move_dict[int(env_info[idx])] = env_info[idx + 1]
 
-        current_idx += 2*self.n_actions_but_comb[0]
+        current_idx += 2 * self.n_actions_but_comb[0]
 
         attack_dict = {}
         for idx in range(current_idx,
-                         current_idx + 2*self.n_actions_but_comb[1], 2):
-            attack_dict[int(env_info[idx])] = env_info[idx+1]
+                         current_idx + 2 * self.n_actions_but_comb[1], 2):
+            attack_dict[int(env_info[idx])] = env_info[idx + 1]
 
         self.print_actions_dict = [move_dict, attack_dict]
 
-        current_idx += 2*self.n_actions_but_comb[1]
+        current_idx += 2 * self.n_actions_but_comb[1]
 
         # Additional Obs map
         number_of_add_obs = int(env_info[current_idx])
         current_idx += 1
         self.add_obs = {}
         for idx in range(number_of_add_obs):
-            self.add_obs[env_info[current_idx]] = [int(env_info[current_idx+1]),
-                                                   int(env_info[current_idx+2]),
-                                                   int(env_info[current_idx+3])]
+            self.add_obs[env_info[current_idx]] = [int(env_info[current_idx + 1]),
+                                                   int(env_info[current_idx + 2]),
+                                                   int(env_info[current_idx + 3])]
             current_idx += 4
 
     # Return env action list
@@ -145,8 +145,8 @@ class DiambraGymHardcoreBase(gym.Env):
 
     # Return min max rewards for the environment
     def get_min_max_reward(self):
-        return [self.minmax_reward[0]/(self.reward_normalization_value),
-                self.minmax_reward[1]/(self.reward_normalization_value)]
+        return [self.minmax_reward[0] / (self.reward_normalization_value),
+                self.minmax_reward[1] / (self.reward_normalization_value)]
 
     # Step method to be implemented in derived classes
     def step(self, action):
@@ -259,14 +259,14 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
         action_space_dict = {}
         for idx in range(2):
             if env_settings["action_space"][idx] == "multi_discrete":
-                action_space_dict["P{}".format(idx+1)] =\
+                action_space_dict["P{}".format(idx + 1)] =\
                     spaces.MultiDiscrete(self.n_actions[idx])
-                print("Using MultiDiscrete action space for P{}".format(idx+1))
+                print("Using MultiDiscrete action space for P{}".format(idx + 1))
             elif env_settings["action_space"][idx] == "discrete":
-                action_space_dict["P{}".format(idx+1)] =\
+                action_space_dict["P{}".format(idx + 1)] =\
                     spaces.Discrete(
                         self.n_actions[idx][0] + self.n_actions[idx][1] - 1)
-                print("Using Discrete action space for P{}".format(idx+1))
+                print("Using Discrete action space for P{}".format(idx + 1))
             else:
                 raise Exception(
                     "Not recognized action space: {}".format(env_settings["action_space"][idx]))
@@ -353,13 +353,13 @@ class DiambraGym1P(DiambraGymHardcore1P):
                 continue
 
             if k[-2:] == "P1":
-                knew = "own"+k[:-2]
+                knew = "own" + k[:-2]
             else:
-                knew = "opp"+k[:-2]
+                knew = "opp" + k[:-2]
 
             # Discrete spaces (binary / categorical)
             if v[0] == 0 or v[0] == 2:
-                player_spec_dict[knew] = spaces.Discrete(v[2]+1)
+                player_spec_dict[knew] = spaces.Discrete(v[2] + 1)
             elif v[0] == 1:  # Box spaces
                 player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
                                                     shape=(), dtype=np.int32)
@@ -396,9 +396,9 @@ class DiambraGym1P(DiambraGymHardcore1P):
                 continue
 
             if k[-2:] == self.player_side:
-                knew = "own"+k[:-2]
+                knew = "own" + k[:-2]
             else:
-                knew = "opp"+k[:-2]
+                knew = "opp" + k[:-2]
 
             player_spec_dict[knew] = data[k]
 
@@ -451,12 +451,12 @@ class DiambraGym2P(DiambraGymHardcore2P):
                 continue
 
             if k[-2:] == "P1":
-                knew = "own"+k[:-2]
+                knew = "own" + k[:-2]
             else:
-                knew = "opp"+k[:-2]
+                knew = "opp" + k[:-2]
 
             if v[0] == 0 or v[0] == 2:  # Discrete spaces
-                player_spec_dict[knew] = spaces.Discrete(v[2]+1)
+                player_spec_dict[knew] = spaces.Discrete(v[2] + 1)
             elif v[0] == 1:  # Box spaces
                 player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
                                                     shape=(), dtype=np.int32)
@@ -500,15 +500,15 @@ class DiambraGym2P(DiambraGymHardcore2P):
                     continue
 
                 if k[-2:] == elem:
-                    knew = "own"+k[:-2]
+                    knew = "own" + k[:-2]
                 else:
-                    knew = "opp"+k[:-2]
+                    knew = "opp" + k[:-2]
 
                 player_spec_dict[knew] = data[k]
 
             actions_dict = {
-                "move": data["moveActionP{}".format(ielem+1)],
-                "attack": data["attackActionP{}".format(ielem+1)],
+                "move": data["moveActionP{}".format(ielem + 1)],
+                "attack": data["attackActionP{}".format(ielem + 1)],
             }
 
             player_spec_dict["actions"] = actions_dict
