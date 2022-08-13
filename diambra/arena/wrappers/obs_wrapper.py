@@ -3,6 +3,7 @@ import gym
 from copy import deepcopy
 import numpy as np
 from collections import deque
+from collections.abc import Mapping
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
 
@@ -33,7 +34,7 @@ def scaled_float_obs_func(observation, observation_space):
                 buf_len = observation_space.spaces[k].nvec.shape[0]
                 actions_vector = np.zeros((buf_len * n_act), dtype=int)
                 for iact in range(buf_len):
-                    actions_vector[iact*n_act + observation[k][iact]] = 1
+                    actions_vector[iact * n_act + observation[k][iact]] = 1
                 observation[k] = actions_vector
             elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2):
                 var_vector = np.zeros(
@@ -136,8 +137,7 @@ class FrameStack(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"])
-                and not done):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
             for _ in range(self.n_frames - 1):
                 self.frames.append(obs["frame"])
 
@@ -165,7 +165,7 @@ class FrameStackDilated(gym.Wrapper):
         self.dilation = dilation
         # Keeping all n_frames*dilation in memory,
         # then extract the subset given by the dilation factor
-        self.frames = deque([], maxlen=n_frames*dilation)
+        self.frames = deque([], maxlen=n_frames * dilation)
         shp = self.observation_space["frame"].shape
         self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
                                                             shape=(
@@ -174,7 +174,7 @@ class FrameStackDilated(gym.Wrapper):
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
-        for _ in range(self.n_frames*self.dilation):
+        for _ in range(self.n_frames * self.dilation):
             self.frames.append(obs["frame"])
         obs["frame"] = self.get_ob()
         return obs
@@ -185,16 +185,15 @@ class FrameStackDilated(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"])
-                and not done):
-            for _ in range(self.n_frames*self.dilation - 1):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
+            for _ in range(self.n_frames * self.dilation - 1):
                 self.frames.append(obs["frame"])
 
         obs["frame"] = self.get_ob()
         return obs, reward, done, info
 
     def get_ob(self):
-        frames_subset = list(self.frames)[self.dilation-1::self.dilation]
+        frames_subset = list(self.frames)[self.dilation - 1::self.dilation]
         assert len(frames_subset) == self.n_frames
         return LazyFrames(list(frames_subset))
 
@@ -215,10 +214,10 @@ class ActionsStack(gym.Wrapper):
                 deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
             self.attack_action_stack.append(
                 deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
-            self.observation_space.spaces["P{}".format(iplayer+1)].spaces["actions"].spaces["move"] =\
-                spaces.MultiDiscrete([self.n_actions[iplayer][0]]*n_actions_stack)
-            self.observation_space.spaces["P{}".format(iplayer+1)].spaces["actions"].spaces["attack"] =\
-                spaces.MultiDiscrete([self.n_actions[iplayer][1]]*n_actions_stack)
+            self.observation_space.spaces["P{}".format(iplayer + 1)].spaces["actions"].spaces["move"] =\
+                spaces.MultiDiscrete([self.n_actions[iplayer][0]] * n_actions_stack)
+            self.observation_space.spaces["P{}".format(iplayer + 1)].spaces["actions"].spaces["attack"] =\
+                spaces.MultiDiscrete([self.n_actions[iplayer][1]] * n_actions_stack)
 
     def fill_stack(self, value=0):
         # Fill the actions stack with no action after reset
@@ -233,30 +232,29 @@ class ActionsStack(gym.Wrapper):
 
         for iplayer in range(self.n_players):
             obs["P{}".format(
-                iplayer+1)]["actions"]["move"] = self.move_action_stack[iplayer]
+                iplayer + 1)]["actions"]["move"] = self.move_action_stack[iplayer]
             obs["P{}".format(
-                iplayer+1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
+                iplayer + 1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
         return obs
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
         for iplayer in range(self.n_players):
             self.move_action_stack[iplayer].append(
-                obs["P{}".format(iplayer+1)]["actions"]["move"])
+                obs["P{}".format(iplayer + 1)]["actions"]["move"])
             self.attack_action_stack[iplayer].append(
-                obs["P{}".format(iplayer+1)]["actions"]["attack"])
+                obs["P{}".format(iplayer + 1)]["actions"]["attack"])
 
         # Add noAction for n_actions_stack - 1 times
         # in case of new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"])
-                and not done):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
             self.fill_stack()
 
         for iplayer in range(self.n_players):
             obs["P{}".format(
-                iplayer+1)]["actions"]["move"] = self.move_action_stack[iplayer]
+                iplayer + 1)]["actions"]["move"] = self.move_action_stack[iplayer]
             obs["P{}".format(
-                iplayer+1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
+                iplayer + 1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
         return obs, reward, done, info
 
 
@@ -288,10 +286,10 @@ def scaled_float_obs_space_func(obs_dict):
                 # One hot encoding x nStack
                 n_val = v.nvec.shape[0]
                 max_val = v.nvec[0]
-                obs_dict.spaces[k] = spaces.MultiDiscrete([2]*(n_val*max_val))
+                obs_dict.spaces[k] = spaces.MultiBinary(n_val * max_val)
             elif isinstance(v, spaces.Discrete) and (v.n > 2):
                 # One hot encoding
-                obs_dict.spaces[k] = spaces.MultiDiscrete([2]*(v.n))
+                obs_dict.spaces[k] = spaces.MultiBinary(v.n)
             elif isinstance(v, spaces.Box):
                 obs_dict.spaces[k] = spaces.Box(
                     low=0, high=1.0, shape=v.shape, dtype=np.float32)
@@ -341,3 +339,32 @@ class LazyFrames(object):
 
     def __getitem__(self, i):
         return self.force()[i]
+
+
+_FLAG_FIRST = object()
+
+def flatten_obs_func(input_dictionary):
+    flattened_dict = {}
+
+    def visit(subdict, results, partial_key):
+        for k, v in subdict.items():
+            newKey = k if partial_key == _FLAG_FIRST else partial_key + "_" + k
+            if isinstance(v, Mapping):
+                visit(v, flattened_dict, newKey)
+            else:
+                flattened_dict[newKey] = v
+
+    visit(input_dictionary, flattened_dict, _FLAG_FIRST)
+
+    return flattened_dict
+
+
+class FlattenDictObs(gym.ObservationWrapper):
+    def __init__(self, env):
+        gym.ObservationWrapper.__init__(self, env)
+
+        self.observation_space = spaces.Dict(flatten_obs_func(self.observation_space))
+
+    def observation(self, observation):
+
+        return flatten_obs_func(observation)
