@@ -3,7 +3,7 @@ import gym
 from copy import deepcopy
 import numpy as np
 from collections import deque
-from collections.abc import Mapping
+from collections import Mapping
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
 
@@ -59,7 +59,7 @@ class WarpFrame(gym.ObservationWrapper):
         """
         print("Warning: for speedup, avoid frame warping wrappers,")
         print("         use environment's native frame wrapping through")
-        print("        \"frameShape\" setting (see documentation for details)")
+        print("        \"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -85,7 +85,7 @@ class WarpFrame3C(gym.ObservationWrapper):
         """
         print("Warning: for speedup, avoid frame warping wrappers,")
         print("         use environment's native frame wrapping through")
-        print("        \"frameShape\" setting (see documentation for details)")
+        print("        \"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -340,31 +340,50 @@ class LazyFrames(object):
     def __getitem__(self, i):
         return self.force()[i]
 
-
-_FLAG_FIRST = object()
-
-def flatten_obs_func(input_dictionary):
+def flatten_obs_func(input_dictionary, keys_to_use):
+    _FLAG_FIRST = object()
     flattened_dict = {}
 
-    def visit(subdict, results, partial_key):
-        for k, v in subdict.items():
-            newKey = k if partial_key == _FLAG_FIRST else partial_key + "_" + k
-            if isinstance(v, Mapping):
-                visit(v, flattened_dict, newKey)
-            else:
-                flattened_dict[newKey] = v
+    def dummy_check(new_key):
+        return True
 
-    visit(input_dictionary, flattened_dict, _FLAG_FIRST)
+    def check_filter(new_key):
+        return new_key in keys_to_use
+
+    def visit(subdict, flattened_dict, partial_key, check_method):
+        for k, v in subdict.items():
+            new_key = k if partial_key == _FLAG_FIRST else partial_key + "_" + k
+            if isinstance(v, Mapping) or isinstance(v, spaces.Dict):
+                visit(v, flattened_dict, new_key, check_method)
+            else:
+                if check_method(new_key):
+                    flattened_dict[new_key] = v
+
+    if keys_to_use is not None:
+        visit(input_dictionary, flattened_dict, _FLAG_FIRST, check_filter)
+    else:
+        visit(input_dictionary, flattened_dict, _FLAG_FIRST, dummy_check)
 
     return flattened_dict
 
-
 class FlattenDictObs(gym.ObservationWrapper):
-    def __init__(self, env):
+    def __init__(self, env, keys_to_use):
         gym.ObservationWrapper.__init__(self, env)
 
-        self.observation_space = spaces.Dict(flatten_obs_func(self.observation_space))
+        self.keys_to_use = keys_to_use
+        if (keys_to_use is not None) and ("frame" not in keys_to_use):
+            self.keys_to_use += ["frame"]
+
+        self.observation_space = spaces.Dict(flatten_obs_func(self.observation_space, self.keys_to_use))
+
+        if keys_to_use is not None:
+            if (sorted(self.observation_space.keys()) != sorted(self.keys_to_use)):
+                print("ERROR: specified keys to use differ from those available:")
+                print("       Available key(s):", sorted(self.observation_space.keys()))
+                print("       Specified key(s):", sorted(self.keys_to_use))
+                print("       Key(s) not found:", sorted([key for key in self.keys_to_use if key not in self.observation_space.keys()]))
+                raise Exception("Specified observation key(s) not found")
 
     def observation(self, observation):
 
-        return flatten_obs_func(observation)
+        return flatten_obs_func(observation, self.keys_to_use)

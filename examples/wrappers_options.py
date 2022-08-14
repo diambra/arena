@@ -43,6 +43,11 @@ wrappers_settings["scale"] = True
 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 wrappers_settings["scale_mod"] = 0
 
+# Flattening observation dictionary and selecting a sub-set of additional observations
+wrappers_settings["flatten_dict"] = True
+wrappers_settings["keys_to_use"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_ownHealth",
+                                    "P1_oppChar", "P1_actions_move", "P1_actions_attack"]
+
 env = diambra.arena.make("doapp", {}, wrappers_settings)
 
 observation = env.reset()

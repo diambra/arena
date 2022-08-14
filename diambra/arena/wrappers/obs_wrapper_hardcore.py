@@ -33,7 +33,7 @@ class WarpFrame(gym.ObservationWrapper):
         """
         print("Warning: for speedup, avoid frame warping wrappers,")
         print("         use environment's native frame wrapping through")
-        print("        \"frameShape\" setting (see documentation for details)")
+        print("        \"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -58,7 +58,7 @@ class WarpFrame3C(gym.ObservationWrapper):
         """
         print("Warning: for speedup, avoid frame warping wrappers,")
         print("         use environment's native frame wrapping through")
-        print("        \"frameShape\" setting (see documentation for details)")
+        print("        \"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -108,8 +108,7 @@ class FrameStack(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"])
-                and not done):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
             for _ in range(self.n_frames - 1):
                 self.frames.append(obs)
 
@@ -136,7 +135,7 @@ class FrameStackDilated(gym.Wrapper):
         self.dilation = dilation
         # Keeping all n_frames*dilation in memory,
         # then extract the subset given by the dilation factor
-        self.frames = deque([], maxlen=n_frames*dilation)
+        self.frames = deque([], maxlen=n_frames * dilation)
         shp = env.observation_space.shape
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(shp[0], shp[1],
@@ -145,7 +144,7 @@ class FrameStackDilated(gym.Wrapper):
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
-        for _ in range(self.n_frames*self.dilation):
+        for _ in range(self.n_frames * self.dilation):
             self.frames.append(obs)
         return self.get_ob()
 
@@ -155,15 +154,14 @@ class FrameStackDilated(gym.Wrapper):
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"])
-                and not done):
-            for _ in range(self.n_frames*self.dilation - 1):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
+            for _ in range(self.n_frames * self.dilation - 1):
                 self.frames.append(obs)
 
         return self.get_ob(), reward, done, info
 
     def get_ob(self):
-        frames_subset = list(self.frames)[self.dilation-1::self.dilation]
+        frames_subset = list(self.frames)[self.dilation - 1::self.dilation]
         assert len(frames_subset) == self.n_frames
         return LazyFrames(list(frames_subset))
 
