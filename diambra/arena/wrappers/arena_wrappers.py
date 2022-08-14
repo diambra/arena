@@ -108,7 +108,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
                  reward_normalization=False, reward_normalization_factor=0.5,
                  frame_stack=1, actions_stack=1, scale=False, scale_mod=0,
                  hwc_obs_resize=[84, 84, 0], dilation=1, flatten_dict=False,
-                 hardcore=False):
+                 keys_to_use=None, hardcore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
@@ -194,6 +194,6 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
             raise ValueError("Scale mod musto be either 0 or -1")
 
     if flatten_dict:
-        env = FlattenDictObs(env)
+        env = FlattenDictObs(env, keys_to_use)
 
     return env
