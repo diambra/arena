@@ -107,8 +107,8 @@ class NormalizeRewardEnv(gym.RewardWrapper):
 def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
                  reward_normalization=False, reward_normalization_factor=0.5,
                  frame_stack=1, actions_stack=1, scale=False, scale_mod=0,
-                 hwc_obs_resize=[84, 84, 0], dilation=1, flatten_dict=False,
-                 keys_to_use=None, hardcore=False):
+                 hwc_obs_resize=[84, 84, 0], dilation=1, flatten=False,
+                 filter_keys=None, hardcore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
@@ -146,7 +146,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     else:
         from diambra.arena.wrappers.obs_wrapper import WarpFrame, \
             WarpFrame3C, FrameStack, FrameStackDilated,\
-            ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenDictObs
+            ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
 
     if hwc_obs_resize[2] == 1:
         # Resizing observation from H x W x 3 to
@@ -193,7 +193,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
         else:
             raise ValueError("Scale mod musto be either 0 or -1")
 
-    if flatten_dict:
-        env = FlattenDictObs(env, keys_to_use)
+    if flatten:
+        env = FlattenFilterDictObs(env, filter_keys)
 
     return env

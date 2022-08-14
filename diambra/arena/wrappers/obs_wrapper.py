@@ -340,7 +340,7 @@ class LazyFrames(object):
     def __getitem__(self, i):
         return self.force()[i]
 
-def flatten_obs_func(input_dictionary, keys_to_use):
+def flatten_filter_obs_func(input_dictionary, filter_keys):
     _FLAG_FIRST = object()
     flattened_dict = {}
 
@@ -348,7 +348,7 @@ def flatten_obs_func(input_dictionary, keys_to_use):
         return True
 
     def check_filter(new_key):
-        return new_key in keys_to_use
+        return new_key in filter_keys
 
     def visit(subdict, flattened_dict, partial_key, check_method):
         for k, v in subdict.items():
@@ -359,31 +359,31 @@ def flatten_obs_func(input_dictionary, keys_to_use):
                 if check_method(new_key):
                     flattened_dict[new_key] = v
 
-    if keys_to_use is not None:
+    if filter_keys is not None:
         visit(input_dictionary, flattened_dict, _FLAG_FIRST, check_filter)
     else:
         visit(input_dictionary, flattened_dict, _FLAG_FIRST, dummy_check)
 
     return flattened_dict
 
-class FlattenDictObs(gym.ObservationWrapper):
-    def __init__(self, env, keys_to_use):
+class FlattenFilterDictObs(gym.ObservationWrapper):
+    def __init__(self, env, filter_keys):
         gym.ObservationWrapper.__init__(self, env)
 
-        self.keys_to_use = keys_to_use
-        if (keys_to_use is not None) and ("frame" not in keys_to_use):
-            self.keys_to_use += ["frame"]
+        self.filter_keys = filter_keys
+        if (filter_keys is not None) and ("frame" not in filter_keys):
+            self.filter_keys += ["frame"]
 
-        self.observation_space = spaces.Dict(flatten_obs_func(self.observation_space, self.keys_to_use))
+        self.observation_space = spaces.Dict(flatten_filter_obs_func(self.observation_space, self.filter_keys))
 
-        if keys_to_use is not None:
-            if (sorted(self.observation_space.keys()) != sorted(self.keys_to_use)):
+        if filter_keys is not None:
+            if (sorted(self.observation_space.keys()) != sorted(self.filter_keys)):
                 print("ERROR: specified keys to use differ from those available:")
                 print("       Available key(s):", sorted(self.observation_space.keys()))
-                print("       Specified key(s):", sorted(self.keys_to_use))
-                print("       Key(s) not found:", sorted([key for key in self.keys_to_use if key not in self.observation_space.keys()]))
+                print("       Specified key(s):", sorted(self.filter_keys))
+                print("       Key(s) not found:", sorted([key for key in self.filter_keys if key not in self.observation_space.keys()]))
                 raise Exception("Specified observation key(s) not found")
 
     def observation(self, observation):
 
-        return flatten_obs_func(observation, self.keys_to_use)
+        return flatten_filter_obs_func(observation, self.filter_keys)
