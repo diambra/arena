@@ -139,7 +139,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     if sticky_actions > 1:
         env = StickyActionsEnv(env, sticky_actions=sticky_actions)
 
-    if hardcore:
+    if hardcore is True:
         from diambra.arena.wrappers.obs_wrapper_hardcore import WarpFrame,\
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ScaledFloatObsNeg, ScaledFloatObs
@@ -187,13 +187,14 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
             env = ScaledFloatObs(env)
         elif scale_mod == -1:
             # Between -1.0 and 1.0
-            raise RuntimeError(
-                "Scaling between -1.0 and 1.0 currently not implemented")
+            raise RuntimeError("Scaling between -1.0 and 1.0 currently not implemented")
             env = ScaledFloatObsNeg(env)
         else:
             raise ValueError("Scale mod musto be either 0 or -1")
 
     if flatten:
+        if hardcore is True:
+            raise RuntimeError("Dictionary observation flattening is valid only for not hardcore mode")
         env = FlattenFilterDictObs(env, filter_keys)
 
     return env
