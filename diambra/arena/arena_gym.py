@@ -362,7 +362,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
                 player_spec_dict[knew] = spaces.Discrete(v[2] + 1)
             elif v[0] == 1:  # Box spaces
                 player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
-                                                    shape=(), dtype=np.int32)
+                                                    shape=(1,), dtype=np.int32)
 
             else:
                 raise RuntimeError(
@@ -377,7 +377,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
         observation_space_dict["P1"] = spaces.Dict(player_spec_dict)
         observation_space_dict["stage"] = spaces.Box(low=self.add_obs["stage"][1],
                                                      high=self.add_obs["stage"][2],
-                                                     shape=(), dtype=np.int8)
+                                                     shape=(1,), dtype=np.int8)
 
         self.observation_space = spaces.Dict(observation_space_dict)
 
@@ -459,7 +459,7 @@ class DiambraGym2P(DiambraGymHardcore2P):
                 player_spec_dict[knew] = spaces.Discrete(v[2] + 1)
             elif v[0] == 1:  # Box spaces
                 player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
-                                                    shape=(), dtype=np.int32)
+                                                    shape=(1,), dtype=np.int32)
 
             else:
                 raise RuntimeError("Only Discrete and Box Spaces allowed")
