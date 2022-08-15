@@ -43,10 +43,12 @@ wrappers_settings["scale"] = True
 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 wrappers_settings["scale_mod"] = 0
 
-# Flattening observation dictionary and filtering a sub-set of the additional observations
+# Flattening observation dictionary and filtering
+# a sub-set of the additional observations
 wrappers_settings["flatten"] = True
-wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_ownHealth",
-                                    "P1_oppChar", "P1_actions_move", "P1_actions_attack"]
+wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide",
+                                    "P1_ownHealth", "P1_oppChar",
+                                    "P1_actions_move", "P1_actions_attack"]
 
 env = diambra.arena.make("doapp", {}, wrappers_settings)
 
