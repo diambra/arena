@@ -76,7 +76,7 @@ def make(game_id, env_settings={}, wrappers_settings={},
     env_addresses = os.getenv("DIAMBRA_ENVS", "").split()
     if len(env_addresses) >= 1:  # If present
         # Check if there are at least n env_addresses as the prescribed rank
-        if len(env_addresses) < rank+1:
+        if len(env_addresses) < rank + 1:
             print(
                 "ERROR: Rank of env client is higher "
                 "than the available env_addresses servers:")
