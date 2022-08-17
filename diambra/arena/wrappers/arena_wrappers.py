@@ -192,7 +192,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
         else:
             raise ValueError("Scale mod musto be either 0 or -1")
 
-    if flatten:
+    if flatten is True:
         if hardcore is True:
             raise RuntimeError("Dictionary observation flattening is valid only for not hardcore mode")
         env = FlattenFilterDictObs(env, filter_keys)
