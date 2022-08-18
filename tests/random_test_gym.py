@@ -7,44 +7,27 @@ import time
 import numpy as np
 
 if __name__ == '__main__':
-    time_dep_seed = int((time.time()-int(time.time()-0.5))*1000)
+    time_dep_seed = int((time.time() - int(time.time() - 0.5)) * 1000)
 
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument('--gameId', type=str, default="doapp",
-                            help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
-        parser.add_argument('--player', type=str,
-                            default="Random", help='Player (Random)')
-        parser.add_argument('--character1', type=str,
-                            default="Random", help='Character P1 (Random)')
-        parser.add_argument('--character2', type=str,
-                            default="Random", help='Character P2 (Random)')
-        parser.add_argument('--character1_2', type=str,
-                            default="Random", help='Character P1_2 (Random)')
-        parser.add_argument('--character2_2', type=str,
-                            default="Random", help='Character P2_2 (Random)')
-        parser.add_argument('--character1_3', type=str,
-                            default="Random", help='Character P1_3 (Random)')
-        parser.add_argument('--character2_3', type=str,
-                            default="Random", help='Character P2_3 (Random)')
-        parser.add_argument('--stepRatio', type=int,
-                            default=3, help='Frame ratio')
-        parser.add_argument('--nEpisodes', type=int,
-                            default=1, help='Number of episodes')
-        parser.add_argument('--continueGame', type=float,
-                            default=-1.0, help='ContinueGame flag (-inf,+1.0]')
-        parser.add_argument('--actionSpace', type=str,
-                            default="discrete", help='discrete/multi_discrete')
-        parser.add_argument('--attButComb', type=int,   default=0,
-                            help='Use attack button combinations (0=F)/1=T')
-        parser.add_argument('--noAction', type=int,   default=0,
-                            help='If to use no action policy (0=False)')
-        parser.add_argument('--hardcore', type=int,
-                            default=0, help='Hard core mode (0=False)')
-        parser.add_argument('--interactiveViz', type=int,   default=0,
-                            help='Interactive Visualization (0=False)')
-        parser.add_argument('--envAddress', type=str,
-                            default="", help='diambraEngine Address')
+        parser.add_argument('--gameId', type=str, default="doapp", help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
+        parser.add_argument('--player', type=str, default="Random", help='Player (Random)')
+        parser.add_argument('--character1', type=str, default="Random", help='Character P1 (Random)')
+        parser.add_argument('--character2', type=str, default="Random", help='Character P2 (Random)')
+        parser.add_argument('--character1_2', type=str, default="Random", help='Character P1_2 (Random)')
+        parser.add_argument('--character2_2', type=str, default="Random", help='Character P2_2 (Random)')
+        parser.add_argument('--character1_3', type=str, default="Random", help='Character P1_3 (Random)')
+        parser.add_argument('--character2_3', type=str, default="Random", help='Character P2_3 (Random)')
+        parser.add_argument('--stepRatio', type=int, default=3, help='Frame ratio')
+        parser.add_argument('--nEpisodes', type=int, default=1, help='Number of episodes')
+        parser.add_argument('--continueGame', type=float, default=-1.0, help='ContinueGame flag (-inf,+1.0]')
+        parser.add_argument('--actionSpace', type=str, default="discrete", help='discrete/multi_discrete')
+        parser.add_argument('--attButComb', type=int, default=0, help='Use attack button combinations (0=F)/1=T')
+        parser.add_argument('--noAction', type=int, default=0, help='If to use no action policy (0=False)')
+        parser.add_argument('--hardcore', type=int, default=0, help='Hard core mode (0=False)')
+        parser.add_argument('--interactiveViz', type=int, default=0, help='Interactive Visualization (0=False)')
+        parser.add_argument('--envAddress', type=str, default="", help='diambraEngine Address')
         opt = parser.parse_args()
         print(opt)
 
@@ -121,8 +104,7 @@ if __name__ == '__main__':
 
             else:
                 for idx in range(2):
-                    actions[idx] = env.action_space["P{}".format(
-                        idx+1)].sample()
+                    actions[idx] = env.action_space["P{}".format(idx + 1)].sample()
 
                     if opt.noAction == 1 and idx == 0:
                         if settings["action_space"][idx] == "multi_discrete":
@@ -137,11 +119,10 @@ if __name__ == '__main__':
                     else:
                         move_action, att_action = actions[idx][0], actions[idx][1]
 
-                    print("(P{}) {} {}".format(idx+1, env.print_actions_dict[0][move_action],
+                    print("(P{}) {} {}".format(idx + 1, env.print_actions_dict[0][move_action],
                                                env.print_actions_dict[1][att_action]))
 
-            if (settings["player"] == "P1P2"
-                    or settings["action_space"] != "discrete"):
+            if (settings["player"] == "P1P2" or settings["action_space"] != "discrete"):
                 actions = np.append(actions[0], actions[1])
 
             observation, reward, done, info = env.step(actions)
@@ -201,11 +182,11 @@ if __name__ == '__main__':
             max_continue = (max_continue + 1) * 0.7 - 1
 
         if (opt.noAction == 1
-                and (np.mean(cumulative_ep_rew_all) > -n_rounds*(max_continue+1) *
-                     env.max_delta_health+0.001)):
+                and (np.mean(cumulative_ep_rew_all) > - n_rounds * (max_continue + 1) *
+                     env.max_delta_health + 0.001)):
             raise RuntimeError("NoAction policy and average "
                                "reward different than {} ({})".format(
-                                   -n_rounds*(max_continue+1)*env.max_delta_health,
+                                   - n_rounds * (max_continue + 1) * env.max_delta_health,
                                    np.mean(cumulative_ep_rew_all)))
 
         print("ALL GOOD!")
