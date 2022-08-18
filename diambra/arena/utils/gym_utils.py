@@ -183,8 +183,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
                             for k3, v3 in v2.items():
                                 print("observation[\"{}\"][\"{}\"][\"{}\"]:\n{}"
                                       .format(k, k2, k3,
-                                              np.reshape(v3,
-                                                         [n_actions_stack, -1])))
+                                              np.reshape(v3, [n_actions_stack, -1])))
                         elif "ownChar" in k2 or "oppChar" in k2:
                             print("observation[\"{}\"][\"{}\"]: {} / {}".format(k, k2, v2,
                                                                                 char_list[np.where(v2 == 1)[0][0]]))
@@ -230,8 +229,7 @@ def available_games(print_out=True, details=False):
                     v["original_rom_name"]))
                 print("   Search keywords: {}".format(v["search_keywords"]))
                 if v["notes"] != "":
-                    print("   " + "\033[91m\033[4m\033[1m" +
-                          "Notes: {}".format(v["notes"]) + "\033[0m")
+                    print("   " + "\033[91m\033[4m\033[1m" + "Notes: {}".format(v["notes"]) + "\033[0m")
                 print("   Characters list: {}".format(v["char_list"]))
     else:
         return games_dict
