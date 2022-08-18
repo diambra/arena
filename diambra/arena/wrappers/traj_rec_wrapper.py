@@ -72,15 +72,14 @@ class TrajectoryRecorder(gym.Wrapper):
 
         obs, reward, done, info = self.env.step(action)
 
-        self.last_frame_hist.append(obs["frame"][:, :, self.frame_shp[2]-1])
+        self.last_frame_hist.append(obs["frame"][:, :, self.frame_shp[2] - 1])
 
         # Add last obs nFrames - 1 times in case of
         # new round / stage / continue_game
-        if ((info["round_done"] or info["stage_done"] or info["game_done"])
-                and not done):
-            for _ in range(self.frame_shp[2]-1):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
+            for _ in range(self.frame_shp[2] - 1):
                 self.last_frame_hist.append(
-                    obs["frame"][:, :, self.frame_shp[2]-1])
+                    obs["frame"][:, :, self.frame_shp[2] - 1])
 
         # Store the whole obs without the frame
         tmp_obs = obs.copy()
@@ -114,8 +113,12 @@ class TrajectoryRecorder(gym.Wrapper):
             to_save["frame_shp"] = self.frame_shp
             to_save["ignore_p2"] = self.ignore_p2
             to_save["char_names"] = self.env.char_names
-            to_save["n_actions_stack"] = int(
-                self.env.observation_space["P1"]["actions"]["move"].nvec.shape[0]/self.env.n_actions[0][0])
+            if isinstance(self.env.observation_space["P1"]["actions"]["move"], gym.spaces.MultiDiscrete):
+                to_save["n_actions_stack"] = int(
+                    self.env.observation_space["P1"]["actions"]["move"].nvec.shape[0] / self.env.n_actions[0][0])
+            else:
+                to_save["n_actions_stack"] = int(
+                    self.env.observation_space["P1"]["actions"]["move"].n / self.env.n_actions[0][0])
             to_save["ep_len"] = len(self.rewards_hist)
             to_save["cum_rew"] = self.cumulative_rew
             to_save["frames"] = self.last_frame_hist
@@ -136,10 +139,10 @@ class TrajectoryRecorder(gym.Wrapper):
             # If 1P mode
             else:
                 save_path = "mod" + str(self.ignore_p2) + "_" +\
-                           self.env.player_side + "_diff" +\
-                           str(self.env.difficulty) + "_rew" +\
-                           str(np.round(self.cumulative_rew, 3)) + "_" +\
-                           datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+                    self.env.player_side + "_diff" +\
+                    str(self.env.difficulty) + "_rew" +\
+                    str(np.round(self.cumulative_rew, 3)) + "_" +\
+                    datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
             pickle_writer = ParallelPickleWriter(
                 os.path.join(self.file_path, save_path), to_save)
