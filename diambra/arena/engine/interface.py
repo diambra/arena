@@ -18,6 +18,19 @@ class DiambraEngine:
         self.channel = grpc.insecure_channel(env_address)
         self.stub = interface_pb2_grpc.EnvServerStub(self.channel)
 
+        # Wait for grpc server to be ready
+        print("Trying to connect to DIAMBRA Engine server ...")
+        try:
+            grpc.channel_ready_future(self.channel).result(timeout=60)
+        except grpc.FutureTimeoutError:
+            print("... failed.")
+            exceptionMessage = "DIAMBRA Arena failed to connect to the Engine Server."
+            print(exceptionMessage)
+            print(" - If you are running a Python script, are you running with DIAMBRA CLI: `diambra run python script.py`?")
+            print(" - If you are running a Python Notebook, have you started Jupyter Notebook with DIAMBRA CLI: `diambra run jupyter notebook`?")
+            raise Exception(exceptionMessage)
+        print("... done.")
+
         # Splash Screen
         SplashScreen()
 
@@ -81,14 +94,17 @@ class DiambraEngine:
         except:
             try:
                 response = self.stub.GetError(interface_pb2.Empty())
-                print("Received error message from engine:", response.errorMessage)
+                exceptionMessage = "Received error message from engine: " + response.errorMessage
+                print(exceptionMessage)
             except:
-                print("DIAMBRA Arena has failed to connect to the Engine.")
+                exceptionMessage = "DIAMBRA Arena failed to connect to the Engine Server."
+                print(exceptionMessage)
                 print(" - If you are running a Python script, are you running with DIAMBRA CLI: `diambra run python script.py`?")
                 print(" - If you are running a Python Notebook, have you started Jupyter Notebook with DIAMBRA CLI: `diambra run jupyter notebook`?")
 
             print("See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://discord.gg/tFDS2UN5sv) for support.")
-            sys.exit(1)
+            raise Exception(exceptionMessage)
+
         self.int_data_vars_list = response.intDataList.split(",")
         self.int_data_vars_list.remove("")
         return response.envInfo.split(",")
