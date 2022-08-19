@@ -31,63 +31,42 @@ class DiambraEngine:
         output = ""
 
         output += "gameId" + sep + "2" + sep + env_settings["game_id"] + sep
-        output += "continueGame" + sep + "3" + sep + \
-            str(env_settings["continue_game"]) + sep
-        output += "showFinal" + sep + "0" + sep + \
-            str(int(env_settings["show_final"])) + sep
-        output += "stepRatio" + sep + "1" + sep + \
-            str(env_settings["step_ratio"]) + sep
+        output += "continueGame" + sep + "3" + sep + str(env_settings["continue_game"]) + sep
+        output += "showFinal" + sep + "0" + sep + str(int(env_settings["show_final"])) + sep
+        output += "stepRatio" + sep + "1" + sep + str(env_settings["step_ratio"]) + sep
         output += "player" + sep + "2" + sep + env_settings["player"] + sep
-        output += "difficulty" + sep + "1" + sep + \
-            str(env_settings["difficulty"]) + sep
-        output += "character1" + sep + "2" + sep + \
-            env_settings["characters"][0][0] + sep
-        output += "character2" + sep + "2" + sep + \
-            env_settings["characters"][1][0] + sep
+        output += "difficulty" + sep + "1" + sep + str(env_settings["difficulty"]) + sep
+        output += "character1" + sep + "2" + sep + env_settings["characters"][0][0] + sep
+        output += "character2" + sep + "2" + sep + env_settings["characters"][1][0] + sep
         for i_char in range(1, max_char_to_select):
-            output += "character1_{}".format(i_char + 1) + sep + \
-                "2" + sep + env_settings["characters"][0][i_char] + sep
-            output += "character2_{}".format(i_char + 1) + sep + \
-                "2" + sep + env_settings["characters"][1][i_char] + sep
-        output += "charOutfits1" + sep + "1" + sep + \
-            str(env_settings["char_outfits"][0]) + sep
-        output += "charOutfits2" + sep + "1" + sep + \
-            str(env_settings["char_outfits"][1]) + sep
-        output += "frameShape1" + sep + "1" + sep + \
-            str(env_settings["frame_shape"][0]) + sep
-        output += "frameShape2" + sep + "1" + sep + \
-            str(env_settings["frame_shape"][1]) + sep
-        output += "frameShape3" + sep + "1" + sep + \
-            str(env_settings["frame_shape"][2]) + sep
+            output += "character1_{}".format(i_char + 1) + sep + "2" + sep + env_settings["characters"][0][i_char] + sep
+            output += "character2_{}".format(i_char + 1) + sep + "2" + sep + env_settings["characters"][1][i_char] + sep
+        output += "charOutfits1" + sep + "1" + sep + str(env_settings["char_outfits"][0]) + sep
+        output += "charOutfits2" + sep + "1" + sep + str(env_settings["char_outfits"][1]) + sep
+        output += "frameShape1" + sep + "1" + sep + str(env_settings["frame_shape"][0]) + sep
+        output += "frameShape2" + sep + "1" + sep + str(env_settings["frame_shape"][1]) + sep
+        output += "frameShape3" + sep + "1" + sep + str(env_settings["frame_shape"][2]) + sep
 
         # SFIII Specific
-        output += "superArt1" + sep + "1" + sep + \
-            str(env_settings["super_art"][0]) + sep
-        output += "superArt2" + sep + "1" + sep + \
-            str(env_settings["super_art"][1]) + sep
+        output += "superArt1" + sep + "1" + sep + str(env_settings["super_art"][0]) + sep
+        output += "superArt2" + sep + "1" + sep + str(env_settings["super_art"][1]) + sep
         # UMK3 Specific
         output += "tower" + sep + "1" + sep + str(env_settings["tower"]) + sep
         # KOF Specific
-        output += "fightingStyle1" + sep + "1" + sep + \
-            str(env_settings["fighting_style"][0]) + sep
-        output += "fightingStyle2" + sep + "1" + sep + \
-            str(env_settings["fighting_style"][1]) + sep
+        output += "fightingStyle1" + sep + "1" + sep + str(env_settings["fighting_style"][0]) + sep
+        output += "fightingStyle2" + sep + "1" + sep + str(env_settings["fighting_style"][1]) + sep
         for idx in range(2):
-            output += "ultimateStyleDash" + \
-                str(idx + 1) + sep + "1" + sep + \
+            output += "ultimateStyleDash" + str(idx + 1) + sep + "1" + sep + \
                 str(env_settings["ultimate_style"][idx][0]) + sep
-            output += "ultimateStyleEvade" + \
-                str(idx + 1) + sep + "1" + sep + \
+            output += "ultimateStyleEvade" + str(idx + 1) + sep + "1" + sep + \
                 str(env_settings["ultimate_style"][idx][1]) + sep
-            output += "ultimateStyleBar" + \
-                str(idx + 1) + sep + "1" + sep + \
+            output += "ultimateStyleBar" + str(idx + 1) + sep + "1" + sep + \
                 str(env_settings["ultimate_style"][idx][2]) + sep
 
-        output += "disableKeyboard" + sep + "0" + sep + \
-            str(int(env_settings["disable_keyboard"])) + sep
-        output += "disableJoystick" + sep + "0" + sep + \
-            str(int(env_settings["disable_joystick"])) + sep
+        output += "disableKeyboard" + sep + "0" + sep + str(int(env_settings["disable_keyboard"])) + sep
+        output += "disableJoystick" + sep + "0" + sep + str(int(env_settings["disable_joystick"])) + sep
         output += "rank" + sep + "1" + sep + str(env_settings["rank"]) + sep
+        output += "randomSeed" + sep + "1" + sep + str(env_settings["seed"]) + sep
 
         output += end_char
 
