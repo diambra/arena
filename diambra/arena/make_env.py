@@ -96,10 +96,10 @@ def make(game_id, env_settings={}, wrappers_settings={},
     env_settings = env_settings_check(env_settings)
 
     # Make environment
-    env, player = make_gym_env(env_settings)
+    env, player = make_gym_env(env_settings)  # FIXME: remove player from returned values here
 
     # Initialize random seed
-    env.seed(seed)
+    env.seed(seed)  # FIXME: remove this call as it is deprecated
 
     # Apply environment wrappers
     env = env_wrapping(env, player, **wrappers_settings,
