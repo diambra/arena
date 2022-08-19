@@ -532,19 +532,3 @@ class DiambraGym2P(DiambraGymHardcore2P):
         self.frame, data, self.player_side = self.arena_engine.reset()
         observation = self.add_obs_integration(self.frame, data)
         return observation
-
-
-def make_gym_env(env_settings):
-
-    if env_settings["player"] != "P1P2":  # 1P Mode
-        if env_settings["hardcore"] is True:
-            env = DiambraGymHardcore1P(env_settings)
-        else:
-            env = DiambraGym1P(env_settings)
-    else:  # 2P Mode
-        if env_settings["hardcore"] is True:
-            env = DiambraGymHardcore2P(env_settings)
-        else:
-            env = DiambraGym2P(env_settings)
-
-    return env, env_settings["player"]

@@ -1,5 +1,5 @@
 import os
-from .arena_gym import make_gym_env
+from .arena_gym import DiambraGymHardcore1P, DiambraGym1P, DiambraGymHardcore2P, DiambraGym2P
 from .wrappers.arena_wrappers import env_wrapping
 
 
@@ -96,13 +96,22 @@ def make(game_id, env_settings={}, wrappers_settings={},
     env_settings = env_settings_check(env_settings)
 
     # Make environment
-    env, player = make_gym_env(env_settings)  # FIXME: remove player from returned values here
+    if env_settings["player"] != "P1P2":  # 1P Mode
+        if env_settings["hardcore"] is True:
+            env = DiambraGymHardcore1P(env_settings)
+        else:
+            env = DiambraGym1P(env_settings)
+    else:  # 2P Mode
+        if env_settings["hardcore"] is True:
+            env = DiambraGymHardcore2P(env_settings)
+        else:
+            env = DiambraGym2P(env_settings)
 
     # Initialize random seed
     env.seed(seed)  # FIXME: remove this call as it is deprecated
 
     # Apply environment wrappers
-    env = env_wrapping(env, player, **wrappers_settings,
+    env = env_wrapping(env, env_settings["player"], **wrappers_settings,
                        hardcore=env_settings["hardcore"])
 
     # Apply trajectories recorder wrappers
