@@ -36,6 +36,7 @@ def env_settings_check(env_settings):
     default_env_settings["disable_keyboard"] = True
     default_env_settings["disable_joystick"] = True
     default_env_settings["rank"] = 0
+    default_env_settings["seed"] = -1
 
     for k, v in env_settings.items():
 
@@ -62,7 +63,7 @@ def env_settings_check(env_settings):
 
 
 def make(game_id, env_settings={}, wrappers_settings={},
-         traj_rec_settings=None, seed=42, rank=0):
+         traj_rec_settings=None, seed=None, rank=0):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -91,6 +92,8 @@ def make(game_id, env_settings={}, wrappers_settings={},
 
     env_settings["env_address"] = env_addresses[rank]
     env_settings["rank"] = rank
+    if seed is not None:
+        env_settings["seed"] = seed
 
     # Checking settings and setting up default ones
     env_settings = env_settings_check(env_settings)
@@ -106,9 +109,6 @@ def make(game_id, env_settings={}, wrappers_settings={},
             env = DiambraGymHardcore2P(env_settings)
         else:
             env = DiambraGym2P(env_settings)
-
-    # Initialize random seed
-    env.seed(seed)  # FIXME: remove this call as it is deprecated
 
     # Apply environment wrappers
     env = env_wrapping(env, env_settings["player"], **wrappers_settings,
