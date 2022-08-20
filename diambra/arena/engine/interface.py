@@ -86,9 +86,8 @@ class DiambraEngine:
 
         return output
 
-    # Send env settings, retrieve env info and int variables list
-    def env_init(self, env_settings):
-        env_settings_string = self.env_settings_to_string(env_settings)
+    # Send env settings, retrieve env info and int variables list [pb low level]
+    def _env_init(self, env_settings_string):
         try:
             response = self.stub.EnvInit(
                 interface_pb2.EnvSettings(settings=env_settings_string))
@@ -106,6 +105,12 @@ class DiambraEngine:
             print("See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://discord.gg/tFDS2UN5sv) for support.")
             raise Exception(exceptionMessage)
 
+        return response
+
+    # Send env settings, retrieve env info and int variables list
+    def env_init(self, env_settings):
+        env_settings_string = self.env_settings_to_string(env_settings)
+        response = self._env_init(env_settings_string)
         self.int_data_vars_list = response.intDataList.split(",")
         self.int_data_vars_list.remove("")
         return response.envInfo.split(",")
@@ -141,9 +146,13 @@ class DiambraEngine:
                                                            self.width,
                                                            self.n_chan)
 
+    # Reset the environment [pb low level]
+    def _reset(self):
+        return self.stub.Reset(interface_pb2.Empty())
+
     # Reset the environment
     def reset(self):
-        response = self.stub.Reset(interface_pb2.Empty())
+        response = self._reset()
         data = self.read_data(response.intVar, response.doneConditions)
         frame = self.read_frame(response.frame)
         return frame, data, response.player
