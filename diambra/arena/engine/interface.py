@@ -157,12 +157,16 @@ class DiambraEngine:
         frame = self.read_frame(response.frame)
         return frame, data, response.player
 
-    # Step the environment (1P)
-    def step_1p(self, mov_p1, att_p1):
+    # Step the environment (1P) [pb low level]
+    def _step_1p(self, mov_p1, att_p1):
         command = interface_pb2.Command()
         command.P1.mov = mov_p1
         command.P1.att = att_p1
-        response = self.stub.Step1P(command)
+        return self.stub.Step1P(command)
+
+    # Step the environment (1P)
+    def step_1p(self, mov_p1, att_p1):
+        response = self._step_1p(mov_p1, att_p1)
         data = self.read_data(response.intVar, response.doneConditions)
         frame = self.read_frame(response.frame)
         return frame, data
