@@ -233,8 +233,7 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
             mov_act, att_act = discrete_to_multi_discrete_action(
                 action, self.n_actions[0][0])
 
-        self.frame, data = self.arena_engine.step_1p(mov_act, att_act)
-        reward = data["reward"]
+        self.frame, reward, data = self.arena_engine.step_1p(mov_act, att_act)
         done = data["ep_done"]
 
         return self.frame, reward, done, data
@@ -292,8 +291,7 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
                 mov_act_p2 = action[2]
                 att_act_p2 = action[3]
             else:  # P2 Discrete Action Space
-                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(
-                    action[2], self.n_actions[1][0])
+                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(action[2], self.n_actions[1][0])
 
         else:  # P1 Discrete Action Space
             # P2
@@ -301,21 +299,16 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
             if isinstance(self.action_space["P2"], gym.spaces.MultiDiscrete):
                 # P1
                 # Discrete to multidiscrete conversion
-                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(
-                    action[0], self.n_actions[0][0])
+                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(action[0], self.n_actions[0][0])
                 mov_act_p2 = action[1]
                 att_act_p2 = action[2]
             else:  # P2 Discrete Action Space
                 # P1
                 # Discrete to multidiscrete conversion
-                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(
-                    action[0], self.n_actions[0][0])
-                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(
-                    action[1], self.n_actions[1][0])
+                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(action[0], self.n_actions[0][0])
+                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(action[1], self.n_actions[1][0])
 
-        self.frame, data = self.arena_engine.step_2p(
-            mov_act_p1, att_act_p1, mov_act_p2, att_act_p2)
-        reward = data["reward"]
+        self.frame, reward, data = self.arena_engine.step_2p(mov_act_p1, att_act_p1, mov_act_p2, att_act_p2)
         done = data["game_done"]
         # data["ep_done"]   = done
 
