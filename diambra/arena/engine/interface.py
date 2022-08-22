@@ -169,7 +169,7 @@ class DiambraEngine:
         response = self._step_1p(mov_p1, att_p1)
         data = self.read_data(response.intVar, response.doneConditions)
         frame = self.read_frame(response.frame)
-        return frame, data
+        return frame, response.reward, data
 
     # Step the environment (2P)
     def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
