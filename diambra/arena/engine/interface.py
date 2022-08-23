@@ -1,7 +1,6 @@
 import numpy as np
-import sys
+import os
 
-from ..utils.splash_screen import SplashScreen
 import grpc
 import diambra.arena.engine.interface_pb2 as interface_pb2
 import diambra.arena.engine.interface_pb2_grpc as interface_pb2_grpc
@@ -32,7 +31,9 @@ class DiambraEngine:
         print("... done.")
 
         # Splash Screen
-        SplashScreen()
+        if 'DISPLAY' in os.environ:
+            from ..utils.splash_screen import SplashScreen
+            SplashScreen()
 
     # Transforming env settings dict to pb request
     def env_settings_to_pb_request(self, env_settings):
