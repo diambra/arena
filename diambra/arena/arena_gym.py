@@ -25,9 +25,10 @@ class DiambraGymHardcoreBase(gym.Env):
         self.arena_engine = DiambraEngine(env_settings["env_address"])
 
         # Send environment settings, retrieve environment info
-        env_info = self.arena_engine.env_init(self.env_settings)
-        self.env_info_process(env_info)
+        env_info_dict = self.arena_engine.env_init(self.env_settings)
+        self.env_info_process(env_info_dict)
         self.player_side = self.env_settings["player"]
+        self.difficulty = self.env_settings["difficulty"]
 
         # Settings log
         print("Environment settings: --- ")
@@ -45,10 +46,10 @@ class DiambraGymHardcoreBase(gym.Env):
                                             dtype=np.uint8)
 
     # Processing Environment info
-    def env_info_process(self, env_info):
+    def env_info_process(self, env_info_dict):
         # N actions
-        self.n_actions_but_comb = [int(env_info[0]), int(env_info[1])]
-        self.n_actions_no_but_comb = [int(env_info[2]), int(env_info[3])]
+        self.n_actions_but_comb = env_info_dict["n_actions"][0]
+        self.n_actions_no_but_comb = env_info_dict["n_actions"][1]
         # N actions
         self.n_actions = [self.n_actions_but_comb, self.n_actions_but_comb]
         for idx in range(2):
@@ -56,78 +57,32 @@ class DiambraGymHardcoreBase(gym.Env):
                 self.n_actions[idx] = self.n_actions_no_but_comb
 
         # Frame height, width and channel dimensions
-        self.hwc_dim = [int(env_info[4]), int(env_info[5]), int(env_info[6])]
+        self.hwc_dim = env_info_dict["frame_shape"]
         self.arena_engine.set_frame_size(self.hwc_dim)
 
         # Maximum difference in players health
-        self.max_delta_health = int(env_info[7]) - int(env_info[8])
+        self.max_delta_health = env_info_dict["delta_health"]
 
         # Maximum number of stages (1P game vs COM)
-        self.max_stage = int(env_info[9])
-
-        # Game difficulty
-        self.difficulty = int(env_info[10])
-
-        # Number of characters of the game
-        self.number_of_characters = int(env_info[11])
-
-        # Number of characters used per round
-        self.n_char_per_round = int(env_info[12])
+        self.max_stage = env_info_dict["max_stage"]
 
         # Min-Max reward
-        min_reward = int(env_info[13])
-        max_reward = int(env_info[14])
-        self.minmax_reward = [min_reward, max_reward]
+        self.minmax_reward = env_info_dict["min_max_rew"]
 
         # Characters names list
-        current_idx = 15
-        self.char_names = []
-        for idx in range(current_idx, current_idx + self.number_of_characters):
-            self.char_names.append(env_info[idx])
-
-        current_idx = current_idx + self.number_of_characters
+        self.char_names = env_info_dict["char_list"]
 
         # Action list
-        move_list = ()
-        for idx in range(current_idx, current_idx + self.n_actions_but_comb[0]):
-            move_list += (env_info[idx],)
-
-        current_idx += self.n_actions_but_comb[0]
-
-        attack_list = ()
-        for idx in range(current_idx, current_idx + self.n_actions_but_comb[1]):
-            attack_list += (env_info[idx],)
-
-        current_idx += self.n_actions_but_comb[1]
-
-        self.action_list = (move_list, attack_list)
+        self.action_list = (tuple(env_info_dict["actions_list"][0]), tuple(env_info_dict["actions_list"][1]))
 
         # Action dict
-        move_dict = {}
-        for idx in range(current_idx,
-                         current_idx + 2 * self.n_actions_but_comb[0], 2):
-            move_dict[int(env_info[idx])] = env_info[idx + 1]
-
-        current_idx += 2 * self.n_actions_but_comb[0]
-
-        attack_dict = {}
-        for idx in range(current_idx,
-                         current_idx + 2 * self.n_actions_but_comb[1], 2):
-            attack_dict[int(env_info[idx])] = env_info[idx + 1]
-
-        self.print_actions_dict = [move_dict, attack_dict]
-
-        current_idx += 2 * self.n_actions_but_comb[1]
+        self.print_actions_dict = env_info_dict["actions_dict"]
 
         # Additional Obs map
-        number_of_add_obs = int(env_info[current_idx])
-        current_idx += 1
         self.add_obs = {}
-        for idx in range(number_of_add_obs):
-            self.add_obs[env_info[current_idx]] = [int(env_info[current_idx + 1]),
-                                                   int(env_info[current_idx + 2]),
-                                                   int(env_info[current_idx + 3])]
-            current_idx += 4
+        for idx in range(len(env_info_dict["additional_obs"])):
+            elem = env_info_dict["additional_obs"][idx]
+            self.add_obs[elem["name"]] = [elem["type"], elem["min"], elem["max"]]
 
     # Return env action list
     def action_list(self):

@@ -34,62 +34,69 @@ class DiambraEngine:
         # Splash Screen
         SplashScreen()
 
-    # Transforming env kwargs to string
-    def env_settings_to_string(self, env_settings):
+    # Transforming env settings dict to pb request
+    def env_settings_to_pb_request(self, env_settings):
 
-        max_char_to_select = 3
-        sep = ","
-        end_char = "+"
+        characters = {
+            "P1": [env_settings["characters"][0][0], env_settings["characters"][0][1], env_settings["characters"][0][2]],
+            "P2": [env_settings["characters"][1][0], env_settings["characters"][1][1], env_settings["characters"][1][2]]
+        }
+        char_outfits = {
+            "first": env_settings["char_outfits"][0],
+            "second": env_settings["char_outfits"][1]
+        }
+        frame_shape = {
+            "h": env_settings["frame_shape"][0],
+            "w": env_settings["frame_shape"][1],
+            "c": env_settings["frame_shape"][2]
+        }
+        super_art = {
+            "first": env_settings["super_art"][0],
+            "second": env_settings["super_art"][1]
+        }
+        fighting_style = {
+            "first": env_settings["fighting_style"][0],
+            "second": env_settings["fighting_style"][1]
+        }
+        ultimate_style = {
+            "P1": {
+                "dash": env_settings["ultimate_style"][0][0],
+                "evade": env_settings["ultimate_style"][0][1],
+                "bar": env_settings["ultimate_style"][0][2]
+            },
+            "P2": {
+                "dash": env_settings["ultimate_style"][1][0],
+                "evade": env_settings["ultimate_style"][1][1],
+                "bar": env_settings["ultimate_style"][1][2]
+            }
+        }
 
-        output = ""
+        request = interface_pb2.EnvSettings(
+            gameId=env_settings["game_id"],
+            continueGame=env_settings["continue_game"],
+            showFinal=env_settings["show_final"],
+            stepRatio=env_settings["step_ratio"],
+            player=env_settings["player"],
+            difficulty=env_settings["difficulty"],
+            characters=characters,
+            charOutfits=char_outfits,
+            frameShape=frame_shape,
+            disableKeyboard=env_settings["disable_keyboard"],
+            disableJoystick=env_settings["disable_joystick"],
+            rank=env_settings["rank"],
+            randomSeed=env_settings["seed"],
+            superArt=super_art,
+            tower=env_settings["tower"],
+            fightingStyle=fighting_style,
+            ultimateStyle=ultimate_style
+        )
 
-        output += "gameId" + sep + "2" + sep + env_settings["game_id"] + sep
-        output += "continueGame" + sep + "3" + sep + str(env_settings["continue_game"]) + sep
-        output += "showFinal" + sep + "0" + sep + str(int(env_settings["show_final"])) + sep
-        output += "stepRatio" + sep + "1" + sep + str(env_settings["step_ratio"]) + sep
-        output += "player" + sep + "2" + sep + env_settings["player"] + sep
-        output += "difficulty" + sep + "1" + sep + str(env_settings["difficulty"]) + sep
-        output += "character1" + sep + "2" + sep + env_settings["characters"][0][0] + sep
-        output += "character2" + sep + "2" + sep + env_settings["characters"][1][0] + sep
-        for i_char in range(1, max_char_to_select):
-            output += "character1_{}".format(i_char + 1) + sep + "2" + sep + env_settings["characters"][0][i_char] + sep
-            output += "character2_{}".format(i_char + 1) + sep + "2" + sep + env_settings["characters"][1][i_char] + sep
-        output += "charOutfits1" + sep + "1" + sep + str(env_settings["char_outfits"][0]) + sep
-        output += "charOutfits2" + sep + "1" + sep + str(env_settings["char_outfits"][1]) + sep
-        output += "frameShape1" + sep + "1" + sep + str(env_settings["frame_shape"][0]) + sep
-        output += "frameShape2" + sep + "1" + sep + str(env_settings["frame_shape"][1]) + sep
-        output += "frameShape3" + sep + "1" + sep + str(env_settings["frame_shape"][2]) + sep
-
-        # SFIII Specific
-        output += "superArt1" + sep + "1" + sep + str(env_settings["super_art"][0]) + sep
-        output += "superArt2" + sep + "1" + sep + str(env_settings["super_art"][1]) + sep
-        # UMK3 Specific
-        output += "tower" + sep + "1" + sep + str(env_settings["tower"]) + sep
-        # KOF Specific
-        output += "fightingStyle1" + sep + "1" + sep + str(env_settings["fighting_style"][0]) + sep
-        output += "fightingStyle2" + sep + "1" + sep + str(env_settings["fighting_style"][1]) + sep
-        for idx in range(2):
-            output += "ultimateStyleDash" + str(idx + 1) + sep + "1" + sep + \
-                str(env_settings["ultimate_style"][idx][0]) + sep
-            output += "ultimateStyleEvade" + str(idx + 1) + sep + "1" + sep + \
-                str(env_settings["ultimate_style"][idx][1]) + sep
-            output += "ultimateStyleBar" + str(idx + 1) + sep + "1" + sep + \
-                str(env_settings["ultimate_style"][idx][2]) + sep
-
-        output += "disableKeyboard" + sep + "0" + sep + str(int(env_settings["disable_keyboard"])) + sep
-        output += "disableJoystick" + sep + "0" + sep + str(int(env_settings["disable_joystick"])) + sep
-        output += "rank" + sep + "1" + sep + str(env_settings["rank"]) + sep
-        output += "randomSeed" + sep + "1" + sep + str(env_settings["seed"]) + sep
-
-        output += end_char
-
-        return output
+        return request
 
     # Send env settings, retrieve env info and int variables list [pb low level]
-    def _env_init(self, env_settings_string):
+    def _env_init(self, env_settings_pb):
         try:
-            response = self.stub.EnvInit(
-                interface_pb2.EnvSettings(settings=env_settings_string))
+            response = self.stub.EnvInit(env_settings_pb)
         except:
             try:
                 response = self.stub.GetError(interface_pb2.Empty())
@@ -108,11 +115,37 @@ class DiambraEngine:
 
     # Send env settings, retrieve env info and int variables list
     def env_init(self, env_settings):
-        env_settings_string = self.env_settings_to_string(env_settings)
-        response = self._env_init(env_settings_string)
-        self.int_data_vars_list = response.intDataList.split(",")
-        self.int_data_vars_list.remove("")
-        return response.envInfo.split(",")
+        env_settings_pb = self.env_settings_to_pb_request(env_settings)
+        response = self._env_init(env_settings_pb)
+
+        move_dict = {}
+        for idx in range(0, len(response.actionsDict.moves), 2):
+            move_dict[response.actionsDict.moves[idx]]: response.actionsDict.moves[idx + 1]
+        att_dict = {}
+        for idx in range(0, len(response.actionsDict.attacks), 2):
+            att_dict[response.actionsDict.attacks[idx]]: response.actionsDict.attacks[idx + 1]
+
+        env_info_dict = {
+            "n_actions": [[response.nActions.butComb.first, response.nActions.butComb.second],
+                          [response.nActions.noButComb.first, response.nActions.noButComb.second]],
+            "frame_shape": [response.frameShape.h, response.frameShape.w, response.frameShape.c],
+            "delta_health": response.deltaHealth,
+            "max_stage": response.maxStage,
+            "min_max_rew": [response.minMaxRew.first, response.minMaxRew.second],
+            "char_list": response.charList,
+            "actions_list": [response.actionsList.moves, response.actionsList.attacks],
+            "actions_dict": [move_dict, att_dict],
+            "additional_obs": [
+                {
+                    "name": response.additionalObs[idx].name,
+                    "type": response.additionalObs[idx].type,
+                    "min": response.additionalObs[idx].min,
+                    "max": response.additionalObs[idx].max,
+                } for idx in range(len(response.additionalObs))
+            ]
+        }
+        self.int_data_vars_list = response.intDataList
+        return env_info_dict
 
     # Set frame size
     def set_frame_size(self, hwc_dim):
