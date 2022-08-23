@@ -1,4 +1,5 @@
 import numpy as np
+import os
 import cv2
 import gym
 from gym import spaces
@@ -117,7 +118,7 @@ class DiambraGymHardcoreBase(gym.Env):
     # Rendering the environment
     def render(self, mode='human', wait_key=1):
 
-        if mode == "human":
+        if mode == "human" and 'DISPLAY' in os.environ:
             if (self.render_gui_started is False):
                 self.window_name = "DIAMBRA Arena - {} - ({})".format(
                     self.env_settings["game_id"], self.env_settings["rank"])

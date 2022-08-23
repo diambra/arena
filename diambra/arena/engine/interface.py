@@ -218,5 +218,6 @@ class DiambraEngine:
 
     # Closing DIAMBRA Arena
     def close(self):
-        self.stub.Close(interface_pb2.Empty())
+        response = self.stub.Close(interface_pb2.Empty())
         self.channel.close()
+        return response
