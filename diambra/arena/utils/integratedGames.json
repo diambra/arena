@@ -1,26 +1,31 @@
-{ 
-    "doapp": 
-        { 
-            "name": "Dead Or Alive ++", 
+{
+    "doapp":
+        {
+            "name": "Dead Or Alive ++",
             "id": "doapp",
-            "original_rom_name": "doapp.zip", 
+            "original_rom_name": "doapp.zip",
             "search_keywords": ["DEAD OR ALIVE ++ [JAPAN]", "dead-or-alive-japan", "80781", "wowroms"],
             "notes": "",
             "nvram_save": "at28c16",
-            "sha256": "d95855c7d8596a90f0b8ca15725686567d767a9a3f93a8896b489a160e705c4e", 
-            "char_list": ["Kasumi", "Zack", "Hayabusa", "Bayman",              
-                         "Lei-Fang", "Raidou", "Gen-Fu", "Tina",              
+            "sha256": "d95855c7d8596a90f0b8ca15725686567d767a9a3f93a8896b489a160e705c4e",
+            "char_list": ["Kasumi", "Zack", "Hayabusa", "Bayman",
+                         "Lei-Fang", "Raidou", "Gen-Fu", "Tina",
                          "Bass", "Jann-Lee", "Ayane"],
             "difficulty": [1, 4, 3],
-            "difficulty_map": {
+            "difficulty_to_cluster_map": {
                 "1": "Easy",
                 "2": "Easy",
                 "3": "Medium",
                 "4": "Hard"
             },
+            "cluster_to_difficulty_map": {
+                "Easy": 2,
+                "Medium": 3,
+                "Hard": 4
+            },
             "cfg": {"H": "But6", "P": "But1", "K": "But2"}
         },
-    "sfiii3n": 
+    "sfiii3n":
         {
             "name": "Street Fighter III",
             "id": "sfiii3n",
@@ -28,12 +33,12 @@
             "search_keywords": ["STREET FIGHTER III 3RD STRIKE: FIGHT FOR THE FUTUR [JAPAN] (CLONE)", "street-fighter-iii-3rd-strike-fight-for-the-futur-japan-clone", "106255", "wowroms"],
             "notes": "",
             "nvram_save": "",
-            "sha256": "7239b5eb005488db22ace477501c574e9420c0ab70aeeb0795dfeb474284d416", 
-            "char_list": ["Alex", "Twelve", "Hugo", "Sean", "Makoto", "Elena", 
-                         "Ibuki", "Chun-Li", "Dudley", "Necro", "Q", "Oro",    
+            "sha256": "7239b5eb005488db22ace477501c574e9420c0ab70aeeb0795dfeb474284d416",
+            "char_list": ["Alex", "Twelve", "Hugo", "Sean", "Makoto", "Elena",
+                         "Ibuki", "Chun-Li", "Dudley", "Necro", "Q", "Oro",
                          "Urien", "Remy", "Ryu", "Gouki", "Yun", "Yang", "Ken", "Gill"],
             "difficulty": [1, 8, 6],
-            "difficulty_map": {
+            "difficulty_to_cluster_map": {
                 "1": "Easy",
                 "2": "Easy",
                 "3": "Easy",
@@ -42,6 +47,11 @@
                 "6": "Medium",
                 "7": "Hard",
                 "8": "Hard"
+            },
+            "cluster_to_difficulty_map": {
+                "Easy": 4,
+                "Medium": 6,
+                "Hard": 8
             },
             "cfg": {"LP": "But4", "MP": "But1", "HP": "But5", "LK": "But3", "MK": "But2", "HK": "But6"}
         },
@@ -62,7 +72,7 @@
                          "Roger", "Tetsujin", "Panda", "Tiger", "Angel", "Alex",
                          "Mokujin", "Unknown"],
             "difficulty": [1, 9, 7],
-            "difficulty_map": {
+            "difficulty_to_cluster_map": {
                 "1": "Easy",
                 "2": "Easy",
                 "3": "Easy",
@@ -73,10 +83,15 @@
                 "8": "Hard",
                 "9": "Hard"
             },
+            "cluster_to_difficulty_map": {
+                "Easy": 5,
+                "Medium": 7,
+                "Hard": 9
+            },
             "cfg": {"LP": "But4", "RP": "But1", "LK": "But3", "RK": "But2", "TAG": "But6"}
         },
     "umk3":
-        { 
+        {
             "name": "Ultimate Mortal Kombat 3",
             "id": "umk3",
             "original_rom_name": "umk3r10.zip",
@@ -87,20 +102,25 @@
             "char_list": ["Kitana", "Reptile", "Kano", "Sektor", "Kabal", "Sonya",
                          "Mileena", "Sindel", "Sheeva", "Jax", "Ermac", "Stryker",
                          "Shang Tsung", "Nightwolf", "Sub-Zero-2", "Cyrax", "Liu Kang",
-                         "Jade", "Sub-Zero", "Kung Lao", "Smoke", "Skorpion",  
+                         "Jade", "Sub-Zero", "Kung Lao", "Smoke", "Skorpion",
                          "Human Smoke", "Noob Saibot", "Motaro", "Shao Kahn"],
             "difficulty": [1, 5, 4],
-            "difficulty_map": {
+            "difficulty_to_cluster_map": {
                 "1": "Easy",
                 "2": "Easy",
                 "3": "Easy",
                 "4": "Medium",
                 "5": "Hard"
             },
+            "cluster_to_difficulty_map": {
+                "Easy": 3,
+                "Medium": 4,
+                "Hard": 5
+            },
             "cfg": {"HP": "But1", "HK": "But2", "LK": "But3",  "LP": "But4", "RUN": "But5", "BLK": "But6"}
         },
     "samsh5sp":
-        { 
+        {
             "name": "Samurai Showdown 5 Special",
             "id": "samsh5sp",
             "original_rom_name": "samsh5sp.zip",
@@ -110,11 +130,11 @@
             "sha256": "adf33d8a02f3d900b4aa95e62fb21d9278fb920b179665b12a489bd39a6c103d",
             "char_list": ["Kyoshiro", "Jubei", "Hanzo", "Enja", "Amakusa", "Suija",
                          "Galford", "Charlotte", "Kusare", "Sogetsu", "Gaira",
-                         "Ukyo", "Yoshitora", "Gaoh", "Haohmaru", "Genjuro",  
+                         "Ukyo", "Yoshitora", "Gaoh", "Haohmaru", "Genjuro",
                          "Shizumaru", "Kazuki", "Tamtam", "Rasetsumaru", "Rimururu",
                          "Mina", "Zankuro", "Nakoruru", "Rera", "Yunfei", "Basara", "Mizuki"],
             "difficulty": [1, 8, 6],
-            "difficulty_map": {
+            "difficulty_to_cluster_map": {
                 "1": "Easy",
                 "2": "Easy",
                 "3": "Easy",
@@ -124,10 +144,15 @@
                 "7": "Hard",
                 "8": "Hard"
             },
+            "cluster_to_difficulty_map": {
+                "Easy": 4,
+                "Medium": 6,
+                "Hard": 8
+            },
             "cfg": {"WS": "But1", "MS": "But2", "K": "But3", "M": "But4"}
         },
     "kof98umh":
-        { 
+        {
             "name": "The King Of Fighters '98 UMH",
             "id": "kof98umh",
             "original_rom_name": "kof98umh.zip",
@@ -141,7 +166,7 @@
                          "Iori","Mature","Vice","Heidern","Takuma","Saisyu","Heavy-D!","Lucky","Brian",
                          "Eiji","Kasumi","Shingo","Rugal","Geese","Krauser","Mr.Big","Goenitz","Orochi"],
             "difficulty": [1, 8, 6],
-            "difficulty_map": {
+            "difficulty_to_cluster_map": {
                 "1": "Easy",
                 "2": "Easy",
                 "3": "Easy",
@@ -150,6 +175,11 @@
                 "6": "Medium",
                 "7": "Hard",
                 "8": "Hard"
+            },
+            "cluster_to_difficulty_map": {
+                "Easy": 4,
+                "Medium": 6,
+                "Hard": 8
             },
             "cfg": {"WP": "But1", "WK": "But2", "SP": "But3", "SK": "But4"}
         }
