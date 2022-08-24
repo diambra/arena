@@ -215,17 +215,21 @@ class DiambraEngine:
         frame = self.read_frame(response.frame)
         return frame, response.reward, data
 
-    # Step the environment (2P)
-    def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
+    # Step the environment (2P) [pb low level]
+    def _step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
         command = interface_pb2.Command()
         command.P1.mov = mov_p1
         command.P1.att = att_p1
         command.P2.mov = mov_p2
         command.P2.att = att_p2
-        response = self.stub.Step2P(command)
+        return self.stub.Step2P(command)
+
+    # Step the environment (2P)
+    def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
+        response = self._step_2p(self, mov_p1, att_p1, mov_p2, att_p2)
         data = self.read_data(response.intVar, response.doneConditions)
         frame = self.read_frame(response.frame)
-        return frame, data
+        return frame, response.reward, data
 
     # Closing DIAMBRA Arena
     def close(self):
