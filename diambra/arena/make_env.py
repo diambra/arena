@@ -48,16 +48,10 @@ def env_settings_check(env_settings):
 
         default_env_settings[k] = v
 
-    if default_env_settings["player"] != "P1P2":
-        default_env_settings["action_space"] = [default_env_settings["action_space"],
-                                                default_env_settings["action_space"]]
-        default_env_settings["attack_but_combination"] = [default_env_settings["attack_but_combination"],
-                                                          default_env_settings["attack_but_combination"]]
-    else:
-        for key in ["action_space", "attack_but_combination"]:
-            if type(default_env_settings[key]) != list:
-                default_env_settings[key] = [default_env_settings[key],
-                                             default_env_settings[key]]
+    for key in ["action_space", "attack_but_combination"]:
+        if type(default_env_settings[key]) != list:
+            default_env_settings[key] = [default_env_settings[key],
+                                         default_env_settings[key]]
 
     return default_env_settings
 

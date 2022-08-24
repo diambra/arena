@@ -92,6 +92,7 @@ class DiambraEngine:
             frameShape=frame_shape,
             actionSpace=action_space,
             attackButCombination=attack_but_combination,
+            hardcore=env_settings["hardcore"],
             disableKeyboard=env_settings["disable_keyboard"],
             disableJoystick=env_settings["disable_joystick"],
             rank=env_settings["rank"],
