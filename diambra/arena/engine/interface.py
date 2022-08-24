@@ -51,6 +51,14 @@ class DiambraEngine:
             "w": env_settings["frame_shape"][1],
             "c": env_settings["frame_shape"][2]
         }
+        action_space = {
+            "first": env_settings["action_space"][0],
+            "second": env_settings["action_space"][1]
+        }
+        attack_but_combination = {
+            "first": env_settings["attack_but_combination"][0],
+            "second": env_settings["attack_but_combination"][1]
+        }
         super_art = {
             "first": env_settings["super_art"][0],
             "second": env_settings["super_art"][1]
@@ -82,6 +90,8 @@ class DiambraEngine:
             characters=characters,
             charOutfits=char_outfits,
             frameShape=frame_shape,
+            actionSpace=action_space,
+            attackButCombination=attack_but_combination,
             disableKeyboard=env_settings["disable_keyboard"],
             disableJoystick=env_settings["disable_joystick"],
             rank=env_settings["rank"],

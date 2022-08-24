@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import diambra.arena
-env = diambra.arena.make("doapp")
 
+env = diambra.arena.make("doapp")
 observation = env.reset()
 
 while True:
