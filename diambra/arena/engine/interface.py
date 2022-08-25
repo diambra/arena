@@ -156,7 +156,6 @@ class DiambraEngine:
                 } for idx in range(len(response.additionalObs))
             ]
         }
-        self.int_data_vars_list = response.intDataList
         return env_info_dict
 
     # Set frame size
@@ -167,18 +166,24 @@ class DiambraEngine:
         self.frame_dim = hwc_dim[0] * hwc_dim[1] * hwc_dim[2]
 
     # Read data
-    def read_data(self, int_var, done_conds):
-        int_var = int_var.split(",")
+    def read_data(self, response):
 
-        data = {"round_done": done_conds.round,
-                "stage_done": done_conds.stage,
-                "game_done": done_conds.game,
-                "ep_done": done_conds.episode}
+        # Adding boolean flags
+        data = {"round_done": response.doneConditions.round,
+                "stage_done": response.doneConditions.stage,
+                "game_done": response.doneConditions.game,
+                "ep_done": response.doneConditions.episode}
 
-        idx = 0
-        for var in self.int_data_vars_list:
-            data[var] = int(int_var[idx])
-            idx += 1
+        # Adding int variables
+        # Actions
+        data["moveActionP1"] = response.actions.P1.mov
+        data["attackActionP1"] = response.actions.P1.att
+        data["moveActionP2"] = response.actions.P2.mov
+        data["attackActionP2"] = response.actions.P2.att
+
+        # Additional Observations
+        for idx in range(len(response.additionalObs)):
+            data[response.additionalObs[idx].name] = response.additionalObs[idx].val
 
         return data
 
@@ -197,7 +202,7 @@ class DiambraEngine:
     # Reset the environment
     def reset(self):
         response = self._reset()
-        data = self.read_data(response.intVar, response.doneConditions)
+        data = self.read_data(response)
         frame = self.read_frame(response.frame)
         return frame, data, response.player
 
@@ -211,7 +216,7 @@ class DiambraEngine:
     # Step the environment (1P)
     def step_1p(self, mov_p1, att_p1):
         response = self._step_1p(mov_p1, att_p1)
-        data = self.read_data(response.intVar, response.doneConditions)
+        data = self.read_data(response)
         frame = self.read_frame(response.frame)
         return frame, response.reward, data
 
@@ -227,7 +232,7 @@ class DiambraEngine:
     # Step the environment (2P)
     def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
         response = self._step_2p(mov_p1, att_p1, mov_p2, att_p2)
-        data = self.read_data(response.intVar, response.doneConditions)
+        data = self.read_data(response)
         frame = self.read_frame(response.frame)
         return frame, response.reward, data
 
