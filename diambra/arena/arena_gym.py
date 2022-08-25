@@ -120,8 +120,8 @@ class DiambraGymHardcoreBase(gym.Env):
 
         if mode == "human" and 'DISPLAY' in os.environ:
             if (self.render_gui_started is False):
-                self.window_name = "DIAMBRA Arena - {} - ({})".format(
-                    self.env_settings["game_id"], self.env_settings["rank"])
+                self.window_name = "[{}] DIAMBRA Arena - {} - ({})".format(
+                    os.getpid(), self.env_settings["game_id"], self.env_settings["rank"])
                 cv2.namedWindow(self.window_name, cv2.WINDOW_GUI_NORMAL)
                 self.render_gui_started = True
                 wait_key = 100
@@ -352,8 +352,8 @@ class DiambraGym1P(DiambraGymHardcore1P):
             player_spec_dict[knew] = data[k]
 
         actions_dict = {
-            "move": data["moveActionP1"],
-            "attack": data["attackActionP1"],
+            "move": data["moveAction{}".format(self.player_side)],
+            "attack": data["attackAction{}".format(self.player_side)],
         }
 
         player_spec_dict["actions"] = actions_dict
@@ -456,8 +456,8 @@ class DiambraGym2P(DiambraGymHardcore2P):
                 player_spec_dict[knew] = data[k]
 
             actions_dict = {
-                "move": data["moveActionP{}".format(ielem + 1)],
-                "attack": data["attackActionP{}".format(ielem + 1)],
+                "move": data["moveAction{}".format(elem)],
+                "attack": data["attackAction{}".format(elem)],
             }
 
             player_spec_dict["actions"] = actions_dict

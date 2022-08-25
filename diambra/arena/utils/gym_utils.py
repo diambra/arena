@@ -167,7 +167,7 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
             obs = np.array(observation).astype(np.float32) / 255
 
     if viz:
-        cv2.imshow("Frame", obs[:, :, ::-1])  # rgb2bgr
+        cv2.imshow("[{}] Frame".format(os.getpid()), obs[:, :, ::-1])  # rgb2bgr
         cv2.waitKey(wait_key)
 
 # Visualize Obs content
@@ -182,8 +182,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
                         if type(v2) == dict:
                             for k3, v3 in v2.items():
                                 print("observation[\"{}\"][\"{}\"][\"{}\"]:\n{}"
-                                      .format(k, k2, k3,
-                                              np.reshape(v3, [n_actions_stack, -1])))
+                                      .format(k, k2, k3, np.reshape(v3, [n_actions_stack, -1])))
                         elif "ownChar" in k2 or "oppChar" in k2:
                             print("observation[\"{}\"][\"{}\"]: {} / {}".format(k, k2, v2,
                                                                                 char_list[np.where(v2 == 1)[0][0]]))
@@ -204,7 +203,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
 
     if viz:
         for idx in range(obs.shape[2]):
-            cv2.imshow("Frame-" + str(idx), obs[:, :, idx])
+            cv2.imshow("[{}] Frame-{}".format(os.getpid(), idx), obs[:, :, idx])
 
         cv2.waitKey(wait_key)
 

@@ -132,10 +132,10 @@ class DiambraEngine:
 
         move_dict = {}
         for idx in range(0, len(response.actionsDict.moves), 2):
-            move_dict[response.actionsDict.moves[idx]]: response.actionsDict.moves[idx + 1]
+            move_dict[int(response.actionsDict.moves[idx])] = response.actionsDict.moves[idx + 1]
         att_dict = {}
         for idx in range(0, len(response.actionsDict.attacks), 2):
-            att_dict[response.actionsDict.attacks[idx]]: response.actionsDict.attacks[idx + 1]
+            att_dict[int(response.actionsDict.attacks[idx])] = response.actionsDict.attacks[idx + 1]
 
         env_info_dict = {
             "n_actions": [[response.nActions.butComb.first, response.nActions.butComb.second],
@@ -226,7 +226,7 @@ class DiambraEngine:
 
     # Step the environment (2P)
     def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
-        response = self._step_2p(self, mov_p1, att_p1, mov_p2, att_p2)
+        response = self._step_2p(mov_p1, att_p1, mov_p2, att_p2)
         data = self.read_data(response.intVar, response.doneConditions)
         frame = self.read_frame(response.frame)
         return frame, response.reward, data
