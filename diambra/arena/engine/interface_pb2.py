@@ -14,15 +14,16 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0finterface.proto\x12\tinterface\"(\n\x07intPair\x12\r\n\x05\x66irst\x18\x01 \x01(\x05\x12\x0e\n\x06second\x18\x02 \x01(\x05\"+\n\nstringPair\x12\r\n\x05\x66irst\x18\x01 \x01(\t\x12\x0e\n\x06second\x18\x02 \x01(\t\")\n\x08\x62oolPair\x12\r\n\x05\x66irst\x18\x01 \x01(\x08\x12\x0e\n\x06second\x18\x02 \x01(\x08\",\n\timageSize\x12\t\n\x01h\x18\x01 \x01(\x05\x12\t\n\x01w\x18\x02 \x01(\x05\x12\t\n\x01\x63\x18\x03 \x01(\x05\"\x07\n\x05\x45mpty\"$\n\x0c\x45rrorMessage\x12\x14\n\x0c\x65rrorMessage\x18\x01 \x01(\t\"\xe2\x06\n\x0b\x45nvSettings\x12\x0e\n\x06gameId\x18\x01 \x01(\t\x12\x14\n\x0c\x63ontinueGame\x18\x02 \x01(\x01\x12\x11\n\tshowFinal\x18\x03 \x01(\x08\x12\x11\n\tstepRatio\x18\x04 \x01(\x05\x12\x0e\n\x06player\x18\x05 \x01(\t\x12\x12\n\ndifficulty\x18\x06 \x01(\x05\x12\x39\n\ncharacters\x18\x07 \x01(\x0b\x32%.interface.EnvSettings.charactersPair\x12\'\n\x0b\x63harOutfits\x18\x08 \x01(\x0b\x32\x12.interface.intPair\x12(\n\nframeShape\x18\t \x01(\x0b\x32\x14.interface.imageSize\x12*\n\x0b\x61\x63tionSpace\x18\n \x01(\x0b\x32\x15.interface.stringPair\x12\x31\n\x14\x61ttackButCombination\x18\x0b \x01(\x0b\x32\x13.interface.boolPair\x12\x10\n\x08hardcore\x18\x0c \x01(\x08\x12\x17\n\x0f\x64isableKeyboard\x18\r \x01(\x08\x12\x17\n\x0f\x64isableJoystick\x18\x0e \x01(\x08\x12\x0c\n\x04rank\x18\x0f \x01(\x05\x12\x12\n\nrandomSeed\x18\x10 \x01(\x05\x12$\n\x08superArt\x18\x11 \x01(\x0b\x32\x12.interface.intPair\x12\r\n\x05tower\x18\x12 \x01(\x05\x12)\n\rfightingStyle\x18\x13 \x01(\x0b\x32\x12.interface.intPair\x12?\n\rultimateStyle\x18\x14 \x01(\x0b\x32(.interface.EnvSettings.ultimateStylePair\x1a(\n\x0e\x63haractersPair\x12\n\n\x02P1\x18\x01 \x03(\t\x12\n\n\x02P2\x18\x02 \x03(\t\x1a?\n\x13ultimateStyleStruct\x12\x0c\n\x04\x64\x61sh\x18\x01 \x01(\x05\x12\r\n\x05\x65vade\x18\x02 \x01(\x05\x12\x0b\n\x03\x62\x61r\x18\x03 \x01(\x05\x1a\x83\x01\n\x11ultimateStylePair\x12\x36\n\x02P1\x18\x01 \x01(\x0b\x32*.interface.EnvSettings.ultimateStyleStruct\x12\x36\n\x02P2\x18\x02 \x01(\x0b\x32*.interface.EnvSettings.ultimateStyleStruct\"\xd9\x05\n\x11\x45nvInfoAndIntData\x12=\n\x08nActions\x18\x01 \x01(\x0b\x32+.interface.EnvInfoAndIntData.nActionsStruct\x12(\n\nframeShape\x18\x02 \x01(\x0b\x32\x14.interface.imageSize\x12\x13\n\x0b\x64\x65ltaHealth\x18\x03 \x01(\x05\x12\x10\n\x08maxStage\x18\x04 \x01(\x05\x12%\n\tminMaxRew\x18\x05 \x01(\x0b\x32\x12.interface.intPair\x12\x10\n\x08\x63harList\x18\x06 \x03(\t\x12\x43\n\x0b\x61\x63tionsList\x18\x07 \x01(\x0b\x32..interface.EnvInfoAndIntData.actionsListStruct\x12\x43\n\x0b\x61\x63tionsDict\x18\x08 \x01(\x0b\x32..interface.EnvInfoAndIntData.actionsDictStruct\x12G\n\radditionalObs\x18\t \x03(\x0b\x32\x30.interface.EnvInfoAndIntData.additionalObsStruct\x12\x13\n\x0bintDataList\x18\n \x03(\t\x1a\\\n\x0enActionsStruct\x12#\n\x07\x62utComb\x18\x01 \x01(\x0b\x32\x12.interface.intPair\x12%\n\tnoButComb\x18\x02 \x01(\x0b\x32\x12.interface.intPair\x1a\x33\n\x11\x61\x63tionsListStruct\x12\r\n\x05moves\x18\x01 \x03(\t\x12\x0f\n\x07\x61ttacks\x18\x02 \x03(\t\x1a\x33\n\x11\x61\x63tionsDictStruct\x12\r\n\x05moves\x18\x01 \x03(\t\x12\x0f\n\x07\x61ttacks\x18\x02 \x03(\t\x1aK\n\x13\x61\x64\x64itionalObsStruct\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\x05\x12\x0b\n\x03min\x18\x03 \x01(\x05\x12\x0b\n\x03max\x18\x04 \x01(\x05\"~\n\x07\x43ommand\x12&\n\x02P1\x18\x01 \x01(\x0b\x32\x1a.interface.Command.actions\x12&\n\x02P2\x18\x02 \x01(\x0b\x32\x1a.interface.Command.actions\x1a#\n\x07\x61\x63tions\x12\x0b\n\x03mov\x18\x01 \x01(\x05\x12\x0b\n\x03\x61tt\x18\x02 \x01(\x05\"\xc0\x01\n\x03Obs\x12\x0e\n\x06intVar\x18\x01 \x01(\t\x12\x30\n\x0e\x64oneConditions\x18\x02 \x01(\x0b\x32\x18.interface.Obs.boolFlags\x12\x0e\n\x06player\x18\x03 \x01(\t\x12\r\n\x05\x66rame\x18\x04 \x01(\x0c\x12\x0e\n\x06reward\x18\x05 \x01(\x05\x1aH\n\tboolFlags\x12\r\n\x05round\x18\x01 \x01(\x08\x12\r\n\x05stage\x18\x02 \x01(\x08\x12\x0c\n\x04game\x18\x03 \x01(\x08\x12\x0f\n\x07\x65pisode\x18\x04 \x01(\x08\x32\xc3\x02\n\tEnvServer\x12\x37\n\x08GetError\x12\x10.interface.Empty\x1a\x17.interface.ErrorMessage\"\x00\x12\x41\n\x07\x45nvInit\x12\x16.interface.EnvSettings\x1a\x1c.interface.EnvInfoAndIntData\"\x00\x12+\n\x05Reset\x12\x10.interface.Empty\x1a\x0e.interface.Obs\"\x00\x12.\n\x06Step1P\x12\x12.interface.Command\x1a\x0e.interface.Obs\"\x00\x12.\n\x06Step2P\x12\x12.interface.Command\x1a\x0e.interface.Obs\"\x00\x12-\n\x05\x43lose\x12\x10.interface.Empty\x1a\x10.interface.Empty\"\x00\x42\x06\xa2\x02\x03HLWb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0finterface.proto\x12\tinterface\"\x07\n\x05\x45mpty\"(\n\x07intPair\x12\r\n\x05\x66irst\x18\x01 \x01(\x05\x12\x0e\n\x06second\x18\x02 \x01(\x05\"+\n\nstringPair\x12\r\n\x05\x66irst\x18\x01 \x01(\t\x12\x0e\n\x06second\x18\x02 \x01(\t\")\n\x08\x62oolPair\x12\r\n\x05\x66irst\x18\x01 \x01(\x08\x12\x0e\n\x06second\x18\x02 \x01(\x08\",\n\timageSize\x12\t\n\x01h\x18\x01 \x01(\x05\x12\t\n\x01w\x18\x02 \x01(\x05\x12\t\n\x01\x63\x18\x03 \x01(\x05\"X\n\x13\x61\x64\x64itionalObsStruct\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04type\x18\x02 \x01(\x05\x12\x0b\n\x03min\x18\x03 \x01(\x05\x12\x0b\n\x03max\x18\x04 \x01(\x05\x12\x0b\n\x03val\x18\x05 \x01(\x05\"$\n\x0c\x45rrorMessage\x12\x14\n\x0c\x65rrorMessage\x18\x01 \x01(\t\"\xe2\x06\n\x0b\x45nvSettings\x12\x0e\n\x06gameId\x18\x01 \x01(\t\x12\x14\n\x0c\x63ontinueGame\x18\x02 \x01(\x01\x12\x11\n\tshowFinal\x18\x03 \x01(\x08\x12\x11\n\tstepRatio\x18\x04 \x01(\x05\x12\x0e\n\x06player\x18\x05 \x01(\t\x12\x12\n\ndifficulty\x18\x06 \x01(\x05\x12\x39\n\ncharacters\x18\x07 \x01(\x0b\x32%.interface.EnvSettings.charactersPair\x12\'\n\x0b\x63harOutfits\x18\x08 \x01(\x0b\x32\x12.interface.intPair\x12(\n\nframeShape\x18\t \x01(\x0b\x32\x14.interface.imageSize\x12*\n\x0b\x61\x63tionSpace\x18\n \x01(\x0b\x32\x15.interface.stringPair\x12\x31\n\x14\x61ttackButCombination\x18\x0b \x01(\x0b\x32\x13.interface.boolPair\x12\x10\n\x08hardcore\x18\x0c \x01(\x08\x12\x17\n\x0f\x64isableKeyboard\x18\r \x01(\x08\x12\x17\n\x0f\x64isableJoystick\x18\x0e \x01(\x08\x12\x0c\n\x04rank\x18\x0f \x01(\x05\x12\x12\n\nrandomSeed\x18\x10 \x01(\x05\x12$\n\x08superArt\x18\x11 \x01(\x0b\x32\x12.interface.intPair\x12\r\n\x05tower\x18\x12 \x01(\x05\x12)\n\rfightingStyle\x18\x13 \x01(\x0b\x32\x12.interface.intPair\x12?\n\rultimateStyle\x18\x14 \x01(\x0b\x32(.interface.EnvSettings.ultimateStylePair\x1a(\n\x0e\x63haractersPair\x12\n\n\x02P1\x18\x01 \x03(\t\x12\n\n\x02P2\x18\x02 \x03(\t\x1a?\n\x13ultimateStyleStruct\x12\x0c\n\x04\x64\x61sh\x18\x01 \x01(\x05\x12\r\n\x05\x65vade\x18\x02 \x01(\x05\x12\x0b\n\x03\x62\x61r\x18\x03 \x01(\x05\x1a\x83\x01\n\x11ultimateStylePair\x12\x36\n\x02P1\x18\x01 \x01(\x0b\x32*.interface.EnvSettings.ultimateStyleStruct\x12\x36\n\x02P2\x18\x02 \x01(\x0b\x32*.interface.EnvSettings.ultimateStyleStruct\"\xe5\x04\n\x11\x45nvInfoAndIntData\x12=\n\x08nActions\x18\x01 \x01(\x0b\x32+.interface.EnvInfoAndIntData.nActionsStruct\x12(\n\nframeShape\x18\x02 \x01(\x0b\x32\x14.interface.imageSize\x12\x13\n\x0b\x64\x65ltaHealth\x18\x03 \x01(\x05\x12\x10\n\x08maxStage\x18\x04 \x01(\x05\x12%\n\tminMaxRew\x18\x05 \x01(\x0b\x32\x12.interface.intPair\x12\x10\n\x08\x63harList\x18\x06 \x03(\t\x12\x43\n\x0b\x61\x63tionsList\x18\x07 \x01(\x0b\x32..interface.EnvInfoAndIntData.actionsListStruct\x12\x43\n\x0b\x61\x63tionsDict\x18\x08 \x01(\x0b\x32..interface.EnvInfoAndIntData.actionsDictStruct\x12\x35\n\radditionalObs\x18\t \x03(\x0b\x32\x1e.interface.additionalObsStruct\x1a\\\n\x0enActionsStruct\x12#\n\x07\x62utComb\x18\x01 \x01(\x0b\x32\x12.interface.intPair\x12%\n\tnoButComb\x18\x02 \x01(\x0b\x32\x12.interface.intPair\x1a\x33\n\x11\x61\x63tionsListStruct\x12\r\n\x05moves\x18\x01 \x03(\t\x12\x0f\n\x07\x61ttacks\x18\x02 \x03(\t\x1a\x33\n\x11\x61\x63tionsDictStruct\x12\r\n\x05moves\x18\x01 \x03(\t\x12\x0f\n\x07\x61ttacks\x18\x02 \x03(\t\"(\n\x0c\x61\x63tionStruct\x12\x0b\n\x03mov\x18\x01 \x01(\x05\x12\x0b\n\x03\x61tt\x18\x02 \x01(\x05\"Y\n\ractionsStruct\x12#\n\x02P1\x18\x01 \x01(\x0b\x32\x17.interface.actionStruct\x12#\n\x02P2\x18\x02 \x01(\x0b\x32\x17.interface.actionStruct\"S\n\x07\x43ommand\x12#\n\x02P1\x18\x01 \x01(\x0b\x32\x17.interface.actionStruct\x12#\n\x02P2\x18\x02 \x01(\x0b\x32\x17.interface.actionStruct\"\x92\x02\n\x03Obs\x12)\n\x07\x61\x63tions\x18\x01 \x01(\x0b\x32\x18.interface.actionsStruct\x12\x35\n\radditionalObs\x18\x02 \x03(\x0b\x32\x1e.interface.additionalObsStruct\x12\x30\n\x0e\x64oneConditions\x18\x03 \x01(\x0b\x32\x18.interface.Obs.boolFlags\x12\x0e\n\x06player\x18\x04 \x01(\t\x12\r\n\x05\x66rame\x18\x05 \x01(\x0c\x12\x0e\n\x06reward\x18\x06 \x01(\x05\x1aH\n\tboolFlags\x12\r\n\x05round\x18\x01 \x01(\x08\x12\r\n\x05stage\x18\x02 \x01(\x08\x12\x0c\n\x04game\x18\x03 \x01(\x08\x12\x0f\n\x07\x65pisode\x18\x04 \x01(\x08\x32\xc3\x02\n\tEnvServer\x12\x37\n\x08GetError\x12\x10.interface.Empty\x1a\x17.interface.ErrorMessage\"\x00\x12\x41\n\x07\x45nvInit\x12\x16.interface.EnvSettings\x1a\x1c.interface.EnvInfoAndIntData\"\x00\x12+\n\x05Reset\x12\x10.interface.Empty\x1a\x0e.interface.Obs\"\x00\x12.\n\x06Step1P\x12\x12.interface.Command\x1a\x0e.interface.Obs\"\x00\x12.\n\x06Step2P\x12\x12.interface.Command\x1a\x0e.interface.Obs\"\x00\x12-\n\x05\x43lose\x12\x10.interface.Empty\x1a\x10.interface.Empty\"\x00\x42\x06\xa2\x02\x03HLWb\x06proto3')
 
 
 
+_EMPTY = DESCRIPTOR.message_types_by_name['Empty']
 _INTPAIR = DESCRIPTOR.message_types_by_name['intPair']
 _STRINGPAIR = DESCRIPTOR.message_types_by_name['stringPair']
 _BOOLPAIR = DESCRIPTOR.message_types_by_name['boolPair']
 _IMAGESIZE = DESCRIPTOR.message_types_by_name['imageSize']
-_EMPTY = DESCRIPTOR.message_types_by_name['Empty']
+_ADDITIONALOBSSTRUCT = DESCRIPTOR.message_types_by_name['additionalObsStruct']
 _ERRORMESSAGE = DESCRIPTOR.message_types_by_name['ErrorMessage']
 _ENVSETTINGS = DESCRIPTOR.message_types_by_name['EnvSettings']
 _ENVSETTINGS_CHARACTERSPAIR = _ENVSETTINGS.nested_types_by_name['charactersPair']
@@ -32,11 +33,18 @@ _ENVINFOANDINTDATA = DESCRIPTOR.message_types_by_name['EnvInfoAndIntData']
 _ENVINFOANDINTDATA_NACTIONSSTRUCT = _ENVINFOANDINTDATA.nested_types_by_name['nActionsStruct']
 _ENVINFOANDINTDATA_ACTIONSLISTSTRUCT = _ENVINFOANDINTDATA.nested_types_by_name['actionsListStruct']
 _ENVINFOANDINTDATA_ACTIONSDICTSTRUCT = _ENVINFOANDINTDATA.nested_types_by_name['actionsDictStruct']
-_ENVINFOANDINTDATA_ADDITIONALOBSSTRUCT = _ENVINFOANDINTDATA.nested_types_by_name['additionalObsStruct']
+_ACTIONSTRUCT = DESCRIPTOR.message_types_by_name['actionStruct']
+_ACTIONSSTRUCT = DESCRIPTOR.message_types_by_name['actionsStruct']
 _COMMAND = DESCRIPTOR.message_types_by_name['Command']
-_COMMAND_ACTIONS = _COMMAND.nested_types_by_name['actions']
 _OBS = DESCRIPTOR.message_types_by_name['Obs']
 _OBS_BOOLFLAGS = _OBS.nested_types_by_name['boolFlags']
+Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
+  'DESCRIPTOR' : _EMPTY,
+  '__module__' : 'interface_pb2'
+  # @@protoc_insertion_point(class_scope:interface.Empty)
+  })
+_sym_db.RegisterMessage(Empty)
+
 intPair = _reflection.GeneratedProtocolMessageType('intPair', (_message.Message,), {
   'DESCRIPTOR' : _INTPAIR,
   '__module__' : 'interface_pb2'
@@ -65,12 +73,12 @@ imageSize = _reflection.GeneratedProtocolMessageType('imageSize', (_message.Mess
   })
 _sym_db.RegisterMessage(imageSize)
 
-Empty = _reflection.GeneratedProtocolMessageType('Empty', (_message.Message,), {
-  'DESCRIPTOR' : _EMPTY,
+additionalObsStruct = _reflection.GeneratedProtocolMessageType('additionalObsStruct', (_message.Message,), {
+  'DESCRIPTOR' : _ADDITIONALOBSSTRUCT,
   '__module__' : 'interface_pb2'
-  # @@protoc_insertion_point(class_scope:interface.Empty)
+  # @@protoc_insertion_point(class_scope:interface.additionalObsStruct)
   })
-_sym_db.RegisterMessage(Empty)
+_sym_db.RegisterMessage(additionalObsStruct)
 
 ErrorMessage = _reflection.GeneratedProtocolMessageType('ErrorMessage', (_message.Message,), {
   'DESCRIPTOR' : _ERRORMESSAGE,
@@ -132,13 +140,6 @@ EnvInfoAndIntData = _reflection.GeneratedProtocolMessageType('EnvInfoAndIntData'
     # @@protoc_insertion_point(class_scope:interface.EnvInfoAndIntData.actionsDictStruct)
     })
   ,
-
-  'additionalObsStruct' : _reflection.GeneratedProtocolMessageType('additionalObsStruct', (_message.Message,), {
-    'DESCRIPTOR' : _ENVINFOANDINTDATA_ADDITIONALOBSSTRUCT,
-    '__module__' : 'interface_pb2'
-    # @@protoc_insertion_point(class_scope:interface.EnvInfoAndIntData.additionalObsStruct)
-    })
-  ,
   'DESCRIPTOR' : _ENVINFOANDINTDATA,
   '__module__' : 'interface_pb2'
   # @@protoc_insertion_point(class_scope:interface.EnvInfoAndIntData)
@@ -147,22 +148,27 @@ _sym_db.RegisterMessage(EnvInfoAndIntData)
 _sym_db.RegisterMessage(EnvInfoAndIntData.nActionsStruct)
 _sym_db.RegisterMessage(EnvInfoAndIntData.actionsListStruct)
 _sym_db.RegisterMessage(EnvInfoAndIntData.actionsDictStruct)
-_sym_db.RegisterMessage(EnvInfoAndIntData.additionalObsStruct)
+
+actionStruct = _reflection.GeneratedProtocolMessageType('actionStruct', (_message.Message,), {
+  'DESCRIPTOR' : _ACTIONSTRUCT,
+  '__module__' : 'interface_pb2'
+  # @@protoc_insertion_point(class_scope:interface.actionStruct)
+  })
+_sym_db.RegisterMessage(actionStruct)
+
+actionsStruct = _reflection.GeneratedProtocolMessageType('actionsStruct', (_message.Message,), {
+  'DESCRIPTOR' : _ACTIONSSTRUCT,
+  '__module__' : 'interface_pb2'
+  # @@protoc_insertion_point(class_scope:interface.actionsStruct)
+  })
+_sym_db.RegisterMessage(actionsStruct)
 
 Command = _reflection.GeneratedProtocolMessageType('Command', (_message.Message,), {
-
-  'actions' : _reflection.GeneratedProtocolMessageType('actions', (_message.Message,), {
-    'DESCRIPTOR' : _COMMAND_ACTIONS,
-    '__module__' : 'interface_pb2'
-    # @@protoc_insertion_point(class_scope:interface.Command.actions)
-    })
-  ,
   'DESCRIPTOR' : _COMMAND,
   '__module__' : 'interface_pb2'
   # @@protoc_insertion_point(class_scope:interface.Command)
   })
 _sym_db.RegisterMessage(Command)
-_sym_db.RegisterMessage(Command.actions)
 
 Obs = _reflection.GeneratedProtocolMessageType('Obs', (_message.Message,), {
 
@@ -184,44 +190,46 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   DESCRIPTOR._serialized_options = b'\242\002\003HLW'
-  _INTPAIR._serialized_start=30
-  _INTPAIR._serialized_end=70
-  _STRINGPAIR._serialized_start=72
-  _STRINGPAIR._serialized_end=115
-  _BOOLPAIR._serialized_start=117
-  _BOOLPAIR._serialized_end=158
-  _IMAGESIZE._serialized_start=160
-  _IMAGESIZE._serialized_end=204
-  _EMPTY._serialized_start=206
-  _EMPTY._serialized_end=213
-  _ERRORMESSAGE._serialized_start=215
-  _ERRORMESSAGE._serialized_end=251
-  _ENVSETTINGS._serialized_start=254
-  _ENVSETTINGS._serialized_end=1120
-  _ENVSETTINGS_CHARACTERSPAIR._serialized_start=881
-  _ENVSETTINGS_CHARACTERSPAIR._serialized_end=921
-  _ENVSETTINGS_ULTIMATESTYLESTRUCT._serialized_start=923
-  _ENVSETTINGS_ULTIMATESTYLESTRUCT._serialized_end=986
-  _ENVSETTINGS_ULTIMATESTYLEPAIR._serialized_start=989
-  _ENVSETTINGS_ULTIMATESTYLEPAIR._serialized_end=1120
-  _ENVINFOANDINTDATA._serialized_start=1123
-  _ENVINFOANDINTDATA._serialized_end=1852
-  _ENVINFOANDINTDATA_NACTIONSSTRUCT._serialized_start=1577
-  _ENVINFOANDINTDATA_NACTIONSSTRUCT._serialized_end=1669
-  _ENVINFOANDINTDATA_ACTIONSLISTSTRUCT._serialized_start=1671
-  _ENVINFOANDINTDATA_ACTIONSLISTSTRUCT._serialized_end=1722
-  _ENVINFOANDINTDATA_ACTIONSDICTSTRUCT._serialized_start=1724
-  _ENVINFOANDINTDATA_ACTIONSDICTSTRUCT._serialized_end=1775
-  _ENVINFOANDINTDATA_ADDITIONALOBSSTRUCT._serialized_start=1777
-  _ENVINFOANDINTDATA_ADDITIONALOBSSTRUCT._serialized_end=1852
-  _COMMAND._serialized_start=1854
-  _COMMAND._serialized_end=1980
-  _COMMAND_ACTIONS._serialized_start=1945
-  _COMMAND_ACTIONS._serialized_end=1980
-  _OBS._serialized_start=1983
-  _OBS._serialized_end=2175
-  _OBS_BOOLFLAGS._serialized_start=2103
-  _OBS_BOOLFLAGS._serialized_end=2175
-  _ENVSERVER._serialized_start=2178
-  _ENVSERVER._serialized_end=2501
+  _EMPTY._serialized_start=30
+  _EMPTY._serialized_end=37
+  _INTPAIR._serialized_start=39
+  _INTPAIR._serialized_end=79
+  _STRINGPAIR._serialized_start=81
+  _STRINGPAIR._serialized_end=124
+  _BOOLPAIR._serialized_start=126
+  _BOOLPAIR._serialized_end=167
+  _IMAGESIZE._serialized_start=169
+  _IMAGESIZE._serialized_end=213
+  _ADDITIONALOBSSTRUCT._serialized_start=215
+  _ADDITIONALOBSSTRUCT._serialized_end=303
+  _ERRORMESSAGE._serialized_start=305
+  _ERRORMESSAGE._serialized_end=341
+  _ENVSETTINGS._serialized_start=344
+  _ENVSETTINGS._serialized_end=1210
+  _ENVSETTINGS_CHARACTERSPAIR._serialized_start=971
+  _ENVSETTINGS_CHARACTERSPAIR._serialized_end=1011
+  _ENVSETTINGS_ULTIMATESTYLESTRUCT._serialized_start=1013
+  _ENVSETTINGS_ULTIMATESTYLESTRUCT._serialized_end=1076
+  _ENVSETTINGS_ULTIMATESTYLEPAIR._serialized_start=1079
+  _ENVSETTINGS_ULTIMATESTYLEPAIR._serialized_end=1210
+  _ENVINFOANDINTDATA._serialized_start=1213
+  _ENVINFOANDINTDATA._serialized_end=1826
+  _ENVINFOANDINTDATA_NACTIONSSTRUCT._serialized_start=1628
+  _ENVINFOANDINTDATA_NACTIONSSTRUCT._serialized_end=1720
+  _ENVINFOANDINTDATA_ACTIONSLISTSTRUCT._serialized_start=1722
+  _ENVINFOANDINTDATA_ACTIONSLISTSTRUCT._serialized_end=1773
+  _ENVINFOANDINTDATA_ACTIONSDICTSTRUCT._serialized_start=1775
+  _ENVINFOANDINTDATA_ACTIONSDICTSTRUCT._serialized_end=1826
+  _ACTIONSTRUCT._serialized_start=1828
+  _ACTIONSTRUCT._serialized_end=1868
+  _ACTIONSSTRUCT._serialized_start=1870
+  _ACTIONSSTRUCT._serialized_end=1959
+  _COMMAND._serialized_start=1961
+  _COMMAND._serialized_end=2044
+  _OBS._serialized_start=2047
+  _OBS._serialized_end=2321
+  _OBS_BOOLFLAGS._serialized_start=2249
+  _OBS_BOOLFLAGS._serialized_end=2321
+  _ENVSERVER._serialized_start=2324
+  _ENVSERVER._serialized_end=2647
 # @@protoc_insertion_point(module_scope)
