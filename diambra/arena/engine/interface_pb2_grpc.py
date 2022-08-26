@@ -32,12 +32,12 @@ class EnvServerStub(object):
                 )
         self.Step1P = channel.unary_unary(
                 '/interface.EnvServer/Step1P',
-                request_serializer=interface__pb2.Command.SerializeToString,
+                request_serializer=interface__pb2.Actions.SerializeToString,
                 response_deserializer=interface__pb2.Obs.FromString,
                 )
         self.Step2P = channel.unary_unary(
                 '/interface.EnvServer/Step2P',
-                request_serializer=interface__pb2.Command.SerializeToString,
+                request_serializer=interface__pb2.Actions.SerializeToString,
                 response_deserializer=interface__pb2.Obs.FromString,
                 )
         self.Close = channel.unary_unary(
@@ -113,12 +113,12 @@ def add_EnvServerServicer_to_server(servicer, server):
             ),
             'Step1P': grpc.unary_unary_rpc_method_handler(
                     servicer.Step1P,
-                    request_deserializer=interface__pb2.Command.FromString,
+                    request_deserializer=interface__pb2.Actions.FromString,
                     response_serializer=interface__pb2.Obs.SerializeToString,
             ),
             'Step2P': grpc.unary_unary_rpc_method_handler(
                     servicer.Step2P,
-                    request_deserializer=interface__pb2.Command.FromString,
+                    request_deserializer=interface__pb2.Actions.FromString,
                     response_serializer=interface__pb2.Obs.SerializeToString,
             ),
             'Close': grpc.unary_unary_rpc_method_handler(
@@ -200,7 +200,7 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Step1P',
-            interface__pb2.Command.SerializeToString,
+            interface__pb2.Actions.SerializeToString,
             interface__pb2.Obs.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -217,7 +217,7 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Step2P',
-            interface__pb2.Command.SerializeToString,
+            interface__pb2.Actions.SerializeToString,
             interface__pb2.Obs.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

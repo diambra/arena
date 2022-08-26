@@ -176,10 +176,10 @@ class DiambraEngine:
 
         # Adding int variables
         # Actions
-        data["moveActionP1"] = response.actions.P1.mov
-        data["attackActionP1"] = response.actions.P1.att
-        data["moveActionP2"] = response.actions.P2.mov
-        data["attackActionP2"] = response.actions.P2.att
+        data["moveActionP1"] = response.playersActions.P1.mov
+        data["attackActionP1"] = response.playersActions.P1.att
+        data["moveActionP2"] = response.playersActions.P2.mov
+        data["attackActionP2"] = response.playersActions.P2.att
 
         # Additional Observations
         for idx in range(len(response.additionalObs)):
@@ -208,10 +208,10 @@ class DiambraEngine:
 
     # Step the environment (1P) [pb low level]
     def _step_1p(self, mov_p1, att_p1):
-        command = interface_pb2.Command()
-        command.P1.mov = mov_p1
-        command.P1.att = att_p1
-        return self.stub.Step1P(command)
+        actions = interface_pb2.Actions()
+        actions.P1.mov = mov_p1
+        actions.P1.att = att_p1
+        return self.stub.Step1P(actions)
 
     # Step the environment (1P)
     def step_1p(self, mov_p1, att_p1):
@@ -222,12 +222,12 @@ class DiambraEngine:
 
     # Step the environment (2P) [pb low level]
     def _step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
-        command = interface_pb2.Command()
-        command.P1.mov = mov_p1
-        command.P1.att = att_p1
-        command.P2.mov = mov_p2
-        command.P2.att = att_p2
-        return self.stub.Step2P(command)
+        actions = interface_pb2.Actions()
+        actions.P1.mov = mov_p1
+        actions.P1.att = att_p1
+        actions.P2.mov = mov_p2
+        actions.P2.att = att_p2
+        return self.stub.Step2P(actions)
 
     # Step the environment (2P)
     def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
