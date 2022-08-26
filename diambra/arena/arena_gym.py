@@ -59,7 +59,6 @@ class DiambraGymHardcoreBase(gym.Env):
 
         # Frame height, width and channel dimensions
         self.hwc_dim = env_info_dict["frame_shape"]
-        self.arena_engine.set_frame_size(self.hwc_dim)
 
         # Maximum difference in players health
         self.max_delta_health = env_info_dict["delta_health"]

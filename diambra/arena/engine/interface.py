@@ -156,14 +156,14 @@ class DiambraEngine:
                 } for idx in range(len(response.additionalObs))
             ]
         }
-        return env_info_dict
 
-    # Set frame size
-    def set_frame_size(self, hwc_dim):
-        self.height = hwc_dim[0]
-        self.width = hwc_dim[1]
-        self.n_chan = hwc_dim[2]
-        self.frame_dim = hwc_dim[0] * hwc_dim[1] * hwc_dim[2]
+        # Set frame size
+        self.height = env_info_dict["frame_shape"][0]
+        self.width = env_info_dict["frame_shape"][1]
+        self.n_chan = env_info_dict["frame_shape"][2]
+        self.frame_dim = self.height * self.width * self.n_chan
+
+        return env_info_dict
 
     # Read data
     def read_data(self, response):
