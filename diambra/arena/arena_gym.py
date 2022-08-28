@@ -430,12 +430,17 @@ class DiambraGym2P(DiambraGymHardcore2P):
         player_dict_p2 = player_spec_dict.copy()
         observation_space_dict["P2"] = spaces.Dict(player_dict_p2)
 
+        observation_space_dict["stage"] = spaces.Box(low=self.add_obs["stage"][1],
+                                                     high=self.add_obs["stage"][2],
+                                                     shape=(1,), dtype=np.int8)
+
         self.observation_space = spaces.Dict(observation_space_dict)
 
     def add_obs_integration(self, frame, data):
 
         observation = {}
         observation["frame"] = frame
+        observation["stage"] = data["stage"]
 
         for ielem, elem in enumerate(["P1", "P2"]):
 
