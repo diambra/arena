@@ -144,8 +144,8 @@ class DiambraEngine:
             "delta_health": response.deltaHealth,
             "max_stage": response.maxStage,
             "min_max_rew": [response.minMaxRew.first, response.minMaxRew.second],
-            "char_list": response.charList,
-            "actions_list": [response.actionsList.moves, response.actionsList.attacks],
+            "char_list": list(response.charList),
+            "actions_list": [list(response.actionsList.moves), list(response.actionsList.attacks)],
             "actions_dict": [move_dict, att_dict],
             "additional_obs": [
                 {
