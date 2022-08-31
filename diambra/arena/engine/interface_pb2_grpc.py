@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import diambra.arena.engine.interface_pb2 as interface__pb2
+from diambra.arena.engine import interface_pb2 as diambra_dot_arena_dot_engine_dot_interface__pb2
 
 
 class EnvServerStub(object):
@@ -17,33 +17,33 @@ class EnvServerStub(object):
         """
         self.GetError = channel.unary_unary(
                 '/interface.EnvServer/GetError',
-                request_serializer=interface__pb2.Empty.SerializeToString,
-                response_deserializer=interface__pb2.ErrorMessage.FromString,
+                request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.ErrorMessage.FromString,
                 )
         self.EnvInit = channel.unary_unary(
                 '/interface.EnvServer/EnvInit',
-                request_serializer=interface__pb2.EnvSettings.SerializeToString,
-                response_deserializer=interface__pb2.EnvInfoAndIntData.FromString,
+                request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvSettings.SerializeToString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInfoAndIntData.FromString,
                 )
         self.Reset = channel.unary_unary(
                 '/interface.EnvServer/Reset',
-                request_serializer=interface__pb2.Empty.SerializeToString,
-                response_deserializer=interface__pb2.Obs.FromString,
+                request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
                 )
         self.Step1P = channel.unary_unary(
                 '/interface.EnvServer/Step1P',
-                request_serializer=interface__pb2.Actions.SerializeToString,
-                response_deserializer=interface__pb2.Obs.FromString,
+                request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
                 )
         self.Step2P = channel.unary_unary(
                 '/interface.EnvServer/Step2P',
-                request_serializer=interface__pb2.Actions.SerializeToString,
-                response_deserializer=interface__pb2.Obs.FromString,
+                request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
                 )
         self.Close = channel.unary_unary(
                 '/interface.EnvServer/Close',
-                request_serializer=interface__pb2.Empty.SerializeToString,
-                response_deserializer=interface__pb2.Empty.FromString,
+                request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
                 )
 
 
@@ -98,33 +98,33 @@ def add_EnvServerServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetError': grpc.unary_unary_rpc_method_handler(
                     servicer.GetError,
-                    request_deserializer=interface__pb2.Empty.FromString,
-                    response_serializer=interface__pb2.ErrorMessage.SerializeToString,
+                    request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.ErrorMessage.SerializeToString,
             ),
             'EnvInit': grpc.unary_unary_rpc_method_handler(
                     servicer.EnvInit,
-                    request_deserializer=interface__pb2.EnvSettings.FromString,
-                    response_serializer=interface__pb2.EnvInfoAndIntData.SerializeToString,
+                    request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvSettings.FromString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInfoAndIntData.SerializeToString,
             ),
             'Reset': grpc.unary_unary_rpc_method_handler(
                     servicer.Reset,
-                    request_deserializer=interface__pb2.Empty.FromString,
-                    response_serializer=interface__pb2.Obs.SerializeToString,
+                    request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.SerializeToString,
             ),
             'Step1P': grpc.unary_unary_rpc_method_handler(
                     servicer.Step1P,
-                    request_deserializer=interface__pb2.Actions.FromString,
-                    response_serializer=interface__pb2.Obs.SerializeToString,
+                    request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.FromString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.SerializeToString,
             ),
             'Step2P': grpc.unary_unary_rpc_method_handler(
                     servicer.Step2P,
-                    request_deserializer=interface__pb2.Actions.FromString,
-                    response_serializer=interface__pb2.Obs.SerializeToString,
+                    request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.FromString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.SerializeToString,
             ),
             'Close': grpc.unary_unary_rpc_method_handler(
                     servicer.Close,
-                    request_deserializer=interface__pb2.Empty.FromString,
-                    response_serializer=interface__pb2.Empty.SerializeToString,
+                    request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -149,8 +149,8 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/GetError',
-            interface__pb2.Empty.SerializeToString,
-            interface__pb2.ErrorMessage.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.ErrorMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -166,8 +166,8 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/EnvInit',
-            interface__pb2.EnvSettings.SerializeToString,
-            interface__pb2.EnvInfoAndIntData.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.EnvSettings.SerializeToString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInfoAndIntData.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -183,8 +183,8 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Reset',
-            interface__pb2.Empty.SerializeToString,
-            interface__pb2.Obs.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -200,8 +200,8 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Step1P',
-            interface__pb2.Actions.SerializeToString,
-            interface__pb2.Obs.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -217,8 +217,8 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Step2P',
-            interface__pb2.Actions.SerializeToString,
-            interface__pb2.Obs.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -234,7 +234,7 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Close',
-            interface__pb2.Empty.SerializeToString,
-            interface__pb2.Empty.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
