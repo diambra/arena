@@ -1,0 +1,17 @@
+#!/bin/bash
+set -euo pipefail
+
+ENGINE_DIR=${ENGINE_DIR:-../engine}
+
+tmp="$(mktemp -d)"
+path="$tmp/diambra/arena/engine/"
+mkdir -p "$path"
+
+cp "$ENGINE_DIR/interface/"*.proto "$path"
+
+python -m grpc_tools.protoc -I "$tmp" \
+  --python_out=. \
+  --grpc_python_out=. \
+  "$path"/*.proto
+
+rm -rf "$tmp"
