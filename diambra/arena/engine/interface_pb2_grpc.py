@@ -45,6 +45,11 @@ class EnvServerStub(object):
                 request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
                 response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
                 )
+        self.Shutdown = channel.unary_unary(
+                '/interface.EnvServer/Shutdown',
+                request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
+                )
 
 
 class EnvServerServicer(object):
@@ -93,6 +98,13 @@ class EnvServerServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Shutdown(self, request, context):
+        """Shutdown termintes the engine process
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_EnvServerServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -123,6 +135,11 @@ def add_EnvServerServicer_to_server(servicer, server):
             ),
             'Close': grpc.unary_unary_rpc_method_handler(
                     servicer.Close,
+                    request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+            ),
+            'Shutdown': grpc.unary_unary_rpc_method_handler(
+                    servicer.Shutdown,
                     request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
                     response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
             ),
@@ -234,6 +251,23 @@ class EnvServer(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Close',
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def Shutdown(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Shutdown',
             diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
             diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
             options, channel_credentials,
