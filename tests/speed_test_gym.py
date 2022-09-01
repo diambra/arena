@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 "Fps different than expected: "
                 "{} VS {}".format(avg_fps, opt.targetSpeed))
 
-        print("ALL GOOD!")
+        print("COMPLETED SUCCESSFULLY!")
     except Exception as e:
         print(e)
-        print("ALL BAD")
+        print("ERROR, ABORTED.")
