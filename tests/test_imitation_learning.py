@@ -122,7 +122,7 @@ try:
 
     env.close()
 
-    print("ALL GOOD!")
-except Exception as e:
-    print(e)
-    print("ALL BAD")
+        print("COMPLETED SUCCESSFULLY!")
+    except Exception as e:
+        print(e)
+        print("ERROR, ABORTED.")
