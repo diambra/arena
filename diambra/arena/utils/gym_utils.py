@@ -166,7 +166,7 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
         if viz:
             obs = np.array(observation).astype(np.float32) / 255
 
-    if viz:
+    if viz and 'DISPLAY' in os.environ:
         cv2.imshow("[{}] Frame".format(os.getpid()), obs[:, :, ::-1])  # rgb2bgr
         cv2.waitKey(wait_key)
 
@@ -201,7 +201,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
         if viz:
             obs = np.array(observation).astype(np.float32)
 
-    if viz:
+    if viz and 'DISPLAY' in os.environ:
         for idx in range(obs.shape[2]):
             cv2.imshow("[{}] Frame-{}".format(os.getpid(), idx), obs[:, :, idx])
 
