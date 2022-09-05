@@ -23,22 +23,22 @@ class EnvServerStub(object):
         self.EnvInit = channel.unary_unary(
                 '/interface.EnvServer/EnvInit',
                 request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvSettings.SerializeToString,
-                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInfoAndIntData.FromString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInitResponse.FromString,
                 )
         self.Reset = channel.unary_unary(
                 '/interface.EnvServer/Reset',
                 request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
-                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.FromString,
                 )
         self.Step1P = channel.unary_unary(
                 '/interface.EnvServer/Step1P',
                 request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
-                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.FromString,
                 )
         self.Step2P = channel.unary_unary(
                 '/interface.EnvServer/Step2P',
                 request_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
-                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
+                response_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.FromString,
                 )
         self.Close = channel.unary_unary(
                 '/interface.EnvServer/Close',
@@ -116,22 +116,22 @@ def add_EnvServerServicer_to_server(servicer, server):
             'EnvInit': grpc.unary_unary_rpc_method_handler(
                     servicer.EnvInit,
                     request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvSettings.FromString,
-                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInfoAndIntData.SerializeToString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInitResponse.SerializeToString,
             ),
             'Reset': grpc.unary_unary_rpc_method_handler(
                     servicer.Reset,
                     request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.FromString,
-                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.SerializeToString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.SerializeToString,
             ),
             'Step1P': grpc.unary_unary_rpc_method_handler(
                     servicer.Step1P,
                     request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.FromString,
-                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.SerializeToString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.SerializeToString,
             ),
             'Step2P': grpc.unary_unary_rpc_method_handler(
                     servicer.Step2P,
                     request_deserializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.FromString,
-                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.SerializeToString,
+                    response_serializer=diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.SerializeToString,
             ),
             'Close': grpc.unary_unary_rpc_method_handler(
                     servicer.Close,
@@ -184,7 +184,7 @@ class EnvServer(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/EnvInit',
             diambra_dot_arena_dot_engine_dot_interface__pb2.EnvSettings.SerializeToString,
-            diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInfoAndIntData.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.EnvInitResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -201,7 +201,7 @@ class EnvServer(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Reset',
             diambra_dot_arena_dot_engine_dot_interface__pb2.Empty.SerializeToString,
-            diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -218,7 +218,7 @@ class EnvServer(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Step1P',
             diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
-            diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -235,7 +235,7 @@ class EnvServer(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/interface.EnvServer/Step2P',
             diambra_dot_arena_dot_engine_dot_interface__pb2.Actions.SerializeToString,
-            diambra_dot_arena_dot_engine_dot_interface__pb2.Obs.FromString,
+            diambra_dot_arena_dot_engine_dot_interface__pb2.Observation.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

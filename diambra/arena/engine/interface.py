@@ -39,41 +39,41 @@ class DiambraEngine:
     def env_settings_to_pb_request(self, env_settings):
 
         characters = {
-            "P1": [env_settings["characters"][0][0], env_settings["characters"][0][1], env_settings["characters"][0][2]],
-            "P2": [env_settings["characters"][1][0], env_settings["characters"][1][1], env_settings["characters"][1][2]]
+            "p1": [env_settings["characters"][0][0], env_settings["characters"][0][1], env_settings["characters"][0][2]],
+            "p2": [env_settings["characters"][1][0], env_settings["characters"][1][1], env_settings["characters"][1][2]]
         }
-        char_outfits = {
-            "first": env_settings["char_outfits"][0],
-            "second": env_settings["char_outfits"][1]
+        outfits = {
+            "p1": env_settings["char_outfits"][0],
+            "p2": env_settings["char_outfits"][1]
         }
         frame_shape = {
             "h": env_settings["frame_shape"][0],
             "w": env_settings["frame_shape"][1],
             "c": env_settings["frame_shape"][2]
         }
-        action_space = {
-            "first": env_settings["action_space"][0],
-            "second": env_settings["action_space"][1]
+        action_spaces = {
+            "p1": interface_pb2.ACTION_SPACE_DISCRETE if env_settings["action_space"][0] == "discrete" else interface_pb2.ACTION_SPACE_MULTI_DISCRETE,
+            "p2": interface_pb2.ACTION_SPACE_DISCRETE if env_settings["action_space"][1] == "discrete" else interface_pb2.ACTION_SPACE_MULTI_DISCRETE,
         }
-        attack_but_combination = {
-            "first": env_settings["attack_but_combination"][0],
-            "second": env_settings["attack_but_combination"][1]
+        attack_buttons_combinations = {
+            "p1": env_settings["attack_but_combination"][0],
+            "p2": env_settings["attack_but_combination"][1]
         }
-        super_art = {
-            "first": env_settings["super_art"][0],
-            "second": env_settings["super_art"][1]
+        super_arts = {
+            "p1": env_settings["super_art"][0],
+            "p2": env_settings["super_art"][1]
         }
-        fighting_style = {
-            "first": env_settings["fighting_style"][0],
-            "second": env_settings["fighting_style"][1]
+        fighting_styles = {
+            "p1": env_settings["fighting_style"][0],
+            "p2": env_settings["fighting_style"][1]
         }
-        ultimate_style = {
-            "P1": {
+        ultimate_styles = {
+            "p1": {
                 "dash": env_settings["ultimate_style"][0][0],
                 "evade": env_settings["ultimate_style"][0][1],
                 "bar": env_settings["ultimate_style"][0][2]
             },
-            "P2": {
+            "p2": {
                 "dash": env_settings["ultimate_style"][1][0],
                 "evade": env_settings["ultimate_style"][1][1],
                 "bar": env_settings["ultimate_style"][1][2]
@@ -81,26 +81,26 @@ class DiambraEngine:
         }
 
         request = interface_pb2.EnvSettings(
-            gameId=env_settings["game_id"],
-            continueGame=env_settings["continue_game"],
-            showFinal=env_settings["show_final"],
-            stepRatio=env_settings["step_ratio"],
+            game_id=env_settings["game_id"],
+            continue_game=env_settings["continue_game"],
+            show_final=env_settings["show_final"],
+            step_ratio=env_settings["step_ratio"],
             player=env_settings["player"],
             difficulty=env_settings["difficulty"],
             characters=characters,
-            charOutfits=char_outfits,
-            frameShape=frame_shape,
-            actionSpace=action_space,
-            attackButCombination=attack_but_combination,
+            outfits=outfits,
+            frame_shape=frame_shape,
+            action_spaces=action_spaces,
+            attack_buttons_combinations=attack_buttons_combinations,
             hardcore=env_settings["hardcore"],
-            disableKeyboard=env_settings["disable_keyboard"],
-            disableJoystick=env_settings["disable_joystick"],
+            disable_keyboard=env_settings["disable_keyboard"],
+            disable_joystick=env_settings["disable_joystick"],
             rank=env_settings["rank"],
-            randomSeed=env_settings["seed"],
-            superArt=super_art,
+            random_seed=env_settings["seed"],
+            super_arts=super_arts,
             tower=env_settings["tower"],
-            fightingStyle=fighting_style,
-            ultimateStyle=ultimate_style
+            fighting_styles=fighting_styles,
+            ultimate_styles=ultimate_styles
         )
 
         return request
@@ -131,30 +131,25 @@ class DiambraEngine:
         response = self._env_init(env_settings_pb)
 
         move_dict = {}
-        for idx in range(0, len(response.actionsDict.moves), 2):
-            move_dict[int(response.actionsDict.moves[idx])] = response.actionsDict.moves[idx + 1]
+        for idx in range(0, len(response.button_mapping.moves), 2):
+            move_dict[int(response.button_mapping.moves[idx])] = response.button_mapping.moves[idx + 1]
         att_dict = {}
-        for idx in range(0, len(response.actionsDict.attacks), 2):
-            att_dict[int(response.actionsDict.attacks[idx])] = response.actionsDict.attacks[idx + 1]
+        for idx in range(0, len(response.button_mapping.attacks), 2):
+            att_dict[int(response.button_mapping.attacks[idx])] = response.button_mapping.attacks[idx + 1]
 
         env_info_dict = {
-            "n_actions": [[response.nActions.butComb.first, response.nActions.butComb.second],
-                          [response.nActions.noButComb.first, response.nActions.noButComb.second]],
-            "frame_shape": [response.frameShape.h, response.frameShape.w, response.frameShape.c],
-            "delta_health": response.deltaHealth,
-            "max_stage": response.maxStage,
-            "min_max_rew": [response.minMaxRew.first, response.minMaxRew.second],
-            "char_list": list(response.charList),
-            "actions_list": [list(response.actionsList.moves), list(response.actionsList.attacks)],
+            "n_actions": [[response.available_actions.with_buttons_combination.moves,
+                           response.available_actions.with_buttons_combination.attacks],
+                          [response.available_actions.without_buttons_combination.moves,
+                           response.available_actions.without_buttons_combination.attacks]],
+            "frame_shape": [response.frame_shape.h, response.frame_shape.w, response.frame_shape.c],
+            "delta_health": response.delta_health,
+            "max_stage": response.max_stage,
+            "cumulative_reward_bounds": [response.cumulative_reward_bounds.min, response.cumulative_reward_bounds.max],
+            "char_list": list(response.char_list),
+            "actions_list": [list(response.buttons.moves), list(response.buttons.attacks)],
             "actions_dict": [move_dict, att_dict],
-            "additional_obs": [
-                {
-                    "name": response.additionalObs[idx].name,
-                    "type": response.additionalObs[idx].type,
-                    "min": response.additionalObs[idx].min,
-                    "max": response.additionalObs[idx].max,
-                } for idx in range(len(response.additionalObs))
-            ]
+            "ram_states": response.ram_states
         }
 
         # Set frame size
@@ -169,21 +164,21 @@ class DiambraEngine:
     def read_data(self, response):
 
         # Adding boolean flags
-        data = {"round_done": response.doneConditions.round,
-                "stage_done": response.doneConditions.stage,
-                "game_done": response.doneConditions.game,
-                "ep_done": response.doneConditions.episode}
+        data = {"round_done": response.game_state.round_done,
+                "stage_done": response.game_state.stage_done,
+                "game_done": response.game_state.game_done,
+                "ep_done": response.game_state.episode_done}
 
         # Adding int variables
         # Actions
-        data["moveActionP1"] = response.playersActions.P1.mov
-        data["attackActionP1"] = response.playersActions.P1.att
-        data["moveActionP2"] = response.playersActions.P2.mov
-        data["attackActionP2"] = response.playersActions.P2.att
+        data["moveActionP1"] = response.actions.p1.move
+        data["attackActionP1"] = response.actions.p1.attack
+        data["moveActionP2"] = response.actions.p2.move
+        data["attackActionP2"] = response.actions.p2.attack
 
-        # Additional Observations
-        for idx in range(len(response.additionalObs)):
-            data[response.additionalObs[idx].name] = response.additionalObs[idx].val
+        # Ram states
+        for k, v in response.ram_states.items():
+            data[k] = v.val
 
         return data
 
@@ -209,8 +204,8 @@ class DiambraEngine:
     # Step the environment (1P) [pb low level]
     def _step_1p(self, mov_p1, att_p1):
         actions = interface_pb2.Actions()
-        actions.P1.mov = mov_p1
-        actions.P1.att = att_p1
+        actions.p1.move = mov_p1
+        actions.p1.attack = att_p1
         return self.stub.Step1P(actions)
 
     # Step the environment (1P)
@@ -223,10 +218,10 @@ class DiambraEngine:
     # Step the environment (2P) [pb low level]
     def _step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
         actions = interface_pb2.Actions()
-        actions.P1.mov = mov_p1
-        actions.P1.att = att_p1
-        actions.P2.mov = mov_p2
-        actions.P2.att = att_p2
+        actions.p1.move = mov_p1
+        actions.p1.attack = att_p1
+        actions.p2.move = mov_p2
+        actions.p2.attack = att_p2
         return self.stub.Step2P(actions)
 
     # Step the environment (2P)

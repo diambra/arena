@@ -44,7 +44,7 @@ class TrajectoryRecorder(gym.Wrapper):
 
         # Items to store
         self.last_frame_hist = []
-        self.add_obs_hist = []
+        self.ram_states_hist = []
         self.rewards_hist = []
         self.actions_hist = []
         self.flag_hist = []
@@ -58,7 +58,7 @@ class TrajectoryRecorder(gym.Wrapper):
         # Store the whole obs without the frame
         tmp_obs = obs.copy()
         tmp_obs.pop("frame")
-        self.add_obs_hist.append(tmp_obs)
+        self.ram_states_hist.append(tmp_obs)
 
         return obs
 
@@ -84,7 +84,7 @@ class TrajectoryRecorder(gym.Wrapper):
         # Store the whole obs without the frame
         tmp_obs = obs.copy()
         tmp_obs.pop("frame")
-        self.add_obs_hist.append(tmp_obs)
+        self.ram_states_hist.append(tmp_obs)
 
         self.rewards_hist.append(reward)
         self.actions_hist.append(action)
@@ -122,7 +122,7 @@ class TrajectoryRecorder(gym.Wrapper):
             to_save["ep_len"] = len(self.rewards_hist)
             to_save["cum_rew"] = self.cumulative_rew
             to_save["frames"] = self.last_frame_hist
-            to_save["add_obs"] = self.add_obs_hist
+            to_save["ram_states"] = self.ram_states_hist
             to_save["rewards"] = self.rewards_hist
             to_save["actions"] = self.actions_hist
             to_save["done_flags"] = self.flag_hist
