@@ -12,6 +12,7 @@ from .engine.interface import DiambraEngine
 class DiambraGymHardcoreBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
+    hardcore = False
 
     def __init__(self, env_settings):
         super(DiambraGymHardcoreBase, self).__init__()
@@ -106,7 +107,16 @@ class DiambraGymHardcoreBase(gym.Env):
 
     # Step method to be implemented in derived classes
     def step(self, action):
-        raise NotImplementedError()
+        self.frame, reward, done, data = self.step_complete(action)
+
+        if self.hardcore:
+            observation = self.frame
+        else:
+            observation = self.ram_states_integration(self.frame, data)
+
+        return observation, reward, done,\
+            {"round_done": data["round_done"], "stage_done": data["stage_done"],
+             "game_done": data["game_done"], "ep_done": data["ep_done"]}
 
     # Resetting the environment
     def reset(self):
@@ -143,6 +153,7 @@ class DiambraGymHardcoreBase(gym.Env):
 class DiambraGymHardcore1P(DiambraGymHardcoreBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
+        super().hardcore = True
 
         # Define action and observation space
         # They must be gym.spaces objects
@@ -194,21 +205,13 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
 
         return self.frame, reward, done, data
 
-    # Step the environment
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        return self.frame, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
-
 # DIAMBRA Gym base class for two players mode
 
 
 class DiambraGymHardcore2P(DiambraGymHardcoreBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
+        super().hardcore = True
 
         # Define action spaces, they must be gym.spaces objects
         action_space_dict = {}
@@ -269,15 +272,6 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
         # data["ep_done"]   = done
 
         return self.frame, reward, done, data
-
-    # Step the environment
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        return self.frame, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
 
 # DIAMBRA Gym base class providing frame and additional info as observations
 
@@ -360,16 +354,6 @@ class DiambraGym1P(DiambraGymHardcore1P):
         observation["P1"] = player_spec_dict
 
         return observation
-
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        observation = self.ram_states_integration(self.frame, data)
-
-        return observation, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
 
     # Reset the environment
     def reset(self):
@@ -469,17 +453,6 @@ class DiambraGym2P(DiambraGymHardcore2P):
             observation[elem] = player_spec_dict
 
         return observation
-
-    # Step the environment
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        observation = self.ram_states_integration(self.frame, data)
-
-        return observation, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
 
     # Reset the environment
     def reset(self):
