@@ -11,16 +11,16 @@ import diambra.arena.engine.interface_pb2_grpc as interface_pb2_grpc
 class DiambraEngine:
     """Diambra Environment gym interface"""
 
-    def __init__(self, env_address):
+    def __init__(self, env_address, grpc_timeout=60):
 
         # Opening gRPC channel
         self.channel = grpc.insecure_channel(env_address)
         self.stub = interface_pb2_grpc.EnvServerStub(self.channel)
 
         # Wait for grpc server to be ready
-        print("Trying to connect to DIAMBRA Engine server ...")
+        print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
         try:
-            grpc.channel_ready_future(self.channel).result(timeout=60)
+            grpc.channel_ready_future(self.channel).result(timeout=grpc_timeout)
         except grpc.FutureTimeoutError:
             print("... failed.")
             exceptionMessage = "DIAMBRA Arena failed to connect to the Engine Server."
