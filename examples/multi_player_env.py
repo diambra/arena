@@ -24,6 +24,7 @@ while True:
 
     actions = env.action_space.sample()
     actions = np.append(actions["P1"], actions["P2"])
+    print("Actions: {}".format(actions))
 
     observation, reward, done, info = env.step(actions)
     show_gym_obs(observation, env.char_names)
