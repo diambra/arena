@@ -58,6 +58,7 @@ show_wrap_obs(observation, env.n_actions_stack, env.char_names)
 while True:
 
     actions = env.action_space.sample()
+    print("Actions: {}".format(actions))
 
     observation, reward, done, info = env.step(actions)
     show_wrap_obs(observation, env.n_actions_stack, env.char_names)

@@ -116,7 +116,7 @@ class ImitationLearningBase(gym.Env):
         done_flags = self.rl_traj_dict["done_flags"][self.step_idx]
 
         if (done_flags[0] or done_flags[1] or done_flags[2]) and not done:
-            self.shift_counter += self.frame_n_channels-1
+            self.shift_counter += self.frame_n_channels - 1
 
         # Observation retrieval
         observation = self.obs_retrieval()
@@ -306,7 +306,7 @@ class ImitationLearningHardcore(ImitationLearningBase):
             observation[:, :, iframe] = self.rl_traj_dict["frames"][self.step_idx +
                                                                     self.shift_counter + iframe - reset_shift]
         # Storing last observation for rendering
-        self.last_obs = observation[:, :, self.frame_n_channels-1]
+        self.last_obs = observation[:, :, self.frame_n_channels - 1]
 
         return observation
 
@@ -338,8 +338,7 @@ class ImitationLearning(ImitationLearningBase):
     # Specific observation retrieval
     def obs_retrieval(self, reset_shift=0):
         # Observation retrieval
-        observation = self.rl_traj_dict["add_obs"][self.step_idx +
-                                                   1 - reset_shift].copy()
+        observation = self.rl_traj_dict["ram_states"][self.step_idx + 1 - reset_shift].copy()
 
         # Frame
         observation["frame"] = np.zeros(
@@ -348,7 +347,7 @@ class ImitationLearning(ImitationLearningBase):
             observation["frame"][:, :, iframe] = self.rl_traj_dict["frames"][self.step_idx +
                                                                              self.shift_counter + iframe - reset_shift]
         # Storing last observation for rendering
-        self.last_obs = observation["frame"][:, :, self.frame_n_channels-1]
+        self.last_obs = observation["frame"][:, :, self.frame_n_channels - 1]
 
         return observation
 
@@ -366,12 +365,12 @@ class ImitationLearning(ImitationLearningBase):
         super().generate_p2_experience_from_p1()
 
         # Process Additiona Obs for P2 (copy them in P1 position)
-        for add_obs in self.rl_traj_dict_p2["add_obs"]:
-            add_obs.pop("P1")
-            add_obs["P1"] = add_obs.pop("P2")
-            add_obs["stage"] = 0
+        for ram_states in self.rl_traj_dict_p2["ram_states"]:
+            ram_states.pop("P1")
+            ram_states["P1"] = ram_states.pop("P2")
+            ram_states["stage"] = 0
 
         # Remove P2 info from P1 Observation
-        for add_obs in self.rl_traj_dict["add_obs"]:
-            add_obs.pop("P2")
-            add_obs["stage"] = 0
+        for ram_states in self.rl_traj_dict["ram_states"]:
+            ram_states.pop("P2")
+            ram_states["stage"] = 0

@@ -31,7 +31,7 @@ settings["hardcore"] = False
 
 # Game-specific options (see documentation for details)
 # Game difficulty level
-settings["difficulty"] = 3
+settings["difficulty"] = 4
 
 # Character to be used, automatically extended with "Random" for games
 # required to select more than one character (e.g. Tekken Tag Tournament)
@@ -41,7 +41,7 @@ settings["characters"] = [["Random"], ["Random"]]
 settings["char_outfits"] = [2, 2]
 
 # If to use discrete or multi_discrete action space
-settings["action_space"] = "discrete"
+settings["action_space"] = "multi_discrete"
 
 # If to use attack buttons combinations actions
 settings["attack_but_combination"] = True
@@ -54,6 +54,7 @@ show_gym_obs(observation, env.char_names)
 while True:
 
     actions = env.action_space.sample()
+    print("Actions: {}".format(actions))
 
     observation, reward, done, info = env.step(actions)
     show_gym_obs(observation, env.char_names)

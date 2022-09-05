@@ -67,7 +67,7 @@ class DiambraGymHardcoreBase(gym.Env):
         self.max_stage = env_info_dict["max_stage"]
 
         # Min-Max reward
-        self.minmax_reward = env_info_dict["min_max_rew"]
+        self.cumulative_reward_bounds = env_info_dict["cumulative_reward_bounds"]
 
         # Characters names list
         self.char_names = env_info_dict["char_list"]
@@ -78,11 +78,12 @@ class DiambraGymHardcoreBase(gym.Env):
         # Action dict
         self.print_actions_dict = env_info_dict["actions_dict"]
 
-        # Additional Obs map
-        self.add_obs = {}
-        for idx in range(len(env_info_dict["additional_obs"])):
-            elem = env_info_dict["additional_obs"][idx]
-            self.add_obs[elem["name"]] = [elem["type"], elem["min"], elem["max"]]
+        # Ram states map
+        self.ram_states = {}
+        for k in sorted(env_info_dict["ram_states"].keys()):
+            self.ram_states[k] = [env_info_dict["ram_states"][k].type,
+                                  env_info_dict["ram_states"][k].min,
+                                  env_info_dict["ram_states"][k].max]
 
     # Return env action list
     def action_list(self):
@@ -98,10 +99,10 @@ class DiambraGymHardcoreBase(gym.Env):
         for k, v in self.print_actions_dict[1].items():
             print(" {}: {}".format(k, v))
 
-    # Return min max rewards for the environment
-    def get_min_max_reward(self):
-        return [self.minmax_reward[0] / (self.reward_normalization_value),
-                self.minmax_reward[1] / (self.reward_normalization_value)]
+    # Return cumulative reward bounds for the environment
+    def get_cumulative_reward_bounds(self):
+        return [self.cumulative_reward_bounds[0] / (self.reward_normalization_value),
+                self.cumulative_reward_bounds[1] / (self.reward_normalization_value)]
 
     # Step method to be implemented in derived classes
     def step(self, action):
@@ -295,7 +296,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
         player_spec_dict = {}
 
         # Adding env additional observations (side-specific)
-        for k, v in self.add_obs.items():
+        for k, v in self.ram_states.items():
 
             if k == "stage":
                 continue
@@ -323,13 +324,13 @@ class DiambraGym1P(DiambraGymHardcore1P):
 
         player_spec_dict["actions"] = spaces.Dict(actions_dict)
         observation_space_dict["P1"] = spaces.Dict(player_spec_dict)
-        observation_space_dict["stage"] = spaces.Box(low=self.add_obs["stage"][1],
-                                                     high=self.add_obs["stage"][2],
+        observation_space_dict["stage"] = spaces.Box(low=self.ram_states["stage"][1],
+                                                     high=self.ram_states["stage"][2],
                                                      shape=(1,), dtype=np.int8)
 
         self.observation_space = spaces.Dict(observation_space_dict)
 
-    def add_obs_integration(self, frame, data):
+    def ram_states_integration(self, frame, data):
 
         observation = {}
         observation["frame"] = frame
@@ -338,7 +339,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
         player_spec_dict = {}
 
         # Adding env additional observations (side-specific)
-        for k, v in self.add_obs.items():
+        for k, v in self.ram_states.items():
 
             if k == "stage":
                 continue
@@ -364,7 +365,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
 
         self.frame, reward, done, data = self.step_complete(action)
 
-        observation = self.add_obs_integration(self.frame, data)
+        observation = self.ram_states_integration(self.frame, data)
 
         return observation, reward, done,\
             {"round_done": data["round_done"], "stage_done": data["stage_done"],
@@ -373,7 +374,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
     # Reset the environment
     def reset(self):
         self.frame, data, self.player_side = self.arena_engine.reset()
-        observation = self.add_obs_integration(self.frame, data)
+        observation = self.ram_states_integration(self.frame, data)
         return observation
 
 # DIAMBRA Gym base class providing frame and additional info as observations
@@ -393,7 +394,7 @@ class DiambraGym2P(DiambraGymHardcore2P):
         player_spec_dict = {}
 
         # Adding env additional observations (side-specific)
-        for k, v in self.add_obs.items():
+        for k, v in self.ram_states.items():
 
             if k == "stage":
                 continue
@@ -430,13 +431,13 @@ class DiambraGym2P(DiambraGymHardcore2P):
         player_dict_p2 = player_spec_dict.copy()
         observation_space_dict["P2"] = spaces.Dict(player_dict_p2)
 
-        observation_space_dict["stage"] = spaces.Box(low=self.add_obs["stage"][1],
-                                                     high=self.add_obs["stage"][2],
+        observation_space_dict["stage"] = spaces.Box(low=self.ram_states["stage"][1],
+                                                     high=self.ram_states["stage"][2],
                                                      shape=(1,), dtype=np.int8)
 
         self.observation_space = spaces.Dict(observation_space_dict)
 
-    def add_obs_integration(self, frame, data):
+    def ram_states_integration(self, frame, data):
 
         observation = {}
         observation["frame"] = frame
@@ -447,7 +448,7 @@ class DiambraGym2P(DiambraGymHardcore2P):
             player_spec_dict = {}
 
             # Adding env additional observations (side-specific)
-            for k, v in self.add_obs.items():
+            for k, v in self.ram_states.items():
 
                 if k == "stage":
                     continue
@@ -474,7 +475,7 @@ class DiambraGym2P(DiambraGymHardcore2P):
 
         self.frame, reward, done, data = self.step_complete(action)
 
-        observation = self.add_obs_integration(self.frame, data)
+        observation = self.ram_states_integration(self.frame, data)
 
         return observation, reward, done,\
             {"round_done": data["round_done"], "stage_done": data["stage_done"],
@@ -483,5 +484,5 @@ class DiambraGym2P(DiambraGymHardcore2P):
     # Reset the environment
     def reset(self):
         self.frame, data, self.player_side = self.arena_engine.reset()
-        observation = self.add_obs_integration(self.frame, data)
+        observation = self.ram_states_integration(self.frame, data)
         return observation
