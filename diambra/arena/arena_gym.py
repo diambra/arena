@@ -23,7 +23,7 @@ class DiambraGymHardcoreBase(gym.Env):
         self.render_gui_started = False
 
         # Launch DIAMBRA Arena
-        self.arena_engine = DiambraEngine(env_settings["env_address"])
+        self.arena_engine = DiambraEngine(env_settings["env_address"], env_settings["grpc_timeout"])
 
         # Send environment settings, retrieve environment info
         env_info_dict = self.arena_engine.env_init(self.env_settings)

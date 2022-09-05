@@ -37,6 +37,7 @@ def env_settings_check(env_settings):
     default_env_settings["disable_joystick"] = True
     default_env_settings["rank"] = 0
     default_env_settings["seed"] = -1
+    default_env_settings["grpc_timeout"] = 60
 
     for k, v in env_settings.items():
 
