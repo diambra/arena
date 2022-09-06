@@ -44,7 +44,7 @@ wrappers_settings["scale"] = True
 wrappers_settings["scale_mod"] = 0
 
 # Flattening observation dictionary and filtering
-# a sub-set of the additional observations
+# a sub-set of the RAM states
 wrappers_settings["flatten"] = True
 wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide",
                                     "P1_ownHealth", "P1_oppChar",
