@@ -167,7 +167,8 @@ class DiambraEngine:
         data = {"round_done": response.game_state.round_done,
                 "stage_done": response.game_state.stage_done,
                 "game_done": response.game_state.game_done,
-                "ep_done": response.game_state.episode_done}
+                "ep_done": response.game_state.episode_done,
+                "env_done": response.game_state.env_done}
 
         # Adding int variables
         # Actions
