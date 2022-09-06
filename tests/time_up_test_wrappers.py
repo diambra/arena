@@ -3,18 +3,17 @@ import diambra.arena
 from diambra.arena.utils.gym_utils import env_spaces_summary, show_wrap_obs
 import argparse
 import time
+import sys
 from os.path import expanduser
 import numpy as np
 
 if __name__ == '__main__':
-    time_dep_seed = int((time.time()-int(time.time()-0.5))*1000)
+    time_dep_seed = int((time.time() - int(time.time() - 0.5)) * 1000)
 
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument('--gameId', type=str,
-                            default="doapp", help='Game ID')
-        parser.add_argument('--continueGame', type=float,
-                            default=0.0, help='ContinueGame flag (-inf,+1.0]')
+        parser.add_argument('--gameId', type=str, default="doapp", help='Game ID')
+        parser.add_argument('--continueGame', type=float, default=0.0, help='ContinueGame flag (-inf,+1.0]')
         parser.add_argument('--firstRoundAct', type=int, default=0,
                             help='Actions active for first round (0=F)')
         parser.add_argument('--interactiveViz', type=int, default=0,
@@ -72,11 +71,8 @@ if __name__ == '__main__':
 
             actions = [None, None]
             for idx in range(2):
-                if (opt.firstRoundAct == 1
-                    and observation["P1"]["ownWins"] == 0.0
-                        and observation["P1"]["oppWins"] == 0.0):
-                    actions[idx] = env.action_space["P{}".format(
-                        idx+1)].sample()
+                if (opt.firstRoundAct == 1 and observation["P1"]["ownWins"] == 0.0 and observation["P1"]["oppWins"] == 0.0):
+                    actions[idx] = env.action_space["P{}".format(idx + 1)].sample()
                 else:
                     actions[idx] = 0
 
@@ -108,3 +104,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         print("ERROR, ABORTED.")
+        sys.exit(1)

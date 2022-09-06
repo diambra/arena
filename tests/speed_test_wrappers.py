@@ -2,6 +2,7 @@
 import diambra.arena
 import argparse
 import time
+import sys
 import numpy as np
 
 
@@ -16,16 +17,11 @@ if __name__ == '__main__':
 
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument('--gameId', type=str, default="doapp",
-                            help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
-        parser.add_argument('--player', type=str, default="Random",
-                            help='Player [(Random), P1, P2, P1P2]')
-        parser.add_argument('--actionSpace', type=str,
-                            default="discrete", help='(discrete)/multidis.')
-        parser.add_argument('--attButComb',  type=int, default=0,
-                            help='Use attack button combinations (0=F)/1=T')
-        parser.add_argument('--targetSpeed', type=int,
-                            default=100,        help='Reference speed')
+        parser.add_argument('--gameId', type=str, default="doapp", help='Game ID [(doapp), sfiii3n, tektagt, umk3]')
+        parser.add_argument('--player', type=str, default="Random", help='Player [(Random), P1, P2, P1P2]')
+        parser.add_argument('--actionSpace', type=str, default="discrete", help='(discrete)/multidis.')
+        parser.add_argument('--attButComb', type=int, default=0, help='Use attack button combinations (0=F)/1=T')
+        parser.add_argument('--targetSpeed', type=int, default=100, help='Reference speed')
         opt = parser.parse_args()
         print(opt)
 
@@ -68,17 +64,15 @@ if __name__ == '__main__':
                 actions = env.action_space.sample()
             else:
                 for idx in range(2):
-                    actions[idx] = env.action_space["P{}".format(
-                        idx+1)].sample()
+                    actions[idx] = env.action_space["P{}".format(idx + 1)].sample()
 
-            if (settings["player"] == "P1P2"
-                    or settings["action_space"] != "discrete"):
+            if (settings["player"] == "P1P2" or settings["action_space"] != "discrete"):
                 actions = np.append(actions[0], actions[1])
 
             tic = time.time()
             observation, reward, done, info = env.step(actions)
             toc = time.time()
-            fps = 1/(toc-tic)
+            fps = 1 / (toc - tic)
             fps_val.append(fps)
 
             if done:
@@ -92,7 +86,7 @@ if __name__ == '__main__':
         print("Average speed = "
               "{} FPS, STD {} FPS".format(avg_fps, np.std(fps_val2)))
 
-        if abs(avg_fps - opt.targetSpeed) > opt.targetSpeed*0.025:
+        if abs(avg_fps - opt.targetSpeed) > opt.targetSpeed * 0.025:
             raise RuntimeError(
                 "Fps different than expected: "
                 "{} VS {}".format(avg_fps, opt.targetSpeed))
@@ -101,3 +95,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         print("ERROR, ABORTED.")
+        sys.exit(1)

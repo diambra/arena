@@ -3,22 +3,19 @@ import diambra.arena
 from diambra.arena.utils.gym_utils import show_wrap_obs
 import argparse
 import os
+import sys
 from os import listdir
 import numpy as np
 
 if __name__ == '__main__':
     try:
         parser = argparse.ArgumentParser()
-        parser.add_argument('--path',     type=str, required=True,
-                            help='Path where recorded files are stored')
-        parser.add_argument('--nProc',    type=int, default=1,
-                            help='Number of processors [(1), 2]')
+        parser.add_argument('--path', type=str, required=True, help='Path where recorded files are stored')
+        parser.add_argument('--nProc', type=int, default=1, help='Number of processors [(1), 2]')
         parser.add_argument('--hardcore', type=int, default=0,
                             help='Hard Core Mode [(0=False), 1=True]')
-        parser.add_argument('--viz',      type=int, default=0,
-                            help='Visualization [(0=False), 1=True]')
-        parser.add_argument('--waitKey',  type=int, default=1,
-                            help='CV2 WaitKey [0, 1]')
+        parser.add_argument('--viz', type=int, default=0, help='Visualization [(0=False), 1=True]')
+        parser.add_argument('--waitKey', type=int, default=1, help='CV2 WaitKey [0, 1]')
         opt = parser.parse_args()
         print(opt)
 
@@ -80,7 +77,7 @@ if __name__ == '__main__':
                 # Frames equality check
                 if opt.hardcore == 0:
                     for frame_idx in range(observation["frame"].shape[2] - 1):
-                        if np.any(observation["frame"][:, :, frame_idx] != observation["frame"][:, :, frame_idx+1]):
+                        if np.any(observation["frame"][:, :, frame_idx] != observation["frame"][:, :, frame_idx + 1]):
                             raise RuntimeError("Frames inside observation after "
                                                "round/stage/game/episode done are "
                                                "not equal. Dones =",
@@ -90,7 +87,7 @@ if __name__ == '__main__':
                                                info["ep_done"])
                 else:
                     for frame_idx in range(observation.shape[2] - 1):
-                        if np.any(observation[:, :, frame_idx] != observation[:, :, frame_idx+1]):
+                        if np.any(observation[:, :, frame_idx] != observation[:, :, frame_idx + 1]):
                             raise RuntimeError("Frames inside observation after "
                                                "round/stage/game/episode done are "
                                                "not equal. Dones =",
@@ -126,3 +123,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         print("ERROR, ABORTED.")
+        sys.exit(1)

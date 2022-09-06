@@ -2,6 +2,7 @@
 import diambra.arena
 import argparse
 import time
+import sys
 import numpy as np
 
 
@@ -52,17 +53,15 @@ if __name__ == '__main__':
                 actions = env.action_space.sample()
             else:
                 for idx in range(2):
-                    actions[idx] = env.action_space["P{}".format(
-                        idx+1)].sample()
+                    actions[idx] = env.action_space["P{}".format(idx + 1)].sample()
 
-            if (settings["player"] == "P1P2"
-                    or settings["action_space"] != "discrete"):
+            if (settings["player"] == "P1P2" or settings["action_space"] != "discrete"):
                 actions = np.append(actions[0], actions[1])
 
             tic = time.time()
             observation, reward, done, info = env.step(actions)
             toc = time.time()
-            fps = 1/(toc-tic)
+            fps = 1 / (toc - tic)
             fps_val.append(fps)
 
             if done:
@@ -76,7 +75,7 @@ if __name__ == '__main__':
         print("Average speed "
               "= {} FPS, STD {} FPS".format(avg_fps, np.std(fps_val2)))
 
-        if abs(avg_fps - opt.targetSpeed) > opt.targetSpeed*0.025:
+        if abs(avg_fps - opt.targetSpeed) > opt.targetSpeed * 0.025:
             raise RuntimeError(
                 "Fps different than expected: "
                 "{} VS {}".format(avg_fps, opt.targetSpeed))
@@ -85,3 +84,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         print("ERROR, ABORTED.")
+        sys.exit(1)

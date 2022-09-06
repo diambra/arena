@@ -5,6 +5,7 @@ from diambra.arena.utils.gym_utils import env_spaces_summary,\
 import argparse
 import time
 import os
+import sys
 from os.path import expanduser
 import numpy as np
 
@@ -240,3 +241,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         print("ERROR, ABORTED.")
+        sys.exit(1)

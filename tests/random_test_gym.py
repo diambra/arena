@@ -4,6 +4,7 @@ from diambra.arena.utils.gym_utils import env_spaces_summary,\
     discrete_to_multi_discrete_action, show_gym_obs
 import argparse
 import time
+import sys
 import numpy as np
 
 if __name__ == '__main__':
@@ -193,3 +194,4 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         print("ERROR, ABORTED.")
+        sys.exit(1)

@@ -201,7 +201,7 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
 
         return self.frame, reward, done,\
             {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
+             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
 
 # DIAMBRA Gym base class for two players mode
 
@@ -277,7 +277,7 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
 
         return self.frame, reward, done,\
             {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
+             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
 
 # DIAMBRA Gym base class providing frame and additional info as observations
 
@@ -369,7 +369,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
 
         return observation, reward, done,\
             {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
+             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
 
     # Reset the environment
     def reset(self):
@@ -479,7 +479,7 @@ class DiambraGym2P(DiambraGymHardcore2P):
 
         return observation, reward, done,\
             {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"]}
+             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
 
     # Reset the environment
     def reset(self):
