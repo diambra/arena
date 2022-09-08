@@ -7,50 +7,11 @@ from collections.abc import Mapping
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
 
-
-# Functions
-
-def warp_frame_3c_func(obs, width, height):
-    obs["frame"] = cv2.resize(obs["frame"], (width, height),
-                              interpolation=cv2.INTER_LINEAR)[:, :, None]
-    return obs
-
-
 def warp_frame_func(obs, width, height):
     obs["frame"] = cv2.cvtColor(obs["frame"], cv2.COLOR_RGB2GRAY)
     return warp_frame_3c_func(obs, width, height)
 
-
-def scaled_float_obs_func(observation, observation_space):
-    # Process all observations
-    for k, v in observation.items():
-
-        if isinstance(v, dict):
-            scaled_float_obs_func(v, observation_space.spaces[k])
-        else:
-            v_space = observation_space.spaces[k]
-            if isinstance(v_space, spaces.MultiDiscrete):
-                n_act = observation_space.spaces[k].nvec[0]
-                buf_len = observation_space.spaces[k].nvec.shape[0]
-                actions_vector = np.zeros((buf_len * n_act), dtype=int)
-                for iact in range(buf_len):
-                    actions_vector[iact * n_act + observation[k][iact]] = 1
-                observation[k] = actions_vector
-            elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2):
-                var_vector = np.zeros(
-                    (observation_space.spaces[k].n), dtype=np.float32)
-                var_vector[observation[k]] = 1
-                observation[k] = var_vector
-            elif isinstance(v_space, spaces.Box):
-                high_val = np.max(v_space.high)
-                low_val = np.min(v_space.low)
-                observation[k] = (np.array(observation[k]).astype(
-                    np.float32) - low_val) / (high_val - low_val)
-    return observation
-
 # Env Wrappers classes
-
-
 class WarpFrame(gym.ObservationWrapper):
     def __init__(self, env, hw_obs_resize=[84, 84]):
         """
@@ -74,6 +35,11 @@ class WarpFrame(gym.ObservationWrapper):
         :return: the observation
         """
         return warp_frame_func(obs, self.width, self.height)
+
+def warp_frame_3c_func(obs, width, height):
+    obs["frame"] = cv2.resize(obs["frame"], (width, height),
+                              interpolation=cv2.INTER_LINEAR)[:, :, None]
+    return obs
 
 class WarpFrame3C(gym.ObservationWrapper):
     def __init__(self, env, hw_obs_resize=[224, 224]):
@@ -254,7 +220,6 @@ class ActionsStack(gym.Wrapper):
                 iplayer + 1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
         return obs, reward, done, info
 
-
 class ScaledFloatObsNeg(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
@@ -269,41 +234,68 @@ class ScaledFloatObsNeg(gym.ObservationWrapper):
             np.array(observation["frame"]).astype(np.float32) / 127.5) - 1.0
         return observation
 
-# Recursive function to modify obs dict
-
-
-def scaled_float_obs_space_func(obs_dict):
-    # Updating observation space dict
-    for k, v in obs_dict.spaces.items():
-
-        if isinstance(v, spaces.dict.Dict):
-            scaled_float_obs_space_func(v)
-        else:
-            if isinstance(v, spaces.MultiDiscrete):
-                # One hot encoding x nStack
-                n_val = v.nvec.shape[0]
-                max_val = v.nvec[0]
-                obs_dict.spaces[k] = spaces.MultiBinary(n_val * max_val)
-            elif isinstance(v, spaces.Discrete) and (v.n > 2):
-                # One hot encoding
-                obs_dict.spaces[k] = spaces.MultiBinary(v.n)
-            elif isinstance(v, spaces.Box):
-                obs_dict.spaces[k] = spaces.Box(
-                    low=0, high=1.0, shape=v.shape, dtype=np.float32)
-
-
 class ScaledFloatObs(gym.ObservationWrapper):
-    def __init__(self, env):
+    def __init__(self, env, exclude_image_scaling=False):
         gym.ObservationWrapper.__init__(self, env)
 
+        self.exclude_image_scaling = exclude_image_scaling
+
         self.original_observation_space = deepcopy(self.observation_space)
-        scaled_float_obs_space_func(self.observation_space)
+        self.scaled_float_obs_space_func(self.observation_space)
+
+    # Recursive function to modify obs dict
+    def scaled_float_obs_space_func(self, obs_dict):
+        # Updating observation space dict
+        for k, v in obs_dict.spaces.items():
+
+            if isinstance(v, spaces.dict.Dict):
+                self.scaled_float_obs_space_func(v)
+            else:
+                if isinstance(v, spaces.MultiDiscrete):
+                    # One hot encoding x nStack
+                    n_val = v.nvec.shape[0]
+                    max_val = v.nvec[0]
+                    obs_dict.spaces[k] = spaces.MultiBinary(n_val * max_val)
+                elif isinstance(v, spaces.Discrete) and (v.n > 2):
+                    # One hot encoding
+                    obs_dict.spaces[k] = spaces.MultiBinary(v.n)
+                elif isinstance(v, spaces.Box) and (self.exclude_image_scaling is False or len(v.shape) < 3):
+                    obs_dict.spaces[k] = spaces.Box(
+                        low=0, high=1.0, shape=v.shape, dtype=np.float32)
 
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
 
-        return scaled_float_obs_func(observation, self.original_observation_space)
+        return self.scaled_float_obs_func(observation, self.original_observation_space)
+
+    def scaled_float_obs_func(self, observation, observation_space):
+
+        # Process all observations
+        for k, v in observation.items():
+
+            if isinstance(v, dict):
+                self.scaled_float_obs_func(v, observation_space.spaces[k])
+            else:
+                v_space = observation_space.spaces[k]
+                if isinstance(v_space, spaces.MultiDiscrete):
+                    n_act = observation_space.spaces[k].nvec[0]
+                    buf_len = observation_space.spaces[k].nvec.shape[0]
+                    actions_vector = np.zeros((buf_len * n_act), dtype=int)
+                    for iact in range(buf_len):
+                        actions_vector[iact * n_act + observation[k][iact]] = 1
+                    observation[k] = actions_vector
+                elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2):
+                    var_vector = np.zeros(
+                        (observation_space.spaces[k].n), dtype=np.float32)
+                    var_vector[observation[k]] = 1
+                    observation[k] = var_vector
+                elif isinstance(v_space, spaces.Box) and (self.exclude_image_scaling is False or len(v_space.shape) < 3):
+                    high_val = np.max(v_space.high)
+                    low_val = np.min(v_space.low)
+                    observation[k] = (np.array(observation[k]).astype(
+                        np.float32) - low_val) / (high_val - low_val)
+        return observation
 
 
 class LazyFrames(object):
@@ -375,12 +367,12 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
 
         if filter_keys is not None:
             if (sorted(self.observation_space.keys()) != sorted(self.filter_keys)):
-                raise Exception("Specified observation key(s) not found:", 
+                raise Exception("Specified observation key(s) not found:",
                     "       Available key(s):", sorted(self.observation_space.keys()),
                     "       Specified key(s):", sorted(self.filter_keys),
                     "       Key(s) not found:", sorted([key for key in self.filter_keys if key not in self.observation_space.keys()]),
                 )
-                
+
 
     def observation(self, observation):
 

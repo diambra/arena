@@ -191,8 +191,9 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
                 else:
                     print("observation[\"{}\"]: {}".format(k, v))
             else:
-                print("observation[\"frame\"].shape:",
-                      observation["frame"].shape)
+                obs = np.array(observation["frame"]).astype(np.float32)
+                print("observation[\"frame\"]: shape {} - min {} - max {}".format(obs.shape, np.amin(obs), np.amax(obs)))
+                pass
 
         if viz:
             obs = np.array(observation["frame"]).astype(np.float32)
@@ -201,8 +202,9 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
             obs = np.array(observation).astype(np.float32)
 
     if viz and 'DISPLAY' in os.environ:
+        norm_factor = 255 if np.amax(obs) > 1.0 else 1.0
         for idx in range(obs.shape[2]):
-            cv2.imshow("[{}] Frame-{}".format(os.getpid(), idx), obs[:, :, idx])
+            cv2.imshow("[{}] Frame-{}".format(os.getpid(), idx), obs[:, :, idx] / norm_factor)
 
         cv2.waitKey(wait_key)
 
