@@ -38,7 +38,9 @@ wrappers_settings["dilation"] = 1
 wrappers_settings["actions_stack"] = 12
 
 # If to scale observation numerical values (deactivated by default)
+# and optionally exclude images from normalization (deactivated by default)
 wrappers_settings["scale"] = True
+wrappers_settings["exclude_image_scaling"] = True
 
 # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
 wrappers_settings["scale_mod"] = 0
