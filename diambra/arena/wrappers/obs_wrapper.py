@@ -69,10 +69,7 @@ class WarpFrame3C(gym.ObservationWrapper):
 class FrameStack(gym.Wrapper):
     def __init__(self, env, n_frames):
         """Stack n_frames last frames.
-        Returns lazy array, which is much more memory efficient.
-        See Also
-        --------
-        stable_baselines.common.atari_wrappers.LazyFrames
+
         :param env: (Gym Environment) the environment
         :param n_frames: (int) the number of frames to stack
         """
@@ -109,16 +106,12 @@ class FrameStack(gym.Wrapper):
 
     def get_ob(self):
         assert len(self.frames) == self.n_frames
-        return LazyFrames(list(self.frames))
+        return list(self.frames)
 
 
 class FrameStackDilated(gym.Wrapper):
     def __init__(self, env, n_frames, dilation):
         """Stack n_frames last frames with dilation factor.
-        Returns lazy array, which is much more memory efficient.
-        See Also
-        --------
-        stable_baselines.common.atari_wrappers.LazyFrames
         :param env: (Gym Environment) the environment
         :param n_frames: (int) the number of frames to stack
         :param dilation: (int) the dilation factor
@@ -131,8 +124,7 @@ class FrameStackDilated(gym.Wrapper):
         self.frames = deque([], maxlen=n_frames * dilation)
         shp = self.observation_space["frame"].shape
         self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
-                                                            shape=(
-                                                                shp[0], shp[1], shp[2] * n_frames),
+                                                            shape=(shp[0], shp[1], shp[2] * n_frames),
                                                             dtype=self.observation_space["frame"].dtype)
 
     def reset(self, **kwargs):
@@ -158,7 +150,7 @@ class FrameStackDilated(gym.Wrapper):
     def get_ob(self):
         frames_subset = list(self.frames)[self.dilation - 1::self.dilation]
         assert len(frames_subset) == self.n_frames
-        return LazyFrames(list(frames_subset))
+        return list(frames_subset)
 
 
 class ActionsStack(gym.Wrapper):
@@ -296,38 +288,6 @@ class ScaledFloatObs(gym.ObservationWrapper):
                     observation[k] = (np.array(observation[k]).astype(
                         np.float32) - low_val) / (high_val - low_val)
         return observation
-
-
-class LazyFrames(object):
-    def __init__(self, frames):
-        """
-        This object ensures that common frames between the observations
-        are only stored once. It exists purely to optimize memory usage
-        which can be huge for DQN's 1M frames replay buffers.
-        This object should only be converted to np.ndarray
-        before being passed to the model.
-        :param frames: ([int] or [float]) environment frames
-        """
-        self.frames = frames
-        self.out = None
-
-    def force(self):
-        if self.out is None:
-            self.out = np.concatenate(self.frames, axis=2)
-            self.frames = None
-        return self.out
-
-    def __array__(self, dtype=None):
-        out = self.force()
-        if dtype is not None:
-            out = out.astype(dtype)
-        return out
-
-    def __len__(self):
-        return len(self.force())
-
-    def __getitem__(self, i):
-        return self.force()[i]
 
 def flatten_filter_obs_func(input_dictionary, filter_keys):
     _FLAG_FIRST = object()
