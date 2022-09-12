@@ -1,26 +1,20 @@
 import numpy as np
 import os
 
+from diambra.engine import Client, model
 import grpc
-import diambra.arena.engine.interface_pb2 as interface_pb2
-import diambra.arena.engine.interface_pb2_grpc as interface_pb2_grpc
 
 # DIAMBRA Env Gym
-
 
 class DiambraEngine:
     """Diambra Environment gym interface"""
 
     def __init__(self, env_address, grpc_timeout=60):
 
-        # Opening gRPC channel
-        self.channel = grpc.insecure_channel(env_address)
-        self.stub = interface_pb2_grpc.EnvServerStub(self.channel)
-
-        # Wait for grpc server to be ready
-        print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
         try:
-            grpc.channel_ready_future(self.channel).result(timeout=grpc_timeout)
+            # Opening gRPC channel
+            self.client = Client(env_address, grpc_timeout)
+            print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
         except grpc.FutureTimeoutError:
             print("... failed.")
             exceptionMessage = "DIAMBRA Arena failed to connect to the Engine Server."
@@ -52,8 +46,8 @@ class DiambraEngine:
             "c": env_settings["frame_shape"][2]
         }
         action_spaces = {
-            "p1": interface_pb2.ACTION_SPACE_DISCRETE if env_settings["action_space"][0] == "discrete" else interface_pb2.ACTION_SPACE_MULTI_DISCRETE,
-            "p2": interface_pb2.ACTION_SPACE_DISCRETE if env_settings["action_space"][1] == "discrete" else interface_pb2.ACTION_SPACE_MULTI_DISCRETE,
+            "p1": model.ACTION_SPACE_DISCRETE if env_settings["action_space"][0] == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
+            "p2": model.ACTION_SPACE_DISCRETE if env_settings["action_space"][1] == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
         }
         attack_buttons_combinations = {
             "p1": env_settings["attack_but_combination"][0],
@@ -80,7 +74,7 @@ class DiambraEngine:
             }
         }
 
-        request = interface_pb2.EnvSettings(
+        request = model.EnvSettings(
             game_id=env_settings["game_id"],
             continue_game=env_settings["continue_game"],
             show_final=env_settings["show_final"],
@@ -108,10 +102,10 @@ class DiambraEngine:
     # Send env settings, retrieve env info and int variables list [pb low level]
     def _env_init(self, env_settings_pb):
         try:
-            response = self.stub.EnvInit(env_settings_pb)
+            response = self.client.EnvInit(env_settings_pb)
         except:
             try:
-                response = self.stub.GetError(interface_pb2.Empty())
+                response = self.client.GetError(model.Empty())
                 exceptionMessage = "Received error message from engine: " + response.errorMessage
                 print(exceptionMessage)
             except:
@@ -193,7 +187,7 @@ class DiambraEngine:
 
     # Reset the environment [pb low level]
     def _reset(self):
-        return self.stub.Reset(interface_pb2.Empty())
+        return self.client.Reset(model.Empty())
 
     # Reset the environment
     def reset(self):
@@ -204,10 +198,10 @@ class DiambraEngine:
 
     # Step the environment (1P) [pb low level]
     def _step_1p(self, mov_p1, att_p1):
-        actions = interface_pb2.Actions()
+        actions = model.Actions()
         actions.p1.move = mov_p1
         actions.p1.attack = att_p1
-        return self.stub.Step1P(actions)
+        return self.client.Step1P(actions)
 
     # Step the environment (1P)
     def step_1p(self, mov_p1, att_p1):
@@ -218,12 +212,12 @@ class DiambraEngine:
 
     # Step the environment (2P) [pb low level]
     def _step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
-        actions = interface_pb2.Actions()
+        actions = model.Actions()
         actions.p1.move = mov_p1
         actions.p1.attack = att_p1
         actions.p2.move = mov_p2
         actions.p2.attack = att_p2
-        return self.stub.Step2P(actions)
+        return self.client.Step2P(actions)
 
     # Step the environment (2P)
     def step_2p(self, mov_p1, att_p1, mov_p2, att_p2):
@@ -234,6 +228,6 @@ class DiambraEngine:
 
     # Closing DIAMBRA Arena
     def close(self):
-        response = self.stub.Close(interface_pb2.Empty())
-        self.channel.close()
+        response = self.client.Close(model.Empty())
+        self.client.channel.close()
         return response
