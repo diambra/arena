@@ -345,11 +345,10 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
             self.filter_keys += ["frame"]
 
         dictionary = flatten_filter_obs_space_func(self.observation_space, self.filter_keys)
-        print("dictionary = ", dictionary)
         self.observation_space = spaces.Dict(dictionary)
 
         if filter_keys is not None:
-            if (sorted(self.observation_space.keys()) != sorted(self.filter_keys)):
+            if (sorted(self.observation_space.spaces.keys()) != sorted(self.filter_keys)):
                 raise Exception("Specified observation key(s) not found:",
                     "       Available key(s):", sorted(self.observation_space.keys()),
                     "       Specified key(s):", sorted(self.filter_keys),
