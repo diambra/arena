@@ -7,10 +7,6 @@ from collections.abc import Mapping
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
 
-def warp_frame_func(obs, width, height):
-    obs["frame"] = cv2.cvtColor(obs["frame"], cv2.COLOR_RGB2GRAY)
-    return warp_frame_3c_func(obs, width, height)
-
 # Env Wrappers classes
 class WarpFrame(gym.ObservationWrapper):
     def __init__(self, env, hw_obs_resize=[84, 84]):
@@ -24,8 +20,7 @@ class WarpFrame(gym.ObservationWrapper):
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
         self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
-                                                            shape=(
-                                                                self.height, self.width, 1),
+                                                            shape=(self.height, self.width, 1),
                                                             dtype=self.observation_space["frame"].dtype)
 
     def observation(self, obs):
@@ -34,12 +29,10 @@ class WarpFrame(gym.ObservationWrapper):
         :param obs: environment obs
         :return: the observation
         """
-        return warp_frame_func(obs, self.width, self.height)
-
-def warp_frame_3c_func(obs, width, height):
-    obs["frame"] = cv2.resize(obs["frame"], (width, height),
-                              interpolation=cv2.INTER_LINEAR)[:, :, None]
-    return obs
+        obs["frame"] = cv2.cvtColor(obs["frame"], cv2.COLOR_RGB2GRAY)
+        obs["frame"] = cv2.resize(obs["frame"], (self.width, self.height),
+                                  interpolation=cv2.INTER_LINEAR)[:, :, None]
+        return obs
 
 class WarpFrame3C(gym.ObservationWrapper):
     def __init__(self, env, hw_obs_resize=[224, 224]):
@@ -53,8 +46,7 @@ class WarpFrame3C(gym.ObservationWrapper):
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
         self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
-                                                            shape=(
-                                                                self.height, self.width, 3),
+                                                            shape=(self.height, self.width, 3),
                                                             dtype=self.observation_space["frame"].dtype)
 
     def observation(self, obs):
@@ -63,7 +55,9 @@ class WarpFrame3C(gym.ObservationWrapper):
         :param obs: environment obs
         :return: the observation
         """
-        return warp_frame_3c_func(obs, self.width, self.height)
+        obs["frame"] = cv2.resize(obs["frame"], (self.width, self.height),
+                                  interpolation=cv2.INTER_LINEAR)[:, :, None]
+        return obs
 
 
 class FrameStack(gym.Wrapper):
@@ -78,8 +72,7 @@ class FrameStack(gym.Wrapper):
         self.frames = deque([], maxlen=n_frames)
         shp = self.observation_space["frame"].shape
         self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
-                                                            shape=(
-                                                                shp[0], shp[1], shp[2] * n_frames),
+                                                            shape=(shp[0], shp[1], shp[2] * n_frames),
                                                             dtype=self.observation_space["frame"].dtype)
 
     def reset(self, **kwargs):
@@ -106,7 +99,7 @@ class FrameStack(gym.Wrapper):
 
     def get_ob(self):
         assert len(self.frames) == self.n_frames
-        return list(self.frames)
+        return np.concatenate(self.frames, axis=2)
 
 
 class FrameStackDilated(gym.Wrapper):
@@ -150,7 +143,7 @@ class FrameStackDilated(gym.Wrapper):
     def get_ob(self):
         frames_subset = list(self.frames)[self.dilation - 1::self.dilation]
         assert len(frames_subset) == self.n_frames
-        return list(frames_subset)
+        return np.concatenate(frames_subset, axis=2)
 
 
 class ActionsStack(gym.Wrapper):
@@ -226,6 +219,7 @@ class ScaledFloatObsNeg(gym.ObservationWrapper):
             np.array(observation["frame"]).astype(np.float32) / 127.5) - 1.0
         return observation
 
+
 class ScaledFloatObs(gym.ObservationWrapper):
     def __init__(self, env, exclude_image_scaling=False):
         gym.ObservationWrapper.__init__(self, env)
@@ -235,7 +229,8 @@ class ScaledFloatObs(gym.ObservationWrapper):
         self.original_observation_space = deepcopy(self.observation_space)
         self.scaled_float_obs_space_func(self.observation_space)
 
-    # Recursive function to modify obs dict
+    # Recursive function to modify obs space dict
+    # FIXME: this can probably be dropped with gym >= 0.21 and only use the next one, here for SB2 compatibility
     def scaled_float_obs_space_func(self, obs_dict):
         # Updating observation space dict
         for k, v in obs_dict.spaces.items():
@@ -252,15 +247,9 @@ class ScaledFloatObs(gym.ObservationWrapper):
                     # One hot encoding
                     obs_dict.spaces[k] = spaces.MultiBinary(v.n)
                 elif isinstance(v, spaces.Box) and (self.exclude_image_scaling is False or len(v.shape) < 3):
-                    obs_dict.spaces[k] = spaces.Box(
-                        low=0, high=1.0, shape=v.shape, dtype=np.float32)
+                    obs_dict.spaces[k] = spaces.Box(low=0, high=1.0, shape=v.shape, dtype=np.float32)
 
-    def observation(self, observation):
-        # careful! This undoes the memory optimization, use
-        # with smaller replay buffers only.
-
-        return self.scaled_float_obs_func(observation, self.original_observation_space)
-
+    # Recursive function to modify obs dict
     def scaled_float_obs_func(self, observation, observation_space):
 
         # Process all observations
@@ -285,9 +274,41 @@ class ScaledFloatObs(gym.ObservationWrapper):
                 elif isinstance(v_space, spaces.Box) and (self.exclude_image_scaling is False or len(v_space.shape) < 3):
                     high_val = np.max(v_space.high)
                     low_val = np.min(v_space.low)
-                    observation[k] = (np.array(observation[k]).astype(
-                        np.float32) - low_val) / (high_val - low_val)
+                    observation[k] = (np.array(observation[k]).astype(np.float32) - low_val) / (high_val - low_val)
+
         return observation
+
+    def observation(self, observation):
+        # careful! This undoes the memory optimization, use
+        # with smaller replay buffers only.
+
+        return self.scaled_float_obs_func(observation, self.original_observation_space)
+
+def flatten_filter_obs_space_func(input_dictionary, filter_keys):
+    _FLAG_FIRST = object()
+    flattened_dict = {}
+
+    def dummy_check(new_key):
+        return True
+
+    def check_filter(new_key):
+        return new_key in filter_keys
+
+    def visit(subdict, flattened_dict, partial_key, check_method):
+        for k, v in subdict.spaces.items():
+            new_key = k if partial_key == _FLAG_FIRST else partial_key + "_" + k
+            if isinstance(v, Mapping) or isinstance(v, spaces.Dict):
+                visit(v, flattened_dict, new_key, check_method)
+            else:
+                if check_method(new_key):
+                    flattened_dict[new_key] = v
+
+    if filter_keys is not None:
+        visit(input_dictionary, flattened_dict, _FLAG_FIRST, check_filter)
+    else:
+        visit(input_dictionary, flattened_dict, _FLAG_FIRST, dummy_check)
+
+    return flattened_dict
 
 def flatten_filter_obs_func(input_dictionary, filter_keys):
     _FLAG_FIRST = object()
@@ -323,7 +344,9 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
         if (filter_keys is not None) and ("frame" not in filter_keys):
             self.filter_keys += ["frame"]
 
-        self.observation_space = spaces.Dict(flatten_filter_obs_func(self.observation_space, self.filter_keys))
+        dictionary = flatten_filter_obs_space_func(self.observation_space, self.filter_keys)
+        print("dictionary = ", dictionary)
+        self.observation_space = spaces.Dict(dictionary)
 
         if filter_keys is not None:
             if (sorted(self.observation_space.keys()) != sorted(self.filter_keys)):
@@ -332,7 +355,6 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
                     "       Specified key(s):", sorted(self.filter_keys),
                     "       Key(s) not found:", sorted([key for key in self.filter_keys if key not in self.observation_space.keys()]),
                 )
-
 
     def observation(self, observation):
 

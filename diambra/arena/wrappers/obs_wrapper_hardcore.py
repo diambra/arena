@@ -5,26 +5,7 @@ from collections import deque
 import cv2  # pytype:disable=import-error
 cv2.ocl.setUseOpenCL(False)
 
-
-# Functions
-
-def warp_frame_3c_func(frame, width, height):
-    frame = cv2.resize(frame, (width, height),
-                       interpolation=cv2.INTER_LINEAR)[:, :, None]
-    return frame
-
-
-def warp_frame_func(frame, width, height):
-    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-    return warp_frame_3c_func(frame, width, height)
-
-
-def scaled_float_obs_func(observation):
-    return np.array(observation).astype(np.float32) / 255.0
-
 # Env Wrappers classes
-
-
 class WarpFrame(gym.ObservationWrapper):
     def __init__(self, env, hw_obs_resize=[84, 84]):
         """
@@ -38,7 +19,7 @@ class WarpFrame(gym.ObservationWrapper):
         self.height = hw_obs_resize[0]
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(self.height, self.width, 1),
-                                            dtype=env.observation_space.dtype)
+                                            dtype=self.observation_space.dtype)
 
     def observation(self, frame):
         """
@@ -46,7 +27,10 @@ class WarpFrame(gym.ObservationWrapper):
         :param frame: ([int] or [float]) environment frame
         :return: ([int] or [float]) the observation
         """
-        return warp_frame_func(frame, self.width, self.height)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+        frame = cv2.resize(frame, (self.width, self.height),
+                           interpolation=cv2.INTER_LINEAR)[:, :, None]
+        return frame
 
 
 class WarpFrame3C(gym.ObservationWrapper):
@@ -62,7 +46,7 @@ class WarpFrame3C(gym.ObservationWrapper):
         self.height = hw_obs_resize[0]
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(self.height, self.width, 3),
-                                            dtype=env.observation_space.dtype)
+                                            dtype=self.observation_space.dtype)
 
     def observation(self, frame):
         """
@@ -70,22 +54,25 @@ class WarpFrame3C(gym.ObservationWrapper):
         :param frame: ([int] or [float]) environment frame
         :return: ([int] or [float]) the observation
         """
-        return warp_frame_3c_func(frame, self.width, self.height)
+        frame = cv2.resize(frame, (self.width, self.height),
+                           interpolation=cv2.INTER_LINEAR)[:, :, None]
+        return frame
 
 
 class FrameStack(gym.Wrapper):
     def __init__(self, env, n_frames):
         """Stack n_frames last frames.
+
         :param env: (Gym Environment) the environment
         :param n_frames: (int) the number of frames to stack
         """
         gym.Wrapper.__init__(self, env)
         self.n_frames = n_frames
         self.frames = deque([], maxlen=n_frames)
-        shp = env.observation_space.shape
+        shp = self.observation_space.shape
         self.observation_space = spaces.Box(low=0, high=255,
                                             shape=(shp[0], shp[1], shp[2] * n_frames),
-                                            dtype=env.observation_space.dtype)
+                                            dtype=self.observation_space.dtype)
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
@@ -109,7 +96,7 @@ class FrameStack(gym.Wrapper):
 
     def get_ob(self):
         assert len(self.frames) == self.n_frames
-        return list(self.frames)
+        return np.concatenate(self.frames, axis=2)
 
 
 class FrameStackDilated(gym.Wrapper):
@@ -125,11 +112,10 @@ class FrameStackDilated(gym.Wrapper):
         # Keeping all n_frames*dilation in memory,
         # then extract the subset given by the dilation factor
         self.frames = deque([], maxlen=n_frames * dilation)
-        shp = env.observation_space.shape
+        shp = self.observation_space.shape
         self.observation_space = spaces.Box(low=0, high=255,
-                                            shape=(shp[0], shp[1],
-                                                   shp[2] * n_frames),
-                                            dtype=env.observation_space.dtype)
+                                            shape=(shp[0], shp[1], shp[2] * n_frames),
+                                            dtype=self.observation_space.dtype)
 
     def reset(self, **kwargs):
         obs = self.env.reset(**kwargs)
@@ -152,15 +138,14 @@ class FrameStackDilated(gym.Wrapper):
     def get_ob(self):
         frames_subset = list(self.frames)[self.dilation - 1::self.dilation]
         assert len(frames_subset) == self.n_frames
-        return list(frames_subset)
+        return np.concatenate(frames_subset, axis=2)
 
 
 class ScaledFloatObsNeg(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
-        self.observation_space = spaces.Box(
-            low=-1.0, high=1.0,
-            shape=env.observation_space.shape, dtype=np.float32)
+        self.observation_space = spaces.Box(low=-1.0, high=1.0,
+            shape=self.observation_space.shape, dtype=np.float32)
 
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
@@ -171,12 +156,13 @@ class ScaledFloatObsNeg(gym.ObservationWrapper):
 class ScaledFloatObs(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
-        self.observation_space = spaces.Box(
-            low=0, high=1.0,
-            shape=env.observation_space.shape, dtype=np.float32)
+
+        self.observation_space = spaces.Box(low=0, high=1.0,
+                                            shape=env.observation_space.shape,
+                                            dtype=np.float32)
 
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
 
-        return scaled_float_obs_func(observation)
+        return np.array(observation).astype(np.float32) / 255.0
