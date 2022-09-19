@@ -171,7 +171,7 @@ class DiambraEngine:
 
         # Ram states
         for k, v in response.ram_states.items():
-            data[k] = v.val
+            data[k] = np.array([v.val])
 
         return data
 
