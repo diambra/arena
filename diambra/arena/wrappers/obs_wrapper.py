@@ -215,8 +215,7 @@ class ScaledFloatObsNeg(gym.ObservationWrapper):
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
-        observation["frame"] = (
-            np.array(observation["frame"]).astype(np.float32) / 127.5) - 1.0
+        observation["frame"] = observation["frame"] / 127.5 - 1.0
         return observation
 
 
@@ -247,7 +246,7 @@ class ScaledFloatObs(gym.ObservationWrapper):
                     # One hot encoding
                     obs_dict.spaces[k] = spaces.MultiBinary(v.n)
                 elif isinstance(v, spaces.Box) and (self.exclude_image_scaling is False or len(v.shape) < 3):
-                    obs_dict.spaces[k] = spaces.Box(low=0, high=1.0, shape=v.shape, dtype=np.float32)
+                    obs_dict.spaces[k] = spaces.Box(low=0.0, high=1.0, shape=v.shape, dtype=np.float32)
 
     # Recursive function to modify obs dict
     def scaled_float_obs_func(self, observation, observation_space):
@@ -267,20 +266,17 @@ class ScaledFloatObs(gym.ObservationWrapper):
                         actions_vector[iact * n_act + observation[k][iact]] = 1
                     observation[k] = actions_vector
                 elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2):
-                    var_vector = np.zeros(
-                        (observation_space.spaces[k].n), dtype=np.float32)
+                    var_vector = np.zeros((observation_space.spaces[k].n), dtype=np.float32)
                     var_vector[observation[k]] = 1
                     observation[k] = var_vector
                 elif isinstance(v_space, spaces.Box) and (self.exclude_image_scaling is False or len(v_space.shape) < 3):
                     high_val = np.max(v_space.high)
                     low_val = np.min(v_space.low)
-                    observation[k] = (np.array(observation[k]).astype(np.float32) - low_val) / (high_val - low_val)
+                    observation[k] = (observation[k] - low_val) / (high_val - low_val)
 
         return observation
 
     def observation(self, observation):
-        # careful! This undoes the memory optimization, use
-        # with smaller replay buffers only.
 
         return self.scaled_float_obs_func(observation, self.original_observation_space)
 
@@ -344,8 +340,7 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
         if (filter_keys is not None) and ("frame" not in filter_keys):
             self.filter_keys += ["frame"]
 
-        dictionary = flatten_filter_obs_space_func(self.observation_space, self.filter_keys)
-        self.observation_space = spaces.Dict(dictionary)
+        self.observation_space = spaces.Dict(flatten_filter_obs_space_func(self.observation_space, self.filter_keys))
 
         if filter_keys is not None:
             if (sorted(self.observation_space.spaces.keys()) != sorted(self.filter_keys)):

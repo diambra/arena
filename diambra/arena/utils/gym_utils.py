@@ -149,7 +149,7 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
                 if type(v) == dict:
                     for k2, v2 in v.items():
                         if "ownChar" in k2 or "oppChar" in k2:
-                            print("observation[\"{}\"][\"{}\"]: {}".format(k, k2, char_list[v2]))
+                            print("observation[\"{}\"][\"{}\"]: {}".format(k, k2, char_list[v2[0]]))
                         else:
                             print(
                                 "observation[\"{}\"][\"{}\"]: {}".format(k, k2, v2))
@@ -160,10 +160,10 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
                       observation["frame"].shape)
 
         if viz:
-            obs = np.array(observation["frame"]).astype(np.float32) / 255
+            obs = observation["frame"] / 255.0
     else:
         if viz:
-            obs = np.array(observation).astype(np.float32) / 255
+            obs = observation / 255.0
 
     if viz and 'DISPLAY' in os.environ:
         cv2.imshow("[{}] Frame".format(os.getpid()), obs[:, :, ::-1])  # rgb2bgr
@@ -180,7 +180,7 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
                     for k2, v2 in v.items():
                         if type(v2) == dict:
                             for k3, v3 in v2.items():
-                                print("observation[\"{}\"][\"{}\"][\"{}\"]:\n{}"
+                                print("observation[\"{}\"][\"{}\"][\"{}\"] (reshaped for viz):\n{}"
                                       .format(k, k2, k3, np.reshape(v3, [n_actions_stack, -1])))
                         elif "ownChar" in k2 or "oppChar" in k2:
                             print("observation[\"{}\"][\"{}\"]: {} / {}".format(k, k2, v2,
@@ -191,15 +191,14 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
                 else:
                     print("observation[\"{}\"]: {}".format(k, v))
             else:
-                obs = np.array(observation["frame"]).astype(np.float32)
+                obs = observation["frame"]
                 print("observation[\"frame\"]: shape {} - min {} - max {}".format(obs.shape, np.amin(obs), np.amax(obs)))
-                pass
 
         if viz:
-            obs = np.array(observation["frame"]).astype(np.float32)
+            obs = observation["frame"]
     else:
         if viz:
-            obs = np.array(observation).astype(np.float32)
+            obs = observation
 
     if viz and 'DISPLAY' in os.environ:
         norm_factor = 255 if np.amax(obs) > 1.0 else 1.0
