@@ -261,12 +261,12 @@ class ScaledFloatObs(gym.ObservationWrapper):
                 if isinstance(v_space, spaces.MultiDiscrete):
                     n_act = observation_space.spaces[k].nvec[0]
                     buf_len = observation_space.spaces[k].nvec.shape[0]
-                    actions_vector = np.zeros((buf_len * n_act), dtype=int)
+                    actions_vector = np.zeros((buf_len * n_act), dtype=np.uint8)
                     for iact in range(buf_len):
                         actions_vector[iact * n_act + observation[k][iact]] = 1
                     observation[k] = actions_vector
                 elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2):
-                    var_vector = np.zeros((observation_space.spaces[k].n), dtype=np.float32)
+                    var_vector = np.zeros((observation_space.spaces[k].n), dtype=np.uint8)
                     var_vector[observation[k]] = 1
                     observation[k] = var_vector
                 elif isinstance(v_space, spaces.Box) and (self.exclude_image_scaling is False or len(v_space.shape) < 3):
@@ -336,7 +336,7 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
     def __init__(self, env, filter_keys):
         gym.ObservationWrapper.__init__(self, env)
 
-        self.filter_keys = filter_keys
+        self.filter_keys = list(set(filter_keys))
         if (filter_keys is not None) and ("frame" not in filter_keys):
             self.filter_keys += ["frame"]
 
