@@ -55,7 +55,6 @@ if __name__ == '__main__':
                                    opt.character2_3]]
 
         settings["step_ratio"] = opt.stepRatio
-        settings["frame_shape"] = [128, 128, 1]
         settings["continue_game"] = opt.continueGame
         settings["show_final"] = False
 
@@ -82,6 +81,7 @@ if __name__ == '__main__':
         wrappers_settings = {}
         wrappers_settings["no_op_max"] = 0
         wrappers_settings["sticky_actions"] = 1
+        wrappers_settings["hwc_obs_resize"] = [128, 128, 1]
         wrappers_settings["reward_normalization"] = True
         wrappers_settings["clip_rewards"] = False
         wrappers_settings["frame_stack"] = 4
@@ -89,6 +89,10 @@ if __name__ == '__main__':
         wrappers_settings["actions_stack"] = 12
         wrappers_settings["scale"] = True
         wrappers_settings["scale_mod"] = 0
+        wrappers_settings["flatten"] = True
+        wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
+                                            "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
+                                            "P1_actions_move", "P1_actions_attack"]
 
         n_rounds = 2
         if opt.gameId == "kof98umh":

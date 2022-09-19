@@ -150,7 +150,7 @@ class ScaledFloatObsNeg(gym.ObservationWrapper):
     def observation(self, observation):
         # careful! This undoes the memory optimization, use
         # with smaller replay buffers only.
-        return (np.array(observation).astype(np.float32) / 127.5) - 1.0
+        return observation / 127.5 - 1.0
 
 
 class ScaledFloatObs(gym.ObservationWrapper):
@@ -158,11 +158,9 @@ class ScaledFloatObs(gym.ObservationWrapper):
         gym.ObservationWrapper.__init__(self, env)
 
         self.observation_space = spaces.Box(low=0, high=1.0,
-                                            shape=env.observation_space.shape,
+                                            shape=self.observation_space.shape,
                                             dtype=np.float32)
 
     def observation(self, observation):
-        # careful! This undoes the memory optimization, use
-        # with smaller replay buffers only.
 
-        return np.array(observation).astype(np.float32) / 255.0
+        return observation / 255.0
