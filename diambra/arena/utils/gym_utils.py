@@ -10,8 +10,6 @@ from threading import Thread
 import hashlib
 
 # Save compressed pickle files in parallel
-
-
 class ParallelPickleWriter(Thread):  # def class typr thread
     def __init__(self, save_path, to_save):
         Thread.__init__(self)   # thread init class (don't forget this)
@@ -27,8 +25,6 @@ class ParallelPickleWriter(Thread):  # def class typr thread
         outfile.close()
 
 # Recursive nested dict print
-
-
 def nested_dict_obs_space(space, k_list=[], level=0):
     for k in space.spaces:
         v = space[k]
@@ -57,8 +53,6 @@ def nested_dict_obs_space(space, k_list=[], level=0):
 
 
 # Print out environment spaces summary
-
-
 def env_spaces_summary(env):
 
     # Printing out observation space description
@@ -93,8 +87,6 @@ def env_spaces_summary(env):
             print("    Space n = ", env.action_space.n)
 
 # Utility to convert a Gym compliant Dict Space to a standard Dict
-
-
 def gym_obs_dict_space_to_standard_dict(observation_space_dict):
 
     standard_dict = {}
@@ -109,8 +101,6 @@ def gym_obs_dict_space_to_standard_dict(observation_space_dict):
     return standard_dict
 
 # Utility to create a Gym compliant Dict Space from the InternalObsDict
-
-
 def standard_dict_to_gym_obs_dict(obsstandard_dict):
 
     for k, v in obsstandard_dict.items():
@@ -123,8 +113,6 @@ def standard_dict_to_gym_obs_dict(obsstandard_dict):
 
 
 # Discrete to multidiscrete action conversion
-
-
 def discrete_to_multi_discrete_action(action, n_move_actions):
 
     mov_act = 0
@@ -140,8 +128,6 @@ def discrete_to_multi_discrete_action(action, n_move_actions):
     return mov_act, att_act
 
 # Visualize Gym Obs content
-
-
 def show_gym_obs(observation, char_list, wait_key=1, viz=True):
     if type(observation) == dict:
         for k, v in observation.items():
@@ -170,8 +156,6 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
         cv2.waitKey(wait_key)
 
 # Visualize Obs content
-
-
 def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True):
     if type(observation) == dict:
         for k, v in observation.items():
@@ -208,8 +192,6 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
         cv2.waitKey(wait_key)
 
 # List all available games
-
-
 def available_games(print_out=True, details=False):
     base_path = os.path.dirname(os.path.abspath(__file__))
     games_file_path = os.path.join(base_path, 'integratedGames.json')
@@ -234,8 +216,6 @@ def available_games(print_out=True, details=False):
         return games_dict
 
 # List sha256 per game
-
-
 def game_sha_256(game_id=None):
 
     base_path = os.path.dirname(os.path.abspath(__file__))
@@ -254,8 +234,6 @@ def game_sha_256(game_id=None):
             v["name"], v["id"], v["sha256"]))
 
 # Check rom sha256
-
-
 def sha256_checksum(filename, block_size=65536):
     sha256 = hashlib.sha256()
     with open(filename, 'rb') as f:
@@ -292,3 +270,7 @@ def check_game_sha_256(path, game_id=None):
             print("Expected  SHA256 Checksum: {}".format(
                 games_dict[game_id]["sha256"]))
             print("Retrieved SHA256 Checksum: {}".format(file_checksum))
+
+# Return number of active environments
+def get_num_envs():
+    return len(os.getenv("DIAMBRA_ENVS", "").split())
