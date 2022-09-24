@@ -5,6 +5,7 @@ import pickle
 import bz2
 import copy
 import cv2
+import logging
 from .utils.splash_screen import SplashScreen
 from .utils.gym_utils import standard_dict_to_gym_obs_dict,\
     discrete_to_multi_discrete_action
@@ -17,6 +18,7 @@ class ImitationLearningBase(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self, traj_files_list, rank=0, total_cpus=1):
+        self.logger = logging.getLogger(__name__)
         super(ImitationLearningBase, self).__init__()
 
         # Check for number of files
@@ -66,7 +68,7 @@ class ImitationLearningBase(gym.Env):
             #     or ignored:
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
             self.action_space = spaces.MultiDiscrete(self.n_actions)
-            print("Using MultiDiscrete action space")
+            self.logger.debug("Using MultiDiscrete action space")
         elif self.tmp_rl_traj_dict["action_space"] == "discrete":
             # Discrete actions:
             # - Arrows U Buttons -> One discrete set
@@ -77,7 +79,7 @@ class ImitationLearningBase(gym.Env):
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
             self.action_space = spaces.Discrete(
                 self.n_actions[0] + self.n_actions[1] - 1)
-            print("Using Discrete action space")
+            self.logger.debug("Using Discrete action space")
         else:
             raise Exception(
                 "Not recognized action space: {}".format(self.tmp_rl_traj_dict["action_space"]))
@@ -94,15 +96,15 @@ class ImitationLearningBase(gym.Env):
     # Print Episode summary
     def traj_summary(self):
 
-        print(self.rl_traj_dict.keys())
+        self.logger.info(self.rl_traj_dict.keys())
 
-        print("Ep. length = {}".format(self.rl_traj_dict["ep_len"]))
+        self.logger.info("Ep. length = {}".format(self.rl_traj_dict["ep_len"]))
 
         for key, value in self.rl_traj_dict.items():
             if type(value) == list and len(value) > 2:
-                print("len({}): {}".format(key, len(value)))
+                self.logger.info("len({}): {}".format(key, len(value)))
             else:
-                print("{} : {}".format(key, value))
+                self.logger.info("{} : {}".format(key, value))
 
     # Step the environment
     def step(self, dummy_action):
@@ -140,7 +142,7 @@ class ImitationLearningBase(gym.Env):
         info["episode_done"] = done_flags[3]
 
         if np.any(done):
-            print("(Rank {}) Episode done".format(self.rank))
+            self.logger.info("(Rank {}) Episode done".format(self.rank))
 
         # Update step idx
         self.step_idx += 1
@@ -159,7 +161,7 @@ class ImitationLearningBase(gym.Env):
         # Manage ignoreP2 flag for recorded P1P2 trajectory (e.g. when HUMvsAI)
         if self.n_reset != 0 and self.rl_traj_dict["ignore_p2"] == 1:
 
-            print("Skipping P2 trajectory for 2P games (e.g. HUMvsAI)")
+            self.logger.debug("Skipping P2 trajectory for 2P games (e.g. HUMvsAI)")
             # Resetting n_reset
             self.n_reset = 0
             # Move traj idx to the next to be read
@@ -167,7 +169,7 @@ class ImitationLearningBase(gym.Env):
 
         # Check if run out of traj files
         if self.traj_idx >= len(self.traj_files_list):
-            print("(Rank {}) Resetting env".format(self.rank))
+            self.logger.info("(Rank {}) Resetting env".format(self.rank))
             self.exhausted = True
             observation = {}
             observation = self.black_screen(observation)
@@ -200,12 +202,12 @@ class ImitationLearningBase(gym.Env):
 
         if self.player_side == "P1P2":
 
-            print("Two players RL trajectory")
+            self.logger.debug("Two players RL trajectory")
 
             if self.n_reset == 0:
                 # First reset for this trajectory
 
-                print("Loading P1 data for 2P trajectory")
+                self.logger.debug("Loading P1 data for 2P trajectory")
 
                 # Generate P2 Experience from P1 one
                 self.generate_p2_experience_from_p1()
@@ -225,7 +227,7 @@ class ImitationLearningBase(gym.Env):
             else:
                 # Second reset for this trajectory
 
-                print("Loading P2 data for 2P trajectory")
+                self.logger.debug("Loading P2 data for 2P trajectory")
 
                 # OverWrite P1 RL trajectory with the one calculated for P2
                 self.rl_traj_dict = self.rl_traj_dict_p2
@@ -238,7 +240,7 @@ class ImitationLearningBase(gym.Env):
 
         else:
 
-            print("One player RL trajectory")
+            self.logger.debug("One player RL trajectory")
 
             # Move traj idx to the next to be read
             self.traj_idx += self.total_cpus

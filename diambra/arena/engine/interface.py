@@ -1,8 +1,15 @@
 import numpy as np
 import os
+import logging
 
 from diambra.engine import Client, model
 import grpc
+
+CONNECTION_FAILED_ERROR_TEXT = """DIAMBRA Arena failed to connect to the Engine Server.
+ - If you are running a Python script, are you running with DIAMBRA CLI: `diambra run python script.py`?
+ - If you are running a Python Notebook, have you started Jupyter Notebook with DIAMBRA CLI: `diambra run jupyter notebook`?
+
+See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://discord.gg/tFDS2UN5sv) for support."""
 
 # DIAMBRA Env Gym
 
@@ -10,19 +17,16 @@ class DiambraEngine:
     """Diambra Environment gym interface"""
 
     def __init__(self, env_address, grpc_timeout=60):
+        self.logger = logging.getLogger(__name__)
 
         try:
             # Opening gRPC channel
             self.client = Client(env_address, grpc_timeout)
-            print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
-        except grpc.FutureTimeoutError:
-            print("... failed.")
-            exceptionMessage = "DIAMBRA Arena failed to connect to the Engine Server."
-            print(exceptionMessage)
-            print(" - If you are running a Python script, are you running with DIAMBRA CLI: `diambra run python script.py`?")
-            print(" - If you are running a Python Notebook, have you started Jupyter Notebook with DIAMBRA CLI: `diambra run jupyter notebook`?")
-            raise Exception(exceptionMessage)
-        print("... done.")
+            self.logger.info("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
+        except grpc.FutureTimeoutError as e:
+            raise Exception(CONNECTION_FAILED_ERROR_TEXT) from e
+
+        self.logger.info("... done.")
 
         # Splash Screen
         if 'DISPLAY' in os.environ:
@@ -107,15 +111,9 @@ class DiambraEngine:
             try:
                 response = self.client.GetError(model.Empty())
                 exceptionMessage = "Received error message from engine: " + response.errorMessage
-                print(exceptionMessage)
+                self.logger.error(exceptionMessage)
             except:
-                exceptionMessage = "DIAMBRA Arena failed to connect to the Engine Server."
-                print(exceptionMessage)
-                print(" - If you are running a Python script, are you running with DIAMBRA CLI: `diambra run python script.py`?")
-                print(" - If you are running a Python Notebook, have you started Jupyter Notebook with DIAMBRA CLI: `diambra run jupyter notebook`?")
-
-            print("See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://discord.gg/tFDS2UN5sv) for support.")
-            raise Exception(exceptionMessage)
+                raise Exception(CONNECTION_FAILED_ERROR_TEXT)
 
         return response
 

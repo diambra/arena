@@ -57,9 +57,8 @@ class WarpFrame(gym.ObservationWrapper):
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
-        print("Warning: for speedup, avoid frame warping wrappers,")
-        print("         use environment's native frame wrapping through")
-        print("        \"frame_shape\" setting (see documentation for details)")
+        self.logger.warning("Warning: for speedup, avoid frame warping wrappers, use environment's \
+            native frame wrapping through\"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -76,16 +75,14 @@ class WarpFrame(gym.ObservationWrapper):
         """
         return warp_frame_func(obs, self.width, self.height)
 
-
 class WarpFrame3C(gym.ObservationWrapper):
     def __init__(self, env, hw_obs_resize=[224, 224]):
         """
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
-        print("Warning: for speedup, avoid frame warping wrappers,")
-        print("         use environment's native frame wrapping through")
-        print("        \"frame_shape\" setting (see documentation for details)")
+        self.logger.warning("Warning: for speedup, avoid frame warping wrappers, use environment's \
+            native frame wrapping through\"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -378,11 +375,12 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
 
         if filter_keys is not None:
             if (sorted(self.observation_space.keys()) != sorted(self.filter_keys)):
-                print("ERROR: specified keys to use differ from those available:")
-                print("       Available key(s):", sorted(self.observation_space.keys()))
-                print("       Specified key(s):", sorted(self.filter_keys))
-                print("       Key(s) not found:", sorted([key for key in self.filter_keys if key not in self.observation_space.keys()]))
-                raise Exception("Specified observation key(s) not found")
+                raise Exception("Specified observation key(s) not found:", 
+                    "       Available key(s):", sorted(self.observation_space.keys()),
+                    "       Specified key(s):", sorted(self.filter_keys),
+                    "       Key(s) not found:", sorted([key for key in self.filter_keys if key not in self.observation_space.keys()]),
+                )
+                
 
     def observation(self, observation):
 
