@@ -1,7 +1,7 @@
 import random
 import numpy as np
 import gym
-
+import logging
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, no_op_max=6):
@@ -132,6 +132,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     :param scaleMod: (int) them scaling method: 0->[0,1] 1->[-1,1]
     :return: (Gym Environment) the wrapped diambra environment
     """
+    logger = logging.getLogger(__name__)
 
     if no_op_max > 0:
         env = NoopResetEnv(env, no_op_max=no_op_max)
@@ -170,7 +171,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
         if dilation == 1:
             env = FrameStack(env, frame_stack)
         else:
-            print("Using frame stacking with dilation = {}".format(dilation))
+            logger.debug("Using frame stacking with dilation = {}".format(dilation))
             env = FrameStackDilated(env, frame_stack, dilation)
 
     # Stack #actionsStack actions together

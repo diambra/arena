@@ -81,7 +81,7 @@ class RLPolicy(object):
         pass
 
     def update_weights(self, weights_path):
-        print("Loading new weights: {}".format(weights_path))
+        self.logger.debug("Loading new weights: {}".format(weights_path))
         self.model.load_parameters(weights_path)
 
     def act(self, observation, info=None):
@@ -110,7 +110,7 @@ class RLPolicy(object):
         else:
 
             prob = action_prob
-            # print("Warning!! Probabilities for
+            # self.logger.error("Warning!! Probabilities for
             #        MultiDiscrete are not correct!")
             # Can be ok doing nothing, but better to check
             # raise Exception("To be checked")

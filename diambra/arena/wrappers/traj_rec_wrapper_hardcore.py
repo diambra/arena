@@ -27,12 +27,13 @@ class TrajectoryRecorder(gym.Wrapper):
         if (self.env.player_side == "P1P2"):
             if ((self.env.attack_but_combination[0] != self.env.attack_but_combination[1])
                     or (self.env.action_space["P1"] != self.env.action_space["P2"])):
-                print(self.env.action_space, self.env.attack_but_combination)
                 raise Exception("Different attack buttons combinations and/or "
                                 "different action spaces not supported for 2P "
-                                "experience recordings")
+                                "experience recordings"
+                                "action space: {}, attack button combo: {}".format(self.env.action_space, self.env.attack_but_combination)
+                                )
 
-        print("Recording trajectories in \"{}\"".format(self.file_path))
+        self.logger.info("Recording trajectories in \"{}\"".format(self.file_path))
         os.makedirs(self.file_path, exist_ok=True)
 
     def reset(self, **kwargs):

@@ -2,6 +2,7 @@ import numpy as np
 import os
 import cv2
 import gym
+import logging
 from gym import spaces
 from .utils.gym_utils import discrete_to_multi_discrete_action
 from .engine.interface import DiambraEngine
@@ -14,6 +15,7 @@ class DiambraGymHardcoreBase(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self, env_settings):
+        self.logger = logging.getLogger(__name__)
         super(DiambraGymHardcoreBase, self).__init__()
 
         self.reward_normalization_value = 1.0
@@ -32,12 +34,10 @@ class DiambraGymHardcoreBase(gym.Env):
         self.difficulty = self.env_settings["difficulty"]
 
         # Settings log
-        print("Environment settings: --- ")
-        print("")
+        self.logger.info("Environment settings:")
         for key in sorted(self.env_settings):
-            print("  \"{}\": {}".format(key, self.env_settings[key]))
-        print("")
-        print("------------------------- ")
+            self.logger.info("  \"{}\": {}".format(key, self.env_settings[key]))
+        self.logger.info("---------------------")
 
         # Image as input:
         self.observation_space = spaces.Box(low=0, high=255,
@@ -91,13 +91,13 @@ class DiambraGymHardcoreBase(gym.Env):
 
     # Print Actions
     def print_actions(self):
-        print("Move actions:")
+        self.logger.info("Move actions:")
         for k, v in self.print_actions_dict[0].items():
-            print(" {}: {}".format(k, v))
+            self.logger.info(" {}: {}".format(k, v))
 
-        print("Attack actions:")
+        self.logger.info("Attack actions:")
         for k, v in self.print_actions_dict[1].items():
-            print(" {}: {}".format(k, v))
+            self.logger.info(" {}: {}".format(k, v))
 
     # Return cumulative reward bounds for the environment
     def get_cumulative_reward_bounds(self):
@@ -157,7 +157,7 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
             #     or ignored:
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
             self.action_space = spaces.MultiDiscrete(self.n_actions[0])
-            print("Using MultiDiscrete action space")
+            self.logger.debug("Using MultiDiscrete action space")
         elif env_settings["action_space"][0] == "discrete":
             # Discrete actions:
             # - Arrows U Buttons -> One discrete set
@@ -168,7 +168,7 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
             self.action_space = spaces.Discrete(
                 self.n_actions[0][0] + self.n_actions[0][1] - 1)
-            print("Using Discrete action space")
+            self.logger.debug("Using Discrete action space")
         else:
             raise Exception(
                 "Not recognized action space: {}".format(env_settings["action_space"][0]))
@@ -216,12 +216,12 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
             if env_settings["action_space"][idx] == "multi_discrete":
                 action_space_dict["P{}".format(idx + 1)] =\
                     spaces.MultiDiscrete(self.n_actions[idx])
-                print("Using MultiDiscrete action space for P{}".format(idx + 1))
+                self.logger.debug("Using MultiDiscrete action space for P{}".format(idx + 1))
             elif env_settings["action_space"][idx] == "discrete":
                 action_space_dict["P{}".format(idx + 1)] =\
                     spaces.Discrete(
                         self.n_actions[idx][0] + self.n_actions[idx][1] - 1)
-                print("Using Discrete action space for P{}".format(idx + 1))
+                self.logger.debug("Using Discrete action space for P{}".format(idx + 1))
             else:
                 raise Exception(
                     "Not recognized action space: {}".format(env_settings["action_space"][idx]))
