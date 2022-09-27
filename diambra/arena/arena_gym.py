@@ -128,6 +128,7 @@ class DiambraGymHardcoreBase(gym.Env):
 
             cv2.imshow(self.window_name, self.frame[:, :, ::-1])
             cv2.waitKey(wait_key)
+            return True
         elif mode == "rgb_array":
             return self.frame
 
