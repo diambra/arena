@@ -180,9 +180,9 @@ class ActionsStack(gym.Wrapper):
 
         for iplayer in range(self.n_players):
             obs["P{}".format(
-                iplayer + 1)]["actions"]["move"] = self.move_action_stack[iplayer]
+                iplayer + 1)]["actions"]["move"] = np.array(self.move_action_stack[iplayer])
             obs["P{}".format(
-                iplayer + 1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
+                iplayer + 1)]["actions"]["attack"] = np.array(self.attack_action_stack[iplayer])
         return obs
 
     def step(self, action):
@@ -200,9 +200,9 @@ class ActionsStack(gym.Wrapper):
 
         for iplayer in range(self.n_players):
             obs["P{}".format(
-                iplayer + 1)]["actions"]["move"] = self.move_action_stack[iplayer]
+                iplayer + 1)]["actions"]["move"] = np.array(self.move_action_stack[iplayer])
             obs["P{}".format(
-                iplayer + 1)]["actions"]["attack"] = self.attack_action_stack[iplayer]
+                iplayer + 1)]["actions"]["attack"] = np.array(self.attack_action_stack[iplayer])
         return obs, reward, done, info
 
 class ScaledFloatObsNeg(gym.ObservationWrapper):
