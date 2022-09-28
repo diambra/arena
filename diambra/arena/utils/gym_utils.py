@@ -135,7 +135,7 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
                 if type(v) == dict:
                     for k2, v2 in v.items():
                         if "ownChar" in k2 or "oppChar" in k2:
-                            print("observation[\"{}\"][\"{}\"]: {}".format(k, k2, char_list[v2[0]]))
+                            print("observation[\"{}\"][\"{}\"]: {}".format(k, k2, char_list[v2]))
                         else:
                             print(
                                 "observation[\"{}\"][\"{}\"]: {}".format(k, k2, v2))
