@@ -220,10 +220,11 @@ class ScaledFloatObsNeg(gym.ObservationWrapper):
 
 
 class ScaledFloatObs(gym.ObservationWrapper):
-    def __init__(self, env, exclude_image_scaling=False):
+    def __init__(self, env, exclude_image_scaling=False, process_discrete_binary=False):
         gym.ObservationWrapper.__init__(self, env)
 
         self.exclude_image_scaling = exclude_image_scaling
+        self.process_discrete_binary = process_discrete_binary
 
         self.original_observation_space = deepcopy(self.observation_space)
         self.scaled_float_obs_space_func(self.observation_space)
@@ -242,7 +243,7 @@ class ScaledFloatObs(gym.ObservationWrapper):
                     n_val = v.nvec.shape[0]
                     max_val = v.nvec[0]
                     obs_dict.spaces[k] = spaces.MultiBinary(n_val * max_val)
-                elif isinstance(v, spaces.Discrete) and (v.n > 2):
+                elif isinstance(v, spaces.Discrete) and (v.n > 2 or self.process_discrete_binary is True):
                     # One hot encoding
                     obs_dict.spaces[k] = spaces.MultiBinary(v.n)
                 elif isinstance(v, spaces.Box) and (self.exclude_image_scaling is False or len(v.shape) < 3):
@@ -265,7 +266,7 @@ class ScaledFloatObs(gym.ObservationWrapper):
                     for iact in range(buf_len):
                         actions_vector[iact * n_act + observation[k][iact]] = 1
                     observation[k] = actions_vector
-                elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2):
+                elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2 or self.process_discrete_binary is True):
                     var_vector = np.zeros((observation_space.spaces[k].n), dtype=np.uint8)
                     var_vector[observation[k]] = 1
                     observation[k] = var_vector

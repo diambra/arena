@@ -107,8 +107,8 @@ class NormalizeRewardEnv(gym.RewardWrapper):
 def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
                  reward_normalization=False, reward_normalization_factor=0.5,
                  frame_stack=1, actions_stack=1, scale=False, exclude_image_scaling=False,
-                 scale_mod=0, hwc_obs_resize=[84, 84, 0], dilation=1, flatten=False,
-                 filter_keys=None, hardcore=False):
+                 process_discrete_binary=False, scale_mod=0, hwc_obs_resize=[84, 84, 0],
+                 dilation=1, flatten=False, filter_keys=None, hardcore=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
@@ -185,7 +185,7 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     if scale:
         if scale_mod == 0:
             # Between 0.0 and 1.0
-            env = ScaledFloatObs(env, exclude_image_scaling)
+            env = ScaledFloatObs(env, exclude_image_scaling, process_discrete_binary)
         elif scale_mod == -1:
             # Between -1.0 and 1.0
             raise RuntimeError("Scaling between -1.0 and 1.0 currently not implemented")
