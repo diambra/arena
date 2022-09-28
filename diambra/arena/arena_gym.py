@@ -313,7 +313,6 @@ class DiambraGym1P(DiambraGymHardcore1P):
             elif v[0] == 1:  # Box spaces
                 player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
                                                     shape=(1,), dtype=np.int32)
-
             else:
                 raise RuntimeError(
                     "Only Discrete (Binary/Categorical) | Box Spaces allowed")
@@ -335,7 +334,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
 
         observation = {}
         observation["frame"] = frame
-        observation["stage"] = data["stage"]
+        observation["stage"] = np.array([data["stage"]], dtype=np.int8)
 
         player_spec_dict = {}
 
@@ -350,7 +349,11 @@ class DiambraGym1P(DiambraGymHardcore1P):
             else:
                 knew = "opp" + k[:-2]
 
-            player_spec_dict[knew] = data[k]
+            # Box spaces
+            if v[0] == 1:
+                player_spec_dict[knew] = np.array([data[k]], dtype=np.int32)
+            else:  # Discrete spaces (binary / categorical)
+                player_spec_dict[knew] = data[k]
 
         actions_dict = {
             "move": data["moveAction{}".format(self.player_side)],
@@ -442,7 +445,7 @@ class DiambraGym2P(DiambraGymHardcore2P):
 
         observation = {}
         observation["frame"] = frame
-        observation["stage"] = data["stage"]
+        observation["stage"] = np.array([data["stage"]], dtype=np.int8)
 
         for ielem, elem in enumerate(["P1", "P2"]):
 
@@ -459,7 +462,11 @@ class DiambraGym2P(DiambraGymHardcore2P):
                 else:
                     knew = "opp" + k[:-2]
 
-                player_spec_dict[knew] = data[k]
+                # Box spaces
+                if v[0] == 1:
+                    player_spec_dict[knew] = np.array([data[k]], dtype=np.int32)
+                else:  # Discrete spaces (binary / categorical)
+                    player_spec_dict[knew] = data[k]
 
             actions_dict = {
                 "move": data["moveAction{}".format(elem)],

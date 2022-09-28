@@ -14,8 +14,8 @@ class WarpFrame(gym.ObservationWrapper):
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
-        self.logger.warning("Warning: for speedup, avoid frame warping wrappers, use environment's \
-            native frame wrapping through\"frame_shape\" setting (see documentation for details)")
+        env.logger.warning("Warning: for speedup, avoid frame warping wrappers, use environment's " +
+                           "native frame wrapping through \"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -40,8 +40,8 @@ class WarpFrame3C(gym.ObservationWrapper):
         Warp frames to 84x84 as done in the Nature paper and later work.
         :param env: (Gym Environment) the environment
         """
-        self.logger.warning("Warning: for speedup, avoid frame warping wrappers, use environment's \
-            native frame wrapping through\"frame_shape\" setting (see documentation for details)")
+        env.logger.warning("Warning: for speedup, avoid frame warping wrappers, use environment's " +
+                           "native frame wrapping through \"frame_shape\" setting (see documentation for details)")
         gym.ObservationWrapper.__init__(self, env)
         self.width = hw_obs_resize[1]
         self.height = hw_obs_resize[0]
@@ -272,7 +272,7 @@ class ScaledFloatObs(gym.ObservationWrapper):
                 elif isinstance(v_space, spaces.Box) and (self.exclude_image_scaling is False or len(v_space.shape) < 3):
                     high_val = np.max(v_space.high)
                     low_val = np.min(v_space.low)
-                    observation[k] = (observation[k] - low_val) / (high_val - low_val)
+                    observation[k] = np.array((observation[k] - low_val) / (high_val - low_val), dtype=np.float32)
 
         return observation
 
@@ -336,9 +336,11 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
     def __init__(self, env, filter_keys):
         gym.ObservationWrapper.__init__(self, env)
 
-        self.filter_keys = list(set(filter_keys))
-        if (filter_keys is not None) and ("frame" not in filter_keys):
-            self.filter_keys += ["frame"]
+        self.filter_keys = filter_keys
+        if (filter_keys is not None):
+            self.filter_keys = list(set(filter_keys))
+            if "frame" not in filter_keys:
+                self.filter_keys += ["frame"]
 
         self.observation_space = spaces.Dict(flatten_filter_obs_space_func(self.observation_space, self.filter_keys))
 
