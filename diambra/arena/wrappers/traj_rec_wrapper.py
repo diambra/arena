@@ -114,12 +114,18 @@ class TrajectoryRecorder(gym.Wrapper):
             to_save["frame_shp"] = self.frame_shp
             to_save["ignore_p2"] = self.ignore_p2
             to_save["char_names"] = self.env.char_names
-            if isinstance(self.env.observation_space["P1"]["actions"]["move"], gym.spaces.MultiDiscrete):
-                to_save["n_actions_stack"] = int(
-                    self.env.observation_space["P1"]["actions"]["move"].nvec.shape[0] / self.env.n_actions[0][0])
+
+            # Handle flattened and unflattened obs_dicts
+            if "P1" in self.env.observation_space.keys():
+                tmp_elem = self.env.observation_space["P1"]["actions"]["move"]
             else:
-                to_save["n_actions_stack"] = int(
-                    self.env.observation_space["P1"]["actions"]["move"].n / self.env.n_actions[0][0])
+                tmp_elem = self.env.observation_space["P1_actions_move"]
+
+            if isinstance(tmp_elem, gym.spaces.MultiDiscrete):
+                to_save["n_actions_stack"] = int(tmp_elem.nvec.shape[0] / self.env.n_actions[0][0])
+            else:
+                to_save["n_actions_stack"] = int(tmp_elem.n / self.env.n_actions[0][0])
+
             to_save["ep_len"] = len(self.rewards_hist)
             to_save["cum_rew"] = self.cumulative_rew
             to_save["frames"] = self.last_frame_hist

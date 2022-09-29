@@ -195,13 +195,13 @@ if __name__ == '__main__':
                 if hardcore is False:
                     # Side check
                     if env.player_side == "P2":
-                        if (observation["P1"]["ownSide"] != 1.0 or observation["P1"]["oppSide"] != 0.0):
-                            raise RuntimeError("Wrong starting sides:", observation["P1"]["ownSide"],
-                                               observation["P1"]["oppSide"])
+                        if (observation["P1_ownSide"] != 1.0 or observation["P1_oppSide"] != 0.0):
+                            raise RuntimeError("Wrong starting sides:", observation["P1_ownSide"],
+                                               observation["P1_oppSide"])
                     else:
-                        if (observation["P1"]["ownSide"] != 0.0 or observation["P1"]["oppSide"] != 1.0):
-                            raise RuntimeError("Wrong starting sides:", observation["P1"]["ownSide"],
-                                               observation["P1"]["oppSide"])
+                        if (observation["P1_ownSide"] != 0.0 or observation["P1_oppSide"] != 1.0):
+                            raise RuntimeError("Wrong starting sides:", observation["P1_ownSide"],
+                                               observation["P1_oppSide"])
 
                     obs = observation["frame"]
                 else:
