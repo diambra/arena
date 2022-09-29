@@ -166,7 +166,7 @@ These examples show how to leverage both single and two players modes, how to se
 DIAMBRA Arena is built to be compatible with all major Reinforcement Learning libraries, it has been tested with the following versions:
 
 - Stable Baselines (<a href="https://stable-baselines.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/hill-a/stable-baselines" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines/" target="_blank">Pypi</a>): 2.10.2
-- Stable Baselines 3 (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 1.6.0
+- Stable Baselines 3 (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 1.6.1
 - Ray (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.0.0
 
 ## AI Tournaments
