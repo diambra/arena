@@ -1,6 +1,7 @@
 # Collection of policies to be applied on the environment
 import numpy as np
 import random
+import logging
 
 # No action policy
 
@@ -73,6 +74,7 @@ class RLPolicy(object):
         self.id = "rl"
         self.name = name
         self.action_space = action_space
+        self.logger = logging.getLogger(__name__)
 
     def initialize(self):
         pass
