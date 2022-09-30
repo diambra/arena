@@ -33,7 +33,7 @@ class TrajectoryRecorder(gym.Wrapper):
                                 "action space: {}, attack button combo: {}".format(self.env.action_space, self.env.attack_but_combination)
                                 )
 
-        self.logger.info("Recording trajectories in \"{}\"".format(self.file_path))
+        env.logger.info("Recording trajectories in \"{}\"".format(self.file_path))
         os.makedirs(self.file_path, exist_ok=True)
 
     def reset(self, **kwargs):

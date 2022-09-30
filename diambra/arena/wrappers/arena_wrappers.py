@@ -185,7 +185,10 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     if scale:
         if scale_mod == 0:
             # Between 0.0 and 1.0
-            env = ScaledFloatObs(env, exclude_image_scaling, process_discrete_binary)
+            if hardcore is False:
+                env = ScaledFloatObs(env, exclude_image_scaling, process_discrete_binary)
+            else:
+                env = ScaledFloatObs(env)
         elif scale_mod == -1:
             # Between -1.0 and 1.0
             raise RuntimeError("Scaling between -1.0 and 1.0 currently not implemented")
@@ -195,7 +198,8 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
 
     if flatten is True:
         if hardcore is True:
-            raise RuntimeError("Dictionary observation flattening is valid only for not hardcore mode")
-        env = FlattenFilterDictObs(env, filter_keys)
+            logger.warning("Dictionary observation flattening is valid only for not hardcore mode, skipping it.")
+        else:
+            env = FlattenFilterDictObs(env, filter_keys)
 
     return env
