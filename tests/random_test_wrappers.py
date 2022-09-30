@@ -90,9 +90,15 @@ if __name__ == '__main__':
         wrappers_settings["scale"] = True
         wrappers_settings["scale_mod"] = 0
         wrappers_settings["flatten"] = True
-        wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
-                                            "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
-                                            "P1_actions_move", "P1_actions_attack"]
+        if opt.gameId != "tektagt":
+            wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
+                                                "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
+                                                "P1_actions_move", "P1_actions_attack"]
+        else:
+            wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
+                                                "P1_ownHealth1", "P1_oppHealth1", "P1_oppChar",
+                                                "P1_ownHealth2", "P1_oppHealth2",
+                                                "P1_actions_move", "P1_actions_attack"]
 
         n_rounds = 2
         if opt.gameId == "kof98umh":
