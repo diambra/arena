@@ -10,7 +10,12 @@ pipmain(['install', 'setuptools'])
 pipmain(['install', 'distro'])
 
 extras= {
-    'core': []
+    'core': [],
+    'stable-baslines': ['stable-baselines==2.10.2'],
+    'stable-baslines3': ['stable-baselines3[extra]==1.6.1'],
+    'ray-rllib': ['ray[rllib]==2.0.0',
+        'tensorflow<=2.10.0',
+        'torch<=1.12.1'],
 }
 
 # NOTE Package data is inside MANIFEST.In
