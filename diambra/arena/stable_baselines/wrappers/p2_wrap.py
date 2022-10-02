@@ -1,4 +1,4 @@
-from sb_utils import p2_to_p1_add_obs_move
+from ..sb_utils import p2_to_p1_add_obs_move
 import gym
 import numpy as np
 
