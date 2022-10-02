@@ -11,8 +11,8 @@ pipmain(['install', 'distro'])
 
 extras= {
     'core': [],
-    'stable-baslines': ['stable-baselines==2.10.2'],
-    'stable-baslines3': ['stable-baselines3[extra]==1.6.1'],
+    'stable-baselines': ['stable-baselines==2.10.2', "protobuf==3.20.1", "pyyaml"],
+    'stable-baselines3': ['stable-baselines3[extra]==1.6.1'],
     'ray-rllib': ['ray[rllib]==2.0.0',
         'tensorflow<=2.10.0',
         'torch<=1.12.1'],
@@ -32,6 +32,7 @@ setuptools.setup(
     license='Custom',
     install_requires=[
             'pip>=21',
+            'importlib-metadata<=4.12.0; python_version <= "3.7"', # problem with gym for importlib-metadata==5.0.0 and python <=3.7
             'setuptools',
             'distro>=1',
             'gym<=0.21.0',
