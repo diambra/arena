@@ -8,7 +8,7 @@ from stable_baselines3.common.monitor import Monitor
 
 # Make Stable Baselines Env function
 def make_sb3_env(game_id, env_settings, wrappers_settings=None,
-                 use_subprocess=True, seed=0,
+                 use_subprocess=True, seed=0, log_dir_base="/tmp/DIAMBRALog/",
                  start_index=0, allow_early_resets=True,
                  start_method=None, no_vec=False):
     """
@@ -42,7 +42,7 @@ def make_sb3_env(game_id, env_settings, wrappers_settings=None,
                                      seed=seed + rank, rank=rank)
 
             # Create log dir
-            log_dir = os.path.join("/tmp/DIAMBRALog/", str(rank))
+            log_dir = os.path.join(log_dir_base, str(rank))
             os.makedirs(log_dir, exist_ok=True)
             env = Monitor(env, log_dir, allow_early_resets=allow_early_resets)
             return env
