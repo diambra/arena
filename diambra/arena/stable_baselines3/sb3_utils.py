@@ -41,7 +41,7 @@ class AutoSave(BaseCallback):
         super(AutoSave, self).__init__(verbose)
         self.check_freq = int(check_freq / num_envs)
         self.num_envs = num_envs
-        self.save_path_base = Path(save_path) / 'autosave_'
+        self.save_path_base = Path(save_path) / "autosave_"
 
     def _on_step(self) -> bool:
         if self.n_calls % self.check_freq == 0:
