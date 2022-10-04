@@ -4,6 +4,7 @@ import os
 import time
 import json
 import numpy as np
+from pathlib import Path
 
 # Linear scheduler for RL agent parameters
 def linear_schedule(initial_value, final_value=0.0):
@@ -40,7 +41,7 @@ class AutoSave(BaseCallback):
         super(AutoSave, self).__init__(verbose)
         self.check_freq = int(check_freq / num_envs)
         self.num_envs = num_envs
-        self.save_path_base = save_path + 'autoSave_'
+        self.save_path_base = Path(save_path) / 'autosave_'
 
     def _on_step(self) -> bool:
         if self.n_calls % self.check_freq == 0:
