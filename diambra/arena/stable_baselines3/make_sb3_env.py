@@ -7,7 +7,7 @@ from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.monitor import Monitor
 
 # Make Stable Baselines Env function
-def make_sb3_env(game_id, env_settings, wrappers_settings=None,
+def make_sb3_env(game_id, env_settings={}, wrappers_settings=None,
                  use_subprocess=True, seed=0, log_dir_base="/tmp/DIAMBRALog/",
                  start_index=0, allow_early_resets=True,
                  start_method=None, no_vec=False):
