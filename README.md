@@ -161,13 +161,15 @@ These examples show how to leverage both single and two players modes, how to se
 
 <img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/github.gif" alt="diambraGif" width="100%"/>
 
-## RL Libs Compatibility
+## Reinforcement Learning Libs Compatibility
 
-DIAMBRA Arena is built to be compatible with all major Reinforcement Learning libraries, it has been tested with the following versions:
+DIAMBRA Arena is built to maximize compatibility will all major Reinforcement Learning libraries. It natively provides interfaces with the two most import packages: Stable Baselines (both version 2 and 3) and Ray RLlib. Their usage is illustrated in detail in the <a href="https://docs.diambra.ai/handsonreinforcementlearning/" target="_blank">documentation</a> and in the <a href="https://docs.diambra.ai/handsonreinforcementlearning/" target="_blank">DIAMBRA Agents repository</a>. It can easily be interfaced with any other package in a similar way.
 
-- Stable Baselines (<a href="https://stable-baselines.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/hill-a/stable-baselines" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines/" target="_blank">Pypi</a>): 2.10.2
-- Stable Baselines 3 (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 1.6.1
-- Ray (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.0.0
+Native interfaces, that can be installed with the dedicated options listed below, have been tested with the following versions:
+
+- Stable Baselines 3 | `pip install diambra-arena[stable-baselines3]` (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 1.6.1
+- Ray RLlib | `pip install diambra-arena[ray-rllib]` (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.0.0
+- Stable Baselines | `pip install diambra-arena[stable-baselines]` (<a href="https://stable-baselines.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/hill-a/stable-baselines" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines/" target="_blank">Pypi</a>): 2.10.2
 
 ## AI Tournaments
 
