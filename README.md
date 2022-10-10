@@ -163,7 +163,7 @@ These examples show how to leverage both single and two players modes, how to se
 
 ## Reinforcement Learning Libs Compatibility
 
-DIAMBRA Arena is built to maximize compatibility will all major Reinforcement Learning libraries. It natively provides interfaces with the two most import packages: Stable Baselines (both version 2 and 3) and Ray RLlib. Their usage is illustrated in detail in the <a href="https://docs.diambra.ai/handsonreinforcementlearning/" target="_blank">documentation</a> and in the <a href="https://docs.diambra.ai/handsonreinforcementlearning/" target="_blank">DIAMBRA Agents repository</a>. It can easily be interfaced with any other package in a similar way.
+DIAMBRA Arena is built to maximize compatibility will all major Reinforcement Learning libraries. It natively provides interfaces with the two most import packages: Stable Baselines (both version 2 and 3) and Ray RLlib. Their usage is illustrated in detail in the <a href="https://docs.diambra.ai/handsonreinforcementlearning/" target="_blank">documentation</a> and in the <a href="https://github.com/diambra/agents" target="_blank">DIAMBRA Agents repository</a>. It can easily be interfaced with any other package in a similar way.
 
 Native interfaces, that can be installed with the dedicated options listed below, have been tested with the following versions:
 
