@@ -48,7 +48,7 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 - **[Installation](#installation)**
 - **[Quickstart & Examples](#quickstart--examples)**
-- **[RL Libs Compatibility](#rl-libs-compatibility)**
+- **[Reinforcement Learning Libs Compatibility](#reinforcement-learning-libs-compatibility)**
 - **[AI Tournaments](#ai-tournaments)**
 - **[References](#references)**
 - **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
