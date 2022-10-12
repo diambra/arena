@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import pytest
 import diambra.arena
 from diambra.arena.utils.gym_utils import show_wrap_obs
 import argparse
@@ -7,31 +8,23 @@ import sys
 from os import listdir
 import numpy as np
 
-if __name__ == '__main__':
+def func(path, hardcore):
     try:
-        parser = argparse.ArgumentParser()
-        parser.add_argument('--path', type=str, required=True, help='Path where recorded files are stored')
-        parser.add_argument('--nProc', type=int, default=1, help='Number of processors [(1), 2]')
-        parser.add_argument('--hardcore', type=int, default=0,
-                            help='Hard Core Mode [(0=False), 1=True]')
-        parser.add_argument('--viz', type=int, default=0, help='Visualization [(0=False), 1=True]')
-        parser.add_argument('--waitKey', type=int, default=1, help='CV2 WaitKey [0, 1]')
-        opt = parser.parse_args()
-        print(opt)
-
-        viz_flag = True if opt.viz == 1 else False
+        nProc = 1
+        viz_flag = True
+        waitKey = 1
 
         # Show files in folder
-        traj_rec_folder = opt.path
+        traj_rec_folder = path
         trajectories_files = [os.path.join(traj_rec_folder, f) for f in listdir(
             traj_rec_folder) if os.path.isfile(os.path.join(traj_rec_folder, f))]
         print(trajectories_files)
 
         diambra_il_settings = {}
         diambra_il_settings["traj_files_list"] = trajectories_files
-        diambra_il_settings["total_cpus"] = opt.nProc
+        diambra_il_settings["total_cpus"] = nProc
 
-        if opt.hardcore == 0:
+        if hardcore is False:
             env = diambra.arena.ImitationLearning(**diambra_il_settings)
         else:
             env = diambra.arena.ImitationLearningHardcore(**diambra_il_settings)
@@ -42,7 +35,7 @@ if __name__ == '__main__':
         env.traj_summary()
 
         show_wrap_obs(observation, env.n_actions_stack,
-                      env.char_names, opt.waitKey, viz_flag)
+                      env.char_names, waitKey, viz_flag)
 
         cumulative_ep_rew = 0.0
         cumulative_ep_rew_all = []
@@ -64,7 +57,7 @@ if __name__ == '__main__':
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
             show_wrap_obs(observation, env.n_actions_stack,
-                          env.char_names, opt.waitKey, viz_flag)
+                          env.char_names, waitKey, viz_flag)
 
             print("----------")
 
@@ -75,7 +68,7 @@ if __name__ == '__main__':
 
             if (np.any([info["round_done"], info["stage_done"], info["game_done"]]) and not done):
                 # Frames equality check
-                if opt.hardcore == 0:
+                if hardcore is False:
                     for frame_idx in range(observation["frame"].shape[2] - 1):
                         if np.any(observation["frame"][:, :, frame_idx] != observation["frame"][:, :, frame_idx + 1]):
                             raise RuntimeError("Frames inside observation after "
@@ -110,7 +103,7 @@ if __name__ == '__main__':
                 observation = env.reset()
                 env.render(mode="human")
                 show_wrap_obs(observation, env.n_actions_stack,
-                              env.char_names, opt.waitKey, viz_flag)
+                              env.char_names, waitKey, viz_flag)
 
         if diambra_il_settings["total_cpus"] == 1:
             print("All ep. rewards =", cumulative_ep_rew_all)
@@ -119,8 +112,21 @@ if __name__ == '__main__':
 
         env.close()
 
-        print("COMPLETED SUCCESSFULLY!")
+        return 0
     except Exception as e:
         print(e)
-        print("ERROR, ABORTED.")
-        sys.exit(1)
+        return 1
+
+
+base_path = os.path.dirname(__file__)
+normal_discrete = os.path.join(base_path, 'data/Discrete/Normal')
+hardcore_discrete = os.path.join(base_path, 'data/Discrete/HC')
+
+normal_multi_discrete = os.path.join(base_path, 'data/MultiDiscrete/Normal')
+hardcore_multi_discrete = os.path.join(base_path, 'data/MultiDiscrete/HC')
+
+
+@pytest.mark.parametrize("path, hardcore", [(normal_discrete, False), (hardcore_discrete, True),
+                                            (normal_multi_discrete, False), (hardcore_multi_discrete, True)])
+def test_one(path, hardcore):
+    assert func(path, hardcore) == 0
