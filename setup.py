@@ -24,7 +24,7 @@ setuptools.setup(
     version=os.environ.get('VERSION', '0.0.0'),
     author="DIAMBRA Team",
     author_email="info@diambra.ai",
-    description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use,\ntransforms popular video games into Reinforcement Learning environments",
+    description="DIAMBRA™ Arena. Built with OpenAI Gym Python interface, easy to use, transforms popular video games into Reinforcement Learning environments",
     long_description = (Path(__file__).parent / "README.md").read_text(),
     long_description_content_type="text/markdown",
     license='Custom',
