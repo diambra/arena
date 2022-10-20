@@ -185,6 +185,7 @@ Our very first AI Tournament **has been an amazing experience!** Participants tr
 ## References
 
 - Documentation: <a href="https://docs.diambra.ai" target="_blank">https://docs.diambra.ai</a>
+- Paper: <a href="https://arxiv.org/abs/2210.10595" target="_blank">https://arxiv.org/abs/2210.10595</a>
 - Website: <a href="https://diambra.ai" target="_blank">https://diambra.ai</a>
 - Discord: <a href="https://discord.gg/tFDS2UN5sv" target="_blank">https://discord.gg/tFDS2UN5sv</a>
 - Linkedin: <a href="https://www.linkedin.com/company/diambra" target="_blank">https://www.linkedin.com/company/diambra</a>
@@ -200,13 +201,22 @@ To request features or report bugs, use the <a href="https://github.com/diambra/
 
 ## Citation
 
-```
-  @misc{diambra2022
-    author = {DIAMBRA Team},
-    title = {DIAMBRA Arena: built with OpenAI Gym Python interface, easy to use, transforms popular video games into Reinforcement Learning environments.},
-    year = {2022},
-    howpublished = {\url{https://github.com/diambra/diambraArena}},
-  }
+Paper: <a href="https://arxiv.org/abs/2210.10595" target="_blank">https://arxiv.org/abs/2210.10595</a>
+
+```LaTex
+@article{Palmas22,
+    author = {{Palmas}, Alessandro},
+    title = "{DIAMBRA Arena: a New Reinforcement Learning Platform for Research and Experimentation}",
+    journal = {arXiv e-prints},
+    keywords = {reinforcement learning, transfer learning, multi-agent, games},
+    year = 2022,
+    month = oct,
+    eid = {arXiv:2210.10595},
+    pages = {arXiv:2210.10595},
+    archivePrefix = {arXiv},
+    eprint = {2210.10595},
+    primaryClass = {cs.AI}
+ }
 ```
 
 ## Terms of Use
