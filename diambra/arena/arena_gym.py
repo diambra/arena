@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import sys
 import cv2
 import gym
 import logging
@@ -118,17 +119,20 @@ class DiambraGymHardcoreBase(gym.Env):
     # Rendering the environment
     def render(self, mode='human', wait_key=1):
 
-        if mode == "human" and 'DISPLAY' in os.environ:
-            if (self.render_gui_started is False):
-                self.window_name = "[{}] DIAMBRA Arena - {} - ({})".format(
-                    os.getpid(), self.env_settings["game_id"], self.env_settings["rank"])
-                cv2.namedWindow(self.window_name, cv2.WINDOW_GUI_NORMAL)
-                self.render_gui_started = True
-                wait_key = 100
+        if mode == "human" and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+            try:
+                if (self.render_gui_started is False):
+                    self.window_name = "[{}] DIAMBRA Arena - {} - ({})".format(
+                        os.getpid(), self.env_settings["game_id"], self.env_settings["rank"])
+                    cv2.namedWindow(self.window_name, cv2.WINDOW_GUI_NORMAL)
+                    self.render_gui_started = True
+                    wait_key = 100
 
-            cv2.imshow(self.window_name, self.frame[:, :, ::-1])
-            cv2.waitKey(wait_key)
-            return True
+                cv2.imshow(self.window_name, self.frame[:, :, ::-1])
+                cv2.waitKey(wait_key)
+                return True
+            except:
+                return False
         elif mode == "rgb_array":
             return self.frame
 

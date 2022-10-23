@@ -1,5 +1,6 @@
 import gym
 import os
+import sys
 from gym import spaces
 import numpy as np
 import pickle
@@ -151,9 +152,12 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
         if viz:
             obs = observation / 255.0
 
-    if viz and 'DISPLAY' in os.environ:
-        cv2.imshow("[{}] Frame".format(os.getpid()), obs[:, :, ::-1])  # rgb2bgr
-        cv2.waitKey(wait_key)
+    if viz is True and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+        try:
+            cv2.imshow("[{}] Frame".format(os.getpid()), obs[:, :, ::-1])  # rgb2bgr
+            cv2.waitKey(wait_key)
+        except:
+            pass
 
 # Visualize Obs content
 def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True):
@@ -184,12 +188,15 @@ def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True)
         if viz:
             obs = observation
 
-    if viz and 'DISPLAY' in os.environ:
-        norm_factor = 255 if np.amax(obs) > 1.0 else 1.0
-        for idx in range(obs.shape[2]):
-            cv2.imshow("[{}] Frame-{}".format(os.getpid(), idx), obs[:, :, idx] / norm_factor)
+    if viz is True and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+        try:
+            norm_factor = 255 if np.amax(obs) > 1.0 else 1.0
+            for idx in range(obs.shape[2]):
+                cv2.imshow("[{}] Frame-{}".format(os.getpid(), idx), obs[:, :, idx] / norm_factor)
 
-        cv2.waitKey(wait_key)
+            cv2.waitKey(wait_key)
+        except:
+            pass
 
 # List all available games
 def available_games(print_out=True, details=False):
