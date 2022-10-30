@@ -171,11 +171,8 @@ class DiambraGymHardcoreBase(gym.Env):
             if viz:
                 frame = observation
 
-        print("Viz = ", viz)
-
         if viz is True and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
             try:
-                print("Viz = ", viz)
                 norm_factor = 255 if np.amax(frame) > 1.0 else 1.0
                 for idx in range(frame.shape[2]):
                     cv2.imshow("[{}] Frame channel {}".format(os.getpid(), idx), frame[:, :, idx] / norm_factor)
