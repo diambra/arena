@@ -59,7 +59,7 @@ def env_settings_check(env_settings):
 
 
 def make(game_id, env_settings={}, wrappers_settings={},
-         traj_rec_settings=None, seed=None, rank=0, log_level=logging.INFO):
+         traj_rec_settings={}, seed=None, rank=0, log_level=logging.INFO):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -111,7 +111,7 @@ def make(game_id, env_settings={}, wrappers_settings={},
                        hardcore=env_settings["hardcore"])
 
     # Apply trajectories recorder wrappers
-    if traj_rec_settings is not None:
+    if traj_rec_settings is True:
         if env_settings["hardcore"]:
             from diambra.arena.wrappers.traj_rec_wrapper_hardcore import TrajectoryRecorder
         else:
