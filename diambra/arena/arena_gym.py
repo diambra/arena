@@ -9,8 +9,6 @@ from .utils.gym_utils import discrete_to_multi_discrete_action
 from .engine.interface import DiambraEngine
 
 # DIAMBRA Env Gym
-
-
 class DiambraGymHardcoreBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
@@ -136,6 +134,56 @@ class DiambraGymHardcoreBase(gym.Env):
         elif mode == "rgb_array":
             return self.frame
 
+    # Print observation details to the console
+    def show_obs(self, observation, wait_key=1, viz=True):
+
+        if type(observation) == dict:
+            for k, v in observation.items():
+                if k != "frame":
+                    if type(v) == dict:
+                        for k2, v2 in v.items():
+                            if k2 == "actions":
+
+                                for k3, v3 in v2.items():
+                                    out_value = v3
+                                    additional_string = ": "
+                                    if type(v3) != int:
+                                        p_idx = 0 if k == "P1" else 1
+                                        n_actions_stack = int(self.observation_space[k][k2][k3].n /
+                                                              (self.n_actions[p_idx][0] if k3 == "move" else self.n_actions[p_idx][1]))
+                                        out_value = np.reshape(v3, [n_actions_stack, -1])
+                                        additional_string = " (reshaped for visualization):\n"
+                                    print("observation[\"{}\"][\"{}\"][\"{}\"]{}{}".format(k, k2, k3, additional_string, out_value))
+                            elif "ownChar" in k2 or "oppChar" in k2:
+                                char_idx = v2 if type(v2) == int else np.where(v2 == 1)[0][0]
+                                print("observation[\"{}\"][\"{}\"]: {} / {}".format(k, k2, v2, self.char_names[char_idx]))
+                            else:
+                                print("observation[\"{}\"][\"{}\"]: {}".format(k, k2, v2))
+                    else:
+                        print("observation[\"{}\"]: {}".format(k, v))
+                else:
+                    frame = observation["frame"]
+                    print("observation[\"frame\"]: shape {} - min {} - max {}".format(frame.shape, np.amin(frame), np.amax(frame)))
+
+            if viz:
+                frame = observation["frame"]
+        else:
+            if viz:
+                frame = observation
+
+        print("Viz = ", viz)
+
+        if viz is True and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+            try:
+                print("Viz = ", viz)
+                norm_factor = 255 if np.amax(frame) > 1.0 else 1.0
+                for idx in range(frame.shape[2]):
+                    cv2.imshow("[{}] Frame channel {}".format(os.getpid(), idx), frame[:, :, idx] / norm_factor)
+
+                cv2.waitKey(wait_key)
+            except:
+                pass
+
     # Closing the environment
     def close(self):
         # Close DIAMBRA Arena
@@ -143,8 +191,6 @@ class DiambraGymHardcoreBase(gym.Env):
         self.arena_engine.close()
 
 # DIAMBRA Gym base class for single player mode
-
-
 class DiambraGymHardcore1P(DiambraGymHardcoreBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
@@ -209,8 +255,6 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
              "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
 
 # DIAMBRA Gym base class for two players mode
-
-
 class DiambraGymHardcore2P(DiambraGymHardcoreBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
@@ -285,8 +329,6 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
              "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
 
 # DIAMBRA Gym base class providing frame and additional info as observations
-
-
 class DiambraGym1P(DiambraGymHardcore1P):
     def __init__(self, env_settings):
         super().__init__(env_settings)
@@ -386,8 +428,6 @@ class DiambraGym1P(DiambraGymHardcore1P):
         return observation
 
 # DIAMBRA Gym base class providing frame and additional info as observations
-
-
 class DiambraGym2P(DiambraGymHardcore2P):
     def __init__(self, env_settings):
         super().__init__(env_settings)
