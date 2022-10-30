@@ -130,6 +130,9 @@ def discrete_to_multi_discrete_action(action, n_move_actions):
 
 # Visualize Gym Obs content
 def show_gym_obs(observation, char_list, wait_key=1, viz=True):
+
+    print("WARNING: Deprecated, use env.show_obs() instead, will be removed in future versions.")
+
     if type(observation) == dict:
         for k, v in observation.items():
             if k != "frame":
@@ -161,6 +164,9 @@ def show_gym_obs(observation, char_list, wait_key=1, viz=True):
 
 # Visualize Obs content
 def show_wrap_obs(observation, n_actions_stack, char_list, wait_key=1, viz=True):
+
+    print("WARNING: Deprecated, use env.show_obs() instead, will be removed in future versions.")
+
     if type(observation) == dict:
         for k, v in observation.items():
             if k != "frame":
