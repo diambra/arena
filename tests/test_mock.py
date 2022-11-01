@@ -51,7 +51,7 @@ class DiambraEngineMock:
         self.player = "P1"
 
     def generate_frame(self):
-        frame = np.ones((self.frame_shape))*self.n_step
+        frame = np.ones((self.frame_shape)) * self.n_steps
         return frame.tobytes()
 
     def generate_ram_states(self):
@@ -159,18 +159,18 @@ class DiambraEngineMock:
         # Characters
         if self.player == "P1P2":
             if self.settings.characters.p1[0] == "Random":
-                self.char_p1 = random.choices(range(self.number_of_chars))
+                self.char_p1 = random.choices(range(self.number_of_chars))[0]
             else:
                 self.char_p1 = self.settings.characters.p1[0]
 
             if self.settings.characters.p2[0] == "Random":
-                self.char_p2 = random.choices(range(self.number_of_chars))
+                self.char_p2 = random.choices(range(self.number_of_chars))[0]
             else:
                 self.char_p2 = self.settings.characters.p2[0]
 
         elif self.player == "P1":
             if self.settings.characters.p1[0] == "Random":
-                self.char_p1 = random.choices(range(self.number_of_chars))
+                self.char_p1 = random.choices(range(self.number_of_chars))[0]
             else:
                 self.char_p1 = self.settings.characters.p1[0]
             self.char_p2 = self.n_stages
@@ -178,7 +178,7 @@ class DiambraEngineMock:
         else:
             self.char_p1 = self.n_stages
             if self.settings.characters.p2[0] == "Random":
-                self.char_p2 = random.choices(range(self.number_of_chars))
+                self.char_p2 = random.choices(range(self.number_of_chars))[0]
             else:
                 self.char_p2 = self.settings.characters.p2[0]
 
@@ -191,8 +191,8 @@ class DiambraEngineMock:
             self.health_p1 = self.max_health
             self.health_p2 = self.max_health
         else:
-            self.side_p1 = random.choices([0, 1], [0.3, 0.7])
-            self.side_p2 = random.choices([(self.side_p1 + 1) % 2, self.side_p1], [0.97, 0.03])
+            self.side_p1 = random.choices([0, 1], [0.3, 0.7])[0]
+            self.side_p2 = random.choices([(self.side_p1 + 1) % 2, self.side_p1], [0.97, 0.03])[0]
 
         # Actions
         self.mov_p1 = mov_p1
@@ -235,8 +235,8 @@ class DiambraEngineMock:
                 else:
                     self.health_p1 = 0
         else:
-            self.health_p1 = int(self.health_p1 * random.choices([0.7, 0.8, 0.9]))
-            self.health_p2 = int(self.health_p2 * random.choices([0.7, 0.8, 0.9]))
+            self.health_p1 = int(self.health_p1 * random.choices([0.7, 0.8, 0.9])[0])
+            self.health_p2 = int(self.health_p2 * random.choices([0.7, 0.8, 0.9])[0])
 
         if self.n_rounds_won == self.rounds_per_stage:
             self.stage_done_ = True
@@ -270,23 +270,28 @@ class DiambraEngineMock:
 
     def update_observation(self):
 
+        print("In update obs 1")
         # Response
         observation = model.Observation()
 
+        print("In update obs 2")
         # Actions
         observation.actions.p1.move = self.mov_p1
         observation.actions.p1.attack = self.att_p1
         observation.actions.p2.move = self.mov_p2
         observation.actions.p2.attack = self.att_p2
 
+        print("In update obs 3")
         # Ram states
         ram_states = self.generate_ram_states()
         for k, v in ram_states.items():
+            print("ram states k, v = ", k, v)
             observation.ram_states[k].type = v["type"]
             observation.ram_states[k].min = v["min"]
             observation.ram_states[k].max = v["max"]
             observation.ram_states[k].val = v["val"]
 
+        print("In update obs 4")
         # Game state
         observation.game_state.round_done = self.round_done_
         observation.game_state.stage_done = self.stage_done_
@@ -294,6 +299,7 @@ class DiambraEngineMock:
         observation.game_state.episode_done = self.episode_done_
         observation.game_state.env_done = self.env_done_
 
+        print("In update obs 5")
         # Player
         observation.player = self.player
 
@@ -309,7 +315,9 @@ class DiambraEngineMock:
     # Reset the environment [pb low level]
     def _mock_reset(self):
 
+        print("in mock, reset 1")
         self.reset_state()
+        print("in mock, reset 2")
 
         return self.update_observation()
 
