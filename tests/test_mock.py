@@ -170,15 +170,6 @@ class DiambraEngineMock:
     # Update game state
     def new_game_state(self, mov_p1=0, att_p1=0, mov_p2=0, att_p2=0):
 
-        if np.any([self.round_done_, self.stage_done_, self.game_done_]) is True:
-            self.side_p1 = 0
-            self.side_p2 = 1
-            self.health_p1 = self.max_health
-            self.health_p2 = self.max_health
-        else:
-            self.side_p1 = random.choices([0, 1], [0.3, 0.7])[0]
-            self.side_p2 = random.choices([(self.side_p1 + 1) % 2, self.side_p1], [0.97, 0.03])[0]
-
         # Actions
         self.mov_p1 = mov_p1
         self.att_p1 = att_p1
@@ -197,9 +188,10 @@ class DiambraEngineMock:
         starting_health_p1 = self.health_p1
         starting_health_p2 = self.health_p2
 
-        if self.n_steps % self.steps_per_round == 0:
+        if (self.n_steps % self.steps_per_round) == 0:
             self.round_done_ = True
             if random.choices([True, False], [self.round_winning_probability, 1 - self.round_winning_probability])[0] is True:
+                print("Round won")
                 self.n_rounds_won += 1
 
                 if self.player == "P2":
@@ -214,6 +206,7 @@ class DiambraEngineMock:
                         starting_health_p1 = self.health_p1
 
             else:
+                print("Round lost")
                 self.n_rounds_lost += 1
                 if self.player == "P2":
                     self.health_p2 = 0
@@ -253,30 +246,34 @@ class DiambraEngineMock:
         delta_p2 = starting_health_p2 - self.health_p2
         self.reward = delta_p1 - delta_p2 if self.player == "P2" else delta_p2 - delta_p1
 
+        if np.any([self.round_done_, self.stage_done_, self.game_done_]) is True:
+            self.side_p1 = 0
+            self.side_p2 = 1
+            self.health_p1 = self.max_health
+            self.health_p2 = self.max_health
+        else:
+            self.side_p1 = random.choices([0, 1], [0.3, 0.7])[0]
+            self.side_p2 = random.choices([(self.side_p1 + 1) % 2, self.side_p1], [0.97, 0.03])[0]
+
     def update_observation(self):
 
-        print("In update obs 1")
         # Response
         observation = model.Observation()
 
-        print("In update obs 2")
         # Actions
         observation.actions.p1.move = self.mov_p1
         observation.actions.p1.attack = self.att_p1
         observation.actions.p2.move = self.mov_p2
         observation.actions.p2.attack = self.att_p2
 
-        print("In update obs 3")
         # Ram states
         ram_states = self.generate_ram_states()
         for k, v in ram_states.items():
-            print("ram states k, v = ", k, v)
             observation.ram_states[k].type = v["type"]
             observation.ram_states[k].min = v["min"]
             observation.ram_states[k].max = v["max"]
             observation.ram_states[k].val = v["val"]
 
-        print("In update obs 4")
         # Game state
         observation.game_state.round_done = self.round_done_
         observation.game_state.stage_done = self.stage_done_
@@ -284,7 +281,6 @@ class DiambraEngineMock:
         observation.game_state.episode_done = self.episode_done_
         observation.game_state.env_done = self.env_done_
 
-        print("In update obs 5")
         # Player
         observation.player = self.player
 
@@ -300,9 +296,7 @@ class DiambraEngineMock:
     # Reset the environment [pb low level]
     def _mock_reset(self):
 
-        print("in mock, reset 1")
         self.reset_state()
-        print("in mock, reset 2")
 
         return self.update_observation()
 
@@ -346,10 +340,16 @@ def func(player, mocker):
         settings["game_id"] = "doapp"
         settings["player"] = "Random"
         settings["step_ratio"] = 6
+        settings["action_space"] = ["discrete", "discrete"]
+        settings["attack_but_combination"] = [True, True]
+        if settings["player"] != "P1P2":
+            settings["action_space"] = settings["action_space"][0]
+            settings["attack_but_combination"] = settings["attack_but_combination"][0]
+        settings["hardcore"] = False
 
         # Args
         args = {}
-        args["interactive_viz"] = False
+        args["interactive_viz"] = True
         args["no_action_probability"] = 0.5
         args["n_episodes"] = 1
 
