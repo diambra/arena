@@ -246,7 +246,7 @@ class DiambraEngineMock:
         delta_p2 = starting_health_p2 - self.health_p2
         self.reward = delta_p1 - delta_p2 if self.player == "P2" else delta_p2 - delta_p1
 
-        if np.any([self.round_done_, self.stage_done_, self.game_done_]) is True:
+        if np.any([self.round_done_, self.stage_done_, self.game_done_]):
             self.side_p1 = 0
             self.side_p2 = 1
             self.health_p1 = self.max_health
@@ -338,7 +338,7 @@ def func(player, mocker):
         # Settings
         settings = {}
         settings["game_id"] = "doapp"
-        settings["player"] = "Random"
+        settings["player"] = "P1"
         settings["step_ratio"] = 6
         settings["action_space"] = ["discrete", "discrete"]
         settings["attack_but_combination"] = [True, True]
@@ -349,7 +349,7 @@ def func(player, mocker):
 
         # Args
         args = {}
-        args["interactive_viz"] = True
+        args["interactive_viz"] = False
         args["no_action_probability"] = 0.5
         args["n_episodes"] = 1
 
