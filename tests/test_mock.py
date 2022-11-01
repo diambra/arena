@@ -51,7 +51,7 @@ class DiambraEngineMock:
         self.player = "P1"
 
     def generate_frame(self):
-        frame = np.ones((self.frame_shape)) * self.n_steps
+        frame = np.ones((self.frame_shape), dtype=np.int8) * self.n_steps
         return frame.tobytes()
 
     def generate_ram_states(self):
@@ -158,29 +158,14 @@ class DiambraEngineMock:
 
         # Characters
         if self.player == "P1P2":
-            if self.settings.characters.p1[0] == "Random":
-                self.char_p1 = random.choices(range(self.number_of_chars))[0]
-            else:
-                self.char_p1 = self.settings.characters.p1[0]
-
-            if self.settings.characters.p2[0] == "Random":
-                self.char_p2 = random.choices(range(self.number_of_chars))[0]
-            else:
-                self.char_p2 = self.settings.characters.p2[0]
-
+            self.char_p1 = random.choices(range(self.number_of_chars))[0]
+            self.char_p2 = random.choices(range(self.number_of_chars))[0]
         elif self.player == "P1":
-            if self.settings.characters.p1[0] == "Random":
-                self.char_p1 = random.choices(range(self.number_of_chars))[0]
-            else:
-                self.char_p1 = self.settings.characters.p1[0]
+            self.char_p1 = random.choices(range(self.number_of_chars))[0]
             self.char_p2 = self.n_stages
-
         else:
             self.char_p1 = self.n_stages
-            if self.settings.characters.p2[0] == "Random":
-                self.char_p2 = random.choices(range(self.number_of_chars))[0]
-            else:
-                self.char_p2 = self.settings.characters.p2[0]
+            self.char_p2 = random.choices(range(self.number_of_chars))[0]
 
     # Update game state
     def new_game_state(self, mov_p1=0, att_p1=0, mov_p2=0, att_p2=0):
@@ -359,7 +344,7 @@ def func(player, mocker):
         # Settings
         settings = {}
         settings["game_id"] = "doapp"
-        settings["player"] = "Kasumi"
+        settings["player"] = "Random"
         settings["step_ratio"] = 6
 
         # Args
@@ -375,7 +360,7 @@ def func(player, mocker):
         print(e)
         return 1
 
-players = ["Random", "P1P2"]
+players = ["Random"]
 
 @pytest.mark.parametrize("player", players)
 def test_random_gym(player, mocker):
