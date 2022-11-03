@@ -12,7 +12,6 @@ CONNECTION_FAILED_ERROR_TEXT = """DIAMBRA Arena failed to connect to the Engine 
 See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://discord.gg/tFDS2UN5sv) for support."""
 
 # DIAMBRA Env Gym
-
 class DiambraEngine:
     """Diambra Environment gym interface"""
 
