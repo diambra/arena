@@ -28,7 +28,7 @@ def func(player, continue_game, action_space, attack_buttons_combination,
     perfect_probability=0.2
     if args["no_action"] is True:
         round_winning_probability = 0.0
-        perfect_probability=0.0
+        perfect_probability = 0.0
 
     diambra_engine_mock = DiambraEngineMock(round_winning_probability, perfect_probability)
 

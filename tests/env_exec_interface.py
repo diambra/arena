@@ -6,6 +6,7 @@ import os
 import sys
 import numpy as np
 import random
+import warnings
 
 def env_exec(settings, wrappers_settings, traj_rec_settings, args):
 
@@ -153,10 +154,10 @@ def env_exec(settings, wrappers_settings, traj_rec_settings, args):
 
         round_max_reward = env.max_delta_health / env.reward_normalization_value
         if (no_action is True and (np.mean(cumulative_ep_rew_all) > -(max_continue + 1) * round_max_reward * n_rounds + 0.001)):
-            raise RuntimeError("NoAction policy and average "
-                               "reward different than {} ({})".format(
-                                   -(max_continue + 1) * round_max_reward * n_rounds,
-                                   np.mean(cumulative_ep_rew_all)))
+
+            message = "NoAction policy and average reward different than {} ({})".format(
+                -(max_continue + 1) * round_max_reward * n_rounds, np.mean(cumulative_ep_rew_all))
+            warnings.warn(UserWarning(message))
 
         print("COMPLETED SUCCESSFULLY!")
         return 0
