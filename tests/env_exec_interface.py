@@ -16,7 +16,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings, args):
         if args["interactive_viz"] is True:
             wait_key = 0
 
-        no_action = random.choices([True, False], [args["no_action_probability"], 1.0 - args["no_action_probability"]])[0]
+        no_action = args["no_action"]
 
         n_rounds = 2
         if settings["game_id"] == "kof98umh":
