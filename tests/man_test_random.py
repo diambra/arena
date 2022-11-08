@@ -92,7 +92,7 @@ if __name__ == '__main__':
     # Args
     args = {}
     args["interactive_viz"] = bool(opt.interactiveViz)
-    args["no_action_probability"] = 1.0*opt.noAction
+    args["no_action"] = True if opt.noAction == 1 else False
     args["n_episodes"] = opt.nEpisodes
 
     env_exec(settings, wrappers_settings, traj_rec_settings, args)

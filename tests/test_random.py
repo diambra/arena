@@ -2,10 +2,10 @@
 import pytest
 from env_exec_interface import env_exec
 import sys
-import time
 import random
 from os.path import expanduser
 import os
+from engine_mock import DiambraEngineMock
 
 # Example Usage:
 # pytest
@@ -14,31 +14,43 @@ import os
 #    -s (show output)
 #    -k 'expression' (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. 'wrappers and doapp')
 
-def func(game_id, player, continue_game, action_space, attack_buttons_combination,
-         wrappers_settings, traj_rec_settings, hardcore_prob, no_action_prob):
+def func(player, continue_game, action_space, attack_buttons_combination,
+         wrappers_settings, traj_rec_settings, hardcore_prob, no_action_prob, mocker):
+
+    # Args
+    args = {}
+    args["interactive_viz"] = False
+    args["n_episodes"] = 1
+
+    args["no_action"] = random.choices([True, False], [no_action_probability, 1.0 - no_action_probability])[0]
+
+    round_winning_probability = 0.5
+    perfect_probability=0.2
+    if args["no_action"] is True:
+        round_winning_probability = 0.0
+        perfect_probability=0.0
+
+    diambra_engine_mock = DiambraEngineMock(round_winning_probability, perfect_probability)
+
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine.__init__', diambra_engine_mock._mock__init__)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._env_init', diambra_engine_mock._mock_env_init)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._reset', diambra_engine_mock._mock_reset)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._step_1p', diambra_engine_mock._mock_step_1p)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._step_2p', diambra_engine_mock._mock_step_2p)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine.close', diambra_engine_mock._mock_close)
 
     try:
-        viz_flag = True
-        wait_key = 1
-
         # Settings
         settings = {}
-        settings["game_id"] = game_id
+        settings["game_id"] = "mock"
         settings["player"] = player
-        settings["step_ratio"] = 6
         settings["continue_game"] = continue_game
         settings["action_space"] = [action_space, action_space]
         settings["attack_but_combination"] = [attack_buttons_combination, attack_buttons_combination]
         if settings["player"] != "P1P2":
             settings["action_space"] = settings["action_space"][0]
             settings["attack_but_combination"] = settings["attack_but_combination"][0]
-        settings["hardcore"] = random.choices([True, False], [hardcore_prob, 1.0 - hardcore_prob])[0]
-
-        # Args
-        args = {}
-        args["interactive_viz"] = False
-        args["no_action_probability"] = no_action_prob
-        args["n_episodes"] = 1
+        settings["hardcore"] = random.choices([True, False], [hardcore_probability, 1.0 - hardcore_probability])[0]
 
         return env_exec(settings, wrappers_settings, traj_rec_settings, args)
 
@@ -47,32 +59,30 @@ def func(game_id, player, continue_game, action_space, attack_buttons_combinatio
         print(e)
         return 1
 
-game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
+#game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"] # To substitute with game (mocked) features
 players = ["Random", "P1P2"]
 continue_games = [-1.0, 0.0, 0.3]
 action_spaces = ["discrete", "multi_discrete"]
 attack_buttons_combinations = [False, True]
-hardcore_prob = 0.4
-no_action_prob = 0.5
-rec_traj_prob = 0.5
+hardcore_probability = 0.4
+no_action_probability = 0.5
+rec_traj_probability = 0.5
 
-@pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("player", players)
 @pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
 @pytest.mark.parametrize("attack_buttons_combination", attack_buttons_combinations)
-def test_random_gym(game_id, player, continue_game, action_space, attack_buttons_combination):
+def test_random_gym(player, continue_game, action_space, attack_buttons_combination, mocker):
     wrappers_settings = {}
     traj_rec_settings = {}
-    assert func(game_id, player, continue_game, action_space, attack_buttons_combination,
-                wrappers_settings, traj_rec_settings, hardcore_prob, no_action_prob) == 0
+    assert func(player, continue_game, action_space, attack_buttons_combination,
+                wrappers_settings, traj_rec_settings, hardcore_probability, no_action_probability, mocker) == 0
 
-@pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("player", players)
 @pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
 @pytest.mark.parametrize("attack_buttons_combination", attack_buttons_combinations)
-def test_random_wrappers(game_id, player, continue_game, action_space, attack_buttons_combination):
+def test_random_wrappers(player, continue_game, action_space, attack_buttons_combination, mocker):
 
     # Env wrappers settings
     wrappers_settings = {}
@@ -87,26 +97,20 @@ def test_random_wrappers(game_id, player, continue_game, action_space, attack_bu
     wrappers_settings["scale"] = True
     wrappers_settings["scale_mod"] = 0
     wrappers_settings["flatten"] = True
-    if game_id != "tektagt":
-        wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
-                                            "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
-                                            "P1_actions_move", "P1_actions_attack"]
-    else:
-        wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
-                                            "P1_ownHealth1", "P1_oppHealth1", "P1_oppChar",
-                                            "P1_ownHealth2", "P1_oppHealth2",
-                                            "P1_actions_move", "P1_actions_attack"]
+    wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
+                                        "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
+                                        "P1_actions_move", "P1_actions_attack"]
 
     # Recording settings
     home_dir = expanduser("~")
     traj_rec_settings = {}
     traj_rec_settings["user_name"] = "Alex"
-    traj_rec_settings["file_path"] = os.path.join(home_dir, "DIAMBRA/trajRecordings", game_id)
+    traj_rec_settings["file_path"] = os.path.join(home_dir, "DIAMBRA/trajRecordings/mock")
     traj_rec_settings["ignore_p2"] = 0
     traj_rec_settings["commit_hash"] = "0000000"
 
-    if (random.choices([True, False], [rec_traj_prob, 1.0 - rec_traj_prob])[0] is False):
+    if (random.choices([True, False], [rec_traj_probability, 1.0 - rec_traj_probability])[0] is False):
         traj_rec_settings = {}
 
-    assert func(game_id, player, continue_game, action_space, attack_buttons_combination,
-                wrappers_settings, traj_rec_settings, hardcore_prob, no_action_prob) == 0
+    assert func(player, continue_game, action_space, attack_buttons_combination,
+                wrappers_settings, traj_rec_settings, hardcore_probability, no_action_probability, mocker) == 0
