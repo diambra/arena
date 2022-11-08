@@ -143,7 +143,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings, args):
         if len(cumulative_ep_rew_all) != max_num_ep:
             raise RuntimeError("Not run all episodes")
 
-        if settings["continue_game"] <= 0.0:
+        if settings["continue_game"] <= 0.0 and settings["player"] != "P1P2":
             max_continue = int(-settings["continue_game"])
         else:
             max_continue = 0
@@ -152,7 +152,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings, args):
             max_continue = (max_continue + 1) * 0.7 - 1
 
         round_max_reward = env.max_delta_health / env.reward_normalization_value
-        if (no_action == 1 and (np.mean(cumulative_ep_rew_all) > -(max_continue + 1) * round_max_reward * n_rounds + 0.001)):
+        if (no_action is True and (np.mean(cumulative_ep_rew_all) > -(max_continue + 1) * round_max_reward * n_rounds + 0.001)):
             raise RuntimeError("NoAction policy and average "
                                "reward different than {} ({})".format(
                                    -(max_continue + 1) * round_max_reward * n_rounds,

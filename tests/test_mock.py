@@ -5,8 +5,6 @@ import sys
 import random
 from os.path import expanduser
 import os
-import logging
-import numpy as np
 from engine_mock import DiambraEngineMock
 
 # Example Usage:
@@ -41,14 +39,10 @@ def func(player, no_action_probability, mocker):
     mocker.patch('diambra.arena.engine.interface.DiambraEngine.close', diambra_engine_mock._mock_close)
 
     try:
-        viz_flag = True
-        wait_key = 1
-
         # Settings
         settings = {}
-        settings["game_id"] = "doapp"
+        settings["game_id"] = "mock"
         settings["player"] = "P1"
-        settings["step_ratio"] = 6
         settings["continue_game"] = 0.0
         settings["action_space"] = ["discrete", "discrete"]
         settings["attack_but_combination"] = [True, True]
