@@ -30,8 +30,21 @@ def func(player, continue_game, action_space, attack_buttons_combination,
         round_winning_probability = 0.0
         perfect_probability = 0.0
 
+    rounds_per_stage = random.choice([2, 3])
+    stages_per_game = random.choice([2, 3])
+    number_of_chars = random.choice([11,33])
+    number_of_chars_per_round = random.choice([1, 2])
+    min_health = random.choice([-1, 0])
+    max_health = random.choice([100, 208])
+    frame_shape = random.choice([[128, 128, 3], [480, 512, 3]])
+    n_actions = random.choice([[9, 7, 12], [9, 6, 6], [9, 6, 12]])
+
     diambra_engine_mock_params = EngineMockParams(round_winning_probability=round_winning_probability,
-                                                  perfect_probability=perfect_probability)
+                                                  perfect_probability=perfect_probability, rounds_per_stage=rounds_per_stage,
+                                                  stages_per_game=stages_per_game, number_of_chars=number_of_chars,
+                                                  number_of_chars_per_round=number_of_chars_per_round,
+                                                  min_health=min_health, max_health=max_health, frame_shape=frame_shape,
+                                                  n_actions=n_actions)
     diambra_engine_mock = DiambraEngineMock(diambra_engine_mock_params)
 
     mocker.patch('diambra.arena.engine.interface.DiambraEngine.__init__', diambra_engine_mock._mock__init__)
@@ -100,8 +113,7 @@ def test_random_wrappers(player, continue_game, action_space, attack_buttons_com
     wrappers_settings["scale_mod"] = 0
     wrappers_settings["flatten"] = True
     wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
-                                        "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
-                                        "P1_actions_move", "P1_actions_attack"]
+                                        "P1_oppChar", "P1_actions_move", "P1_actions_attack"]
 
     # Recording settings
     home_dir = expanduser("~")

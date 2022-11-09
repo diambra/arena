@@ -7,7 +7,8 @@ class EngineMockParams:
 
     def __init__(self, round_winning_probability=0.4, perfect_probability=0.2,
                  steps_per_round=20, rounds_per_stage=2, stages_per_game=2,
-                 number_of_chars=15, min_health=0, max_health=100,
+                 number_of_chars=15, number_of_chars_per_round=1,
+                 min_health=0, max_health=100,
                  frame_shape=[128, 128, 3], n_actions=[9, 7, 12], fps=1000):
 
         self.params = {}
@@ -19,6 +20,7 @@ class EngineMockParams:
         self.params["rounds_per_stage"] = rounds_per_stage
         self.params["stages_per_game"] = stages_per_game
         self.params["number_of_chars"] = number_of_chars
+        self.params["number_of_chars_per_round"] = number_of_chars_per_round
         self.params["min_health"] = min_health
         self.params["max_health"] = max_health
         self.params["frame_shape"] = frame_shape
@@ -36,6 +38,7 @@ class DiambraEngineMock:
         self.rounds_per_stage = engine_mock_params.params["rounds_per_stage"]
         self.stages_per_game = engine_mock_params.params["stages_per_game"]
         self.number_of_chars = engine_mock_params.params["number_of_chars"]
+        self.number_of_chars_per_round = engine_mock_params.params["number_of_chars_per_round"]
         self.min_health = engine_mock_params.params["min_health"]
         self.max_health = engine_mock_params.params["max_health"]
         self.frame_shape = engine_mock_params.params["frame_shape"]
@@ -61,7 +64,7 @@ class DiambraEngineMock:
         self.player = "P1"
 
     def generate_frame(self):
-        frame = np.ones((self.frame_shape), dtype=np.int8) * (self.n_stages * self.rounds_per_stage + self.n_steps) % 255
+        frame = np.ones((self.frame_shape), dtype=np.int8) * ((self.n_stages * self.rounds_per_stage + self.n_steps) % 255)
         return frame.tobytes()
 
     def generate_ram_states(self):
@@ -74,11 +77,15 @@ class DiambraEngineMock:
         ram_states["SideP2"] = {"type": 0, "min": 0, "max": 1, "val": self.side_p2}
         ram_states["WinsP1"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_lost if self.player == "P2" else self.n_rounds_won}
         ram_states["WinsP2"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_won if self.player == "P2" else self.n_rounds_lost}
-        ram_states["HealthP1"] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p1}
-        ram_states["HealthP2"] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p2}
+        if self.number_of_chars_per_round == 1:
+            ram_states["HealthP1"] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p1}
+            ram_states["HealthP2"] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p2}
+        else:
+            for idx in range(self.number_of_chars_per_round):
+                ram_states["Health{}P1".format(idx+1)] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p1}
+                ram_states["Health{}P2".format(idx+1)] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p2}
 
         return ram_states
-
 
     def _mock__init__(self, env_address, grpc_timeout=60):
         print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
