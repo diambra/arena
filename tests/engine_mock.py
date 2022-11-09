@@ -61,7 +61,7 @@ class DiambraEngineMock:
         self.player = "P1"
 
     def generate_frame(self):
-        frame = np.ones((self.frame_shape), dtype=np.int8) * (self.n_stages * self.rounds_per_stage + self.n_steps)
+        frame = np.ones((self.frame_shape), dtype=np.int8) * (self.n_stages * self.rounds_per_stage + self.n_steps) % 255
         return frame.tobytes()
 
     def generate_ram_states(self):
