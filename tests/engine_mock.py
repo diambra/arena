@@ -3,27 +3,50 @@ import random
 import numpy as np
 from diambra.engine import Client, model
 
+class EngineMockParams:
+
+    def __init__(self, round_winning_probability=0.4, perfect_probability=0.2,
+                 steps_per_round=20, rounds_per_stage=2, stages_per_game=2,
+                 number_of_chars=15, min_health=0, max_health=100,
+                 frame_shape=[128, 128, 3], n_actions=[9, 7, 12], fps=1000):
+
+        self.params = {}
+
+        # Game features
+        self.params["round_winning_probability"] = round_winning_probability
+        self.params["perfect_probability"] = perfect_probability
+        self.params["steps_per_round"] = steps_per_round
+        self.params["rounds_per_stage"] = rounds_per_stage
+        self.params["stages_per_game"] = stages_per_game
+        self.params["number_of_chars"] = number_of_chars
+        self.params["min_health"] = min_health
+        self.params["max_health"] = max_health
+        self.params["frame_shape"] = frame_shape
+        self.params["n_actions"] = n_actions
+        self.params["fps"] = fps
+
 class DiambraEngineMock:
 
-    def __init__(self, round_winning_probability=0.4, perfect_probability=0.2):
-        # Game features
-        self.steps_per_round = 20
-        self.rounds_per_stage = 2
-        self.stages_per_game = 2
-        self.number_of_chars = 15
-        self.char_list = ["Char{}".format(i) for i in range(self.number_of_chars)]
-        self.min_health = 0
-        self.max_health = 100
-        self.frame_shape = [128, 128, 3]
-        self.n_actions = [9, 7, 12]
+    def __init__(self, engine_mock_params):
 
-        self.round_winning_probability = round_winning_probability
-        self.perfect_probability = perfect_probability
+        # Game features
+        self.round_winning_probability = engine_mock_params.params["round_winning_probability"]
+        self.perfect_probability = engine_mock_params.params["perfect_probability"]
+        self.steps_per_round = engine_mock_params.params["steps_per_round"]
+        self.rounds_per_stage = engine_mock_params.params["rounds_per_stage"]
+        self.stages_per_game = engine_mock_params.params["stages_per_game"]
+        self.number_of_chars = engine_mock_params.params["number_of_chars"]
+        self.min_health = engine_mock_params.params["min_health"]
+        self.max_health = engine_mock_params.params["max_health"]
+        self.frame_shape = engine_mock_params.params["frame_shape"]
+        self.n_actions = engine_mock_params.params["n_actions"]
+        self.fps = engine_mock_params.params["fps"]
 
         time_dep_seed = int((time.time() - int(time.time() - 0.5)) * 1000)
         random.seed()
 
         # Class state variables
+        self.char_list = ["Char{}".format(i) for i in range(self.number_of_chars)]
         self.n_steps = 0
         self.n_rounds_won = 0
         self.n_rounds_lost = 0
@@ -178,6 +201,9 @@ class DiambraEngineMock:
 
     # Update game state
     def new_game_state(self, mov_p1=0, att_p1=0, mov_p2=0, att_p2=0):
+
+        # Sleep to simulate computer time elapsed
+        time.sleep(1.0/self.fps)
 
         # Actions
         self.mov_p1 = mov_p1

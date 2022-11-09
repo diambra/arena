@@ -5,7 +5,7 @@ import sys
 import random
 from os.path import expanduser
 import os
-from engine_mock import DiambraEngineMock
+from engine_mock import DiambraEngineMock, EngineMockParams
 
 # Example Usage:
 # pytest
@@ -30,7 +30,9 @@ def func(player, continue_game, action_space, attack_buttons_combination,
         round_winning_probability = 0.0
         perfect_probability = 0.0
 
-    diambra_engine_mock = DiambraEngineMock(round_winning_probability, perfect_probability)
+    diambra_engine_mock_params = EngineMockParams(round_winning_probability=round_winning_probability,
+                                                  perfect_probability=perfect_probability)
+    diambra_engine_mock = DiambraEngineMock(diambra_engine_mock_params)
 
     mocker.patch('diambra.arena.engine.interface.DiambraEngine.__init__', diambra_engine_mock._mock__init__)
     mocker.patch('diambra.arena.engine.interface.DiambraEngine._env_init', diambra_engine_mock._mock_env_init)
