@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import pytest
+from env_exec_interface import env_exec
 import sys
 import time
 import random
 from os.path import expanduser
 import os
+from engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
-import argparse
 import numpy as np
 
 def reject_outliers(data):
@@ -15,18 +16,27 @@ def reject_outliers(data):
     filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
     return filtered
 
-def func(game_id, player, wrappers_settings, target_speed):
+def func(player, wrappers_settings, target_speed, mocker):
+
+    diambra_engine_mock_params = EngineMockParams(round_winning_probability=0.5,
+                                                  perfect_probability=0.0, fps=500)
+    diambra_engine_mock = DiambraEngineMock(diambra_engine_mock_params)
+
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine.__init__', diambra_engine_mock._mock__init__)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._env_init', diambra_engine_mock._mock_env_init)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._reset', diambra_engine_mock._mock_reset)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._step_1p', diambra_engine_mock._mock_step_1p)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine._step_2p', diambra_engine_mock._mock_step_2p)
+    mocker.patch('diambra.arena.engine.interface.DiambraEngine.close', diambra_engine_mock._mock_close)
 
     try:
         # Settings
         settings = {}
         settings["player"] = player
-        settings["step_ratio"] = 1
-        settings["frame_shape"] = [128, 128, 1]
         settings["action_space"] = "discrete"
         settings["attack_but_combination"] = False
 
-        env = diambra.arena.make(game_id, settings, wrappers_settings)
+        env = diambra.arena.make("mock", settings, wrappers_settings)
 
         observation = env.reset()
         n_step = 0
@@ -65,33 +75,22 @@ def func(game_id, player, wrappers_settings, target_speed):
         if abs(avg_fps - target_speed) > target_speed * 0.025:
             raise RuntimeError("Fps different than expected: {} VS {}".format(avg_fps, target_speed))
 
-        print("COMPLETED SUCCESSFULLY!")
         return 0
     except Exception as e:
         print(e)
-        print("ERROR, ABORTED.")
         return 1
 
-game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
 players = ["Random", "P1P2"]
 
-target_speeds = {}
-target_speeds["doapp"] = [696, 1256]
-target_speeds["sfiii3n"] = [1090, 916]
-target_speeds["tektagt"] = [2500, 2500]
-target_speeds["umk3"] = [969, 1213]
-target_speeds["samsh5sp"] = [1339, 1123]
-target_speeds["kof98umh"] = [1786, 3987]
+target_speeds = [500, 500]
 
-@pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("player", players)
-def test_speed_gym(game_id, player):
+def test_speed_gym(player, mocker):
     wrappers_settings = {}
-    assert func(game_id, player, wrappers_settings, target_speeds[game_id][0]) == 0
+    assert func(player, wrappers_settings, target_speeds[0], mocker) == 0
 
-@pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("player", players)
-def test_speed_wrappers(game_id, player):
+def test_speed_wrappers(player, mocker):
 
     # Env wrappers settings
     wrappers_settings = {}
@@ -104,14 +103,9 @@ def test_speed_wrappers(game_id, player):
     wrappers_settings["actions_stack"] = 12
     wrappers_settings["scale"] = True
     wrappers_settings["scale_mod"] = 0
-    if game_id != "tektagt":
-        wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
-                                            "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
-                                            "P1_actions_move", "P1_actions_attack"]
-    else:
-        wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
-                                            "P1_ownHealth1", "P1_oppHealth1", "P1_oppChar",
-                                            "P1_ownHealth2", "P1_oppHealth2",
-                                            "P1_actions_move", "P1_actions_attack"]
+    wrappers_settings["flatten"] = True
+    wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
+                                        "P1_ownHealth", "P1_oppHealth", "P1_oppChar",
+                                        "P1_actions_move", "P1_actions_attack"]
 
-    assert func(game_id, player, wrappers_settings, target_speeds[game_id][1]) == 0
+    assert func(player, wrappers_settings, target_speeds[1], mocker) == 0
