@@ -126,10 +126,10 @@ normal_multi_discrete = os.path.join(base_path, 'data/MultiDiscrete/Normal')
 hardcore_multi_discrete = os.path.join(base_path, 'data/MultiDiscrete/HC')
 
 @pytest.mark.parametrize("path", [normal_discrete, normal_multi_discrete])
-def test_normal_mode(path):
+def test_imitation_normal_mode(path):
     assert func(path, False) == 0
 
 @pytest.mark.parametrize("path", [hardcore_discrete, hardcore_multi_discrete])
-def test_hardcore_mode(path):
+def test_imitation_hardcore_mode(path):
     assert func(path, True) == 0
 

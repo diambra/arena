@@ -59,7 +59,7 @@ rec_traj_probability = 0.5
 @pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
 @pytest.mark.parametrize("attack_buttons_combination", attack_buttons_combinations)
-def test_random_gym(game_id, player, continue_game, action_space, attack_buttons_combination):
+def test_integration_gym(game_id, player, continue_game, action_space, attack_buttons_combination):
     wrappers_settings = {}
     traj_rec_settings = {}
     assert func(game_id, player, continue_game, action_space, attack_buttons_combination,
@@ -70,7 +70,7 @@ def test_random_gym(game_id, player, continue_game, action_space, attack_buttons
 @pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
 @pytest.mark.parametrize("attack_buttons_combination", attack_buttons_combinations)
-def test_random_wrappers(game_id, player, continue_game, action_space, attack_buttons_combination):
+def test_integration_wrappers(game_id, player, continue_game, action_space, attack_buttons_combination):
 
     # Env wrappers settings
     wrappers_settings = {}
