@@ -1,0 +1,15 @@
+on:
+  pull_request: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - run: python3 -m pip install .
+      - run: python3 -m pip install --upgrade pytest pytest-mock
+      - run: pytest tests/test_random.py
+      - run: pytest tests/test_speed.py
