@@ -1,0 +1,57 @@
+on:
+  push:
+    tags:
+      - "v*.*.*"
+    branches:
+      - main
+  pull_request: {}
+
+jobs:
+  generate-matrix:
+    name: Generate build matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        with:
+          dir_names: "true"
+          files: 'images/**'
+        uses: tj-actions/changed-files@v29.0.2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(./.github/workflows/generate-image-build-matrix ${{ steps.changed-files.outputs.all_changed_files }})"
+
+  build-and-push-images:
+    needs: [generate-matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push agent ${{ matrix.dir }}
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ${{ matrix.dir }}/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/diambra/agent-${{ matrix.name }}:${{ github.sha }}
+            ghcr.io/diambra/agent-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
+          build-args: ${{ matrix.build_args }}
+
