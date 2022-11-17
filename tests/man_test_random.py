@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('--nEpisodes', type=int, default=1, help='Number of episodes')
     parser.add_argument('--continueGame', type=float, default=-1.0, help='ContinueGame flag (-inf,+1.0]')
     parser.add_argument('--actionSpace', type=str, default="discrete", help='discrete/multi_discrete')
-    parser.add_argument('--attButComb', type=int, default=0, help='Use attack button combinations (0=F)/1=T')
+    parser.add_argument('--attButComb', type=bool, default=False, help='Use attack button combinations (0=F)/1=T')
     parser.add_argument('--noAction', type=int, default=0, help='If to use no action policy (0=False)')
     parser.add_argument('--recordTraj', type=int, default=0, help='If to record trajectories (0=False)')
     parser.add_argument('--hardcore', type=int, default=0, help='Hard core mode (0=False)')
@@ -40,17 +40,14 @@ if __name__ == '__main__':
     if opt.envAddress != "":
         settings["env_address"] = opt.envAddress
     settings["player"] = opt.player
-    settings["characters"] = [[opt.character1,
-                               opt.character1_2,
-                               opt.character1_3],
-                              [opt.character2,
-                               opt.character2_2,
-                               opt.character2_3]]
+    settings["characters"] = ((opt.character1, opt.character1_2, opt.character1_3),
+                              (opt.character2, opt.character2_2, opt.character2_3))
     settings["step_ratio"] = opt.stepRatio
     settings["continue_game"] = opt.continueGame
-    settings["action_space"] = [opt.actionSpace, opt.actionSpace]
-    settings["attack_but_combination"] = [opt.attButComb, opt.attButComb]
+    settings["action_space"] = (opt.actionSpace, opt.actionSpace)
+    settings["attack_but_combination"] = (opt.attButComb, opt.attButComb)
     if settings["player"] != "P1P2":
+        settings["characters"] = settings["characters"][0]
         settings["action_space"] = settings["action_space"][0]
         settings["attack_but_combination"] = settings["attack_but_combination"][0]
     settings["hardcore"] = False if opt.hardcore == 0 else True

@@ -7,13 +7,15 @@ import logging
 from gym import spaces
 from .utils.gym_utils import discrete_to_multi_discrete_action
 from .engine.interface import DiambraEngine
+from .env_settings import EnvironmentSettings1P, EnvironmentSettings2P
+from typing import Union
 
 # DIAMBRA Env Gym
 class DiambraGymHardcoreBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, env_settings):
+    def __init__(self, env_settings: Union[EnvironmentSettings1P, EnvironmentSettings2P]):
         self.logger = logging.getLogger(__name__)
         super(DiambraGymHardcoreBase, self).__init__()
 

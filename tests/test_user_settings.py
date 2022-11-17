@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import pytest
-from env_exec_interface import env_exec
 import sys
 import random
 from os.path import expanduser
@@ -14,37 +13,23 @@ from engine_mock import DiambraEngineMock, EngineMockParams
 #    -s (show output)
 #    -k 'expression' (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. 'wrappers and doapp')
 
+def env_exec(settings, wrappers_settings, traj_rec_settings):
+    try:
+        env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, traj_rec_settings)
+
+        env.close()
+
+        print("COMPLETED SUCCESSFULLY!")
+        return 0
+    except Exception as e:
+        print(e)
+        print("ERROR, ABORTED.")
+        return 1
+
 def func(player, continue_game, action_space, attack_buttons_combination,
-         wrappers_settings, traj_rec_settings, hardcore_prob, no_action_prob, mocker):
+         wrappers_settings, traj_rec_settings, mocker):
 
-    # Args
-    args = {}
-    args["interactive_viz"] = False
-    args["n_episodes"] = 1
-
-    args["no_action"] = random.choices([True, False], [no_action_probability, 1.0 - no_action_probability])[0]
-
-    round_winning_probability = 0.5
-    perfect_probability=0.2
-    if args["no_action"] is True:
-        round_winning_probability = 0.0
-        perfect_probability = 0.0
-
-    rounds_per_stage = random.choice([2, 3])
-    stages_per_game = random.choice([2, 3])
-    number_of_chars = random.choice([11,33])
-    number_of_chars_per_round = random.choice([1, 2])
-    min_health = random.choice([-1, 0])
-    max_health = random.choice([100, 208])
-    frame_shape = random.choice([[128, 128, 3], [480, 512, 3]])
-    n_actions = random.choice([[9, 7, 12], [9, 6, 6], [9, 6, 12]])
-
-    diambra_engine_mock_params = EngineMockParams(round_winning_probability=round_winning_probability,
-                                                  perfect_probability=perfect_probability, rounds_per_stage=rounds_per_stage,
-                                                  stages_per_game=stages_per_game, number_of_chars=number_of_chars,
-                                                  number_of_chars_per_round=number_of_chars_per_round,
-                                                  min_health=min_health, max_health=max_health, frame_shape=frame_shape,
-                                                  n_actions=n_actions)
+    diambra_engine_mock_params = EngineMockParams()
     diambra_engine_mock = DiambraEngineMock(diambra_engine_mock_params)
 
     mocker.patch('diambra.arena.engine.interface.DiambraEngine.__init__', diambra_engine_mock._mock__init__)
@@ -65,38 +50,61 @@ def func(player, continue_game, action_space, attack_buttons_combination,
         if settings["player"] != "P1P2":
             settings["action_space"] = settings["action_space"][0]
             settings["attack_but_combination"] = settings["attack_but_combination"][0]
-        settings["hardcore"] = random.choices([True, False], [hardcore_probability, 1.0 - hardcore_probability])[0]
 
-        return env_exec(settings, wrappers_settings, traj_rec_settings, args)
+        return env_exec(settings, wrappers_settings, traj_rec_settings)
 
         return 0
     except Exception as e:
         print(e)
         return 1
 
-players = ["Random", "P1P2"]
+
+'''
+    # System level
+    step_ratio: int = 6
+
+    # Game level
+    game_id: str = "doapp"
+    player: str = "Random"
+    continue_game: float = 0.0
+    difficulty: int = 3
+    frame_shape: Tuple[int, int, int] = (0, 0, 0)
+
+    tower: int = 3  # UMK3 Specific
+
+    # Player level
+    characters: Union[str, Tuple[str], Tuple[str, str], Tuple[str, str, str]] = ("Random", "Random", "Random")
+    char_outfits: int = 2
+    action_space: str = "multi_discrete"
+    attack_but_combination: bool = True
+
+    super_art: int = 0  # SFIII Specific
+
+    fighting_style: int = 0 # KOF Specific
+    ultimate_style: Tuple[int, int, int] = (0, 0, 0) # KOF Specific
+'''
+
 continue_games = [-1.0, 0.0, 0.3]
 action_spaces = ["discrete", "multi_discrete"]
 attack_buttons_combinations = [False, True]
-hardcore_probability = 0.4
-no_action_probability = 0.5
-rec_traj_probability = 0.5
 
-@pytest.mark.parametrize("player", players)
+# Gym
 @pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
 @pytest.mark.parametrize("attack_buttons_combination", attack_buttons_combinations)
-def test_random_gym(player, continue_game, action_space, attack_buttons_combination, mocker):
+def test_settings_gym_1p_ok(continue_game, action_space, attack_buttons_combination, mocker):
     wrappers_settings = {}
     traj_rec_settings = {}
-    assert func(player, continue_game, action_space, attack_buttons_combination,
-                wrappers_settings, traj_rec_settings, hardcore_probability, no_action_probability, mocker) == 0
+    assert func("Random", continue_game, action_space, attack_buttons_combination,
+                wrappers_settings, traj_rec_settings, mocker) == 0
 
+
+# Wrappers
 @pytest.mark.parametrize("player", players)
 @pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
 @pytest.mark.parametrize("attack_buttons_combination", attack_buttons_combinations)
-def test_random_wrappers(player, continue_game, action_space, attack_buttons_combination, mocker):
+def test_settings_wrappers_1p_ok(player, continue_game, action_space, attack_buttons_combination, mocker):
 
     # Env wrappers settings
     wrappers_settings = {}

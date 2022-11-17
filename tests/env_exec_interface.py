@@ -8,7 +8,13 @@ import numpy as np
 import random
 import warnings
 
-def env_exec(settings, wrappers_settings, traj_rec_settings, args):
+default_args = {
+    "interactive_viz": False,
+    "n_episodes": 1,
+    "no_action": False
+}
+
+def env_exec(settings, wrappers_settings, traj_rec_settings, args=default_args):
 
     try:
         time_dep_seed = int((time.time() - int(time.time() - 0.5)) * 1000)
