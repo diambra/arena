@@ -5,7 +5,9 @@ import random
 from os.path import expanduser
 import os
 from engine_mock import DiambraEngineMock, EngineMockParams
+import diambra.arena
 from diambra.arena.utils.gym_utils import available_games
+import numpy as np
 
 # Example Usage:
 # pytest
@@ -56,6 +58,13 @@ gym_settings_var_order = ["game_id", "player", "step_ratio", "frame_shape", "tow
 @pytest.mark.parametrize("test_input,expected", [("3+5", 8), ("2+4", 6), ("6*9", 42)])
 def test_eval(test_input, expected):
     assert eval(test_input) == expected
+
+def pytest_generate_tests(metafunc):
+    if "stringinput" in metafunc.fixturenames:
+        metafunc.parametrize("stringinput", ["prova", "!"])
+
+def test_valid_string(stringinput):
+    assert stringinput.isalpha()
 '''
 
 def generate_pytest_decorator_input(var_order, test_parameters):
@@ -97,26 +106,15 @@ ok_test_parameters = {
     "ultimate_style": [0, 1, 2],
 }
 
-test_vars, values_list = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters)
-print(test_vars)
-print(values_list)
-sys.exit(1)
+def pytest_generate_tests(metafunc):
+    test_vars, values_list = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters)
+    #if test_vars in metafunc.fixturenames:
+    metafunc.parametrize(test_vars, values_list)
 
 # Gym
-@pytest.mark.parametrize("game_id", game_ids)
-@pytest.mark.parametrize("player", players)
-@pytest.mark.parametrize("step_ratio", step_ratios)
-@pytest.mark.parametrize("frame_shape", frame_shapes)
-@pytest.mark.parametrize("tower", towers)
-@pytest.mark.parametrize("super_art", super_arts)
-@pytest.mark.parametrize("fighting_style", fighting_styles)
-@pytest.mark.parametrize("ultimate_style", ultimate_styles)
-@pytest.mark.parametrize("continue_game", continue_games)
-@pytest.mark.parametrize("action_space", action_spaces)
-@pytest.mark.parametrize("attack_buttons_combination", attack_buttons_combinations)
 def test_settings_gym_1p_ok(game_id, player, step_ratio, frame_shape, tower, super_art,
                             fighting_style, ultimate_style, continue_game, action_space,
-                            attack_buttons_combination, mocker):
+                            attack_buttons_combination, expected, mocker):
 
     difficulty_range = range(games_dict[game_id]["difficulty"][0], games_dict[game_id]["difficulty"][1]+1)
     difficulty = random.choice(difficulty_range)
@@ -153,10 +151,11 @@ def test_settings_gym_1p_ok(game_id, player, step_ratio, frame_shape, tower, sup
     wrappers_settings = {}
     traj_rec_settings = {}
 
-    assert func(settings, wrappers_settings, traj_rec_settings, mocker) == 0
+    assert func(settings, wrappers_settings, traj_rec_settings, mocker) == expected
 
 
 # Wrappers
+'''
 @pytest.mark.parametrize("player", players)
 @pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
@@ -192,3 +191,4 @@ def test_settings_wrappers_1p_ok(player, continue_game, action_space, attack_but
 
     assert func(player, continue_game, action_space, attack_buttons_combination,
                 wrappers_settings, traj_rec_settings, hardcore_probability, no_action_probability, mocker) == 0
+'''
