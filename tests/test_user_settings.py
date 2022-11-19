@@ -48,18 +48,59 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
         return 1
 
 games_dict = available_games(False)
+gym_settings_var_order = ["game_id", "player", "step_ratio", "frame_shape", "tower", "super_art",
+                          "fighting_style", "ultimate_style", "continue_game", "action_space",
+                          "attack_buttons_combination"]
 
-continue_games = [-1.0, 0.0, 0.3]
-action_spaces = ["discrete", "multi_discrete"]
-attack_buttons_combinations = [False, True]
-game_ids = game_dict.keys()
-players = ["P1", "P2", "Random", "P1P2"]
-step_ratios = [1, 3, 6]
-frame_shapes = [(0, 0, 0), (0, 0, 1), (0, 0, 3), (82, 82, 0), (82, 82, 1), (82, 82, 3)]
-towers = [1, 3, 4]
-super_arts = [0, 1, 3]
-fighting_styles = [0, 1, 3]
-ultimate_styles = [0, 1, 2]
+'''
+@pytest.mark.parametrize("test_input,expected", [("3+5", 8), ("2+4", 6), ("6*9", 42)])
+def test_eval(test_input, expected):
+    assert eval(test_input) == expected
+'''
+
+def generate_pytest_decorator_input(var_order, test_parameters):
+
+    test_vars = ""
+    values_list = []
+
+    number_of_tests = 0
+    for k, v in test_parameters.items():
+        number_of_tests = max(number_of_tests, len(v))
+
+    for var in var_order:
+        test_vars += var + ","
+    test_vars += "expected"
+
+    for idx in range(number_of_tests):
+
+        test_value_tuple = tuple()
+
+        for var in var_order:
+            test_value_tuple += (test_parameters[var][idx % len(test_parameters[var])],)
+        test_value_tuple += (0,)
+
+        values_list.append(test_value_tuple)
+
+    return test_vars, values_list
+
+ok_test_parameters = {
+    "continue_game": [-1.0, 0.0, 0.3],
+    "action_space": ["discrete", "multi_discrete"],
+    "attack_buttons_combination": [False, True],
+    "game_id": list(games_dict.keys()),
+    "player": ["P1", "P2", "Random", "P1P2"],
+    "step_ratio": [1, 3, 6],
+    "frame_shape": [(0, 0, 0), (0, 0, 1), (0, 0, 3), (82, 82, 0), (82, 82, 1), (82, 82, 3)],
+    "tower": [1, 3, 4],
+    "super_art": [0, 1, 3],
+    "fighting_style": [0, 1, 3],
+    "ultimate_style": [0, 1, 2],
+}
+
+test_vars, values_list = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters)
+print(test_vars)
+print(values_list)
+sys.exit(1)
 
 # Gym
 @pytest.mark.parametrize("game_id", game_ids)
@@ -79,8 +120,10 @@ def test_settings_gym_1p_ok(game_id, player, step_ratio, frame_shape, tower, sup
 
     difficulty_range = range(games_dict[game_id]["difficulty"][0], games_dict[game_id]["difficulty"][1]+1)
     difficulty = random.choice(difficulty_range)
-    characters =
-    char_outfits =
+    characters_list = np.append("Random", games_dict[game_id]["char_list"])
+    characters = random.choice(characters_list)
+    outfits_range = range(games_dict[game_id]["outfits"][0], games_dict[game_id]["outfits"][1]+1)
+    char_outfits = random.choice(outfits_range)
 
     # Env settings
     settings = {}

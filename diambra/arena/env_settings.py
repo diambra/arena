@@ -15,6 +15,8 @@ def check_val_in_list(key, value, valid_list):
 @dataclass
 class EnvironmentSettings:
 
+    game_id: str
+
     # System level
     step_ratio: int = 6
     disable_keyboard:bool = True
@@ -24,7 +26,6 @@ class EnvironmentSettings:
     grpc_timeout: int = 60
 
     # Game level
-    game_id: str
     player: str = "Random"
     continue_game: float = 0.0
     show_final: bool = True
@@ -48,8 +49,13 @@ class EnvironmentSettings:
         check_val_in_list("player", self.player, ["P1", "P2", "Random", "P1P2"])
         check_num_in_range("continue_game", self.continue_game, [MIN_VAL, 1.0])
         check_num_in_range("difficulty", self.difficulty, self.games_dict[self.game_id]["difficulty"][:2])
+
         check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_VAL])
         check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, MAX_VAL])
+        if (min(self.frame_shape[0], self.frame_shape[1]) == 0 and
+            max(self.frame_shape[0], self.frame_shape[1]) != 0):
+            raise Exception("\"frame_shape[0] and frame_shape[1]\" must be either both different from or equal to 0")
+
         check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1, 3])
 
         check_num_in_range("tower", self.tower, [1, 4])
