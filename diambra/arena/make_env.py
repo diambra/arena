@@ -44,7 +44,6 @@ def make(game_id, env_settings={}, wrappers_settings={},
         env_settings = from_dict(EnvironmentSettings2P, env_settings)
     else:
         env_settings = from_dict(EnvironmentSettings1P, env_settings)
-    env_settings.sanity_check()
     print("After sanity check = ", env_settings)
 
     # Make environment

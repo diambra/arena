@@ -1,5 +1,16 @@
 from dataclasses import dataclass
 from typing import Union, List, Tuple
+from diambra.arena.utils.gym_utils import available_games
+
+MAX_VAL = float("inf")
+MIX_VAL = float("-inf")
+
+def check_num_in_range(key, value, bounds):
+    assert (value >= bounds[0] and value <= bounds[1]), "\"{}\" ({}) value must be in the range {}".format(key, value, bounds)
+
+def check_val_in_list(key, value, valid_list):
+    assert (value in valid_list), "\"{}\" ({}) admissible values are {}".format(key, value, valid_list)
+
 
 @dataclass
 class EnvironmentSettings:
@@ -13,7 +24,7 @@ class EnvironmentSettings:
     grpc_timeout: int = 60
 
     # Game level
-    game_id: str = "doapp"
+    game_id: str
     player: str = "Random"
     continue_game: float = 0.0
     show_final: bool = True
@@ -24,6 +35,24 @@ class EnvironmentSettings:
 
     # Environment level
     hardcore: bool = False
+
+    def __init__(self):
+        self.games_dict = available_games(False)
+
+        check_num_in_range("step_ratio", self.step_ratio, [1, 6])
+        check_num_in_range("rank", self.rank, [0, MAX_VAL])
+        check_num_in_range("seed", self.seed, [-1, MAX_VAL])
+        check_num_in_range("grpc_timeout", self.grpc_timeout, [0, 120])
+
+        check_val_in_list("game_id", self.game_id, self.games_dict.keys())
+        check_val_in_list("player", self.player, ["P1", "P2", "Random", "P1P2"])
+        check_num_in_range("continue_game", self.continue_game, [MIN_VAL, 1.0])
+        check_num_in_range("difficulty", self.difficulty, self.games_dict[self.game_id]["difficulty"][:2])
+        check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_VAL])
+        check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, MAX_VAL])
+        check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1, 3])
+
+        check_num_in_range("tower", self.tower, [1, 4])
 
 @dataclass
 class EnvironmentSettings1P(EnvironmentSettings):
@@ -39,7 +68,8 @@ class EnvironmentSettings1P(EnvironmentSettings):
     fighting_style: int = 0 # KOF Specific
     ultimate_style: Tuple[int, int, int] = (0, 0, 0) # KOF Specific
 
-    def sanity_check(self):
+    def __init__(self):
+        super().__init__()
 
         # Check for characters
         if type(self.characters) == str:
@@ -48,6 +78,18 @@ class EnvironmentSettings1P(EnvironmentSettings):
             self.characters = (self.characters[0], "Random", "Random")
         elif type(self.characters) == Tuple[str, str]:
             self.characters = (self.characters[0], self.characters[1], "Random")
+
+        check_num_in_range("char_outfits", self.char_outfits, self.games_dict[self.game_id]["outfits"])
+        for idx in range(3):
+            check_val_in_list("characters[{}]".format(idx), self.characters[idx],
+                              np.append(self.games_dict[self.game_id]["char_list"], "Random"))
+        check_val_in_list("action_space", self.action_space, ["discrete", "multi_discrete"])
+
+        check_num_in_range("super_art", self.super_art, [0, 3])
+
+        check_num_in_range("fighting_style", self.fighting_style, [0, 3])
+        for idx in range(3):
+            check_num_in_range("ultimate_style[{}]".format(idx), self.ultimate_style[idx], [0, 2])
 
 @dataclass
 class EnvironmentSettings2P(EnvironmentSettings):
@@ -66,7 +108,8 @@ class EnvironmentSettings2P(EnvironmentSettings):
     fighting_style: Tuple[int, int] = (0, 0)  # KOF Specific
     ultimate_style: Tuple[Tuple[int, int, int], Tuple[int, int, int]] = ((0, 0, 0), (0, 0, 0))  # KOF Specific
 
-    def sanity_check(self):
+    def __init__(self):
+        super().__init__()
 
         # Check for characters
         if type(self.characters[0]) == str:
@@ -79,3 +122,16 @@ class EnvironmentSettings2P(EnvironmentSettings):
             self.characters = ((self.characters[0][0], self.characters[0][1], "Random"),
                                (self.characters[1][0], self.characters[1][1], "Random"))
 
+        for jdx in range(2):
+            check_num_in_range("char_outfits[{}]".format(jdx), self.char_outfits[jdx],
+                               self.games_dict[self.game_id]["outfits"])
+            for idx in range(3):
+                check_val_in_list("characters[{}][{}]".format(jdx, idx), self.characters[jdx][idx],
+                                  np.append(self.games_dict[self.game_id]["char_list"], "Random"))
+            check_val_in_list("action_space[{}]".format(jdx), self.action_space[jdx], ["discrete", "multi_discrete"])
+
+            check_num_in_range("super_art[{}]".format(jdx), self.super_art[jdx], [0, 3])
+
+            check_num_in_range("fighting_style[{}]".format(jdx), self.fighting_style[jdx], [0, 3])
+            for idx in range(3):
+                check_num_in_range("ultimate_style[{}][{}]".format(jdx, idx), self.ultimate_style[jdx][idx], [0, 2])
