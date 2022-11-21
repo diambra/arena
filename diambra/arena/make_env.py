@@ -3,7 +3,7 @@ import logging
 from dacite import from_dict
 from .arena_gym import DiambraGymHardcore1P, DiambraGym1P, DiambraGymHardcore2P, DiambraGym2P
 from .wrappers.arena_wrappers import env_wrapping
-from .env_settings import EnvironmentSettings1P, EnvironmentSettings2P
+from .env_settings import EnvironmentSettings1P, EnvironmentSettings2P, WrappersSettings
 
 def make(game_id, env_settings={}, wrappers_settings={},
          traj_rec_settings={}, seed=None, rank=0, log_level=logging.INFO):
@@ -59,8 +59,9 @@ def make(game_id, env_settings={}, wrappers_settings={},
             env = DiambraGym2P(env_settings)
 
     # Apply environment wrappers
-    env = env_wrapping(env, env_settings.player, **wrappers_settings,
-                       hardcore=env_settings.hardcore)
+    wrappers_settings = from_dict(WrappersSettings, wrappers_settings)
+    wrappers_settings.sanity_check()
+    env = env_wrapping(env, wrappers_settings, hardcore=env_settings.hardcore)
 
     # Apply trajectories recorder wrappers
     if traj_rec_settings is True:

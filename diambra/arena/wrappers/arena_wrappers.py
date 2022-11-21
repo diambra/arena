@@ -102,18 +102,10 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         return float(reward) / float(self.env.reward_normalization_value)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
-
-
-def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
-                 reward_normalization=False, reward_normalization_factor=0.5,
-                 frame_stack=1, actions_stack=1, scale=False, exclude_image_scaling=False,
-                 process_discrete_binary=False, scale_mod=0, hwc_obs_resize=[84, 84, 0],
-                 dilation=1, flatten=False, filter_keys=None, hardcore=False):
+def env_wrapping(env, wrappers_settings: WrapperSettings, hardcore: bool=False):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
-    :param player: player identification to discriminate
-                   between 1P and 2P games
     :param no_op_max: (int) wrap the environment to perform
                     no_op_max no action steps at reset
     :param clipRewards: (bool) wrap the reward clipping wrapper
@@ -135,10 +127,10 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
     logger = logging.getLogger(__name__)
 
     if no_op_max > 0:
-        env = NoopResetEnv(env, no_op_max=no_op_max)
+        env = NoopResetEnv(env, no_op_max=wrappers_settings.no_op_max)
 
     if sticky_actions > 1:
-        env = StickyActionsEnv(env, sticky_actions=sticky_actions)
+        env = StickyActionsEnv(env, sticky_actions=wrappers_settings.sticky_actions)
 
     if hardcore is True:
         from diambra.arena.wrappers.obs_wrapper_hardcore import WarpFrame,\
@@ -149,57 +141,54 @@ def env_wrapping(env, player, no_op_max=0, sticky_actions=1, clip_rewards=False,
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
 
-    if hwc_obs_resize[2] == 1:
+    if wrappers_settings.hwc_obs_resize[2] == 1:
         # Resizing observation from H x W x 3 to
         # hwObsResize[0] x hwObsResize[1] x 1
-        env = WarpFrame(env, hwc_obs_resize)
-    elif hwc_obs_resize[2] == 3:
+        env = WarpFrame(env, wrappers_settings.hwc_obs_resize)
+    elif wrappers_settings.hwc_obs_resize[2] == 3:
         # Resizing observation from H x W x 3 to
         # hwObsResize[0] x hwObsResize[1] x hwObsResize[2]
-        env = WarpFrame3C(env, hwc_obs_resize)
+        env = WarpFrame3C(env, wrappers_settings.hwc_obs_resize)
 
     # Normalize rewards
-    if reward_normalization:
-        env = NormalizeRewardEnv(env, reward_normalization_factor)
+    if wrappers_settings.reward_normalization is True:
+        env = NormalizeRewardEnv(env, wrappers_settings.reward_normalization_factor)
 
     # Clip rewards using sign function
-    if clip_rewards:
+    if wrappers_settings.clip_rewards is True:
         env = ClipRewardEnv(env)
 
     # Stack #frameStack frames together
-    if frame_stack > 1:
-        if dilation == 1:
-            env = FrameStack(env, frame_stack)
+    if wrappers_settings.frame_stack > 1:
+        if wrappers_settings.dilation == 1:
+            env = FrameStack(env, wrappers_settings.frame_stack)
         else:
-            logger.debug("Using frame stacking with dilation = {}".format(dilation))
-            env = FrameStackDilated(env, frame_stack, dilation)
+            logger.debug("Using frame stacking with dilation = {}".format(wrappers_settings.dilation))
+            env = FrameStackDilated(env, wrappers_settings.frame_stack, wrappers_settings.dilation)
 
     # Stack #actionsStack actions together
-    if actions_stack > 1 and not hardcore:
-        if player != "P1P2":
-            env = ActionsStack(env, actions_stack)
-        else:
-            env = ActionsStack(env, actions_stack, n_players=2)
+    if wrappers_settings.actions_stack > 1 and not hardcore:
+        env = ActionsStack(env, wrappers_settings.actions_stack)
 
     # Scales observations normalizing them
-    if scale:
-        if scale_mod == 0:
+    if wrappers_settings.scale is True:
+        if wrappers_settings.scale_mod == 0:
             # Between 0.0 and 1.0
             if hardcore is False:
-                env = ScaledFloatObs(env, exclude_image_scaling, process_discrete_binary)
+                env = ScaledFloatObs(env, wrappers_settings.exclude_image_scaling, wrappers_settings.process_discrete_binary)
             else:
                 env = ScaledFloatObs(env)
-        elif scale_mod == -1:
+        elif wrappers_settings.scale_mod == -1:
             # Between -1.0 and 1.0
             raise RuntimeError("Scaling between -1.0 and 1.0 currently not implemented")
             env = ScaledFloatObsNeg(env)
         else:
-            raise ValueError("Scale mod musto be either 0 or -1")
+            raise ValueError("Scale mod must be either 0 or -1")
 
-    if flatten is True:
+    if wrappers_settings.flatten is True:
         if hardcore is True:
             logger.warning("Dictionary observation flattening is valid only for not hardcore mode, skipping it.")
         else:
-            env = FlattenFilterDictObs(env, filter_keys)
+            env = FlattenFilterDictObs(env, wrappers_settings.filter_keys)
 
     return env
