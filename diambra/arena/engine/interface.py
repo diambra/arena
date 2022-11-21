@@ -35,67 +35,106 @@ class DiambraEngine:
     # Transforming env settings dict to pb request
     def env_settings_to_pb_request(self, env_settings):
 
-        characters = {
-            "p1": [env_settings["characters"][0][0], env_settings["characters"][0][1], env_settings["characters"][0][2]],
-            "p2": [env_settings["characters"][1][0], env_settings["characters"][1][1], env_settings["characters"][1][2]]
-        }
-        outfits = {
-            "p1": env_settings["char_outfits"][0],
-            "p2": env_settings["char_outfits"][1]
-        }
         frame_shape = {
-            "h": env_settings["frame_shape"][0],
-            "w": env_settings["frame_shape"][1],
-            "c": env_settings["frame_shape"][2]
-        }
-        action_spaces = {
-            "p1": model.ACTION_SPACE_DISCRETE if env_settings["action_space"][0] == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
-            "p2": model.ACTION_SPACE_DISCRETE if env_settings["action_space"][1] == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
-        }
-        attack_buttons_combinations = {
-            "p1": env_settings["attack_but_combination"][0],
-            "p2": env_settings["attack_but_combination"][1]
-        }
-        super_arts = {
-            "p1": env_settings["super_art"][0],
-            "p2": env_settings["super_art"][1]
-        }
-        fighting_styles = {
-            "p1": env_settings["fighting_style"][0],
-            "p2": env_settings["fighting_style"][1]
-        }
-        ultimate_styles = {
-            "p1": {
-                "dash": env_settings["ultimate_style"][0][0],
-                "evade": env_settings["ultimate_style"][0][1],
-                "bar": env_settings["ultimate_style"][0][2]
-            },
-            "p2": {
-                "dash": env_settings["ultimate_style"][1][0],
-                "evade": env_settings["ultimate_style"][1][1],
-                "bar": env_settings["ultimate_style"][1][2]
-            }
+            "h": env_settings.frame_shape[0],
+            "w": env_settings.frame_shape[1],
+            "c": env_settings.frame_shape[2]
         }
 
+        if env_settings.player == "P1P2":
+            characters = {
+                "p1": [env_settings.characters[0][0], env_settings.characters[0][1], env_settings.characters[0][2]],
+                "p2": [env_settings.characters[1][0], env_settings.characters[1][1], env_settings.characters[1][2]]
+            }
+            outfits = {
+                "p1": env_settings.char_outfits[0],
+                "p2": env_settings.char_outfits[1]
+            }
+            action_spaces = {
+                "p1": model.ACTION_SPACE_DISCRETE if env_settings.action_space[0] == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
+                "p2": model.ACTION_SPACE_DISCRETE if env_settings.action_space[1] == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
+            }
+            attack_buttons_combinations = {
+                "p1": env_settings.attack_but_combination[0],
+                "p2": env_settings.attack_but_combination[1]
+            }
+            super_arts = {
+                "p1": env_settings.super_art[0],
+                "p2": env_settings.super_art[1]
+            }
+            fighting_styles = {
+                "p1": env_settings.fighting_style[0],
+                "p2": env_settings.fighting_style[1]
+            }
+            ultimate_styles = {
+                "p1": {
+                    "dash": env_settings.ultimate_style[0][0],
+                    "evade": env_settings.ultimate_style[0][1],
+                    "bar": env_settings.ultimate_style[0][2]
+                },
+                "p2": {
+                    "dash": env_settings.ultimate_style[1][0],
+                    "evade": env_settings.ultimate_style[1][1],
+                    "bar": env_settings.ultimate_style[1][2]
+                }
+            }
+        else:
+            characters = {
+                "p1": [env_settings.characters[0], env_settings.characters[1], env_settings.characters[2]],
+                "p2": [env_settings.characters[0], env_settings.characters[1], env_settings.characters[2]]
+            }
+            outfits = {
+                "p1": env_settings.char_outfits,
+                "p2": env_settings.char_outfits
+            }
+            action_spaces = {
+                "p1": model.ACTION_SPACE_DISCRETE if env_settings.action_space == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
+                "p2": model.ACTION_SPACE_DISCRETE if env_settings.action_space == "discrete" else model.ACTION_SPACE_MULTI_DISCRETE,
+            }
+            attack_buttons_combinations = {
+                "p1": env_settings.attack_but_combination,
+                "p2": env_settings.attack_but_combination
+            }
+            super_arts = {
+                "p1": env_settings.super_art,
+                "p2": env_settings.super_art
+            }
+            fighting_styles = {
+                "p1": env_settings.fighting_style,
+                "p2": env_settings.fighting_style
+            }
+            ultimate_styles = {
+                "p1": {
+                    "dash": env_settings.ultimate_style[0],
+                    "evade": env_settings.ultimate_style[1],
+                    "bar": env_settings.ultimate_style[2]
+                },
+                "p2": {
+                    "dash": env_settings.ultimate_style[0],
+                    "evade": env_settings.ultimate_style[1],
+                    "bar": env_settings.ultimate_style[2]
+                }
+            }
+
         request = model.EnvSettings(
-            game_id=env_settings["game_id"],
-            continue_game=env_settings["continue_game"],
-            show_final=env_settings["show_final"],
-            step_ratio=env_settings["step_ratio"],
-            player=env_settings["player"],
-            difficulty=env_settings["difficulty"],
+            game_id=env_settings.game_id,
+            continue_game=env_settings.continue_game,
+            show_final=env_settings.show_final,
+            step_ratio=env_settings.step_ratio,
+            player=env_settings.player,
+            difficulty=env_settings.difficulty,
             characters=characters,
             outfits=outfits,
             frame_shape=frame_shape,
             action_spaces=action_spaces,
             attack_buttons_combinations=attack_buttons_combinations,
-            hardcore=env_settings["hardcore"],
-            disable_keyboard=env_settings["disable_keyboard"],
-            disable_joystick=env_settings["disable_joystick"],
-            rank=env_settings["rank"],
-            random_seed=env_settings["seed"],
+            hardcore=env_settings.hardcore,
+            disable_keyboard=env_settings.disable_keyboard,
+            disable_joystick=env_settings.disable_joystick,
+            rank=env_settings.rank,
+            random_seed=env_settings.seed,
             super_arts=super_arts,
-            tower=env_settings["tower"],
+            tower=env_settings.tower,
             fighting_styles=fighting_styles,
             ultimate_styles=ultimate_styles
         )

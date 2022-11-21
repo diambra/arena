@@ -47,10 +47,10 @@ class StickyActionsEnv(gym.Wrapper):
         gym.Wrapper.__init__(self, env)
         self.sticky_actions = sticky_actions
 
-        assert self.env.env_settings["step_ratio"] == 1, "sticky_actions can "\
-                                                         "be activated only "\
-                                                         "when stepRatio is "\
-                                                         "set equal to 1"
+        assert self.env.env_settings.step_ratio == 1, "sticky_actions can "\
+                                                      "be activated only "\
+                                                      "when stepRatio is "\
+                                                      "set equal to 1"
 
     def step(self, action):
 
