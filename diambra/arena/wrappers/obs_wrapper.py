@@ -147,21 +147,19 @@ class FrameStackDilated(gym.Wrapper):
 
 
 class ActionsStack(gym.Wrapper):
-    def __init__(self, env, n_actions_stack, n_players=1):
+    def __init__(self, env, n_actions_stack):
         """Stack n_actions_stack last actions.
         :param env: (Gym Environment) the environment
         :param n_actions_stack: (int) the number of actions to stack
         """
         gym.Wrapper.__init__(self, env)
         self.n_actions_stack = n_actions_stack
-        self.n_players = n_players
+        self.n_players = 1 if self.env.env_settings.player != "P1P2" else 2
         self.move_action_stack = []
         self.attack_action_stack = []
         for iplayer in range(self.n_players):
-            self.move_action_stack.append(
-                deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
-            self.attack_action_stack.append(
-                deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
+            self.move_action_stack.append(deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
+            self.attack_action_stack.append(deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
             self.observation_space.spaces["P{}".format(iplayer + 1)].spaces["actions"].spaces["move"] =\
                 spaces.MultiDiscrete([self.n_actions[iplayer][0]] * n_actions_stack)
             self.observation_space.spaces["P{}".format(iplayer + 1)].spaces["actions"].spaces["attack"] =\

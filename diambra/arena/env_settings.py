@@ -143,3 +143,52 @@ class EnvironmentSettings2P(EnvironmentSettings):
             check_num_in_range("fighting_style[{}]".format(jdx), self.fighting_style[jdx], [0, 3])
             for idx in range(3):
                 check_num_in_range("ultimate_style[{}][{}]".format(jdx, idx), self.ultimate_style[jdx][idx], [0, 2])
+
+
+@dataclass
+class WrappersSettings:
+
+    no_op_max: int = 0
+    sticky_actions: int = 1
+    clip_rewards: bool = False
+    reward_normalization: bool = False
+    reward_normalization_factor: float = 0.5
+    frame_stack: int = 1
+    actions_stack: int = 1
+    scale: bool = False
+    exclude_image_scaling: bool = False
+    process_discrete_binary: bool = False
+    scale_mod: int = 0
+    hwc_obs_resize: Tuple[int, int, int] = (84, 84, 0)
+    dilation: int = 1
+    flatten: bool = False
+    filter_keys: List[str] = None
+
+    def sanity_check(self):
+
+        no_op_max: int = 0
+        sticky_actions: int = 1
+        reward_normalization_factor: float = 0.5
+        frame_stack: int = 1
+        actions_stack: int = 1
+        scale_mod: int = 0
+        hwc_obs_resize: Tuple[int, int, int] = (84, 84, 0)
+        dilation: int = 1
+
+        check_num_in_range("no_op_max", self.no_op_max, [0, MAX_VAL])
+        check_num_in_range("sticky_actions", self.sticky_actions, [1, MAX_VAL])
+        check_num_in_range("reward_normalization_factor", self.reward_normalization_factor, [0.0, MAX_VAL])
+        check_num_in_range("frame_stack", self.frame_stack, [1, MAX_VAL])
+        check_num_in_range("actions_stack", self.actions_stack, [1, MAX_VAL])
+        check_num_in_range("scale_mod", self.scale_mod, [0, 0])
+        check_num_in_range("dilation", self.dilation, [1, MAX_VAL])
+
+        check_val_in_list("hwc_obs_resize[2]", self.hwc_obs_resize[2], [0, 1, 3])
+        if self.hwc_obs_resize[2] != 0:
+            check_num_in_range("hwc_obs_resize[0]", self.hwc_obs_resize[0], [1, MAX_VAL])
+            check_num_in_range("hwc_obs_resize[1]", self.hwc_obs_resize[1], [1, MAX_VAL])
+            if (min(self.hwc_obs_resize[0], self.hwc_obs_resize[1]) == 0 and
+                max(self.hwc_obs_resize[0], self.hwc_obs_resize[1]) != 0):
+                raise Exception("\"hwc_obs_resize[0] and hwc_obs_resize[1]\" must be both different from 0")
+
+
