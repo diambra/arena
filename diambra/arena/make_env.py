@@ -44,7 +44,7 @@ def make(game_id, env_settings={}, wrappers_settings={},
         env_settings = from_dict(EnvironmentSettings2P, env_settings)
     else:
         env_settings = from_dict(EnvironmentSettings1P, env_settings)
-    print("After sanity check = ", env_settings)
+    env_settings.sanity_check()
 
     # Make environment
     if env_settings.player != "P1P2":  # 1P Mode

@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 from typing import Union, List, Tuple
 from diambra.arena.utils.gym_utils import available_games
+import numpy as np
 
 MAX_VAL = float("inf")
-MIX_VAL = float("-inf")
+MIN_VAL = float("-inf")
 
 def check_num_in_range(key, value, bounds):
     assert (value >= bounds[0] and value <= bounds[1]), "\"{}\" ({}) value must be in the range {}".format(key, value, bounds)
@@ -23,6 +24,7 @@ class EnvironmentSettings:
     disable_joystick: bool = True
     rank: int = 0
     seed: int = -1
+    env_address: str = "localhost:50051"
     grpc_timeout: int = 60
 
     # Game level
@@ -37,7 +39,7 @@ class EnvironmentSettings:
     # Environment level
     hardcore: bool = False
 
-    def __init__(self):
+    def sanity_check(self):
         self.games_dict = available_games(False)
 
         check_num_in_range("step_ratio", self.step_ratio, [1, 6])
@@ -74,15 +76,15 @@ class EnvironmentSettings1P(EnvironmentSettings):
     fighting_style: int = 0 # KOF Specific
     ultimate_style: Tuple[int, int, int] = (0, 0, 0) # KOF Specific
 
-    def __init__(self):
-        super().__init__()
+    def sanity_check(self):
+        super().sanity_check()
 
         # Check for characters
-        if type(self.characters) == str:
+        if isinstance(self.characters, str):
             self.characters = (self.characters, "Random", "Random")
-        elif type(self.characters) == Tuple[str]:
+        elif isinstance(self.characters, Tuple[str]):
             self.characters = (self.characters[0], "Random", "Random")
-        elif type(self.characters) == Tuple[str, str]:
+        elif isinstance(self.characters, Tuple[str, str]):
             self.characters = (self.characters[0], self.characters[1], "Random")
 
         check_num_in_range("char_outfits", self.char_outfits, self.games_dict[self.game_id]["outfits"])
@@ -106,7 +108,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
                       Tuple[Tuple[str, str, str], Tuple[str, str, str]]] =\
                     (("Random", "Random", "Random"), ("Random", "Random", "Random"))
     char_outfits: Tuple[int, int] = (2, 2)
-    action_space: Tuple[int, int] = ("multi_discrete", "multi_discrete")
+    action_space: Tuple[str, str] = ("multi_discrete", "multi_discrete")
     attack_but_combination: Tuple[bool, bool] = (True, True)
 
     super_art: Tuple[int, int] = (0, 0)  # SFIII Specific
@@ -114,17 +116,17 @@ class EnvironmentSettings2P(EnvironmentSettings):
     fighting_style: Tuple[int, int] = (0, 0)  # KOF Specific
     ultimate_style: Tuple[Tuple[int, int, int], Tuple[int, int, int]] = ((0, 0, 0), (0, 0, 0))  # KOF Specific
 
-    def __init__(self):
-        super().__init__()
+    def sanity_check(self):
+        super().sanity_check()
 
         # Check for characters
-        if type(self.characters[0]) == str:
+        if isinstance(self.characters[0], str):
             self.characters = ((self.characters[0], "Random", "Random"),
                                (self.characters[1], "Random", "Random"))
-        elif type(self.characters[0]) == Tuple[str]:
+        elif isinstance(self.characters[0], Tuple[str]):
             self.characters = ((self.characters[0][0], "Random", "Random"),
                                (self.characters[1][0], "Random", "Random"))
-        elif type(self.characters[0]) == Tuple[str, str]:
+        elif isinstance(self.characters[0], Tuple[str, str]):
             self.characters = ((self.characters[0][0], self.characters[0][1], "Random"),
                                (self.characters[1][0], self.characters[1][1], "Random"))
 

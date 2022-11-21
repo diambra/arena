@@ -20,25 +20,22 @@ class DiambraGymHardcoreBase(gym.Env):
         super(DiambraGymHardcoreBase, self).__init__()
 
         self.reward_normalization_value = 1.0
-        self.attack_but_combination = env_settings["attack_but_combination"]
+        self.attack_but_combination = env_settings.attack_but_combination
 
         self.env_settings = env_settings
         self.render_gui_started = False
 
         # Launch DIAMBRA Arena
-        self.arena_engine = DiambraEngine(env_settings["env_address"], env_settings["grpc_timeout"])
+        self.arena_engine = DiambraEngine(env_settings.env_address, env_settings.grpc_timeout)
 
         # Send environment settings, retrieve environment info
         env_info_dict = self.arena_engine.env_init(self.env_settings)
         self.env_info_process(env_info_dict)
-        self.player_side = self.env_settings["player"]
-        self.difficulty = self.env_settings["difficulty"]
+        self.player_side = self.env_settings.player
+        self.difficulty = self.env_settings.difficulty
 
         # Settings log
-        self.logger.info("Environment settings:")
-        for key in sorted(self.env_settings):
-            self.logger.info("  \"{}\": {}".format(key, self.env_settings[key]))
-        self.logger.info("---------------------")
+        self.logger.info(self.env_settings)
 
         # Image as input:
         self.observation_space = spaces.Box(low=0, high=255,
@@ -53,10 +50,15 @@ class DiambraGymHardcoreBase(gym.Env):
         self.n_actions_but_comb = env_info_dict["n_actions"][0]
         self.n_actions_no_but_comb = env_info_dict["n_actions"][1]
         # N actions
-        self.n_actions = [self.n_actions_but_comb, self.n_actions_but_comb]
-        for idx in range(2):
-            if self.attack_but_combination[idx] is False:
-                self.n_actions[idx] = self.n_actions_no_but_comb
+        if self.env_settings.player == "P1P2":
+            self.n_actions = [self.n_actions_but_comb, self.n_actions_but_comb]
+            for idx in range(2):
+                if self.attack_but_combination[idx] is False:
+                    self.n_actions[idx] = self.n_actions_no_but_comb
+        else:
+            self.n_actions = self.n_actions_but_comb
+            if self.attack_but_combination is False:
+                self.n_actions = self.n_actions_no_but_comb
 
         # Frame height, width and channel dimensions
         self.hwc_dim = env_info_dict["frame_shape"]
@@ -123,7 +125,7 @@ class DiambraGymHardcoreBase(gym.Env):
             try:
                 if (self.render_gui_started is False):
                     self.window_name = "[{}] DIAMBRA Arena - {} - ({})".format(
-                        os.getpid(), self.env_settings["game_id"], self.env_settings["rank"])
+                        os.getpid(), self.env_settings.game_id, self.env_settings.rank)
                     cv2.namedWindow(self.window_name, cv2.WINDOW_GUI_NORMAL)
                     self.render_gui_started = True
                     wait_key = 100
@@ -150,9 +152,11 @@ class DiambraGymHardcoreBase(gym.Env):
                                     out_value = v3
                                     additional_string = ": "
                                     if type(v3) != int:
-                                        p_idx = 0 if k == "P1" else 1
-                                        n_actions_stack = int(self.observation_space[k][k2][k3].n /
-                                                              (self.n_actions[p_idx][0] if k3 == "move" else self.n_actions[p_idx][1]))
+                                        if self.env_settings.player == "P1P2":
+                                            n_actions = self.n_actions[0] if k == "P1" else self.n_actions[1]
+                                        else:
+                                            n_actions = self.n_actions
+                                        n_actions_stack = int(self.observation_space[k][k2][k3].n / (n_actions[0] if k3 == "move" else n_actions[1]))
                                         out_value = np.reshape(v3, [n_actions_stack, -1])
                                         additional_string = " (reshaped for visualization):\n"
                                     print("observation[\"{}\"][\"{}\"][\"{}\"]{}{}".format(k, k2, k3, additional_string, out_value))
@@ -197,7 +201,7 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
         # Define action and observation space
         # They must be gym.spaces objects
 
-        if env_settings["action_space"][0] == "multi_discrete":
+        if env_settings.action_space == "multi_discrete":
             # MultiDiscrete actions:
             # - Arrows -> One discrete set
             # - Buttons -> One discrete set
@@ -206,9 +210,9 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
             #     e.g. NOOP = [0], ButA = [1], ButB = [2], ButA+ButB = [3]
             #     or ignored:
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
-            self.action_space = spaces.MultiDiscrete(self.n_actions[0])
+            self.action_space = spaces.MultiDiscrete(self.n_actions)
             self.logger.debug("Using MultiDiscrete action space")
-        elif env_settings["action_space"][0] == "discrete":
+        elif env_settings.action_space == "discrete":
             # Discrete actions:
             # - Arrows U Buttons -> One discrete set
             # NB: use the convention NOOP = 0, and buttons combinations
@@ -216,12 +220,10 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
             #     e.g. NOOP = [0], ButA = [1], ButB = [2], ButA+ButB = [3]
             #     or ignored:
             #     e.g. NOOP = [0], ButA = [1], ButB = [2]
-            self.action_space = spaces.Discrete(
-                self.n_actions[0][0] + self.n_actions[0][1] - 1)
+            self.action_space = spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
             self.logger.debug("Using Discrete action space")
         else:
-            raise Exception(
-                "Not recognized action space: {}".format(env_settings["action_space"][0]))
+            raise Exception("Not recognized action space: {}".format(env_settings.action_space))
 
     # Step the environment
     def step_complete(self, action):
@@ -237,7 +239,7 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
         else:
             # Discrete to multidiscrete conversion
             mov_act, att_act = discrete_to_multi_discrete_action(
-                action, self.n_actions[0][0])
+                action, self.n_actions[0])
 
         self.frame, reward, data = self.arena_engine.step_1p(mov_act, att_act)
         done = data["ep_done"]
@@ -261,18 +263,17 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
         # Define action spaces, they must be gym.spaces objects
         action_space_dict = {}
         for idx in range(2):
-            if env_settings["action_space"][idx] == "multi_discrete":
+            if env_settings.action_space[idx] == "multi_discrete":
                 action_space_dict["P{}".format(idx + 1)] =\
                     spaces.MultiDiscrete(self.n_actions[idx])
                 self.logger.debug("Using MultiDiscrete action space for P{}".format(idx + 1))
-            elif env_settings["action_space"][idx] == "discrete":
+            elif env_settings.action_space[idx] == "discrete":
                 action_space_dict["P{}".format(idx + 1)] =\
                     spaces.Discrete(
                         self.n_actions[idx][0] + self.n_actions[idx][1] - 1)
                 self.logger.debug("Using Discrete action space for P{}".format(idx + 1))
             else:
-                raise Exception(
-                    "Not recognized action space: {}".format(env_settings["action_space"][idx]))
+                raise Exception("Not recognized action space: {}".format(env_settings.action_space[idx]))
 
         self.action_space = spaces.Dict(action_space_dict)
 
@@ -363,8 +364,8 @@ class DiambraGym1P(DiambraGymHardcore1P):
                     "Only Discrete (Binary/Categorical) | Box Spaces allowed")
 
         actions_dict = {
-            "move": spaces.Discrete(self.n_actions[0][0]),
-            "attack": spaces.Discrete(self.n_actions[0][1])
+            "move": spaces.Discrete(self.n_actions[0]),
+            "attack": spaces.Discrete(self.n_actions[1])
         }
 
         player_spec_dict["actions"] = spaces.Dict(actions_dict)

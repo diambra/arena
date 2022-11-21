@@ -18,7 +18,9 @@ import numpy as np
 
 def env_exec(settings, wrappers_settings, traj_rec_settings):
     try:
+        print("Before make")
         env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, traj_rec_settings)
+        print("After make")
 
         env.close()
 
@@ -103,7 +105,7 @@ ok_test_parameters = {
     "tower": [1, 3, 4],
     "super_art": [0, 1, 3],
     "fighting_style": [0, 1, 3],
-    "ultimate_style": [0, 1, 2],
+    "ultimate_style": [(0, 0, 0), (1, 2, 0), (2, 2, 2)],
 }
 
 def pytest_generate_tests(metafunc):
@@ -134,14 +136,14 @@ def test_settings_gym_1p_ok(game_id, player, step_ratio, frame_shape, tower, sup
 
     settings["tower"] = tower
 
-    settings["characters"] = [characters, characters]
-    settings["char_outfits"] = [char_outfits, char_outfits]
-    settings["action_space"] = [action_space, action_space]
-    settings["attack_but_combination"] = [attack_buttons_combination, attack_buttons_combination]
+    settings["characters"] = (characters, characters)
+    settings["char_outfits"] = (char_outfits, char_outfits)
+    settings["action_space"] = (action_space, action_space)
+    settings["attack_but_combination"] = (attack_buttons_combination, attack_buttons_combination)
 
-    settings["super_art"] = [super_art, super_art]
-    settings["fighting_style"] = [fighting_style, fighting_style]
-    settings["ultimate_style"] = [ultimate_style, ultimate_style]
+    settings["super_art"] = (super_art, super_art)
+    settings["fighting_style"] = (fighting_style, fighting_style)
+    settings["ultimate_style"] = (ultimate_style, ultimate_style)
 
     if settings["player"] != "P1P2":
         for key in ["characters" , "char_outfits", "action_space", "attack_but_combination",
