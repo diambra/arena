@@ -69,7 +69,7 @@ def test_valid_string(stringinput):
     assert stringinput.isalpha()
 '''
 
-def generate_pytest_decorator_input(var_order, test_parameters):
+def generate_pytest_decorator_input(var_order, test_parameters, outcome):
 
     test_vars = ""
     values_list = []
@@ -88,7 +88,7 @@ def generate_pytest_decorator_input(var_order, test_parameters):
 
         for var in var_order:
             test_value_tuple += (test_parameters[var][idx % len(test_parameters[var])],)
-        test_value_tuple += (0,)
+        test_value_tuple += (outcome,)
 
         values_list.append(test_value_tuple)
 
@@ -108,21 +108,42 @@ ok_test_parameters = {
     "ultimate_style": [(0, 0, 0), (1, 2, 0), (2, 2, 2)],
 }
 
+ko_test_parameters = {
+    "continue_game": [1.3, "string"],
+    "action_space": ["random", 12],
+    "attack_buttons_combination": [1],
+    "game_id": ["mock"],
+    "player": [4, "P2P1"],
+    "step_ratio": [8],
+    "frame_shape": [(0, 82, 0), (0, 0, 4), (-100, -100, 3)],
+    "tower": [5],
+    "super_art": ["value", 4],
+    "fighting_style": [False, 6],
+    "ultimate_style": [(10, 0, 0), "string"],
+}
+
 def pytest_generate_tests(metafunc):
-    test_vars, values_list = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters)
-    #if test_vars in metafunc.fixturenames:
+    test_vars, values_list_ok = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters, 0)
+    test_vars, values_list_ko = generate_pytest_decorator_input(gym_settings_var_order, ko_test_parameters, 1)
+    values_list = values_list_ok + values_list_ko
+    print(test_vars, values_list)
     metafunc.parametrize(test_vars, values_list)
 
 # Gym
-def test_settings_gym_1p_ok(game_id, player, step_ratio, frame_shape, tower, super_art,
-                            fighting_style, ultimate_style, continue_game, action_space,
-                            attack_buttons_combination, expected, mocker):
+def test_settings_gym_1p(game_id, player, step_ratio, frame_shape, tower, super_art,
+                         fighting_style, ultimate_style, continue_game, action_space,
+                         attack_buttons_combination, expected, mocker):
 
-    difficulty_range = range(games_dict[game_id]["difficulty"][0], games_dict[game_id]["difficulty"][1]+1)
+    if game_id != "mock":
+        game_data = games_dict[game_id]
+    else:
+        game_data = games_dict["doapp"]
+
+    difficulty_range = range(game_data["difficulty"][0], game_data["difficulty"][1] + 1)
+    characters_list = np.append("Random", game_data["char_list"])
+    outfits_range = range(game_data["outfits"][0], game_data["outfits"][1] + 1)
     difficulty = random.choice(difficulty_range)
-    characters_list = np.append("Random", games_dict[game_id]["char_list"])
     characters = random.choice(characters_list)
-    outfits_range = range(games_dict[game_id]["outfits"][0], games_dict[game_id]["outfits"][1]+1)
     char_outfits = random.choice(outfits_range)
 
     # Env settings
