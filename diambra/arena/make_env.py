@@ -62,7 +62,6 @@ def make(game_id, env_settings={}, wrappers_settings={},
     wrappers_settings = from_dict(WrappersSettings, wrappers_settings)
     wrappers_settings.sanity_check()
     env = env_wrapping(env, wrappers_settings, hardcore=env_settings.hardcore)
-    print("After wrappring")
 
     # Apply trajectories recorder wrappers
     if traj_rec_settings is True:
