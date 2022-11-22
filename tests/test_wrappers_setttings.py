@@ -48,8 +48,8 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
         print(e)
         return 1
 
-wrappers_settings_var_order = ["no_op_max", "sticky_actions", "hwc_obs_resize",
-                               "reward_normalization", "clip_rewards", "frame_stack", "dilation",
+wrappers_settings_var_order = ["no_op_max", "sticky_actions", "hwc_obs_resize", "reward_normalization",
+                               "reward_normalization_factor", "clip_rewards", "frame_stack", "dilation",
                                "actions_stack", "scale", "scale_mod", "flatten", "filter_keys"]
 
 ok_test_parameters = {
@@ -57,6 +57,7 @@ ok_test_parameters = {
     "sticky_actions": [1, 4],
     "hwc_obs_resize": [(0, 0, 0), (84, 84, 1), (84, 84, 3), (84, 84, 0)],
     "reward_normalization": [True, False],
+    "reward_normalization_factor": [0.2, 0.5],
     "clip_rewards": [True, False],
     "frame_stack": [1, 5],
     "dilation": [1, 3],
@@ -68,13 +69,26 @@ ok_test_parameters = {
 }
 
 ko_test_parameters = {
+    "no_op_max": [-1],
+    "sticky_actions": [True],
+    "hwc_obs_resize": [(0, 84, 3), (0, 0, 1)],
+    "reward_normalization": ["True"],
+    "reward_normalization_factor": [-10],
+    "clip_rewards": [0.5],
+    "frame_stack": [0],
+    "dilation": [0],
+    "actions_stack": [-2],
+    "scale": [10],
+    "scale_mod": [2],
+    "flatten": [None],
+    "filter_keys": [12]
 }
 
 def pytest_generate_tests(metafunc):
     test_vars, values_list_ok = generate_pytest_decorator_input(wrappers_settings_var_order, ok_test_parameters, 0)
-    #test_vars, values_list_ko = generate_pytest_decorator_input(wrappers_settings_var_order, ko_test_parameters, 1)
-    #values_list = values_list_ok + values_list_ko
-    metafunc.parametrize(test_vars, values_list_ok)
+    test_vars, values_list_ko = generate_pytest_decorator_input(wrappers_settings_var_order, ko_test_parameters, 1)
+    values_list = values_list_ok + values_list_ko
+    metafunc.parametrize(test_vars, values_list)
 
 # Wrappers
 @pytest.mark.parametrize("step_ratio", [1])
@@ -84,8 +98,8 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.parametrize("attack_buttons_combination", [False, True])
 def test_settings_wrappers(step_ratio, player, action_space, attack_buttons_combination, hardcore,
                            no_op_max, sticky_actions, hwc_obs_resize, reward_normalization,
-                           clip_rewards, frame_stack, dilation, actions_stack, scale,
-                           scale_mod, flatten, filter_keys, expected, mocker):
+                           reward_normalization_factor, clip_rewards, frame_stack, dilation,
+                           actions_stack, scale, scale_mod, flatten, filter_keys, expected, mocker):
 
     # Env settings
     settings = {}
