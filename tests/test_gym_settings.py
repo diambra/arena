@@ -2,12 +2,12 @@
 import pytest
 import sys
 import random
-from os.path import expanduser
 import os
 from engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
 from diambra.arena.utils.gym_utils import available_games
 import numpy as np
+from pytest_utils import generate_pytest_decorator_input
 
 # Example Usage:
 # pytest
@@ -18,9 +18,7 @@ import numpy as np
 
 def env_exec(settings, wrappers_settings, traj_rec_settings):
     try:
-        print("Before make")
         env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, traj_rec_settings)
-        print("After make")
 
         env.close()
 
@@ -56,31 +54,6 @@ gym_settings_var_order = ["game_id", "player", "step_ratio", "frame_shape", "tow
                           "fighting_style", "ultimate_style", "continue_game", "action_space",
                           "attack_buttons_combination"]
 
-def generate_pytest_decorator_input(var_order, test_parameters, outcome):
-
-    test_vars = ""
-    values_list = []
-
-    number_of_tests = 0
-    for k, v in test_parameters.items():
-        number_of_tests = max(number_of_tests, len(v))
-
-    for var in var_order:
-        test_vars += var + ","
-    test_vars += "expected"
-
-    for idx in range(number_of_tests):
-
-        test_value_tuple = tuple()
-
-        for var in var_order:
-            test_value_tuple += (test_parameters[var][idx % len(test_parameters[var])],)
-        test_value_tuple += (outcome,)
-
-        values_list.append(test_value_tuple)
-
-    return test_vars, values_list
-
 ok_test_parameters = {
     "continue_game": [-1.0, 0.0, 0.3],
     "action_space": ["discrete", "multi_discrete"],
@@ -113,7 +86,6 @@ def pytest_generate_tests(metafunc):
     test_vars, values_list_ok = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters, 0)
     test_vars, values_list_ko = generate_pytest_decorator_input(gym_settings_var_order, ko_test_parameters, 1)
     values_list = values_list_ok + values_list_ko
-    print(test_vars, values_list)
     metafunc.parametrize(test_vars, values_list)
 
 # Gym

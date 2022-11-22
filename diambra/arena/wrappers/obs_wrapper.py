@@ -160,10 +160,16 @@ class ActionsStack(gym.Wrapper):
         for iplayer in range(self.n_players):
             self.move_action_stack.append(deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
             self.attack_action_stack.append(deque([0 for i in range(n_actions_stack)], maxlen=n_actions_stack))
-            self.observation_space.spaces["P{}".format(iplayer + 1)].spaces["actions"].spaces["move"] =\
-                spaces.MultiDiscrete([self.n_actions[iplayer][0]] * n_actions_stack)
-            self.observation_space.spaces["P{}".format(iplayer + 1)].spaces["actions"].spaces["attack"] =\
-                spaces.MultiDiscrete([self.n_actions[iplayer][1]] * n_actions_stack)
+
+        if self.n_players == 1:
+            self.observation_space["P1"]["actions"]["move"] = spaces.MultiDiscrete([self.n_actions[0]] * n_actions_stack)
+            self.observation_space["P1"]["actions"]["attack"] = spaces.MultiDiscrete([self.n_actions[1]] * n_actions_stack)
+        else:
+            for iplayer in range(self.n_players):
+                self.observation_space["P{}".format(iplayer + 1)]["actions"]["move"] =\
+                    spaces.MultiDiscrete([self.n_actions[iplayer][0]] * n_actions_stack)
+                self.observation_space["P{}".format(iplayer + 1)]["actions"]["attack"] =\
+                    spaces.MultiDiscrete([self.n_actions[iplayer][1]] * n_actions_stack)
 
     def fill_stack(self, value=0):
         # Fill the actions stack with no action after reset

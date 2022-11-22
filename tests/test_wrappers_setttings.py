@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import pytest
 import sys
 import random
@@ -17,10 +17,7 @@ import numpy as np
 
 def env_exec(settings, wrappers_settings, traj_rec_settings):
     try:
-        print("Before make")
         env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, traj_rec_settings)
-        print("After make")
-
         env.close()
 
         print("COMPLETED SUCCESSFULLY!")
@@ -51,8 +48,8 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
         return 1
 
 wrappers_settings_var_order = ["no_op_max", "sticky_actions", "hwc_obs_resize",
-                               "reward_normalization", "clip_rewards" "frame_stack", "dilation",
-                               "actions_stack", "scale","scale_mod", "flatten", "filter_keys"]
+                               "reward_normalization", "clip_rewards", "frame_stack", "dilation",
+                               "actions_stack", "scale", "scale_mod", "flatten", "filter_keys"]
 
 def generate_pytest_decorator_input(var_order, test_parameters, outcome):
 
@@ -80,18 +77,18 @@ def generate_pytest_decorator_input(var_order, test_parameters, outcome):
     return test_vars, values_list
 
 ok_test_parameters = {
-    "no_op_max": ,
-    "sticky_actions": ,
-    "hwc_obs_resize": ,
-    "reward_normalization": ,
-    "clip_rewards": ,
-    "frame_stack": ,
-    "dilation": ,
-    "actions_stack": ,
-    "scale": ,
-    "scale_mod": ,
-    "flatten": ,
-    "filter_keys":
+    "no_op_max": [0, 2],
+    "sticky_actions": [1, 4],
+    "hwc_obs_resize": [(0, 0, 0), (84, 84, 1), (84, 84, 3), (84, 84, 0)],
+    "reward_normalization": [True, False],
+    "clip_rewards": [True, False],
+    "frame_stack": [1, 5],
+    "dilation": [1, 3],
+    "actions_stack": [1, 6],
+    "scale": [True, False],
+    "scale_mod": [0],
+    "flatten": [True, False],
+    "filter_keys": [[], ["stage", "P1_ownSide"]]
 }
 
 ko_test_parameters = {
@@ -99,34 +96,34 @@ ko_test_parameters = {
 
 def pytest_generate_tests(metafunc):
     test_vars, values_list_ok = generate_pytest_decorator_input(wrappers_settings_var_order, ok_test_parameters, 0)
-    test_vars, values_list_ko = generate_pytest_decorator_input(wrappers_settings_var_order, ko_test_parameters, 1)
-    values_list = values_list_ok + values_list_ko
-    print(test_vars, values_list)
-    metafunc.parametrize(test_vars, values_list)
+    #test_vars, values_list_ko = generate_pytest_decorator_input(wrappers_settings_var_order, ko_test_parameters, 1)
+    #values_list = values_list_ok + values_list_ko
+    metafunc.parametrize(test_vars, values_list_ok)
 
 # Wrappers
-def test_settings_wrappers(no_op_max, sticky_actions, hwc_obs_resize, reward_normalization, clip_rewards,
-                           frame_stack, dilation, actions_stack, scale, scale_mod, flatten, filter_keys, mocker):
+def test_settings_wrappers(no_op_max, sticky_actions, hwc_obs_resize, reward_normalization,
+                           clip_rewards, frame_stack, dilation, actions_stack, scale,
+                           scale_mod, flatten, filter_keys, expected, mocker):
 
     # Env settings
     settings = {}
-    settings["game_id"] = game_id
+    settings["game_id"] = "doapp"
+    settings["step_ratio"] = 1
 
     # Env wrappers settings
     wrappers_settings = {}
-    wrappers_settings["no_op_max"] = 0
-    wrappers_settings["sticky_actions"] = 1
-    wrappers_settings["hwc_obs_resize"] = [128, 128, 1]
-    wrappers_settings["reward_normalization"] = True
-    wrappers_settings["clip_rewards"] = False
-    wrappers_settings["frame_stack"] = 4
-    wrappers_settings["dilation"] = 1
-    wrappers_settings["actions_stack"] = 12
-    wrappers_settings["scale"] = True
-    wrappers_settings["scale_mod"] = 0
-    wrappers_settings["flatten"] = True
-    wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide",
-                                        "P1_oppChar", "P1_actions_move", "P1_actions_attack"]
+    wrappers_settings["no_op_max"] = no_op_max
+    wrappers_settings["sticky_actions"] = sticky_actions
+    wrappers_settings["hwc_obs_resize"] = hwc_obs_resize
+    wrappers_settings["reward_normalization"] = reward_normalization
+    wrappers_settings["clip_rewards"] = clip_rewards
+    wrappers_settings["frame_stack"] = frame_stack
+    wrappers_settings["dilation"] = dilation
+    wrappers_settings["actions_stack"] = actions_stack
+    wrappers_settings["scale"] = scale
+    wrappers_settings["scale_mod"] = scale_mod
+    wrappers_settings["flatten"] = flatten
+    wrappers_settings["filter_keys"] = filter_keys
 
     # Recording settings
     traj_rec_settings = {}

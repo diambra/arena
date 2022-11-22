@@ -82,10 +82,9 @@ class EnvironmentSettings1P(EnvironmentSettings):
         # Check for characters
         if isinstance(self.characters, str):
             self.characters = (self.characters, "Random", "Random")
-        elif isinstance(self.characters, Tuple[str]):
-            self.characters = (self.characters[0], "Random", "Random")
-        elif isinstance(self.characters, Tuple[str, str]):
-            self.characters = (self.characters[0], self.characters[1], "Random")
+        else:
+            for idx in range(len(self.characters), 3):
+                self.characters += ("Random", )
 
         check_num_in_range("char_outfits", self.char_outfits, self.games_dict[self.game_id]["outfits"])
         for idx in range(3):
@@ -123,12 +122,10 @@ class EnvironmentSettings2P(EnvironmentSettings):
         if isinstance(self.characters[0], str):
             self.characters = ((self.characters[0], "Random", "Random"),
                                (self.characters[1], "Random", "Random"))
-        elif isinstance(self.characters[0], Tuple[str]):
-            self.characters = ((self.characters[0][0], "Random", "Random"),
-                               (self.characters[1][0], "Random", "Random"))
-        elif isinstance(self.characters[0], Tuple[str, str]):
-            self.characters = ((self.characters[0][0], self.characters[0][1], "Random"),
-                               (self.characters[1][0], self.characters[1][1], "Random"))
+        else:
+            for idx in range(len(self.characters[0]), 3):
+                self.characters[0] += ("Random", )
+                self.characters[1] += ("Random", )
 
         for jdx in range(2):
             check_num_in_range("char_outfits[{}]".format(jdx), self.char_outfits[jdx],
@@ -143,7 +140,6 @@ class EnvironmentSettings2P(EnvironmentSettings):
             check_num_in_range("fighting_style[{}]".format(jdx), self.fighting_style[jdx], [0, 3])
             for idx in range(3):
                 check_num_in_range("ultimate_style[{}][{}]".format(jdx, idx), self.ultimate_style[jdx][idx], [0, 2])
-
 
 @dataclass
 class WrappersSettings:
