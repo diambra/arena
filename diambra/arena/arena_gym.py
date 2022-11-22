@@ -5,9 +5,9 @@ import cv2
 import gym
 import logging
 from gym import spaces
-from .utils.gym_utils import discrete_to_multi_discrete_action
-from .engine.interface import DiambraEngine
-from .env_settings import EnvironmentSettings1P, EnvironmentSettings2P
+from diambra.arena.utils.gym_utils import discrete_to_multi_discrete_action
+from diambra.arena.engine.interface import DiambraEngine
+from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P
 from typing import Union
 
 # DIAMBRA Env Gym
