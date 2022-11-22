@@ -188,3 +188,9 @@ class WrappersSettings:
                 raise Exception("\"hwc_obs_resize[0] and hwc_obs_resize[1]\" must be both different from 0")
 
 
+@dataclass
+class RecordingSettings:
+
+    file_path: str
+    username: str = "username"
+    ignore_p2: bool = False

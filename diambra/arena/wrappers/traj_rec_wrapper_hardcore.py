@@ -4,25 +4,20 @@ import datetime
 
 import gym
 from ..utils.gym_utils import ParallelPickleWriter
+from diambra.arena.env_settings import RecordingSettings
 
 # Trajectory recorder wrapper
-
-
 class TrajectoryRecorder(gym.Wrapper):
-    def __init__(self, env, file_path, user_name,
-                 ignore_p2, commit_hash="0000000"):
+    def __init__(self, env, recording_settings: RecordingSettings):
         """
         Record trajectories to use them for imitation learning
         :param env: (Gym Environment) the environment to wrap
-        :param file_path: (str) file path specifying where to
-               store the trajectory file
         """
         gym.Wrapper.__init__(self, env)
-        self.file_path = file_path
-        self.user_name = user_name
-        self.ignore_p2 = ignore_p2
+        self.file_path = recording_settings.file_path
+        self.username = recording_settings.username
+        self.ignore_p2 = recording_settings.ignore_p2
         self.frame_shp = self.env.observation_space.shape
-        self.commit_hash = commit_hash
 
         if (self.env.player_side == "P1P2"):
             if ((self.env.attack_but_combination[0] != self.env.attack_but_combination[1])
@@ -70,8 +65,7 @@ class TrajectoryRecorder(gym.Wrapper):
 
         # Add last obs nFrames - 1 times in case of
         # new round / stage / continue_game
-        if ((info["round_done"] or info["stage_done"] or info["game_done"])
-                and not done):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
             for _ in range(self.frame_shp[2]-1):
                 self.last_frame_hist.append(obs[:, :, self.frame_shp[2]-1])
 
@@ -84,7 +78,7 @@ class TrajectoryRecorder(gym.Wrapper):
         if done:
             to_save = {}
             to_save["commit_hash"] = self.commit_hash
-            to_save["user_name"] = self.user_name
+            to_save["username"] = self.username
             to_save["player_side"] = self.env.player_side
             if self.env.player_side != "P1P2":
                 to_save["difficulty"] = self.env.difficulty
