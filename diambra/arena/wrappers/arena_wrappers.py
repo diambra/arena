@@ -127,17 +127,11 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
     """
     logger = logging.getLogger(__name__)
 
-    print("AAA")
-
     if wrappers_settings.no_op_max > 0:
         env = NoopResetEnv(env, no_op_max=wrappers_settings.no_op_max)
 
-    print("BBB")
-
     if wrappers_settings.sticky_actions > 1:
         env = StickyActionsEnv(env, sticky_actions=wrappers_settings.sticky_actions)
-
-    print("CCC")
 
     if hardcore is True:
         from diambra.arena.wrappers.obs_wrapper_hardcore import WarpFrame,\
@@ -148,8 +142,6 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
             WarpFrame3C, FrameStack, FrameStackDilated,\
             ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
 
-    print("DDD")
-
     if wrappers_settings.hwc_obs_resize[2] == 1:
         # Resizing observation from H x W x 3 to
         # hwObsResize[0] x hwObsResize[1] x 1
@@ -159,8 +151,6 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
         # hwObsResize[0] x hwObsResize[1] x hwObsResize[2]
         env = WarpFrame3C(env, wrappers_settings.hwc_obs_resize)
 
-    print("EEE")
-
     # Normalize rewards
     if wrappers_settings.reward_normalization is True:
         env = NormalizeRewardEnv(env, wrappers_settings.reward_normalization_factor)
@@ -168,8 +158,6 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
     # Clip rewards using sign function
     if wrappers_settings.clip_rewards is True:
         env = ClipRewardEnv(env)
-
-    print("FFF")
 
     # Stack #frameStack frames together
     if wrappers_settings.frame_stack > 1:
@@ -179,13 +167,9 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
             logger.debug("Using frame stacking with dilation = {}".format(wrappers_settings.dilation))
             env = FrameStackDilated(env, wrappers_settings.frame_stack, wrappers_settings.dilation)
 
-    print("GGG")
-
     # Stack #actionsStack actions together
     if wrappers_settings.actions_stack > 1 and not hardcore:
         env = ActionsStack(env, wrappers_settings.actions_stack)
-
-    print("GGG222")
 
     # Scales observations normalizing them
     if wrappers_settings.scale is True:
@@ -201,8 +185,6 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
             env = ScaledFloatObsNeg(env)
         else:
             raise ValueError("Scale mod must be either 0 or -1")
-
-    print("HHH")
 
     if wrappers_settings.flatten is True:
         if hardcore is True:

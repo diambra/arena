@@ -7,6 +7,7 @@ import os
 from engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
 import numpy as np
+from pytest_utils import generate_pytest_decorator_input
 
 # Example Usage:
 # pytest
@@ -51,31 +52,6 @@ wrappers_settings_var_order = ["no_op_max", "sticky_actions", "hwc_obs_resize",
                                "reward_normalization", "clip_rewards", "frame_stack", "dilation",
                                "actions_stack", "scale", "scale_mod", "flatten", "filter_keys"]
 
-def generate_pytest_decorator_input(var_order, test_parameters, outcome):
-
-    test_vars = ""
-    values_list = []
-
-    number_of_tests = 0
-    for k, v in test_parameters.items():
-        number_of_tests = max(number_of_tests, len(v))
-
-    for var in var_order:
-        test_vars += var + ","
-    test_vars += "expected"
-
-    for idx in range(number_of_tests):
-
-        test_value_tuple = tuple()
-
-        for var in var_order:
-            test_value_tuple += (test_parameters[var][idx % len(test_parameters[var])],)
-        test_value_tuple += (outcome,)
-
-        values_list.append(test_value_tuple)
-
-    return test_vars, values_list
-
 ok_test_parameters = {
     "no_op_max": [0, 2],
     "sticky_actions": [1, 4],
@@ -101,14 +77,27 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize(test_vars, values_list_ok)
 
 # Wrappers
-def test_settings_wrappers(no_op_max, sticky_actions, hwc_obs_resize, reward_normalization,
+@pytest.mark.parametrize("step_ratio", [1])
+@pytest.mark.parametrize("player", ["Random", "P1P2"])
+@pytest.mark.parametrize("hardcore", [False, True])
+@pytest.mark.parametrize("action_space", ["discrete", "multi_discrete"])
+@pytest.mark.parametrize("attack_buttons_combination", [False, True])
+def test_settings_wrappers(step_ratio, player, action_space, attack_buttons_combination, hardcore,
+                           no_op_max, sticky_actions, hwc_obs_resize, reward_normalization,
                            clip_rewards, frame_stack, dilation, actions_stack, scale,
                            scale_mod, flatten, filter_keys, expected, mocker):
 
     # Env settings
     settings = {}
     settings["game_id"] = "doapp"
-    settings["step_ratio"] = 1
+    settings["step_ratio"] = step_ratio
+    settings["player"] = player
+    settings["hardcore"] = hardcore
+    settings["action_space"] = action_space
+    settings["attack_buttons_combination"] = attack_buttons_combination
+    if player == "P1P2":
+        settings["action_space"] = (action_space, action_space)
+        settings["attack_buttons_combination"] = (attack_buttons_combination, attack_buttons_combination)
 
     # Env wrappers settings
     wrappers_settings = {}
