@@ -5,13 +5,13 @@ import datetime
 import gym
 from ..utils.gym_utils import gym_obs_dict_space_to_standard_dict,\
     ParallelPickleWriter
+from diambra.arena.env_settings import RecordingSettings
 
 # Trajectory recorder wrapper
 
 
 class TrajectoryRecorder(gym.Wrapper):
-    def __init__(self, env, file_path, user_name,
-                 ignore_p2, commit_hash="0000000"):
+    def __init__(self, env, recording_settings: RecordingSettings):
         """
         Record trajectories to use them for imitation learning
         :param env: (Gym Environment) the environment to wrap
@@ -19,11 +19,10 @@ class TrajectoryRecorder(gym.Wrapper):
                store the trajectory file
         """
         gym.Wrapper.__init__(self, env)
-        self.file_path = file_path
-        self.user_name = user_name
-        self.ignore_p2 = ignore_p2
+        self.file_path = recording_settings.file_path
+        self.username = recording_settings.username
+        self.ignore_p2 = recording_settings.ignore_p2
         self.frame_shp = self.env.observation_space["frame"].shape
-        self.commit_hash = commit_hash
 
         if (self.env.player_side == "P1P2"):
             if ((self.env.attack_but_combination[0] != self.env.attack_but_combination[1])
@@ -96,7 +95,7 @@ class TrajectoryRecorder(gym.Wrapper):
         if done:
             to_save = {}
             to_save["commit_hash"] = self.commit_hash
-            to_save["user_name"] = self.user_name
+            to_save["username"] = self.username
             to_save["player_side"] = self.env.player_side
             if self.env.player_side != "P1P2":
                 to_save["difficulty"] = self.env.difficulty
@@ -133,19 +132,18 @@ class TrajectoryRecorder(gym.Wrapper):
             to_save["rewards"] = self.rewards_hist
             to_save["actions"] = self.actions_hist
             to_save["done_flags"] = self.flag_hist
-            to_save["observation_space_dict"] = gym_obs_dict_space_to_standard_dict(
-                self.env.observation_space)
+            to_save["observation_space_dict"] = gym_obs_dict_space_to_standard_dict(self.env.observation_space)
 
             # Characters name
             # If 2P mode
-            if self.env.player_side == "P1P2" and self.ignore_p2 == 0:
-                save_path = "mod" + str(self.ignore_p2) + "_" +\
+            if self.env.player_side == "P1P2" and self.ignore_p2 is False:
+                save_path = "mod_" + str(self.ignore_p2) + "_" +\
                     self.env.player_side + "_rew" +\
                     str(np.round(self.cumulative_rew, 3)) +\
                     "_" + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
             # If 1P mode
             else:
-                save_path = "mod" + str(self.ignore_p2) + "_" +\
+                save_path = "mod_" + str(self.ignore_p2) + "_" +\
                     self.env.player_side + "_diff" +\
                     str(self.env.difficulty) + "_rew" +\
                     str(np.round(self.cumulative_rew, 3)) + "_" +\
