@@ -42,6 +42,7 @@ class EnvironmentSettings:
     def sanity_check(self):
         self.games_dict = available_games(False)
 
+        # TODO: consider using typing.Literal to specify lists of admissible values: NOTE: It requires Python 3.8+
         check_num_in_range("step_ratio", self.step_ratio, [1, 6])
         check_num_in_range("rank", self.rank, [0, MAX_VAL])
         check_num_in_range("seed", self.seed, [-1, MAX_VAL])
