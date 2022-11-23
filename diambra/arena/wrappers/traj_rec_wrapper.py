@@ -33,6 +33,9 @@ class TrajectoryRecorder(gym.Wrapper):
                                 "action space: {}, attack button combo: {}".format(self.env.action_space, self.env.attack_but_combination)
                                 )
 
+        if ("P1" in self.observation_space.keys()) is False:
+            raise Exception("Trajectory recording for not hardcore mode does not work with Observation Dict flattening, please deactivate it.")
+
         env.logger.info("Recording trajectories in \"{}\"".format(self.file_path))
         os.makedirs(self.file_path, exist_ok=True)
 
