@@ -66,7 +66,6 @@ def make(game_id, env_settings={}, wrappers_settings={},
     # Apply trajectories recorder wrappers
     if len(traj_rec_settings) != 0:
         traj_rec_settings = from_dict(RecordingSettings, traj_rec_settings)
-        print("Trajectory settings = ", traj_rec_settings)
         if env_settings.hardcore is True:
             from diambra.arena.wrappers.traj_rec_wrapper_hardcore import TrajectoryRecorder
         else:

@@ -123,6 +123,8 @@ def test_random_wrappers(player, continue_game, action_space, attack_buttons_com
 
     if (random.choices([True, False], [rec_traj_probability, 1.0 - rec_traj_probability])[0] is False):
         traj_rec_settings = {}
+    else:
+        wrappers_settings["flatten"] = False
 
     assert func(player, continue_game, action_space, attack_buttons_combination,
                 wrappers_settings, traj_rec_settings, hardcore_probability, no_action_probability, mocker) == 0

@@ -26,7 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--attButComb', type=bool, default=False, help='Use attack button combinations (0=F)/1=T')
     parser.add_argument('--noAction', type=int, default=0, help='If to use no action policy (0=False)')
     parser.add_argument('--recordTraj', type=bool, default=False, help='If to record trajectories')
-    parser.add_argument('--hardcore', type=int, default=0, help='Hard core mode (0=False)')
+    parser.add_argument('--hardcore', type=bool, default=False, help='Hard core mode')
     parser.add_argument('--interactiveViz', type=int, default=0, help='Interactive Visualization (0=False)')
     parser.add_argument('--envAddress', type=str, default="", help='diambraEngine Address')
     parser.add_argument('--wrappers', type=bool, default=False, help='If to use wrappers')
@@ -52,7 +52,7 @@ if __name__ == '__main__':
         settings["characters"] = settings["characters"][0]
         settings["action_space"] = settings["action_space"][0]
         settings["attack_but_combination"] = settings["attack_but_combination"][0]
-    settings["hardcore"] = False if opt.hardcore == 0 else True
+    settings["hardcore"] = opt.hardcore
 
     # Env wrappers settings
     wrappers_settings = {}
@@ -86,6 +86,8 @@ if __name__ == '__main__':
     traj_rec_settings["ignore_p2"] = False
     if opt.recordTraj is False:
         traj_rec_settings = {}
+    else:
+        wrappers_settings["flatten"] = False
 
     # Args
     args = {}

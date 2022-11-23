@@ -94,7 +94,6 @@ class TrajectoryRecorder(gym.Wrapper):
                     to_save["action_space"] = "multi_discrete"
                 to_save["attack_but_comb"] = self.env.attack_but_combination[0]
             to_save["n_actions"] = n_actions
-
             to_save["frame_shp"] = self.frame_shp
             to_save["ignore_p2"] = self.ignore_p2
             to_save["char_names"] = self.env.char_names
