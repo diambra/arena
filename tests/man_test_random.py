@@ -18,17 +18,18 @@ if __name__ == '__main__':
     parser.add_argument('--character2_2', type=str, default="Random", help='Character P2_2 (Random)')
     parser.add_argument('--character1_3', type=str, default="Random", help='Character P1_3 (Random)')
     parser.add_argument('--character2_3', type=str, default="Random", help='Character P2_3 (Random)')
+    parser.add_argument('--difficulty', type=int, default=3, help='Game difficulty')
     parser.add_argument('--stepRatio', type=int, default=3, help='Frame ratio')
     parser.add_argument('--nEpisodes', type=int, default=1, help='Number of episodes')
     parser.add_argument('--continueGame', type=float, default=-1.0, help='ContinueGame flag (-inf,+1.0]')
     parser.add_argument('--actionSpace', type=str, default="discrete", help='discrete/multi_discrete')
     parser.add_argument('--attButComb', type=bool, default=False, help='Use attack button combinations (0=F)/1=T')
     parser.add_argument('--noAction', type=int, default=0, help='If to use no action policy (0=False)')
-    parser.add_argument('--recordTraj', type=int, default=0, help='If to record trajectories (0=False)')
+    parser.add_argument('--recordTraj', type=bool, default=False, help='If to record trajectories')
     parser.add_argument('--hardcore', type=int, default=0, help='Hard core mode (0=False)')
     parser.add_argument('--interactiveViz', type=int, default=0, help='Interactive Visualization (0=False)')
     parser.add_argument('--envAddress', type=str, default="", help='diambraEngine Address')
-    parser.add_argument('--wrappers', type=int, default=0, help='If to use wrappers (0=False)')
+    parser.add_argument('--wrappers', type=bool, default=False, help='If to use wrappers')
     opt = parser.parse_args()
     print(opt)
 
@@ -40,6 +41,7 @@ if __name__ == '__main__':
     if opt.envAddress != "":
         settings["env_address"] = opt.envAddress
     settings["player"] = opt.player
+    settings["difficulty"] = opt.difficulty
     settings["characters"] = ((opt.character1, opt.character1_2, opt.character1_3),
                               (opt.character2, opt.character2_2, opt.character2_3))
     settings["step_ratio"] = opt.stepRatio
@@ -56,7 +58,7 @@ if __name__ == '__main__':
     wrappers_settings = {}
     wrappers_settings["no_op_max"] = 0
     wrappers_settings["sticky_actions"] = 1
-    wrappers_settings["hwc_obs_resize"] = [128, 128, 1]
+    wrappers_settings["hwc_obs_resize"] = (128, 128, 1)
     wrappers_settings["reward_normalization"] = True
     wrappers_settings["clip_rewards"] = False
     wrappers_settings["frame_stack"] = 4
@@ -74,16 +76,15 @@ if __name__ == '__main__':
                                             "P1_ownHealth1", "P1_oppHealth1", "P1_oppChar",
                                             "P1_ownHealth2", "P1_oppHealth2",
                                             "P1_actions_move", "P1_actions_attack"]
-    if opt.wrappers == 0:
+    if opt.wrappers is False:
         wrappers_settings = {}
 
     # Recording settings
     traj_rec_settings = {}
     traj_rec_settings["user_name"] = "Alex"
     traj_rec_settings["file_path"] = os.path.join(expanduser("~"), "DIAMBRA/trajRecordings", opt.gameId)
-    traj_rec_settings["ignore_p2"] = 0
-    traj_rec_settings["commit_hash"] = "0000000"
-    if opt.recordTraj == 0:
+    traj_rec_settings["ignore_p2"] = False
+    if opt.recordTraj is False:
         traj_rec_settings = {}
 
     # Args
