@@ -31,8 +31,8 @@ def func(game_id, player, continue_game, action_space, attack_buttons_combinatio
         settings["game_id"] = game_id
         settings["player"] = player
         settings["continue_game"] = continue_game
-        settings["action_space"] = [action_space, action_space]
-        settings["attack_but_combination"] = [attack_buttons_combination, attack_buttons_combination]
+        settings["action_space"] = (action_space, action_space)
+        settings["attack_but_combination"] = (attack_buttons_combination, attack_buttons_combination)
         if settings["player"] != "P1P2":
             settings["action_space"] = settings["action_space"][0]
             settings["attack_but_combination"] = settings["attack_but_combination"][0]
@@ -76,7 +76,7 @@ def test_integration_wrappers(game_id, player, continue_game, action_space, atta
     wrappers_settings = {}
     wrappers_settings["no_op_max"] = 0
     wrappers_settings["sticky_actions"] = 1
-    wrappers_settings["hwc_obs_resize"] = [128, 128, 1]
+    wrappers_settings["hwc_obs_resize"] = (128, 128, 1)
     wrappers_settings["reward_normalization"] = True
     wrappers_settings["clip_rewards"] = False
     wrappers_settings["frame_stack"] = 4
@@ -100,8 +100,7 @@ def test_integration_wrappers(game_id, player, continue_game, action_space, atta
     traj_rec_settings = {}
     traj_rec_settings["user_name"] = "Alex"
     traj_rec_settings["file_path"] = os.path.join(expanduser("~"), "DIAMBRA/trajRecordings", game_id)
-    traj_rec_settings["ignore_p2"] = 0
-    traj_rec_settings["commit_hash"] = "0000000"
+    traj_rec_settings["ignore_p2"] = False
 
     if (random.choices([True, False], [rec_traj_probability, 1.0 - rec_traj_probability])[0] is False):
         traj_rec_settings = {}
