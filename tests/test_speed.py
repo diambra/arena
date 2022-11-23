@@ -36,8 +36,11 @@ def func(player, wrappers_settings, target_speed, mocker):
         settings["player"] = player
         settings["action_space"] = "discrete"
         settings["attack_but_combination"] = False
+        if player == "P1P2":
+            settings["action_space"] = ("discrete", "discrete")
+            settings["attack_but_combination"] = (False, False)
 
-        env = diambra.arena.make("mock", settings, wrappers_settings)
+        env = diambra.arena.make("doapp", settings, wrappers_settings)
 
         observation = env.reset()
         n_step = 0
