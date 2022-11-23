@@ -98,7 +98,7 @@ def test_integration_wrappers(game_id, player, continue_game, action_space, atta
     # Recording settings
     home_dir = expanduser("~")
     traj_rec_settings = {}
-    traj_rec_settings["user_name"] = "Alex"
+    traj_rec_settings["username"] = "Alex"
     traj_rec_settings["file_path"] = os.path.join(expanduser("~"), "DIAMBRA/trajRecordings", game_id)
     traj_rec_settings["ignore_p2"] = False
 
