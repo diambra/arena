@@ -77,7 +77,7 @@ class TrajectoryRecorder(gym.Wrapper):
 
         if done:
             to_save = {}
-            to_save["commit_hash"] = self.commit_hash
+            n_actions = self.env.n_actions if self.env.player_side != "P1P2" else self.env.n_actions[0]
             to_save["username"] = self.username
             to_save["player_side"] = self.env.player_side
             if self.env.player_side != "P1P2":
@@ -86,13 +86,15 @@ class TrajectoryRecorder(gym.Wrapper):
                     to_save["action_space"] = "discrete"
                 else:
                     to_save["action_space"] = "multi_discrete"
+                to_save["attack_but_comb"] = self.env.attack_but_combination
             else:
                 if isinstance(self.env.action_space["P1"], gym.spaces.Discrete):
                     to_save["action_space"] = "discrete"
                 else:
                     to_save["action_space"] = "multi_discrete"
-            to_save["n_actions"] = self.env.n_actions[0]
-            to_save["attack_but_comb"] = self.env.attack_but_combination[0]
+                to_save["attack_but_comb"] = self.env.attack_but_combination[0]
+            to_save["n_actions"] = n_actions
+
             to_save["frame_shp"] = self.frame_shp
             to_save["ignore_p2"] = self.ignore_p2
             to_save["char_names"] = self.env.char_names

@@ -78,8 +78,7 @@ class TrajectoryRecorder(gym.Wrapper):
         # new round / stage / continue_game
         if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
             for _ in range(self.frame_shp[2] - 1):
-                self.last_frame_hist.append(
-                    obs["frame"][:, :, self.frame_shp[2] - 1])
+                self.last_frame_hist.append(obs["frame"][:, :, self.frame_shp[2] - 1])
 
         # Store the whole obs without the frame
         tmp_obs = obs.copy()
@@ -94,7 +93,7 @@ class TrajectoryRecorder(gym.Wrapper):
 
         if done:
             to_save = {}
-            to_save["commit_hash"] = self.commit_hash
+            n_actions = self.env.n_actions if self.env.player_side != "P1P2" else self.env.n_actions[0]
             to_save["username"] = self.username
             to_save["player_side"] = self.env.player_side
             if self.env.player_side != "P1P2":
@@ -103,13 +102,14 @@ class TrajectoryRecorder(gym.Wrapper):
                     to_save["action_space"] = "discrete"
                 else:
                     to_save["action_space"] = "multi_discrete"
+                to_save["attack_but_comb"] = self.env.attack_but_combination
             else:
                 if isinstance(self.env.action_space["P1"], gym.spaces.Discrete):
                     to_save["action_space"] = "discrete"
                 else:
                     to_save["action_space"] = "multi_discrete"
-            to_save["n_actions"] = self.env.n_actions[0]
-            to_save["attack_but_comb"] = self.env.attack_but_combination[0]
+                to_save["attack_but_comb"] = self.env.attack_but_combination[0]
+            to_save["n_actions"] = n_actions
             to_save["frame_shp"] = self.frame_shp
             to_save["ignore_p2"] = self.ignore_p2
             to_save["char_names"] = self.env.char_names
@@ -121,9 +121,9 @@ class TrajectoryRecorder(gym.Wrapper):
                 tmp_elem = self.env.observation_space["P1_actions_move"]
 
             if isinstance(tmp_elem, gym.spaces.MultiDiscrete):
-                to_save["n_actions_stack"] = int(tmp_elem.nvec.shape[0] / self.env.n_actions[0][0])
+                to_save["n_actions_stack"] = int(tmp_elem.nvec.shape[0] / n_actions[0])
             else:
-                to_save["n_actions_stack"] = int(tmp_elem.n / self.env.n_actions[0][0])
+                to_save["n_actions_stack"] = int(tmp_elem.n / n_actions[0])
 
             to_save["ep_len"] = len(self.rewards_hist)
             to_save["cum_rew"] = self.cumulative_rew
