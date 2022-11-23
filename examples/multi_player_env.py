@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import diambra.arena
-from diambra.arena.utils.gym_utils import show_gym_obs
 import numpy as np
 
 # Environment Settings
