@@ -5,6 +5,8 @@ import numpy as np
 
 MAX_VAL = float("inf")
 MIN_VAL = float("-inf")
+MAX_FRAME_RES = 512
+MAX_STACK_VALUE = 48
 
 def check_num_in_range(key, value, bounds):
     assert (value >= bounds[0] and value <= bounds[1]), "\"{}\" ({}) value must be in the range {}".format(key, value, bounds)
@@ -53,13 +55,13 @@ class EnvironmentSettings:
         check_num_in_range("continue_game", self.continue_game, [MIN_VAL, 1.0])
         check_num_in_range("difficulty", self.difficulty, self.games_dict[self.game_id]["difficulty"][:2])
 
-        check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, 512])
-        check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, 512])
+        check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_FRAME_RES])
+        check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, MAX_FRAME_RES])
         if (min(self.frame_shape[0], self.frame_shape[1]) == 0 and
             max(self.frame_shape[0], self.frame_shape[1]) != 0):
             raise Exception("\"frame_shape[0] and frame_shape[1]\" must be either both different from or equal to 0")
 
-        check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1, 3])
+        check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1])
 
         check_num_in_range("tower", self.tower, [1, 4])
 
@@ -172,18 +174,17 @@ class WrappersSettings:
         hwc_obs_resize: Tuple[int, int, int] = (84, 84, 0)
         dilation: int = 1
 
-        check_num_in_range("no_op_max", self.no_op_max, [0, MAX_VAL])
-        check_num_in_range("sticky_actions", self.sticky_actions, [1, MAX_VAL])
-        check_num_in_range("reward_normalization_factor", self.reward_normalization_factor, [0.0, MAX_VAL])
-        check_num_in_range("frame_stack", self.frame_stack, [1, MAX_VAL])
-        check_num_in_range("actions_stack", self.actions_stack, [1, MAX_VAL])
+        check_num_in_range("no_op_max", self.no_op_max, [0, 12])
+        check_num_in_range("sticky_actions", self.sticky_actions, [1, 12])
+        check_num_in_range("frame_stack", self.frame_stack, [1, MAX_STACK_VALUE])
+        check_num_in_range("actions_stack", self.actions_stack, [1, MAX_STACK_VALUE])
+        check_num_in_range("dilation", self.dilation, [1, MAX_STACK_VALUE])
         check_num_in_range("scale_mod", self.scale_mod, [0, 0])
-        check_num_in_range("dilation", self.dilation, [1, MAX_VAL])
 
         check_val_in_list("hwc_obs_resize[2]", self.hwc_obs_resize[2], [0, 1, 3])
         if self.hwc_obs_resize[2] != 0:
-            check_num_in_range("hwc_obs_resize[0]", self.hwc_obs_resize[0], [1, MAX_VAL])
-            check_num_in_range("hwc_obs_resize[1]", self.hwc_obs_resize[1], [1, MAX_VAL])
+            check_num_in_range("hwc_obs_resize[0]", self.hwc_obs_resize[0], [1, MAX_FRAME_RES])
+            check_num_in_range("hwc_obs_resize[1]", self.hwc_obs_resize[1], [1, MAX_FRAME_RES])
             if (min(self.hwc_obs_resize[0], self.hwc_obs_resize[1]) == 0 and
                 max(self.hwc_obs_resize[0], self.hwc_obs_resize[1]) != 0):
                 raise Exception("\"hwc_obs_resize[0] and hwc_obs_resize[1]\" must be both different from 0")
