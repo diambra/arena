@@ -9,6 +9,7 @@ import logging
 from .utils.splash_screen import SplashScreen
 from .utils.gym_utils import standard_dict_to_gym_obs_dict,\
     discrete_to_multi_discrete_action
+from typing import List
 
 # Diambra imitation learning environment
 
@@ -17,7 +18,7 @@ class ImitationLearningBase(gym.Env):
     """Diambra Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, traj_files_list, rank=0, total_cpus=1):
+    def __init__(self, traj_files_list: List[str], rank: int=0, total_cpus: int=1):
         self.logger = logging.getLogger(__name__)
         super(ImitationLearningBase, self).__init__()
 
@@ -287,7 +288,7 @@ class ImitationLearningBase(gym.Env):
 
 
 class ImitationLearningHardcore(ImitationLearningBase):
-    def __init__(self, traj_files_list, rank=0, total_cpus=1):
+    def __init__(self, traj_files_list: List[str], rank: int=0, total_cpus: int=1):
         super().__init__(traj_files_list, rank, total_cpus)
 
         # Observation space
@@ -323,7 +324,7 @@ class ImitationLearningHardcore(ImitationLearningBase):
 
 
 class ImitationLearning(ImitationLearningBase):
-    def __init__(self, traj_files_list, rank=0, total_cpus=1):
+    def __init__(self, traj_files_list: List[str], rank: int=0, total_cpus: int=1):
         super().__init__(traj_files_list, rank, total_cpus)
 
         # Observation space
