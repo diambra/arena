@@ -53,8 +53,8 @@ class EnvironmentSettings:
         check_num_in_range("continue_game", self.continue_game, [MIN_VAL, 1.0])
         check_num_in_range("difficulty", self.difficulty, self.games_dict[self.game_id]["difficulty"][:2])
 
-        check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_VAL])
-        check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, MAX_VAL])
+        check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, 512])
+        check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, 512])
         if (min(self.frame_shape[0], self.frame_shape[1]) == 0 and
             max(self.frame_shape[0], self.frame_shape[1]) != 0):
             raise Exception("\"frame_shape[0] and frame_shape[1]\" must be either both different from or equal to 0")
