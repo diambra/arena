@@ -57,7 +57,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings, args=default_args):
 
                 if settings["action_space"] == "discrete":
                     move_action, att_action = discrete_to_multi_discrete_action(
-                        actions, env.n_actions[0][0])
+                        actions, env.n_actions[0])
                 else:
                     move_action, att_action = actions[0], actions[1]
 
