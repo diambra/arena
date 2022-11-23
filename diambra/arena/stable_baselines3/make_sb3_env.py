@@ -7,10 +7,10 @@ from stable_baselines3.common.utils import set_random_seed
 from stable_baselines3.common.monitor import Monitor
 
 # Make Stable Baselines Env function
-def make_sb3_env(game_id, env_settings={}, wrappers_settings=None,
-                 use_subprocess=True, seed=0, log_dir_base="/tmp/DIAMBRALog/",
-                 start_index=0, allow_early_resets=True,
-                 start_method=None, no_vec=False):
+def make_sb3_env(game_id: str, env_settings: dict={}, wrappers_settings: dict={},
+                 use_subprocess: bool=True, seed: int=0, log_dir_base: str="/tmp/DIAMBRALog/",
+                 start_index: int=0, allow_early_resets: bool=True,
+                 start_method: str=None, no_vec: bool=False):
     """
     Create a wrapped, monitored VecEnv.
     :param game_id: (str) the game environment ID
