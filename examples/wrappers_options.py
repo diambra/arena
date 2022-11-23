@@ -1,5 +1,4 @@
 import diambra.arena
-from diambra.arena.utils.gym_utils import show_wrap_obs
 
 # Gym wrappers settings
 wrappers_settings = {}
@@ -15,7 +14,7 @@ wrappers_settings["sticky_actions"] = 1
 # WARNING: for speedup, avoid frame warping wrappers,
 #          use environment's native frame wrapping through
 #          "frame_shape" setting (see documentation for details).
-wrappers_settings["hwc_obs_resize"] = [128, 128, 1]
+wrappers_settings["hwc_obs_resize"] = (128, 128, 1)
 
 # Wrapper option for reward normalization
 # When activated, the reward normalization factor can be set (default = 0.5)
@@ -57,7 +56,7 @@ wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide",
 env = diambra.arena.make("doapp", {}, wrappers_settings)
 
 observation = env.reset()
-show_wrap_obs(observation, env.n_actions_stack, env.char_names)
+env.show_obs(observation)
 
 while True:
 
@@ -65,14 +64,14 @@ while True:
     print("Actions: {}".format(actions))
 
     observation, reward, done, info = env.step(actions)
-    show_wrap_obs(observation, env.n_actions_stack, env.char_names)
+    env.show_obs(observation)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
 
     if done:
         observation = env.reset()
-        show_wrap_obs(observation, env.n_actions_stack, env.char_names)
+        env.show_obs(observation)
         break
 
 env.close()

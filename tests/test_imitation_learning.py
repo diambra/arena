@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import pytest
 import diambra.arena
-from diambra.arena.utils.gym_utils import show_wrap_obs
 import argparse
 import os
 import sys
@@ -11,8 +10,6 @@ import numpy as np
 def func(path, hardcore):
     try:
         nProc = 1
-        viz_flag = True
-        waitKey = 1
 
         # Show files in folder
         traj_rec_folder = path
@@ -34,8 +31,7 @@ def func(path, hardcore):
 
         env.traj_summary()
 
-        show_wrap_obs(observation, env.n_actions_stack,
-                      env.char_names, waitKey, viz_flag)
+        env.show_obs(observation)
 
         cumulative_ep_rew = 0.0
         cumulative_ep_rew_all = []
@@ -56,8 +52,7 @@ def func(path, hardcore):
             print("done = ", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            show_wrap_obs(observation, env.n_actions_stack,
-                          env.char_names, waitKey, viz_flag)
+            env.show_obs(observation)
 
             print("----------")
 
@@ -102,8 +97,7 @@ def func(path, hardcore):
 
                 observation = env.reset()
                 env.render(mode="human")
-                show_wrap_obs(observation, env.n_actions_stack,
-                              env.char_names, waitKey, viz_flag)
+                env.show_obs(observation)
 
         if diambra_il_settings["total_cpus"] == 1:
             print("All ep. rewards =", cumulative_ep_rew_all)

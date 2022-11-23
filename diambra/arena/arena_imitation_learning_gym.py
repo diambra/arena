@@ -5,6 +5,8 @@ import pickle
 import bz2
 import copy
 import cv2
+import sys
+import os
 import logging
 from .utils.splash_screen import SplashScreen
 from .utils.gym_utils import standard_dict_to_gym_obs_dict,\
@@ -284,9 +286,52 @@ class ImitationLearningBase(gym.Env):
             output = np.expand_dims(self.last_obs, axis=2)
             return output
 
+    # Print observation details to the console
+    def show_obs(self, observation, wait_key=1, viz=True):
+
+        if type(observation) == dict:
+            for k, v in observation.items():
+                if k != "frame":
+                    if type(v) == dict:
+                        for k2, v2 in v.items():
+                            if k2 == "actions":
+
+                                for k3, v3 in v2.items():
+                                    out_value = v3
+                                    additional_string = ": "
+                                    if type(v3) != int:
+                                        n_actions_stack = int(self.observation_space[k][k2][k3].n / (self.n_actions[0] if k3 == "move" else self.n_actions[1]))
+                                        out_value = np.reshape(v3, [n_actions_stack, -1])
+                                        additional_string = " (reshaped for visualization):\n"
+                                    print("observation[\"{}\"][\"{}\"][\"{}\"]{}{}".format(k, k2, k3, additional_string, out_value))
+                            elif "ownChar" in k2 or "oppChar" in k2:
+                                char_idx = v2 if type(v2) == int else np.where(v2 == 1)[0][0]
+                                print("observation[\"{}\"][\"{}\"]: {} / {}".format(k, k2, v2, self.char_names[char_idx]))
+                            else:
+                                print("observation[\"{}\"][\"{}\"]: {}".format(k, k2, v2))
+                    else:
+                        print("observation[\"{}\"]: {}".format(k, v))
+                else:
+                    frame = observation["frame"]
+                    print("observation[\"frame\"]: shape {} - min {} - max {}".format(frame.shape, np.amin(frame), np.amax(frame)))
+
+            if viz:
+                frame = observation["frame"]
+        else:
+            if viz:
+                frame = observation
+
+        if viz is True and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+            try:
+                norm_factor = 255 if np.amax(frame) > 1.0 else 1.0
+                for idx in range(frame.shape[2]):
+                    cv2.imshow("[{}] Frame channel {}".format(os.getpid(), idx), frame[:, :, idx] / norm_factor)
+
+                cv2.waitKey(wait_key)
+            except:
+                pass
+
 # Diambra imitation learning environment
-
-
 class ImitationLearningHardcore(ImitationLearningBase):
     def __init__(self, traj_files_list: List[str], rank: int=0, total_cpus: int=1):
         super().__init__(traj_files_list, rank, total_cpus)
@@ -321,8 +366,6 @@ class ImitationLearningHardcore(ImitationLearningBase):
         return observation
 
 # Diambra imitation learning environment
-
-
 class ImitationLearning(ImitationLearningBase):
     def __init__(self, traj_files_list: List[str], rank: int=0, total_cpus: int=1):
         super().__init__(traj_files_list, rank, total_cpus)
