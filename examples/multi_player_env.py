@@ -10,15 +10,15 @@ settings = {}
 settings["player"] = "P1P2"
 
 # If to use discrete or multi_discrete action space
-settings["action_space"] = ["discrete", "discrete"]
+settings["action_space"] = ("discrete", "discrete")
 
 # If to use attack buttons combinations actions
-settings["attack_but_combination"] = [True, True]
+settings["attack_but_combination"] = (True, True)
 
 env = diambra.arena.make("doapp", settings)
 
 observation = env.reset()
-show_gym_obs(observation, env.char_names)
+env.show_obs(observation)
 
 while True:
 
@@ -27,14 +27,14 @@ while True:
     print("Actions: {}".format(actions))
 
     observation, reward, done, info = env.step(actions)
-    show_gym_obs(observation, env.char_names)
+    env.show_obs(observation)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
 
     if done:
         observation = env.reset()
-        show_gym_obs(observation, env.char_names)
+        env.show_obs(observation)
         break
 
 env.close()

@@ -1,5 +1,4 @@
 import diambra.arena
-from diambra.arena.utils.gym_utils import show_wrap_obs
 import os
 import numpy as np
 
@@ -27,7 +26,7 @@ env = diambra.arena.ImitationLearning(**settings)
 
 observation = env.reset()
 env.render(mode="human")
-show_wrap_obs(observation, env.n_actions_stack, env.char_names)
+env.show_obs(observation)
 
 # Show trajectory summary
 env.traj_summary()
@@ -37,7 +36,7 @@ while True:
     dummy_actions = 0
     observation, reward, done, info = env.step(dummy_actions)
     env.render(mode="human")
-    show_wrap_obs(observation, env.n_actions_stack, env.char_names)
+    env.show_obs(observation)
     print("Reward: {}".format(reward))
     print("Done: {}".format(done))
     print("Info: {}".format(info))
@@ -48,6 +47,6 @@ while True:
     if done:
         observation = env.reset()
         env.render(mode="human")
-        show_wrap_obs(observation, env.n_actions_stack, env.char_names)
+        env.show_obs(observation)
 
 env.close()
