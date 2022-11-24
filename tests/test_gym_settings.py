@@ -50,7 +50,7 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
         return 1
 
 games_dict = available_games(False)
-gym_settings_var_order = ["game_id", "player", "step_ratio", "frame_shape", "tower", "super_art",
+gym_settings_var_order = ["player", "step_ratio", "frame_shape", "tower", "super_art",
                           "fighting_style", "ultimate_style", "continue_game", "action_space",
                           "attack_buttons_combination"]
 
@@ -58,10 +58,9 @@ ok_test_parameters = {
     "continue_game": [-1.0, 0.0, 0.3],
     "action_space": ["discrete", "multi_discrete"],
     "attack_buttons_combination": [False, True],
-    "game_id": list(games_dict.keys()),
     "player": ["P1", "P2", "Random", "P1P2"],
     "step_ratio": [1, 3, 6],
-    "frame_shape": [(0, 0, 0), (0, 0, 1), (0, 0, 3), (82, 82, 0), (82, 82, 1), (82, 82, 3)],
+    "frame_shape": [(0, 0, 0), (0, 0, 1), (82, 82, 0), (82, 82, 1)],
     "tower": [1, 3, 4],
     "super_art": [0, 1, 3],
     "fighting_style": [0, 1, 3],
@@ -72,7 +71,6 @@ ko_test_parameters = {
     "continue_game": [1.3, "string"],
     "action_space": ["random", 12],
     "attack_buttons_combination": [1],
-    "game_id": ["mock"],
     "player": [4, "P2P1"],
     "step_ratio": [8],
     "frame_shape": [(0, 82, 0), (0, 0, 4), (-100, -100, 3)],
@@ -89,15 +87,12 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize(test_vars, values_list)
 
 # Gym
+@pytest.mark.parametrize("game_id", list(games_dict.keys()))
 def test_settings_gym(game_id, player, step_ratio, frame_shape, tower, super_art,
                       fighting_style, ultimate_style, continue_game, action_space,
                       attack_buttons_combination, expected, mocker):
 
-    if game_id != "mock":
-        game_data = games_dict[game_id]
-    else:
-        game_data = games_dict["doapp"]
-
+    game_data = games_dict[game_id]
     difficulty_range = range(game_data["difficulty"][0], game_data["difficulty"][1] + 1)
     characters_list = np.append("Random", game_data["char_list"])
     outfits_range = range(game_data["outfits"][0], game_data["outfits"][1] + 1)

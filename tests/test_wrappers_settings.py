@@ -8,6 +8,7 @@ from engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
 import numpy as np
 from pytest_utils import generate_pytest_decorator_input
+from diambra.arena.utils.gym_utils import available_games
 
 # Example Usage:
 # pytest
@@ -51,6 +52,8 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
 wrappers_settings_var_order = ["no_op_max", "sticky_actions", "hwc_obs_resize", "reward_normalization",
                                "reward_normalization_factor", "clip_rewards", "frame_stack", "dilation",
                                "actions_stack", "scale", "scale_mod", "flatten", "filter_keys"]
+games_dict = available_games(False)
+
 
 ok_test_parameters = {
     "no_op_max": [0, 2],
@@ -91,19 +94,20 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize(test_vars, values_list)
 
 # Wrappers
+@pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("step_ratio", [1])
 @pytest.mark.parametrize("player", ["Random", "P1P2"])
 @pytest.mark.parametrize("hardcore", [False, True])
 @pytest.mark.parametrize("action_space", ["discrete", "multi_discrete"])
 @pytest.mark.parametrize("attack_buttons_combination", [False, True])
-def test_settings_wrappers(step_ratio, player, action_space, attack_buttons_combination, hardcore,
+def test_settings_wrappers(game_id, step_ratio, player, action_space, attack_buttons_combination, hardcore,
                            no_op_max, sticky_actions, hwc_obs_resize, reward_normalization,
                            reward_normalization_factor, clip_rewards, frame_stack, dilation,
                            actions_stack, scale, scale_mod, flatten, filter_keys, expected, mocker):
 
     # Env settings
     settings = {}
-    settings["game_id"] = "doapp"
+    settings["game_id"] = game_id
     settings["step_ratio"] = step_ratio
     settings["player"] = player
     settings["hardcore"] = hardcore

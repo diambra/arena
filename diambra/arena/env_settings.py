@@ -70,7 +70,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
 
     # Player level
     characters: Union[str, Tuple[str], Tuple[str, str], Tuple[str, str, str]] = ("Random", "Random", "Random")
-    char_outfits: int = 2
+    char_outfits: int = 1
     action_space: str = "multi_discrete"
     attack_but_combination: bool = True
 
@@ -109,7 +109,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
                       Tuple[Tuple[str, str], Tuple[str, str]],
                       Tuple[Tuple[str, str, str], Tuple[str, str, str]]] =\
                     (("Random", "Random", "Random"), ("Random", "Random", "Random"))
-    char_outfits: Tuple[int, int] = (2, 2)
+    char_outfits: Tuple[int, int] = (1, 1)
     action_space: Tuple[str, str] = ("multi_discrete", "multi_discrete")
     attack_but_combination: Tuple[bool, bool] = (True, True)
 
