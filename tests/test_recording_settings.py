@@ -8,6 +8,7 @@ from engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
 import numpy as np
 from pytest_utils import generate_pytest_decorator_input
+from diambra.arena.utils.gym_utils import available_games
 
 # Example Usage:
 # pytest
@@ -49,7 +50,7 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
         return 1
 
 wrappers_settings_var_order = ["username", "file_path", "ignore_p2"]
-
+games_dict = available_games(False)
 home_dir = expanduser("~")
 
 ok_test_parameters = {
@@ -72,16 +73,17 @@ def pytest_generate_tests(metafunc):
 
 
 # Recording
+@pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("player", ["Random", "P1P2"])
 @pytest.mark.parametrize("hardcore", [False, True])
 @pytest.mark.parametrize("action_space", ["discrete", "multi_discrete"])
 @pytest.mark.parametrize("attack_buttons_combination", [False, True])
-def test_settings_recording(username, file_path, ignore_p2,
+def test_settings_recording(game_id ,username, file_path, ignore_p2,
                             player, action_space, attack_buttons_combination, hardcore, expected, mocker):
 
     # Env settings
     settings = {}
-    settings["game_id"] = "doapp"
+    settings["game_id"] = game_id
     settings["player"] = player
     settings["hardcore"] = hardcore
     settings["action_space"] = action_space
@@ -97,9 +99,6 @@ def test_settings_recording(username, file_path, ignore_p2,
     wrappers_settings["frame_stack"] = 4
     wrappers_settings["actions_stack"] = 12
     wrappers_settings["scale"] = True
-    if hardcore is False:
-        wrappers_settings["flatten"] = True
-        wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide", "P1_oppSide", "P1_oppChar"]
 
     # Recording settings
     traj_rec_settings = {}
