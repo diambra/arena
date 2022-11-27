@@ -9,12 +9,12 @@ from stable_baselines.common.misc_util import set_global_seeds
 from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 
 
-def make_sb_env(seed, env_settings, wrappers_settings=None,
-                traj_rec_settings=None, custom_wrappers=None,
-                key_to_add=None, p2_mode=None, p2_policy=None,
-                start_index=0, allow_early_resets=True,
-                start_method=None, no_vec=False,
-                use_subprocess=False):
+def make_sb_env(seed: int, env_settings: dict, wrappers_settings: dict={},
+                traj_rec_settings: dict={}, custom_wrappers: list=None,
+                key_to_add: list=None, p2_mode: str=None, p2_policy=None,
+                start_index: int=0, allow_early_resets: bool=True,
+                start_method: str=None, no_vec: bool=False,
+                use_subprocess: bool=False):
     """
     Create a wrapped, monitored VecEnv.
     :param seed: (int) initial seed for RNG
