@@ -94,7 +94,7 @@ def test_settings_gym(game_id, player, step_ratio, frame_shape, tower, super_art
 
     game_data = games_dict[game_id]
     difficulty_range = range(game_data["difficulty"][0], game_data["difficulty"][1] + 1)
-    characters_list = np.append("Random", game_data["char_list"])
+    characters_list = ["Random"] + game_data["char_list"]
     outfits_range = range(game_data["outfits"][0], game_data["outfits"][1] + 1)
     difficulty = random.choice(difficulty_range)
     characters = random.choice(characters_list)

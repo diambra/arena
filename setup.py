@@ -11,6 +11,7 @@ pipmain(['install', 'distro'])
 
 extras= {
     'core': [],
+    'tests': ['pytest', 'pytest-mock'],
     'stable-baselines': ['stable-baselines==2.10.2', "protobuf==3.20.1", "pyyaml"],
     'stable-baselines3': ['stable-baselines3[extra]==1.6.1', "pyyaml"],
     'ray-rllib': ['ray[rllib]==2.0.0', 'tensorflow<=2.10.0', 'torch<=1.12.1', "pyyaml"],
