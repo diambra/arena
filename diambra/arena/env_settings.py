@@ -126,9 +126,11 @@ class EnvironmentSettings2P(EnvironmentSettings):
             self.characters = ((self.characters[0], "Random", "Random"),
                                (self.characters[1], "Random", "Random"))
         else:
+            tmp_chars = [self.characters[0], self.characters[1]]
             for idx in range(len(self.characters[0]), 3):
-                self.characters[0] += ("Random", )
-                self.characters[1] += ("Random", )
+                for jdx in range(2):
+                    tmp_chars[jdx] += ("Random", )
+            self.characters = tuple(tmp_chars)
 
         for jdx in range(2):
             check_num_in_range("char_outfits[{}]".format(jdx), self.char_outfits[jdx],

@@ -8,6 +8,13 @@ settings = {}
 # 2 Players game
 settings["player"] = "P1P2"
 
+# Characters to be used, automatically extended with "Random" for games
+# required to select more than one character (e.g. Tekken Tag Tournament)
+settings["characters"] = ("Random", "Random")
+
+# Characters outfit
+settings["char_outfits"] = (2, 2)
+
 # If to use discrete or multi_discrete action space
 settings["action_space"] = ("discrete", "discrete")
 
