@@ -34,7 +34,7 @@ settings["difficulty"] = 4
 
 # Character to be used, automatically extended with "Random" for games
 # required to select more than one character (e.g. Tekken Tag Tournament)
-settings["characters"] = ("Random")
+settings["characters"] = "Random"
 
 # Character outfit
 settings["char_outfits"] = 2
