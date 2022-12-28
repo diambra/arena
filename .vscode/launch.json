@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "[Arena] (conda diambra-arena) Gist",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/examples/diambra_arena_gist.py",
+        "console": "integratedTerminal",
+      }
+    ]
+}

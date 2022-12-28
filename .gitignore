@@ -1,4 +1,3 @@
-*.vscode
 .idea
 diambra_arena.egg-info/*
 build/*
