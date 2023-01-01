@@ -223,4 +223,4 @@ Paper: <a href="https://arxiv.org/abs/2210.10595" target="_blank">https://arxiv.
 
 DIAMBRA Arena software package is subject to our <a href="https://diambra.ai/terms" target="_blank">Terms of Use</a>. By using it, you accept them in full.
 
-###### DIAMBRA™ is a Trade Mark, © Copyright 2018 - 2022. All Right Reserved.
+###### DIAMBRA™ is a Trade Mark, © Copyright 2018-2023. All Right Reserved.
