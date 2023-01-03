@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-[![Paper](http://img.shields.io/badge/paper-arxiv.2210.10595-B31B1B.svg)](https://arxiv.org/abs/2210.10595)
+<a href="https://arxiv.org/abs/2210.10595"><img src="http://img.shields.io/badge/paper-arxiv.2210.10595-B31B1B.svg" alt="Paper"/></a>
 </p>
 
 # DIAMBRA Arena
