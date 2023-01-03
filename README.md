@@ -12,6 +12,10 @@
   <a href="https://twitter.com/diambra_ai">Twitter</a>
 </p>
 
+<p align="center">
+[![Paper](http://img.shields.io/badge/paper-arxiv.2210.10595-B31B1B.svg)](https://arxiv.org/abs/2210.10595)
+</p>
+
 # DIAMBRA Arena
 
 DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It provides a standard interface to popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym format**, that makes its adoption smooth and straightforward.
