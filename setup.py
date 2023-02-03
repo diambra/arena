@@ -29,7 +29,7 @@ setuptools.setup(
     long_description = (Path(__file__).parent / "README.md").read_text(),
     long_description_content_type="text/markdown",
     license='Custom',
-    python_requires='>=3.7, <3.11'
+    python_requires='>=3.7, <3.11',
     install_requires=[
             'pip>=21',
             'importlib-metadata<=4.12.0; python_version <= "3.7"', # problem with gym for importlib-metadata==5.0.0 and python <=3.7
