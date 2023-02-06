@@ -29,7 +29,7 @@ setuptools.setup(
     long_description = (Path(__file__).parent / "README.md").read_text(),
     long_description_content_type="text/markdown",
     license='Custom',
-    python_requires='>=3.7, <3.11',
+    python_requires='>=3.7',
     install_requires=[
             'pip>=21',
             'importlib-metadata<=4.12.0; python_version <= "3.7"', # problem with gym for importlib-metadata==5.0.0 and python <=3.7
@@ -44,7 +44,7 @@ setuptools.setup(
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42',
             'grpcio',
-            'diambra-engine>2.1.0rc5', # To make sure both protobuf <3.20 (TF 2.x current limitation) and >=3.20 are supported
+            'diambra-engine>=2.2.0rc0', # To make sure both protobuf <3.20 (TF 2.x current limitation) and >=3.20 are supported
             'dacite'],
         packages=[package for package in setuptools.find_packages(
         ) if package.startswith("diambra")],
