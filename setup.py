@@ -43,7 +43,7 @@ setuptools.setup(
             'opencv-contrib-python>=4.4.0.42',
             'opencv-python>=4.4.0.42',
             'grpcio',
-            'diambra-engine',
+            'diambra-engine>=2.1.0rc6',
             'dacite'],
         packages=[package for package in setuptools.find_packages(
         ) if package.startswith("diambra")],
