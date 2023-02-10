@@ -6,7 +6,7 @@ RUN apt-get -qy update && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get -qy clean
 
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 HOME=/tmp
 
 # Copy arena to tmp since bind-mount is read-only and pip doesn't support
 # out-of-tree builds.
