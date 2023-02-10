@@ -5,6 +5,7 @@ import logging
 import gym
 from ray.rllib.env.env_context import EnvContext
 from copy import deepcopy
+import pickle
 
 class DiambraArena(gym.Env):
 
@@ -12,47 +13,86 @@ class DiambraArena(gym.Env):
 
         self.logger = logging.getLogger(__name__)
 
-        if "is_rollout" not in config.keys():
-            message = "Environment initialized without a preprocessed config file."
-            message += " Make sure to call \"preprocess_ray_config\" before inizializing Ray RL Algorithms."
-            raise Exception(message)
+        # If to load environment spaces from a file
+        self.env_spaces_file_name = "./diambra_ray_env_spaces"
+        self.load_spaces_from_file = False
 
-        self.game_id = config["game_id"]
-        self.settings = config["settings"] if "settings" in config.keys() else {}
-        self.wrappers_settings = config["wrappers_settings"] if "wrappers_settings" in config.keys() else {}
-        self.seed = config["seed"] if "seed" in config.keys() else 0
-
-        num_rollout_workers = config["num_workers"]
-        num_eval_workers = config["evaluation_num_workers"]
-        num_envs_per_worker = config["num_envs_per_worker"]
-        worker_index = config.worker_index
-        vector_index = config.vector_index
-        create_env_on_driver = config["create_env_on_driver"]
-        is_rollout = config["is_rollout"]
-
-        self.logger.debug("num_rollout_workers: {}".format(num_rollout_workers))
-        self.logger.debug("num_eval_workers: {}".format(num_eval_workers))
-        self.logger.debug("num_envs_per_worker: {}".format(num_envs_per_worker))
-        self.logger.debug("worker_index: {}".format(worker_index))
-        self.logger.debug("vector_index: {}".format(vector_index))
-        self.logger.debug("create_env_on_driver: {}".format(create_env_on_driver))
-        self.logger.debug("is_rollout: {}".format(is_rollout))
-
-        if is_rollout is True:
-            self.rank = vector_index + (worker_index - 1) * num_envs_per_worker
+        if "load_spaces_from_file" in config.keys() and config["load_spaces_from_file"] is True:
+            if "env_spaces_file_name" not in config.keys():
+                raise Exception("Loading environment spaces from file selected, but no file specified.")
+            else:
+                self.env_spaces_file_name = config["env_spaces_file_name"]
+                
+                if not os.path.isfile(self.env_spaces_file_name):
+                    raise FileNotFoundError("Unable to load environment spaces from specified file ({}), no file found.".format(self.env_spaces_file_name))    
+                else:    
+                    self.load_spaces_from_file = config["load_spaces_from_file"]
         else:
-            self.rank = vector_index + (worker_index - 1) * num_envs_per_worker + num_rollout_workers * num_envs_per_worker
+            if "env_spaces_file_name" in config.keys():
+                self.env_spaces_file_name = config["env_spaces_file_name"]
 
-        if create_env_on_driver is True:
-            self.rank += num_envs_per_worker
+        if self.load_spaces_from_file is False:
 
-        self.logger.debug("Rank: {}".format(self.rank))
+            if "is_rollout" not in config.keys():
+                message = "Environment initialized without a preprocessed config file."
+                message += " Make sure to call \"preprocess_ray_config\" before initializing Ray RL Algorithms."
+                raise Exception(message)
 
-        self.env = diambra.arena.make(self.game_id, self.settings, self.wrappers_settings,
-                                      seed=self.seed + self.rank, rank=self.rank)
+            self.game_id = config["game_id"]
+            self.settings = config["settings"] if "settings" in config.keys() else {}
+            self.wrappers_settings = config["wrappers_settings"] if "wrappers_settings" in config.keys() else {}
+            self.seed = config["seed"] if "seed" in config.keys() else 0
 
-        self.action_space = self.env.action_space
-        self.observation_space = self.env.observation_space
+            num_rollout_workers = config["num_workers"]
+            num_eval_workers = config["evaluation_num_workers"]
+            num_envs_per_worker = config["num_envs_per_worker"]
+            worker_index = config.worker_index
+            vector_index = config.vector_index
+            create_env_on_driver = config["create_env_on_driver"]
+            is_rollout = config["is_rollout"]
+
+            self.logger.debug("num_rollout_workers: {}".format(num_rollout_workers))
+            self.logger.debug("num_eval_workers: {}".format(num_eval_workers))
+            self.logger.debug("num_envs_per_worker: {}".format(num_envs_per_worker))
+            self.logger.debug("worker_index: {}".format(worker_index))
+            self.logger.debug("vector_index: {}".format(vector_index))
+            self.logger.debug("create_env_on_driver: {}".format(create_env_on_driver))
+            self.logger.debug("is_rollout: {}".format(is_rollout))
+
+            if is_rollout is True:
+                self.rank = vector_index + (worker_index - 1) * num_envs_per_worker
+            else:
+                self.rank = vector_index + (worker_index - 1) * num_envs_per_worker + num_rollout_workers * num_envs_per_worker
+
+            if create_env_on_driver is True:
+                self.rank += num_envs_per_worker
+
+            self.logger.debug("Rank: {}".format(self.rank))
+
+            self.env = diambra.arena.make(self.game_id, self.settings, self.wrappers_settings,
+                                        seed=self.seed + self.rank, rank=self.rank)
+
+            env_spaces_dict = {}
+            env_spaces_dict["action_space"] = self.env.action_space
+            env_spaces_dict["observation_space"] = self.env.observation_space
+
+            # Saving environment spaces
+            self.logger.info("Saving environment spaces in: {}".format(self.env_spaces_file_name))
+            os.makedirs(os.path.dirname(self.env_spaces_file_name), exist_ok=True)
+            env_spaces_file = open(self.env_spaces_file_name, "wb")
+            pickle.dump(env_spaces_dict, env_spaces_file)
+            env_spaces_file.close()
+
+        else:
+            print("Loading environment spaces from: {}".format(self.env_spaces_file_name))
+            self.logger.info("Loading environment spaces from: {}".format(self.env_spaces_file_name))
+            env_spaces_file = open(self.env_spaces_file_name, "rb")
+            # Load Pickle Dict
+            env_spaces_dict = pickle.load(env_spaces_file)
+            env_spaces_file.close()
+
+        self.action_space = env_spaces_dict["action_space"]
+        self.observation_space = env_spaces_dict["observation_space"]
 
     def reset(self):
         return self.env.reset()
@@ -122,6 +162,10 @@ def preprocess_ray_config(config):
         config["evaluation_config"]["env_config"] = deepcopy(config["env_config"])
 
     config["evaluation_config"]["env_config"]["is_rollout"] = False
+
+    # Deactivating environment checking for submission that loads env spaces from file
+    if "load_spaces_from_file" in config["env_config"].keys() and config["env_config"]["load_spaces_from_file"] is True:
+        config["disable_env_checking"] = True
 
     return config
 
