@@ -35,7 +35,6 @@ setuptools.setup(
             'setuptools',
             'distro>=1',
             'gym<=0.21.0',
-            'jupyter>=1.0.0',
             'testresources',
             'inputs',
             'screeninfo',
