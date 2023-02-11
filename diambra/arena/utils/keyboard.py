@@ -15,6 +15,8 @@ def available_keyboards():
     for idx, keyboard in enumerate(devices.keyboards):
         print("Keyboard {}: {}".format(idx, keyboard))
 
+    return len(devices.keyboards)
+
 
 # Class to manage keyboard
 class DiambraKeyboard(Thread):  # def class type thread
@@ -74,6 +76,8 @@ class DiambraKeyboard(Thread):  # def class type thread
             while configuration_ok is False:
 
                 ans = input("Want to test the configuration? (n/y): ")
+                ans = input("Want to test the configuration? (n/y): ")
+                ans = input("Want to test the configuration? (n/y): ")
 
                 if ans == "y":
                     self.init_action_list(self.all_actions_list)
@@ -105,7 +109,7 @@ class DiambraKeyboard(Thread):  # def class type thread
                         if event_code_to_show is not None:
                             if event.code != event_code_to_show:
                                 continue
-                        print("{} {}".format(event.code, event.state))
+                        print("Event type: {}, event code: {}, event state: {}".format(event.ev_type, event.code, event.state))
 
     # Prepare keyboard config dict to be saved
     def process_keyboard_dict_for_save(self):
@@ -207,25 +211,43 @@ class DiambraKeyboard(Thread):  # def class type thread
         print("")
         print("Configuring keyboard {}".format(self.keyboard))
         print("")
+        print("# Buttons CFG file")
+        print("                _______            ")
+        print("       B7    __|digital|__   B8    ")
+        print("       B5      |buttons|     B6    ")
+        print("                 /    \            ")
+        print("             SELECT  START         ")
+        print("        UP                   B1    ")
+        print("        |                          ")
+        print(" LEFT--   --RIGHT        B4      B2")
+        print("        |                          ")
+        print("      DOWN                   B3    ")
+        print("  __/____                          ")
+        print(" |digital|                         ")
+        print(" | move  |                         ")
+        print("  -------                          ")
+        print("")
         print("")
 
         self.keyboard_dict = {}
         self.keyboard_dict["Key"] = defaultdict(lambda: 7)
 
         # Buttons configuration
-
         # Start and Select
         print("Press START button")
         but_not_set = True
+        start_set = False
         while but_not_set:
             for event in self.keyboard.read():
                 if event.ev_type == "Key":
                     if event.state == 1:
                         self.start_code = event.code
+                        start_set = True
                         print("Start associated with {}".format(event.code))
                     else:
-                        but_not_set = False
-                        break
+                        if start_set == True:
+                            but_not_set = False
+                            break
 
         print("Press SELECT button (Start to skip)")
         but_not_set = True
@@ -259,11 +281,9 @@ class DiambraKeyboard(Thread):  # def class type thread
 
                 for event in self.keyboard.read():
                     if event.ev_type == "Key":
-                        if (event.code != self.start_code
-                                and event.code != self.select_code):
-                            if event.state == 1:
-                                print("Button B{}, event code = {}".format(
-                                    idx+1, event.code))
+                        if (event.code != self.start_code and event.code != self.select_code):
+                            if event.state > 0:
+                                print("Button B{}, event code = {}".format(idx+1, event.code))
                                 self.keyboard_dict["Key"][event.code] = idx
                             elif event.state == 0:
                                 but_not_set = False
@@ -273,18 +293,10 @@ class DiambraKeyboard(Thread):  # def class type thread
                                 end_flag = True
                                 break
 
-        # Move sticks
-        # Digital
+        # Moves
         end_flag = False
-        print("Configuring digital move")
+        print("Configuring moves")
         moves_list = ["UP", "RIGHT", "DOWN", "LEFT"]
-        event_codes_list = ["Y", "X", "Y", "X"]
-        self.keyboard_dict["Absolute"]["ABS_HAT0Y"] = defaultdict(lambda: [
-                                                                [], 0])
-        self.keyboard_dict["Absolute"]["ABS_HAT0X"] = defaultdict(lambda: [
-                                                                [], 0])
-        self.keyboard_dict["Absolute"]["ABS_HAT0Y"][0] = [[0, 2], 0]
-        self.keyboard_dict["Absolute"]["ABS_HAT0X"][0] = [[1, 3], 0]
 
         for idx, move in enumerate(moves_list):
 
@@ -301,47 +313,18 @@ class DiambraKeyboard(Thread):  # def class type thread
                     break
 
                 for event in self.keyboard.read():
-
-                    if event.ev_type == "Absolute":
-                        if event.code == "ABS_HAT0" + event_codes_list[idx]:
-                            if abs(event.state) == 1:
-                                print("{} move event code = {}, event state = {}".format(
-                                    move, event.code, event.state))
-                                self.keyboard_dict["Absolute"][event.code][event.state] = [
-                                    idx, abs(event.state)]
+                    if event.ev_type == "Key":
+                        if (event.code != self.start_code and event.code != self.select_code):
+                            if event.state > 0:
+                                print("Move {}, event code = {}".format(move, event.code))
+                                self.keyboard_dict["Key"][event.code] = idx
                             elif event.state == 0:
                                 but_not_set = False
-                            else:
-                                print("Digital Move Stick assumes not admissible values: {}".format(
-                                    event.state))
-                                print(
-                                    "Digital Move Stick not supported, configuration skipped")
-                                end_flag = True
-                                break
-                    else:
-                        if (event.code == self.start_code
-                                or event.code == self.select_code):
+                        else:
                             if event.state == 0:
-                                print("Digital Move Stick configuration skipped")
+                                print("Remaining buttons configuration skipped")
                                 end_flag = True
                                 break
-
-        # Setting origin value, analog at rest
-        for idx in range(2):
-            self.origin_analog_val[moves_list[idx]] = int(
-                (self.max_analog_val[moves_list[idx]] +
-                 self.max_analog_val[moves_list[idx+2]]) / 2.0)
-            self.origin_analog_val[moves_list[idx+2]] = self.origin_analog_val[moves_list[idx]]
-
-        # Setting threshold to discriminate between analog values
-        thresh_perc = 0.5
-        self.delta_perc = {}
-        for idx in range(2):
-            self.delta_perc[idx] = (self.max_analog_val[moves_list[idx]] -
-                                    self.origin_analog_val[moves_list[idx]]) * thresh_perc
-            self.delta_perc[idx+2] = -self.delta_perc[idx]
-
-        print("Delta perc = ", self.delta_perc)
 
         print("Keyboard dict : ")
         print("Buttons (Keys) dict : ", self.keyboard_dict["Key"])
@@ -368,8 +351,10 @@ class DiambraKeyboard(Thread):  # def class type thread
                 print("Move action = {}. (Press START to end configuration test).".format(self.all_actions_list[0][actions[0]]))
             if actions[1] != 0:
                 print("Attack action = {}. (Press START to end configuration test).".format(self.all_actions_list[1][actions[1]]))
-            if actions[2] != 0:
-                break
+            #if actions[2] != 0:
+            #    ans = input("Want to end configuration? (N/y)")
+            #    if ans == "y":
+            #        break
 
     # Creating hash dictionary
     def compose_hash_dict(self, dictionary, hash_elem):
@@ -461,42 +446,46 @@ class DiambraKeyboard(Thread):  # def class type thread
 
                     # Select
                     if event.code == self.select_code:
-                        self.select_but = event.state
+                        self.select_but = min(event.state, 1)
                     # Start
                     elif event.code == self.start_code:
-                        self.start_but = event.state
+                        self.start_but = min(event.state, 1)
                     else:
-                        self.event_hash_attack[self.keyboard_dict[event.ev_type]
-                                               [event.code]] = event.state
-
-                # category of move values (digital moves)
-                elif "ABS_HAT0" in event.code:
-
-                    idx = self.keyboard_dict[event.ev_type][event.code][event.state][0]
-                    event_state = self.keyboard_dict[event.ev_type][event.code][event.state][1]
-                    self.event_hash_move[idx] = event_state
-
-                # category of move values (analog left stick)
-                elif event.code == "ABS_X" or event.code == "ABS_Y":
-
-                    thresh_values = self.keyboard_dict[event.ev_type][event.code][0]
-                    min_act = self.keyboard_dict[event.ev_type][event.code][1]
-                    centr_act = self.keyboard_dict[event.ev_type][event.code][2]
-                    max_act = self.keyboard_dict[event.ev_type][event.code][3]
-
-                    if event.state < thresh_values[0]:
-                        idx = min_act[0]
-                        event_state = min_act[1]
-                    elif event.state > thresh_values[1]:
-                        idx = max_act[0]
-                        event_state = max_act[1]
-                    else:
-                        idx = centr_act[0]
-                        event_state = centr_act[1]
-
-                    for elem in idx:
-                        self.event_hash_move[elem] = event_state
+                        self.event_hash_attack[self.keyboard_dict[event.ev_type][event.code]] = min(event.state, 1)
 
     # Stop the thread
     def stop(self):
         self.stop_event.set()
+
+if __name__ == "__main__":
+
+    print("\nWhat do you want to do:")
+    print("  1 - Show keyboard events")
+    print("  2 - Configure keyboard")
+    print("  3 - Normal Initialization")
+    choice = input("\nYour choice: ")
+    print("\n")
+
+    if choice == "1":
+        num_keyboards = available_keyboards()
+
+        print("\n")
+        if num_keyboards > 0:
+            keyboard_num = int(input("Keyboard idx: "))
+            keyboard = DiambraKeyboard(keyboard_num=keyboard_num, skip_configure=True)
+            keyboard.show_keyboard_events()
+    elif choice == "2":
+        num_keyboards = available_keyboards()
+
+        print("\n")
+        if num_keyboards > 0:
+            keyboard_num = int(input("Keyboard idx: "))
+            keyboard = DiambraKeyboard(keyboard_num=keyboard_num, skip_configure=True)
+            keyboard.configure()
+    elif choice == "3":
+        num_keyboards = available_keyboards()
+
+        print("\n")
+        if num_keyboards > 0:
+            keyboard_num = int(input("Keyboard idx: "))
+            keyboard = DiambraKeyboard(keyboard_num=keyboard_num, force=True)
