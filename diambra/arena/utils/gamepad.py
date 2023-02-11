@@ -15,6 +15,8 @@ def available_gamepads():
     for idx, gamepad in enumerate(devices.gamepads):
         print("Gamepad {}: {}".format(idx, gamepad))
 
+    return len(devices.gamepads)
+
 
 # Class to manage gamepad
 class DiambraGamepad(Thread):  # def class type thread
@@ -603,8 +605,7 @@ class DiambraGamepad(Thread):  # def class type thread
                     elif event.code == self.start_code:
                         self.start_but = event.state
                     else:
-                        self.event_hash_attack[self.gamepad_dict[event.ev_type]
-                                               [event.code]] = event.state
+                        self.event_hash_attack[self.gamepad_dict[event.ev_type][event.code]] = event.state
 
                 # category of move values (digital moves)
                 elif "ABS_HAT0" in event.code:
@@ -637,3 +638,20 @@ class DiambraGamepad(Thread):  # def class type thread
     # Stop the thread
     def stop(self):
         self.stop_event.set()
+
+
+if __name__ == "__main__":
+
+    print("\nWhat do you want to do:")
+    print("  1 - Show gamepad events")
+    choice = input("\nYour choice: ")
+    print("\n")
+
+    if choice == "1":
+        num_gamepads = available_gamepads()
+
+        print("\n")
+        if num_gamepads > 0:
+            gamepad_num = int(input("Gamepad idx: "))
+            gamepad = DiambraGamepad(gamepad_num=gamepad_num, skip_configure=True)
+            gamepad.show_gamepad_events()
