@@ -55,7 +55,7 @@ jobs:
         with:
           registry: quay.io
           username: diambra+github
-          password: ${{ secrets.QUAY_PASSWORD }}
+          password: ${{ secrets.QUAY_TOKEN }}
 
       - name: Build and push agent ${{ matrix.dir }}
         uses: docker/build-push-action@v3
