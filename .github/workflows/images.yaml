@@ -28,6 +28,7 @@ jobs:
   build-and-push-images:
     needs: [generate-matrix]
     runs-on: ubuntu-latest
+    if: ${{ needs.generate-matrix.outputs.matrix != '[]' }}
     strategy:
       fail-fast: true
       matrix:
