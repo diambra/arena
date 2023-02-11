@@ -11,7 +11,7 @@ pipmain(['install', 'distro'])
 
 extras= {
     'core': [],
-    'tests': ['pytest', 'pytest-mock'],
+    'tests': ['pytest', 'pytest-mock', 'testresources'],
     'stable-baselines': ['stable-baselines==2.10.2', "protobuf==3.20.1", "pyyaml"],
     'stable-baselines3': ['stable-baselines3[extra]==1.6.1', "pyyaml"],
     'ray-rllib': ['ray[rllib]==2.0.0', 'tensorflow<=2.10.0', 'torch<=1.12.1', "pyyaml"],
@@ -35,12 +35,10 @@ setuptools.setup(
             'setuptools',
             'distro>=1',
             'gym<=0.21.0',
-            'testresources',
             'inputs',
             'screeninfo',
             'tk',
             'opencv-contrib-python>=4.4.0.42',
-            'opencv-python>=4.4.0.42',
             'grpcio',
             'diambra-engine>=2.1.0rc7',
             'dacite'],
