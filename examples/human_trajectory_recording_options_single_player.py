@@ -1,7 +1,7 @@
 import os
 from os.path import expanduser
 import diambra.arena
-from diambra.arena.utils.gamepad import DiambraGamepad
+from diambra.arena.utils.controller import get_diambra_controller
 
 # Environment Settings
 settings = {}
@@ -36,8 +36,8 @@ traj_rec_settings["ignore_p2"] = False
 env = diambra.arena.make(game_id, settings, wrappers_settings, traj_rec_settings)
 
 # GamePad(s) initialization
-gamepad = DiambraGamepad(env.action_list)
-gamepad.start()
+controller = get_diambra_controller(env.action_list)
+controller.start()
 
 observation = env.reset()
 
@@ -45,7 +45,7 @@ while True:
 
     env.render()
 
-    actions = gamepad.get_actions()
+    actions = controller.get_actions()
 
     observation, reward, done, info = env.step(actions)
 
@@ -53,5 +53,5 @@ while True:
         observation = env.reset()
         break
 
-gamepad.stop()
+controller.stop()
 env.close()
