@@ -49,7 +49,7 @@ def get_diambra_controller(action_list, cfg=["But1", "But2", "But3", "But4", "Bu
 
     if devices_num > 0:
         print("\nWarning: unplugging devices during execution can cause errors.")
-        device_idx = int(input("Select device idx: "))
+        device_idx = int(input("Select device idx (you may need to repeat the input twice): "))
         try:
             device_dict = devices_list[device_idx]
             print("Initializing device # {}, named: {}".format(device_idx, device_dict["device"].name))
