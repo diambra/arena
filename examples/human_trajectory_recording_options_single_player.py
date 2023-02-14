@@ -35,7 +35,7 @@ traj_rec_settings["ignore_p2"] = False
 
 env = diambra.arena.make(game_id, settings, wrappers_settings, traj_rec_settings)
 
-# GamePad(s) initialization
+# Controller initialization
 controller = get_diambra_controller(env.action_list)
 controller.start()
 
