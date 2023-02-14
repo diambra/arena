@@ -65,11 +65,11 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 - Install Docker Desktop: <a href="https://docs.docker.com/desktop/install/linux-install/" target="_blank">Linux</a> | <a href="https://docs.docker.com/desktop/windows/install/" target="_blank">Windows</a> | <a href="https://docs.docker.com/desktop/mac/install/" target="_blank">MacOS</a>
 
-- Install DIAMBRA Command Line Interface (**avoid using** a virtual environment\*): `python3 -m pip install diambra`
+- Install DIAMBRA Command Line Interface: `python3 -m pip install diambra`
 
-- Install DIAMBRA Arena (**using** a virtual environment is strongly suggested): `python3 -m pip install diambra-arena`
+- Install DIAMBRA Arena: `python3 -m pip install diambra-arena`
 
-\*: If you use [ana]conda and have the base environment active, make sure to deactivate it with `conda deactivate`
+**Using a virtual environment to isolate your python packages installation is strongly suggested**
 
 ## Quickstart & Examples
 
