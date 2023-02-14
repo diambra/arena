@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 import diambra.arena
 
-env = diambra.arena.make("doapp")
-observation = env.reset()
+if __name__ == '__main__':
 
-while True:
-    env.render()
+    env = diambra.arena.make("doapp")
+    observation = env.reset()
 
-    actions = env.action_space.sample()
+    while True:
+        env.render()
 
-    observation, reward, done, info = env.step(actions)
+        actions = env.action_space.sample()
 
-    if done:
-        observation = env.reset()
-        break
+        observation, reward, done, info = env.step(actions)
 
-env.close()
+        if done:
+            observation = env.reset()
+            break
+
+    env.close()

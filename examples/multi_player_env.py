@@ -2,45 +2,47 @@
 import diambra.arena
 import numpy as np
 
-# Environment Settings
-settings = {}
+if __name__ == '__main__':
 
-# 2 Players game
-settings["player"] = "P1P2"
+    # Environment Settings
+    settings = {}
 
-# Characters to be used, automatically extended with "Random" for games
-# required to select more than one character (e.g. Tekken Tag Tournament)
-settings["characters"] = ("Random", "Random")
+    # 2 Players game
+    settings["player"] = "P1P2"
 
-# Characters outfit
-settings["char_outfits"] = (2, 2)
+    # Characters to be used, automatically extended with "Random" for games
+    # required to select more than one character (e.g. Tekken Tag Tournament)
+    settings["characters"] = ("Random", "Random")
 
-# If to use discrete or multi_discrete action space
-settings["action_space"] = ("discrete", "discrete")
+    # Characters outfit
+    settings["char_outfits"] = (2, 2)
 
-# If to use attack buttons combinations actions
-settings["attack_but_combination"] = (True, True)
+    # If to use discrete or multi_discrete action space
+    settings["action_space"] = ("discrete", "discrete")
 
-env = diambra.arena.make("doapp", settings)
+    # If to use attack buttons combinations actions
+    settings["attack_but_combination"] = (True, True)
 
-observation = env.reset()
-env.show_obs(observation)
+    env = diambra.arena.make("doapp", settings)
 
-while True:
-
-    actions = env.action_space.sample()
-    actions = np.append(actions["P1"], actions["P2"])
-    print("Actions: {}".format(actions))
-
-    observation, reward, done, info = env.step(actions)
+    observation = env.reset()
     env.show_obs(observation)
-    print("Reward: {}".format(reward))
-    print("Done: {}".format(done))
-    print("Info: {}".format(info))
 
-    if done:
-        observation = env.reset()
+    while True:
+
+        actions = env.action_space.sample()
+        actions = np.append(actions["P1"], actions["P2"])
+        print("Actions: {}".format(actions))
+
+        observation, reward, done, info = env.step(actions)
         env.show_obs(observation)
-        break
+        print("Reward: {}".format(reward))
+        print("Done: {}".format(done))
+        print("Info: {}".format(info))
 
-env.close()
+        if done:
+            observation = env.reset()
+            env.show_obs(observation)
+            break
+
+    env.close()

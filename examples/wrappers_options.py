@@ -1,77 +1,79 @@
 import diambra.arena
 
-# Gym wrappers settings
-wrappers_settings = {}
+if __name__ == '__main__':
 
-# Number of no-Op actions to be executed
-# at the beginning of the episode (0 by default)
-wrappers_settings["no_op_max"] = 0
+    # Gym wrappers settings
+    wrappers_settings = {}
 
-# Number of steps for which the same action should be sent (1 by default)
-wrappers_settings["sticky_actions"] = 1
+    # Number of no-Op actions to be executed
+    # at the beginning of the episode (0 by default)
+    wrappers_settings["no_op_max"] = 0
 
-# Frame resize operation spec (deactivated by default)
-# WARNING: for speedup, avoid frame warping wrappers,
-#          use environment's native frame wrapping through
-#          "frame_shape" setting (see documentation for details).
-wrappers_settings["hwc_obs_resize"] = (128, 128, 1)
+    # Number of steps for which the same action should be sent (1 by default)
+    wrappers_settings["sticky_actions"] = 1
 
-# Wrapper option for reward normalization
-# When activated, the reward normalization factor can be set (default = 0.5)
-# The normalization is performed by dividing the reward value
-# by the product of the factor times the value of the full health bar
-# reward = reward / (C * fullHealthBarValue)
-wrappers_settings["reward_normalization"] = True
-wrappers_settings["reward_normalization_factor"] = 0.5
+    # Frame resize operation spec (deactivated by default)
+    # WARNING: for speedup, avoid frame warping wrappers,
+    #          use environment's native frame wrapping through
+    #          "frame_shape" setting (see documentation for details).
+    wrappers_settings["hwc_obs_resize"] = (128, 128, 1)
 
-# If to clip rewards (False by default)
-wrappers_settings["clip_rewards"] = False
+    # Wrapper option for reward normalization
+    # When activated, the reward normalization factor can be set (default = 0.5)
+    # The normalization is performed by dividing the reward value
+    # by the product of the factor times the value of the full health bar
+    # reward = reward / (C * fullHealthBarValue)
+    wrappers_settings["reward_normalization"] = True
+    wrappers_settings["reward_normalization_factor"] = 0.5
 
-# Number of frames to be stacked together (1 by default)
-wrappers_settings["frame_stack"] = 4
+    # If to clip rewards (False by default)
+    wrappers_settings["clip_rewards"] = False
 
-# Frames interval when stacking (1 by default)
-wrappers_settings["dilation"] = 1
+    # Number of frames to be stacked together (1 by default)
+    wrappers_settings["frame_stack"] = 4
 
-# How many past actions to stack together (1 by default)
-wrappers_settings["actions_stack"] = 12
+    # Frames interval when stacking (1 by default)
+    wrappers_settings["dilation"] = 1
 
-# If to scale observation numerical values (deactivated by default)
-# optionally exclude images from normalization (deactivated by default)
-# and optionally perform one-hot encoding also on discrete binary variables (deactivated by default)
-wrappers_settings["scale"] = True
-wrappers_settings["exclude_image_scaling"] = True
-wrappers_settings["process_discrete_binary"] = True
+    # How many past actions to stack together (1 by default)
+    wrappers_settings["actions_stack"] = 12
 
-# Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
-wrappers_settings["scale_mod"] = 0
+    # If to scale observation numerical values (deactivated by default)
+    # optionally exclude images from normalization (deactivated by default)
+    # and optionally perform one-hot encoding also on discrete binary variables (deactivated by default)
+    wrappers_settings["scale"] = True
+    wrappers_settings["exclude_image_scaling"] = True
+    wrappers_settings["process_discrete_binary"] = True
 
-# Flattening observation dictionary and filtering
-# a sub-set of the RAM states
-wrappers_settings["flatten"] = True
-wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide",
-                                    "P1_ownHealth", "P1_oppChar",
-                                    "P1_actions_move", "P1_actions_attack"]
+    # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
+    wrappers_settings["scale_mod"] = 0
 
-env = diambra.arena.make("doapp", {}, wrappers_settings)
+    # Flattening observation dictionary and filtering
+    # a sub-set of the RAM states
+    wrappers_settings["flatten"] = True
+    wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide",
+                                        "P1_ownHealth", "P1_oppChar",
+                                        "P1_actions_move", "P1_actions_attack"]
 
-observation = env.reset()
-env.show_obs(observation)
+    env = diambra.arena.make("doapp", {}, wrappers_settings)
 
-while True:
-
-    actions = env.action_space.sample()
-    print("Actions: {}".format(actions))
-
-    observation, reward, done, info = env.step(actions)
+    observation = env.reset()
     env.show_obs(observation)
-    print("Reward: {}".format(reward))
-    print("Done: {}".format(done))
-    print("Info: {}".format(info))
 
-    if done:
-        observation = env.reset()
+    while True:
+
+        actions = env.action_space.sample()
+        print("Actions: {}".format(actions))
+
+        observation, reward, done, info = env.step(actions)
         env.show_obs(observation)
-        break
+        print("Reward: {}".format(reward))
+        print("Done: {}".format(done))
+        print("Info: {}".format(info))
 
-env.close()
+        if done:
+            observation = env.reset()
+            env.show_obs(observation)
+            break
+
+    env.close()
