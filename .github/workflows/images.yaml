@@ -73,11 +73,13 @@ jobs:
           tags: |
             ghcr.io/diambra/arena-${{ matrix.name }}:${{ github.sha }}
             ghcr.io/diambra/arena-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
+            ${{ github.ref_name == 'main' && format('ghcr.io/diambra/arena-{0}:latest', matrix.name) || '' }}
 
             docker.io/diambra/arena-${{ matrix.name }}:${{ github.sha }}
             docker.io/diambra/arena-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
+            ${{ github.ref_name == 'main' && format('docker.io/diambra/arena-{0}:latest', matrix.name) || '' }}
 
             quay.io/diambra/arena-${{ matrix.name }}:${{ github.sha }}
             quay.io/diambra/arena-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
+            ${{ github.ref_name == 'main' &&  format('quay.io/diambra/arena-{0}:latest', matrix.name) || '' }}
           build-args: ${{ matrix.build_args }}
-
