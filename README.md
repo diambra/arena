@@ -18,6 +18,20 @@
 
 # DIAMBRA Arena
 
+## Index
+
+- **[Overview](#overview)**
+- **[Competition Platform](#competition-platform)**
+- **[Installation](#installation)**
+- **[Quickstart & Examples](#quickstart--examples)**
+- **[Reinforcement Learning Libs Compatibility](#reinforcement-learning-libs-compatibility)**
+- **[References](#references)**
+- **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
+- **[Citation](#citation)**
+- **[Terms of Use](#terms-of-use)**
+
+## Overview
+
 DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It provides a standard interface to popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym format**, that makes its adoption smooth and straightforward.
 
 It **supports all major Operating Systems** (Linux, Windows and MacOS) and **can be easily installed via Python PIP**, as described in the **[installation section](#installation)** below. It is **completely free to use**, the user only needs to <a href="https://diambra.ai/register/" target="_blank">register on the official website</a>.
@@ -48,16 +62,21 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 **Many more are coming soon...**
 
-## Index
+## Competition Platform
 
-- **[Installation](#installation)**
-- **[Quickstart & Examples](#quickstart--examples)**
-- **[Reinforcement Learning Libs Compatibility](#reinforcement-learning-libs-compatibility)**
-- **[Competition Platform](#competition-platform)**
-- **[References](#references)**
-- **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
-- **[Citation](#citation)**
-- **[Terms of Use](#terms-of-use)**
+<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/leaderboard.jpg" alt="DIAMBRA Leaderboard" width="100%"/>
+
+Our competition platform allows you to submit your agents and compete with other coders around the globe in epic video games tournaments!
+
+It features a public global leaderboard where users are ranked by the best score achieved by their agents in our different environments. 
+
+It also offers you the possibility to unlock cool achievements depending on the performances of your agent. 
+
+<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/achievements.jpg" alt="DIAMBRA Achievements" width="100%"/>
+
+Submitted agents are evaluated and their episodes are streamed on our Twitch channel.
+
+We aimed at making the submission process as smooth as possible, **<a href="https://diambra.ai/register/" target="_blank">join us and try it now!</a>**
 
 ## Installation
 
@@ -174,22 +193,6 @@ Native interfaces, that can be installed with the dedicated options listed below
 - Stable Baselines 3 | `pip install diambra-arena[stable-baselines3]` (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 1.6.1
 - Ray RLlib | `pip install diambra-arena[ray-rllib]` (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.0.0
 - Stable Baselines | `pip install diambra-arena[stable-baselines]` (<a href="https://stable-baselines.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/hill-a/stable-baselines" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines/" target="_blank">Pypi</a>): 2.10.2
-
-## Competition Platform
-
-<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/leaderboard.jpg" alt="DIAMBRA Leaderboard" width="100%"/>
-
-Our competition platform allows you to submit your agents and compete with other coders around the globe in epic video games tournaments!
-
-It features a public global leaderboard where users are ranked by the best score achieved by their agents in our different environments. 
-
-It also offers you the possibility to unlock cool achievements depending on the performances of your agent. 
-
-<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/achievements.jpg" alt="DIAMBRA Achievements" width="100%"/>
-
-Submitted agents are evaluated and their episodes are streamed on our Twitch channel.
-
-We aimed at making the submission process as smooth as possible, **<a href="https://diambra.ai/register/" target="_blank">join us and try it now!</a>**
 
 ## References
 
