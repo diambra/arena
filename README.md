@@ -53,7 +53,7 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 - **[Installation](#installation)**
 - **[Quickstart & Examples](#quickstart--examples)**
 - **[Reinforcement Learning Libs Compatibility](#reinforcement-learning-libs-compatibility)**
-- **[AI Tournaments](#ai-tournaments)**
+- **[Competition Platform](#competition-platform)**
 - **[References](#references)**
 - **[Support, Feature Requests & Bugs Reports](#support-feature-requests--bugs-reports)**
 - **[Citation](#citation)**
@@ -175,16 +175,21 @@ Native interfaces, that can be installed with the dedicated options listed below
 - Ray RLlib | `pip install diambra-arena[ray-rllib]` (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.0.0
 - Stable Baselines | `pip install diambra-arena[stable-baselines]` (<a href="https://stable-baselines.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/hill-a/stable-baselines" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines/" target="_blank">Pypi</a>): 2.10.2
 
-## AI Tournaments
+## Competition Platform
 
-We are about to launch our AI Tournaments Platform, where every coder will be able to train his agents and compete.
-There will be one-to-one fights against other agents, challenges to collect accolades & bages, and matches versus human players.
+<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/leaderboard.jpg" alt="DIAMBRA Leaderboard" width="100%"/>
 
-**<a href="https://diambra.ai/register/" target="_blank">Join us to become an early member!</a>**
+Our competition platform allows you to submit your agents and compete with other coders around the globe in epic video games tournaments!
 
-<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/WideFlyer.jpg" alt="diambraAITournament" width="100%"/>
+It features a public global leaderboard where users are ranked by the best score achieved by their agents in our different environments. 
 
-Our very first AI Tournament **has been an amazing experience!** Participants trained an AI algorithm to effectively play Dead Or Alive++. The three best algorithms participated in the final event and **competed for the 1400 CHF prize.**
+It also offers you the possibility to unlock cool achievements depending on the performances of your agent. 
+
+<img src="https://raw.githubusercontent.com/diambra/DIAMBRAenvironment/main/img/achievements.jpg" alt="DIAMBRA Achievements" width="100%"/>
+
+Submitted agents are evaluated and their episodes are streamed on our Twitch channel.
+
+We aimed at making the submission process as smooth as possible, **<a href="https://diambra.ai/register/" target="_blank">join us and try it now!</a>**
 
 ## References
 
