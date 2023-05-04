@@ -6,7 +6,7 @@
 </p>
 <p align="center">
   <a href="https://www.linkedin.com/company/diambra">Linkedin</a> •
-  <a href="https://discord.gg/tFDS2UN5sv">Discord</a> •
+  <a href="https://diambra.ai/discord">Discord</a> •
   <a href="https://www.twitch.tv/diambra_ai">Twitch</a> •
   <a href="https://www.youtube.com/c/diambra_ai">YouTube</a> •
   <a href="https://twitter.com/diambra_ai">Twitter</a>
@@ -199,7 +199,7 @@ Native interfaces, that can be installed with the dedicated options listed below
 - Documentation: <a href="https://docs.diambra.ai" target="_blank">https://docs.diambra.ai</a>
 - Paper: <a href="https://arxiv.org/abs/2210.10595" target="_blank">https://arxiv.org/abs/2210.10595</a>
 - Website: <a href="https://diambra.ai" target="_blank">https://diambra.ai</a>
-- Discord: <a href="https://discord.gg/tFDS2UN5sv" target="_blank">https://discord.gg/tFDS2UN5sv</a>
+- Discord: <a href="https://diambra.ai/discord" target="_blank">https://diambra.ai/discord</a>
 - Linkedin: <a href="https://www.linkedin.com/company/diambra" target="_blank">https://www.linkedin.com/company/diambra</a>
 - Twitch: <a href="https://www.twitch.tv/diambra_ai" target="_blank">https://www.twitch.tv/diambra_ai</a>
 - YouTube: <a href="https://www.youtube.com/c/diambra_ai" target="_blank">https://www.youtube.com/c/diambra_ai</a>
@@ -207,7 +207,7 @@ Native interfaces, that can be installed with the dedicated options listed below
 
 ## Support, Feature Requests & Bugs Reports
 
-To receive support, use the dedicated channel in our <a href="https://discord.gg/tFDS2UN5sv" target="_blank">Discord Server</a>.
+To receive support, use the dedicated channel in our <a href="https://diambra.ai/discord" target="_blank">Discord Server</a>.
 
 To request features or report bugs, use the <a href="https://github.com/diambra/arena/issues" target="_blank">GitHub Issue Tracker</a>.
 

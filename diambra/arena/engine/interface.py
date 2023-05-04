@@ -9,7 +9,7 @@ CONNECTION_FAILED_ERROR_TEXT = """DIAMBRA Arena failed to connect to the Engine 
  - If you are running a Python script, are you running with DIAMBRA CLI: `diambra run python script.py`?
  - If you are running a Python Notebook, have you started Jupyter Notebook with DIAMBRA CLI: `diambra run jupyter notebook`?
 
-See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://discord.gg/tFDS2UN5sv) for support."""
+See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://diambra.ai/discord) for support."""
 
 # DIAMBRA Env Gym
 class DiambraEngine:
