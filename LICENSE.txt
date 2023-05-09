@@ -1,10 +1,10 @@
-© 2018-2023, DIAMBRA | Dueling AI Arena, https://diambra.ai
+© 2018-2023, DIAMBRA Inc., https://diambra.ai
 
 Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
 
 - Commercial use is forbidden without specific prior written permission received 
-  from DIAMBRA Team. In this context and for the purpose of this LICENSE, 
+  from DIAMBRA, Inc. In this context and for the purpose of this LICENSE, 
   "Commercial use" includes (but is not limited to): using this software to 
   organize Tournaments or Competitions of any type, selling services or 
   products that make use of this software (like providing it as a service, or 
@@ -16,7 +16,7 @@ are permitted provided that the following conditions are met:
   list of conditions and the following disclaimer in the documentation and/or 
   other materials provided with the distribution.
 - Distribution of derivative work is forbidden without specific prior written
-  permission received from DIAMBRA Team.
+  permission received from DIAMBRA, Inc.
 - Neither the name DIAMBRA | Dueling AI Arena nor the names of its contributors 
   may be used to endorse or promote products derived from this software without 
   specific prior written permission.
@@ -48,9 +48,9 @@ elements protected by copyright, and to interface them with it.
 It is the case, for example, of Game ROMS required to execute the corresponding 
 Game-related Environment. In such cases, it is sole and only responsibility of 
 the User to comply with all the laws and regulations, and to make sure he has the 
-right to use such copyright-protected material. DIAMBRA members do not support 
+right to use such copyright-protected material. DIAMBRA, Inc. does not support 
 in any way piracy, and illegal distribution of copyright-protected material, 
-thus they will spend their maximum effort in avoiding illegal distribution of 
-such material, and are by no means responsible for copyright infringement.
+thus it will spend its maximum effort in avoiding illegal distribution of 
+such material, and is by no means responsible for copyright infringement.
 
 END OF DISCLAIMER
