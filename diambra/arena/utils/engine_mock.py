@@ -296,6 +296,8 @@ class DiambraEngineMock:
             self.game_done_ = True
             self.episode_done_ = True
 
+        self.env_done_ = self.episode_done_
+
         delta_p1 = starting_health_p1 - self.health_p1
         delta_p2 = starting_health_p2 - self.health_p2
         self.reward = delta_p1 - delta_p2 if self.player == "P2" else delta_p2 - delta_p1
