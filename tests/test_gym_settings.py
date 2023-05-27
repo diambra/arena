@@ -3,7 +3,7 @@ import pytest
 import sys
 import random
 import os
-from engine_mock import DiambraEngineMock, EngineMockParams
+from diambra.arena.utils.engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
 from diambra.arena.utils.gym_utils import available_games
 import numpy as np
@@ -43,8 +43,6 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
 
     try:
         return env_exec(settings, wrappers_settings, traj_rec_settings)
-
-        return 0
     except Exception as e:
         print(e)
         return 1

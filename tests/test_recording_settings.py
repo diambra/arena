@@ -4,7 +4,7 @@ import sys
 import random
 from os.path import expanduser
 import os
-from engine_mock import DiambraEngineMock, EngineMockParams
+from diambra.arena.utils.engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
 import numpy as np
 from pytest_utils import generate_pytest_decorator_input
@@ -43,8 +43,6 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
 
     try:
         return env_exec(settings, wrappers_settings, traj_rec_settings)
-
-        return 0
     except Exception as e:
         print(e)
         return 1

@@ -39,8 +39,6 @@ def func(game_id, player, continue_game, action_space, attack_buttons_combinatio
         settings["hardcore"] = random.choices([True, False], [hardcore_probability, 1.0 - hardcore_probability])[0]
 
         return env_exec(settings, wrappers_settings, traj_rec_settings, args)
-
-        return 0
     except Exception as e:
         print(e)
         return 1

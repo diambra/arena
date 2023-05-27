@@ -6,7 +6,7 @@ import time
 import random
 from os.path import expanduser
 import os
-from engine_mock import DiambraEngineMock, EngineMockParams
+from diambra.arena.utils.engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
 import numpy as np
 import warnings
