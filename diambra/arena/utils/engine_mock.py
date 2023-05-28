@@ -15,7 +15,7 @@ class DiambraEngineMock:
 
         # Random seed
         time_dep_seed = int((time.time() - int(time.time() - 0.5)) * 1000)
-        random.seed()
+        random.seed(time_dep_seed)
 
         # Class state variables initialization
         self.n_steps = 0
@@ -252,17 +252,11 @@ class DiambraEngineMock:
         self.health_p1 = int((self.health_p1 - self.game_data["health"][0]) * coeff_p1) + self.game_data["health"][0]
         self.health_p2 = int((self.health_p2 - self.game_data["health"][0]) * coeff_p2) + self.game_data["health"][0]
 
-        if (self.n_steps % self.steps_per_round) == 0:
-            print("TimeUp, forcing lost")
-            if self.player == "P2":
-                self.health_p2 = self.game_data["health"][0]
-            else:
-                self.health_p1 = self.game_data["health"][0]
-
-        if min(self.health_p1, self.health_p2) == self.game_data["health"][0]:
+        if (min(self.health_p1, self.health_p2) == self.game_data["health"][0]) or ((self.n_steps % self.steps_per_round) == 0):
             self.round_done_ = True
 
             if self.health_p1 > self.health_p2:
+                self.health_p2 = self.game_data["health"][0]
                 if self.player == "P2":
                     print("Round lost")
                     self.n_rounds_lost += 1
@@ -271,12 +265,20 @@ class DiambraEngineMock:
                     self.n_rounds_won += 1
 
             elif self.health_p2 > self.health_p1:
+                self.health_p1 = self.game_data["health"][0]
                 if self.player == "P2":
                     print("Round won")
                     self.n_rounds_won += 1
                 else:
                     print("Round lost")
                     self.n_rounds_lost += 1
+            else:
+                print("Draw, forcing lost")
+                self.n_rounds_lost += 1
+                if self.player == "P2":
+                    self.health_p2 = self.game_data["health"][0]
+                else:
+                    self.health_p1 = self.game_data["health"][0]
 
         if self.n_rounds_won == self.game_data["rounds_per_stage"]:
             self.stage_done_ = True
