@@ -24,6 +24,12 @@
                 "Medium": 3,
                 "Hard": 4
             },
+            "rounds_per_stage": 2,
+            "stages_per_game": 8,
+            "number_of_chars_per_round": 1,
+            "n_actions": [9, 4, 8],
+            "health": [0, 208],
+            "frame_shape": [480, 512, 3],
             "cfg": {"H": "But6", "P": "But1", "K": "But2"}
         },
     "sfiii3n":
@@ -55,6 +61,12 @@
                 "Medium": 6,
                 "Hard": 8
             },
+            "rounds_per_stage": 2,
+            "stages_per_game": 10,
+            "number_of_chars_per_round": 1,
+            "n_actions": [9, 7, 10],
+            "health": [-1, 160],
+            "frame_shape": [224, 384, 3],
             "cfg": {"LP": "But4", "MP": "But1", "HP": "But5", "LK": "But3", "MK": "But2", "HK": "But6"}
         },
     "tektagt":
@@ -91,6 +103,12 @@
                 "Medium": 7,
                 "Hard": 9
             },
+            "rounds_per_stage": 2,
+            "stages_per_game": 8,
+            "number_of_chars_per_round": 2,
+            "n_actions": [9, 6, 13],
+            "health": [0, 182],
+            "frame_shape": [240, 512, 3],
             "cfg": {"LP": "But4", "RP": "But1", "LK": "But3", "RK": "But2", "TAG": "But6"}
         },
     "umk3":
@@ -121,6 +139,12 @@
                 "Medium": 4,
                 "Hard": 5
             },
+            "rounds_per_stage": 2,
+            "stages_per_game": 11,
+            "number_of_chars_per_round": 1,
+            "n_actions": [9, 7, 7],
+            "health": [0, 166],
+            "frame_shape": [254, 500, 3],
             "cfg": {"HP": "But1", "HK": "But2", "LK": "But3",  "LP": "But4", "RUN": "But5", "BLK": "But6"}
         },
     "samsh5sp":
@@ -154,6 +178,12 @@
                 "Medium": 6,
                 "Hard": 8
             },
+            "rounds_per_stage": 2,
+            "stages_per_game": 9,
+            "number_of_chars_per_round": 1,
+            "n_actions": [9, 5, 11],
+            "health": [0, 125],
+            "frame_shape": [224, 320, 3],
             "cfg": {"WS": "But1", "MS": "But2", "K": "But3", "M": "But4"}
         },
     "kof98umh":
@@ -187,6 +217,12 @@
                 "Medium": 6,
                 "Hard": 8
             },
+            "rounds_per_stage": 3,
+            "stages_per_game": 7,
+            "number_of_chars_per_round": 1,
+            "n_actions": [9, 5, 9],
+            "health": [-1, 119],
+            "frame_shape": [240, 320, 3],
             "cfg": {"WP": "But1", "WK": "But2", "SP": "But3", "SK": "But4"}
         }
 }

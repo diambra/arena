@@ -4,8 +4,8 @@ import sys
 import random
 from os.path import expanduser
 import os
-from diambra.arena.utils.engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
+from diambra.arena.utils.engine_mock import DiambraEngineMock
 import numpy as np
 from pytest_utils import generate_pytest_decorator_input
 from diambra.arena.utils.gym_utils import available_games
@@ -31,8 +31,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings):
 
 def func(settings, wrappers_settings, traj_rec_settings, mocker):
 
-    diambra_engine_mock_params = EngineMockParams()
-    diambra_engine_mock = DiambraEngineMock(diambra_engine_mock_params)
+    diambra_engine_mock = DiambraEngineMock()
 
     mocker.patch('diambra.arena.engine.interface.DiambraEngine.__init__', diambra_engine_mock._mock__init__)
     mocker.patch('diambra.arena.engine.interface.DiambraEngine._env_init', diambra_engine_mock._mock_env_init)

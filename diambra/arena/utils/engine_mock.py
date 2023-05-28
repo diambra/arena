@@ -1,103 +1,88 @@
 import time
 import random
 import numpy as np
+import diambra.arena
 from diambra.engine import Client, model
-
-class EngineMockParams:
-
-    def __init__(self, round_winning_probability=0.4, perfect_probability=0.2,
-                 steps_per_round=20, rounds_per_stage=2, stages_per_game=2,
-                 number_of_chars=15, number_of_chars_per_round=1,
-                 min_health=0, max_health=100,
-                 frame_shape=[128, 128, 3], n_actions=[9, 7, 12], fps=1000):
-
-        self.params = {}
-
-        # Game features
-        self.params["round_winning_probability"] = round_winning_probability
-        self.params["perfect_probability"] = perfect_probability
-        self.params["steps_per_round"] = steps_per_round
-        self.params["rounds_per_stage"] = rounds_per_stage
-        self.params["stages_per_game"] = stages_per_game
-        self.params["number_of_chars"] = number_of_chars
-        self.params["number_of_chars_per_round"] = number_of_chars_per_round
-        self.params["min_health"] = min_health
-        self.params["max_health"] = max_health
-        self.params["frame_shape"] = frame_shape
-        self.params["n_actions"] = n_actions
-        self.params["fps"] = fps
 
 class DiambraEngineMock:
 
-    def __init__(self, engine_mock_params):
+    def __init__(self, steps_per_round=20, fps=1000):
 
         # Game features
-        self.round_winning_probability = engine_mock_params.params["round_winning_probability"]
-        self.perfect_probability = engine_mock_params.params["perfect_probability"]
-        self.steps_per_round = engine_mock_params.params["steps_per_round"]
-        self.rounds_per_stage = engine_mock_params.params["rounds_per_stage"]
-        self.stages_per_game = engine_mock_params.params["stages_per_game"]
-        self.number_of_chars = engine_mock_params.params["number_of_chars"]
-        self.number_of_chars_per_round = engine_mock_params.params["number_of_chars_per_round"]
-        self.min_health = engine_mock_params.params["min_health"]
-        self.max_health = engine_mock_params.params["max_health"]
-        self.frame_shape = engine_mock_params.params["frame_shape"]
-        self.n_actions = engine_mock_params.params["n_actions"]
-        self.fps = engine_mock_params.params["fps"]
+        self.game_data = None
+        self.steps_per_round = steps_per_round
+        self.fps = fps
 
+        # Random seed
         time_dep_seed = int((time.time() - int(time.time() - 0.5)) * 1000)
         random.seed()
 
-        # Class state variables
-        self.char_list = ["Char{}".format(i) for i in range(self.number_of_chars)]
+        # Class state variables initialization
         self.n_steps = 0
         self.n_rounds_won = 0
         self.n_rounds_lost = 0
         self.n_stages = 0
         self.n_continue = 0
-        self.char_p1 = 0
-        self.char_p2 = 0
         self.side_p1 = 0
         self.side_p2 = 1
-        self.health_p1 = self.max_health
-        self.health_p2 = self.max_health
-        self.player = "P1"
-
-    def generate_frame(self):
-        frame = np.ones((self.frame_shape), dtype=np.int8) * ((self.n_stages * self.rounds_per_stage + self.n_steps) % 255)
-        return frame.tobytes()
-
-    def generate_ram_states(self):
-
-        ram_states = {}
-        ram_states["stage"] = {"type": 1, "min": 1, "max": self.stages_per_game, "val": self.n_stages+1}
-        ram_states["CharP1"] = {"type": 2, "min": 0, "max": self.number_of_chars-1, "val": self.char_p1}
-        ram_states["CharP2"] = {"type": 2, "min": 0, "max": self.number_of_chars-1, "val": self.char_p2}
-        ram_states["SideP1"] = {"type": 0, "min": 0, "max": 1, "val": self.side_p1}
-        ram_states["SideP2"] = {"type": 0, "min": 0, "max": 1, "val": self.side_p2}
-        ram_states["WinsP1"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_lost if self.player == "P2" else self.n_rounds_won}
-        ram_states["WinsP2"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_won if self.player == "P2" else self.n_rounds_lost}
-        if self.number_of_chars_per_round == 1:
-            ram_states["HealthP1"] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p1}
-            ram_states["HealthP2"] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p2}
-        else:
-            for idx in range(self.number_of_chars_per_round):
-                ram_states["Health{}P1".format(idx+1)] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p1}
-                ram_states["Health{}P2".format(idx+1)] = {"type": 1, "min": self.min_health, "max": self.max_health, "val": self.health_p2}
-
-        return ram_states
+        self.char_p1 = 0
+        self.char_p2 = 0
+        self.health_p1 = 0
+        self.health_p2 = 0
+        self.player = ""
 
     def _mock__init__(self, env_address, grpc_timeout=60):
         print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
         print("... done (MOCKED!).")
 
+    def generate_ram_states(self):
+
+        ram_states = {}
+        ram_states["stage"] = {"type": 1, "min": 1, "max": self.game_data["stages_per_game"], "val": self.n_stages + 1}
+        ram_states["CharP1"] = {"type": 2, "min": 0, "max": len(self.game_data["char_list"]) - 1, "val": self.char_p1}
+        ram_states["CharP2"] = {"type": 2, "min": 0, "max": len(self.game_data["char_list"]) - 1, "val": self.char_p2}
+        ram_states["SideP1"] = {"type": 0, "min": 0, "max": 1, "val": self.side_p1}
+        ram_states["SideP2"] = {"type": 0, "min": 0, "max": 1, "val": self.side_p2}
+        ram_states["WinsP1"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_lost if self.player == "P2" else self.n_rounds_won}
+        ram_states["WinsP2"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_won if self.player == "P2" else self.n_rounds_lost}
+        if self.game_data["number_of_chars_per_round"] == 1:
+            ram_states["HealthP1"] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p1}
+            ram_states["HealthP2"] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p2}
+        else:
+            for idx in range(self.game_data["number_of_chars_per_round"]):
+                ram_states["Health{}P1".format(idx+1)] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p1}
+                ram_states["Health{}P2".format(idx+1)] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p2}
+
+        return ram_states
+
     # Send env settings, retrieve env info and int variables list [pb low level]
     def _mock_env_init(self, env_settings_pb):
         self.settings = env_settings_pb
-        if (self.settings.frame_shape.h > 0 and self.settings.frame_shape.w > 0 ):
+
+        # Print settings
+        print("Settings:")
+        print(self.settings)
+
+        # Retrieve game info
+        self.game_data = diambra.arena.available_games(print_out=False)[self.settings.game_id]
+
+        # Setting win and perfect probability based on game difficulty
+        probability_maps = {
+            "Easy": [0.75, 0.4],
+            "Medium": [0.5, 0.2],
+            "Hard": [0.25, 0.1],
+        }
+
+        difficulty_level = self.game_data["difficulty_to_cluster_map"][str(self.settings.difficulty)]
+
+        self.round_winning_probability = probability_maps[difficulty_level][0]
+        self.perfect_probability = probability_maps[difficulty_level][1]
+
+        self.frame_shape = self.game_data["frame_shape"]
+        if (self.settings.frame_shape.h > 0 and self.settings.frame_shape.w > 0):
             self.frame_shape[0] = self.settings.frame_shape.h
             self.frame_shape[1] = self.settings.frame_shape.w
-        if (self.settings.frame_shape.c == 1 or self.settings.frame_shape.c == 3):
+        if (self.settings.frame_shape.c == 1):
             self.frame_shape[2] = self.settings.frame_shape.c
 
         self.continue_per_episode = - int(self.settings.continue_game) if self.settings.continue_game < 0.0 else int(self.settings.continue_game*10)
@@ -105,27 +90,29 @@ class DiambraEngineMock:
         # Build the response
         response = model.EnvInitResponse()
 
-        response.available_actions.with_buttons_combination.moves = self.n_actions[0]
-        response.available_actions.with_buttons_combination.attacks = self.n_actions[2]
-        response.available_actions.without_buttons_combination.moves = self.n_actions[0]
-        response.available_actions.without_buttons_combination.attacks = self.n_actions[1]
-
         response.frame_shape.h = self.frame_shape[0]
         response.frame_shape.w = self.frame_shape[1]
         response.frame_shape.c = self.frame_shape[2]
-        response.delta_health = self.max_health - self.min_health
-        response.max_stage = self.stages_per_game
-        response.cumulative_reward_bounds.min = -((self.rounds_per_stage - 1) * (self.stages_per_game - 1) + self.rounds_per_stage) * (self.max_health - self.min_health)
-        response.cumulative_reward_bounds.max = self.rounds_per_stage * self.stages_per_game * (self.max_health - self.min_health)
-        response.char_list.extend(self.char_list)
+
+        response.available_actions.with_buttons_combination.moves = self.game_data["n_actions"][0]
+        response.available_actions.with_buttons_combination.attacks = self.game_data["n_actions"][2]
+        response.available_actions.without_buttons_combination.moves = self.game_data["n_actions"][0]
+        response.available_actions.without_buttons_combination.attacks = self.game_data["n_actions"][1]
+
+        response.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
+        response.max_stage = self.game_data["stages_per_game"]
+        response.cumulative_reward_bounds.min = -((self.game_data["rounds_per_stage"] - 1) * (response.max_stage - 1) + self.game_data["rounds_per_stage"]) * response.delta_health
+        response.cumulative_reward_bounds.max = self.game_data["rounds_per_stage"] * response.max_stage * response.delta_health
+        response.char_list.extend(self.game_data["char_list"])
+
         response.buttons.moves.extend(["NoMove", "Left", "UpLeft", "Up", "UpRight", "Right", "DownRight", "Down", "DownLeft"])
-        response.buttons.attacks.extend(["But{}".format(i) for i in range(self.n_actions[1])] +\
-                                        ["But{}But{}".format(i - self.n_actions[1] + 1, i - self.n_actions[1] + 2)\
-                                        for i in range(self.n_actions[1], self.n_actions[2])])
+        response.buttons.attacks.extend(["But{}".format(i) for i in range(self.game_data["n_actions"][1])] +\
+                                        ["But{}But{}".format(i - self.game_data["n_actions"][1] + 1, i - self.game_data["n_actions"][1] + 2)\
+                                        for i in range(self.game_data["n_actions"][1], self.game_data["n_actions"][2])])
         response.button_mapping.moves.extend(["0", " ", "1", "\u2190", "2", "\u2196", "3", "\u2191",
                                               "4", "\u2197", "5", "\u2192", "6", "\u2198", "7", "\u2193", "8", "\u2199"])
         attack_mapping = ["0", " "]
-        for i in range(1, self.n_actions[2]):
+        for i in range(1, self.game_data["n_actions"][2]):
             attack_mapping += [str(i), "Attack{}".format(i)]
         response.button_mapping.attacks.extend(attack_mapping)
 
@@ -137,6 +124,10 @@ class DiambraEngineMock:
             response.ram_states[k].val = v["val"]
 
         return response
+
+    def generate_frame(self):
+        frame = np.ones((self.frame_shape), dtype=np.int8) * ((self.n_stages * self.game_data["rounds_per_stage"] + self.n_steps) % 255)
+        return frame.tobytes()
 
     # Set delta health
     def set_delta_health(self):
@@ -190,21 +181,36 @@ class DiambraEngineMock:
 
         self.side_p1 = 0
         self.side_p2 = 1
-        self.health_p1 = self.max_health
-        self.health_p2 = self.max_health
+        self.health_p1 = self.game_data["health"][1]
+        self.health_p2 = self.game_data["health"][1]
 
         self.reward = 0
 
         # Characters
         if self.player == "P1P2":
-            self.char_p1 = random.choices(range(self.number_of_chars))[0]
-            self.char_p2 = random.choices(range(self.number_of_chars))[0]
+            if (self.settings.characters.p1[0] == "Random"):
+                self.char_p1 = random.choices(range(len(self.game_data["char_list"])))[0]
+            else:
+                self.char_p1 = self.game_data["char_list"].index(self.settings.characters.p1[0])
+
+            if (self.settings.characters.p2[0] == "Random"):
+                self.char_p2 = random.choices(range(len(self.game_data["char_list"])))[0]
+            else:
+                self.char_p2 = self.game_data["char_list"].index(self.settings.characters.p2[0])
+
         elif self.player == "P1":
-            self.char_p1 = random.choices(range(self.number_of_chars))[0]
             self.char_p2 = self.n_stages
+            if (self.settings.characters.p1[0] == "Random"):
+                self.char_p1 = random.choices(range(len(self.game_data["char_list"])))[0]
+            else:
+                self.char_p1 = self.game_data["char_list"].index(self.settings.characters.p1[0])
+
         else:
             self.char_p1 = self.n_stages
-            self.char_p2 = random.choices(range(self.number_of_chars))[0]
+            if (self.settings.characters.p2[0] == "Random"):
+                self.char_p2 = random.choices(range(len(self.game_data["char_list"])))[0]
+            else:
+                self.char_p2 = self.game_data["char_list"].index(self.settings.characters.p2[0])
 
     # Update game state
     def new_game_state(self, mov_p1=0, att_p1=0, mov_p2=0, att_p2=0):
@@ -243,10 +249,17 @@ class DiambraEngineMock:
         if self.player == "P1P2" and att_p2 == 0:
                 coeff_p1 = 1
 
-        self.health_p1 = int(self.health_p1 * coeff_p1)
-        self.health_p2 = int(self.health_p2 * coeff_p2)
+        self.health_p1 = int((self.health_p1 - self.game_data["health"][0]) * coeff_p1) + self.game_data["health"][0]
+        self.health_p2 = int((self.health_p2 - self.game_data["health"][0]) * coeff_p2) + self.game_data["health"][0]
 
-        if (min(self.health_p1, self.health_p2) == 0) or ((self.n_steps % self.steps_per_round) == 0):
+        if (self.n_steps % self.steps_per_round) == 0:
+            print("TimeUp, forcing lost")
+            if self.player == "P2":
+                self.health_p2 = self.game_data["health"][0]
+            else:
+                self.health_p1 = self.game_data["health"][0]
+
+        if min(self.health_p1, self.health_p2) == self.game_data["health"][0]:
             self.round_done_ = True
 
             if self.health_p1 > self.health_p2:
@@ -265,12 +278,7 @@ class DiambraEngineMock:
                     print("Round lost")
                     self.n_rounds_lost += 1
 
-            else:
-                print("Draw")
-                self.n_rounds_won += 1
-                self.n_rounds_lost += 1
-
-        if self.n_rounds_won == self.rounds_per_stage:
+        if self.n_rounds_won == self.game_data["rounds_per_stage"]:
             self.stage_done_ = True
             self.n_stages += 1
             self.n_rounds_won = 0
@@ -283,7 +291,7 @@ class DiambraEngineMock:
             else:
                 self.char_p1 = self.n_stages
 
-        if self.n_rounds_lost == self.rounds_per_stage:
+        if self.n_rounds_lost == self.game_data["rounds_per_stage"]:
             self.game_done_ = True
             if self.n_continue >= self.continue_per_episode:
                 self.episode_done_ = True
@@ -292,7 +300,7 @@ class DiambraEngineMock:
                 self.n_rounds_won = 0
                 self.n_rounds_lost = 0
 
-        if self.n_stages == self.stages_per_game:
+        if self.n_stages == self.game_data["stages_per_game"]:
             self.game_done_ = True
             self.episode_done_ = True
 
@@ -308,8 +316,8 @@ class DiambraEngineMock:
 
             self.side_p1 = 0
             self.side_p2 = 1
-            self.health_p1 = self.max_health
-            self.health_p2 = self.max_health
+            self.health_p1 = self.game_data["health"][1]
+            self.health_p2 = self.game_data["health"][1]
 
             # Set delta healths
             self.set_delta_health()
