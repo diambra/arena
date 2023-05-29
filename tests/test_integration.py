@@ -10,7 +10,7 @@ import os
 # (optional)
 #    module.py (Run specific module)
 #    -s (show output)
-#    -k 'expression' (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. 'wrappers and doapp')
+#    -k "expression" (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. "wrappers and doapp")
 
 def func(game_id, player, continue_game, action_space, attack_buttons_combination,
          wrappers_settings, traj_rec_settings, hardcore_prob, no_action_prob):

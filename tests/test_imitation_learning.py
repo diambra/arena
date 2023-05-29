@@ -111,11 +111,11 @@ def func(path, hardcore):
 
 
 base_path = os.path.dirname(__file__)
-normal_discrete = os.path.join(base_path, 'data/Discrete/Normal')
-hardcore_discrete = os.path.join(base_path, 'data/Discrete/HC')
+normal_discrete = os.path.join(base_path, "data/Discrete/Normal")
+hardcore_discrete = os.path.join(base_path, "data/Discrete/HC")
 
-normal_multi_discrete = os.path.join(base_path, 'data/MultiDiscrete/Normal')
-hardcore_multi_discrete = os.path.join(base_path, 'data/MultiDiscrete/HC')
+normal_multi_discrete = os.path.join(base_path, "data/MultiDiscrete/Normal")
+hardcore_multi_discrete = os.path.join(base_path, "data/MultiDiscrete/HC")
 
 @pytest.mark.parametrize("path", [normal_discrete, normal_multi_discrete])
 def test_imitation_normal_mode(path):
