@@ -30,6 +30,7 @@ class DiambraEngineMock:
         self.health_p1 = 0
         self.health_p2 = 0
         self.player = ""
+        self.perfect = False
 
     def _mock__init__(self, env_address, grpc_timeout=60):
         print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
@@ -75,7 +76,7 @@ class DiambraEngineMock:
 
         difficulty_level = self.game_data["difficulty_to_cluster_map"][str(self.settings.difficulty)]
 
-        self.round_winning_probability = probability_maps[difficulty_level][0]
+        self.base_round_winning_probability = probability_maps[difficulty_level][0] ** (1.0/self.game_data["stages_per_game"])
         self.perfect_probability = probability_maps[difficulty_level][1]
 
         self.frame_shape = self.game_data["frame_shape"]
@@ -86,6 +87,8 @@ class DiambraEngineMock:
             self.frame_shape[2] = self.settings.frame_shape.c
 
         self.continue_per_episode = - int(self.settings.continue_game) if self.settings.continue_game < 0.0 else int(self.settings.continue_game*10)
+        self.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
+        self.base_hit = int(self.delta_health * (self.game_data["n_actions"][0] + self.game_data["n_actions"][0]) / (self.game_data["n_actions"][1] * (self.steps_per_round - 1)))
 
         # Build the response
         response = model.EnvInitResponse()
@@ -99,7 +102,7 @@ class DiambraEngineMock:
         response.available_actions.without_buttons_combination.moves = self.game_data["n_actions"][0]
         response.available_actions.without_buttons_combination.attacks = self.game_data["n_actions"][1]
 
-        response.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
+        response.delta_health = self.delta_health
         response.max_stage = self.game_data["stages_per_game"]
         response.cumulative_reward_bounds.min = -((self.game_data["rounds_per_stage"] - 1) * (response.max_stage - 1) + self.game_data["rounds_per_stage"]) * response.delta_health
         response.cumulative_reward_bounds.max = self.game_data["rounds_per_stage"] * response.max_stage * response.delta_health
@@ -130,23 +133,8 @@ class DiambraEngineMock:
         return frame.tobytes()
 
     # Set delta health
-    def set_delta_health(self):
-        # Setting delta health as a function of winning probabilities
-        self.delta_health_p1 = 0.6
-        self.delta_health_p2 = 0.6
-
-        if self.player == "P2":
-            self.delta_health_p1 *= self.round_winning_probability
-            self.delta_health_p2 *= 1.0 - self.round_winning_probability
-        else:
-            self.delta_health_p1 *= 1.0 - self.round_winning_probability
-            self.delta_health_p2 *= self.round_winning_probability
-
-        if random.choices([True, False], [self.perfect_probability, 1.0 - self.perfect_probability])[0] is True:
-            if self.player == "P2":
-                self.delta_health_p2 = 0.0
-            else:
-                self.delta_health_p1 = 0.0
+    def set_perfect_chance(self):
+        self.perfect = random.choices([True, False], [self.perfect_probability, 1.0 - self.perfect_probability])[0]
 
     # Reset game state
     def reset_state(self):
@@ -170,7 +158,7 @@ class DiambraEngineMock:
             self.player = random.choices(["P1", "P2"])[0]
 
         # Set delta healths
-        self.set_delta_health()
+        self.set_perfect_chance()
 
         # Done flags
         self.round_done_ = False
@@ -237,20 +225,22 @@ class DiambraEngineMock:
         starting_health_p2 = self.health_p2
 
         # Health evolution
-        coeff_p1 = 1.0 - random.random() * self.delta_health_p1
-        coeff_p2 = 1.0 - random.random() * self.delta_health_p2
+        hit_prob = self.base_round_winning_probability ** self.n_stages
 
-        if att_p1 == 0:
-            if self.player == "P2":
-                coeff_p1 = 1
-            else:
-                coeff_p2 = 1
+        if self.player == "P2":
+            if not self.perfect:
+                self.health_p2 -= random.choices([self.base_hit, 0], [1.0 - hit_prob, hit_prob])[0]
+            if att_p1 != 0:
+                self.health_p1 -= random.choices([self.base_hit, 0], [hit_prob, 1.0 - hit_prob])[0]
+        else:
+            self.health_p1 -= random.choices([self.base_hit, 0], [1.0 - hit_prob, hit_prob])[0]
+            if att_p1 != 0:
+                self.health_p2 -= random.choices([self.base_hit, 0], [hit_prob, 1.0 - hit_prob])[0]
+            if (self.player == "P1P2" and att_p2 == 0) or self.perfect:
+                self.health_p1 = starting_health_p1
 
-        if self.player == "P1P2" and att_p2 == 0:
-                coeff_p1 = 1
-
-        self.health_p1 = int((self.health_p1 - self.game_data["health"][0]) * coeff_p1) + self.game_data["health"][0]
-        self.health_p2 = int((self.health_p2 - self.game_data["health"][0]) * coeff_p2) + self.game_data["health"][0]
+        self.health_p1 = max(self.health_p1, self.game_data["health"][0])
+        self.health_p2 = max(self.health_p2, self.game_data["health"][0])
 
         if (min(self.health_p1, self.health_p2) == self.game_data["health"][0]) or ((self.n_steps % self.steps_per_round) == 0):
             self.round_done_ = True
@@ -322,7 +312,7 @@ class DiambraEngineMock:
             self.health_p2 = self.game_data["health"][1]
 
             # Set delta healths
-            self.set_delta_health()
+            self.set_perfect_chance()
         else:
             self.side_p1 = random.choices([0, 1], [0.3, 0.7])[0]
             self.side_p2 = random.choices([(self.side_p1 + 1) % 2, self.side_p1], [0.97, 0.03])[0]
