@@ -120,11 +120,11 @@ class AutoSave(BaseCallback):
 
 
 class UpdateRLPolicyWeights(BaseCallback):
-    def __init__(self, check_freq: int, num_env: int, save_path: str,
+    def __init__(self, check_freq: int, num_envs: int, save_path: str,
                  prev_agents_sampling={"probability": 0.0, "list": []}, verbose=1):
         super(UpdateRLPolicyWeights, self).__init__(verbose)
-        self.check_freq = int(check_freq / num_env)
-        self.num_env = num_env
+        self.check_freq = int(check_freq / num_envs)
+        self.num_envs = num_envs
         self.save_path = os.path.join(save_path, 'lastModel')
         self.sampling_probability = prev_agents_sampling["probability"]
         self.prev_agents_list = prev_agents_sampling["list"]
