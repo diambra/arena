@@ -2,10 +2,7 @@
 import diambra.arena
 from diambra.arena.utils.gym_utils import env_spaces_summary, discrete_to_multi_discrete_action
 import time
-import os
-import sys
 import numpy as np
-import random
 import warnings
 
 default_args = {

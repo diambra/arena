@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 import pytest
 import diambra.arena
-import argparse
 import os
-import sys
 from os import listdir
 import numpy as np
 

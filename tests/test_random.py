@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import pytest
 from env_exec_interface import env_exec
-import sys
 import random
 from os.path import expanduser
 import os

@@ -3,9 +3,7 @@ import argparse
 from env_exec_interface import env_exec
 import time
 import os
-import sys
 from os.path import expanduser
-import numpy as np
 
 if __name__ == '__main__':
 

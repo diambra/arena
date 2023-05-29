@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 import pytest
 from env_exec_interface import env_exec
-import sys
 import time
-import random
 from os.path import expanduser
-import os
 import diambra.arena
 from diambra.arena.utils.engine_mock import DiambraEngineMock
 import numpy as np

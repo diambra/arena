@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 import pytest
-import sys
-import random
 from os.path import expanduser
 import os
 from diambra.arena.utils.engine_mock import DiambraEngineMock
 import diambra.arena
-import numpy as np
 from pytest_utils import generate_pytest_decorator_input
 from diambra.arena.utils.gym_utils import available_games
 
