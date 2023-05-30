@@ -69,7 +69,7 @@ class DiambraArena(gym.Env):
             self.logger.debug("Rank: {}".format(self.rank))
 
             self.env = diambra.arena.make(self.game_id, self.settings, self.wrappers_settings,
-                                        seed=self.seed + self.rank, rank=self.rank)
+                                          seed=self.seed + self.rank, rank=self.rank)
 
             env_spaces_dict = {}
             env_spaces_dict["action_space"] = self.env.action_space

@@ -38,23 +38,28 @@ class DiambraEngineMock:
 
     def generate_ram_states(self):
 
-        ram_states = {}
-        ram_states["stage"] = {"type": 1, "min": 1, "max": self.game_data["stages_per_game"], "val": self.n_stages + 1}
-        ram_states["CharP1"] = {"type": 2, "min": 0, "max": len(self.game_data["char_list"]) - 1, "val": self.char_p1}
-        ram_states["CharP2"] = {"type": 2, "min": 0, "max": len(self.game_data["char_list"]) - 1, "val": self.char_p2}
-        ram_states["SideP1"] = {"type": 0, "min": 0, "max": 1, "val": self.side_p1}
-        ram_states["SideP2"] = {"type": 0, "min": 0, "max": 1, "val": self.side_p2}
-        ram_states["WinsP1"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_lost if self.player == "P2" else self.n_rounds_won}
-        ram_states["WinsP2"] = {"type": 1, "min": 0, "max": 2, "val": self.n_rounds_won if self.player == "P2" else self.n_rounds_lost}
+        for k, v in self.ram_states.items():
+            self.ram_states[k][3] = random.choices(range(v[1], v[2] + 1))[0]
+
+        # Setting meaningful values to ram states
+        self.ram_states["stage"][3] = self.n_stages + 1
+        self.ram_states["SideP1"][3] = self.side_p1
+        self.ram_states["SideP2"][3] = self.side_p2
+        self.ram_states["WinsP1"][3] = self.n_rounds_won
+        self.ram_states["WinsP2"][3] = self.n_rounds_lost
+
+        self.ram_states["CharP1"][3] = self.char_p1
+        self.ram_states["CharP2"][3] = self.char_p2
+        self.ram_states["Char1P1"][3] = self.char_p1
+        self.ram_states["Char1P2"][3] = self.char_p2
+
         if self.game_data["number_of_chars_per_round"] == 1:
-            ram_states["HealthP1"] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p1}
-            ram_states["HealthP2"] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p2}
+            self.ram_states["HealthP1"][3] = self.health_p1
+            self.ram_states["HealthP2"][3] = self.health_p2
         else:
             for idx in range(self.game_data["number_of_chars_per_round"]):
-                ram_states["Health{}P1".format(idx+1)] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p1}
-                ram_states["Health{}P2".format(idx+1)] = {"type": 1, "min": self.game_data["health"][0], "max": self.game_data["health"][1], "val": self.health_p2}
-
-        return ram_states
+                self.ram_states["Health{}P1".format(idx+1)][3] = self.health_p1
+                self.ram_states["Health{}P2".format(idx+1)][3] = self.health_p2
 
     # Send env settings, retrieve env info and int variables list [pb low level]
     def _mock_env_init(self, env_settings_pb):
@@ -90,6 +95,11 @@ class DiambraEngineMock:
         self.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
         self.base_hit = int(self.delta_health * (self.game_data["n_actions"][0] + self.game_data["n_actions"][0]) / (self.game_data["n_actions"][1] * (self.steps_per_round - 1)))
 
+        # Generate the ram states map
+        self.ram_states = self.game_data["ram_states"]
+        for k, v in self.ram_states.items():
+                self.ram_states[k].append(0)
+
         # Build the response
         response = model.EnvInitResponse()
 
@@ -119,12 +129,12 @@ class DiambraEngineMock:
             attack_mapping += [str(i), "Attack{}".format(i)]
         response.button_mapping.attacks.extend(attack_mapping)
 
-        ram_states = self.generate_ram_states()
-        for k, v in ram_states.items():
-            response.ram_states[k].type = v["type"]
-            response.ram_states[k].min = v["min"]
-            response.ram_states[k].max = v["max"]
-            response.ram_states[k].val = v["val"]
+        self.generate_ram_states()
+        for k, v in self.ram_states.items():
+            response.ram_states[k].type = v[0]
+            response.ram_states[k].min = v[1]
+            response.ram_states[k].max = v[2]
+            response.ram_states[k].val = v[3]
 
         return response
 
@@ -329,12 +339,12 @@ class DiambraEngineMock:
         observation.actions.p2.attack = self.att_p2
 
         # Ram states
-        ram_states = self.generate_ram_states()
-        for k, v in ram_states.items():
-            observation.ram_states[k].type = v["type"]
-            observation.ram_states[k].min = v["min"]
-            observation.ram_states[k].max = v["max"]
-            observation.ram_states[k].val = v["val"]
+        self.generate_ram_states()
+        for k, v in self.ram_states.items():
+            observation.ram_states[k].type = v[0]
+            observation.ram_states[k].min = v[1]
+            observation.ram_states[k].max = v[2]
+            observation.ram_states[k].val = v[3]
 
         # Game state
         observation.game_state.round_done = self.round_done_
