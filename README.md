@@ -68,9 +68,9 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 Our competition platform allows you to submit your agents and compete with other coders around the globe in epic video games tournaments!
 
-It features a public global leaderboard where users are ranked by the best score achieved by their agents in our different environments. 
+It features a public global leaderboard where users are ranked by the best score achieved by their agents in our different environments.
 
-It also offers you the possibility to unlock cool achievements depending on the performances of your agent. 
+It also offers you the possibility to unlock cool achievements depending on the performances of your agent.
 
 <img src="https://raw.githubusercontent.com/diambra/arena/main/img/achievements.jpg" alt="DIAMBRA Achievements" width="100%"/>
 
@@ -186,9 +186,9 @@ These examples show how to leverage both single and two players modes, how to se
 
 ## Reinforcement Learning Libs Compatibility
 
-DIAMBRA Arena is built to maximize compatibility will all major Reinforcement Learning libraries. It natively provides interfaces with the two most import packages: Stable Baselines (both version 2 and 3) and Ray RLlib. Their usage is illustrated in detail in the <a href="https://docs.diambra.ai/handsonreinforcementlearning/" target="_blank">documentation</a> and in the <a href="https://github.com/diambra/agents" target="_blank">DIAMBRA Agents repository</a>. It can easily be interfaced with any other package in a similar way.
+DIAMBRA Arena is built to maximize compatibility will all major Reinforcement Learning libraries. It natively provides interfaces with the two most import packages: Stable Baselines 3 and Ray RLlib, while Stable Baselines is also available but deprecated. Their usage is illustrated in detail in the <a href="https://docs.diambra.ai/handsonreinforcementlearning/" target="_blank">documentation</a> and in the <a href="https://github.com/diambra/agents" target="_blank">DIAMBRA Agents</a>  repository. It can easily be interfaced with any other package in a similar way.
 
-Native interfaces, that can be installed with the dedicated options listed below, have been tested with the following versions:
+Native interfaces, installed with the specific options listed below, are tested with the following versions:
 
 - Stable Baselines 3 | `pip install diambra-arena[stable-baselines3]` (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 1.6.1
 - Ray RLlib | `pip install diambra-arena[ray-rllib]` (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.0.0

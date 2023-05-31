@@ -32,6 +32,7 @@ setuptools.setup(
     install_requires=[
             'pip>=21',
             'importlib-metadata<=4.12.0; python_version <= "3.7"', # problem with gym for importlib-metadata==5.0.0 and python <=3.7
+            'wheel==0.38.4', # Required until we can upgrade to gym >= 0.22.0
             'setuptools',
             'distro>=1',
             'gym<=0.21.0',
