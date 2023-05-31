@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/diambra/arena/main/img/github.png" alt="diambra" width="100%"/>
+<img src="https://raw.githubusercontent.com/diambra/arena/main/img/github.jpg" alt="diambra" width="100%"/>
 
 <p align="center">
   <a href="https://docs.diambra.ai">Documentation</a> •
@@ -100,13 +100,13 @@ DIAMBRA Arena usage follows the standard RL interaction framework: the agent sen
 
 #### Download Game ROM(s) and Check Validity
 
-Check available games with the following command:
+Check out available games:
 
 ```
 diambra arena list-roms
 ```
 
-Output example:
+Output extract:
 
 ```shell
 [...]
@@ -121,21 +121,19 @@ Output example:
 
 Search ROMs on the web using **Search Keywords** provided by the game list command reported above. **Pay attention, follow game-specific notes reported there, and store all ROMs in the same folder, whose absolute path will be referred in the following as** `your/roms/local/path`.
 
-**Specific game ROM files are required, check validity of the downloaded ROMs as follows.**
-
-Check ROM(s) validity running:
+**Specific game ROM files are required, check validity of the downloaded ROMs:**
 
 ```
 diambra arena check-roms your/roms/local/path/romFileName.zip
 ```
 
-The output for a valid ROM file would look like the following:
+The output for a valid ROM file would look like:
 
 ```
 Correct ROM file for Dead Or Alive ++, sha256 = d95855c7d8596a90f0b8ca15725686567d767a9a3f93a8896b489a160e705c4e
 ```
 
-**Make sure to check out our <a href="https://diambra.ai/terms" target="_blank">Terms of Use</a>, and in particular Section 7. By using the software, you accept the in full.</span>**
+**Make sure to check out our <a href="https://diambra.ai/terms" target="_blank">Terms of Use</a>, and in particular Section 7. By using the software, you accept them in full.</span>**
 
 #### Base script
 

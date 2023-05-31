@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 import screeninfo
 
-gif_file_path = os.path.join(os.path.dirname(__file__), ".splashScreen.gif")
+gif_file_path = os.path.join(os.path.dirname(__file__), ".splash_screen.gif")
 
 
 def get_monitor_from_coord(x, y):

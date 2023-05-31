@@ -1,2 +1,2 @@
-include diambra/arena/utils/.splashScreen.gif
+include diambra/arena/utils/.splash_screen.gif
 include diambra/arena/utils/integratedGames.json
