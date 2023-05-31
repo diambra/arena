@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 import pytest
 from env_exec_interface import env_exec
-import sys
 import random
 from os.path import expanduser
 import os
-import time
-import numpy as np
 
 # Example Usage:
 # pytest
 # (optional)
 #    module.py (Run specific module)
 #    -s (show output)
-#    -k 'expression' (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. 'wrappers and doapp')
+#    -k "expression" (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. "wrappers and doapp")
 
 def func(game_id, player, continue_game, action_space, attack_buttons_combination,
          wrappers_settings, traj_rec_settings, hardcore_prob, no_action_prob):
@@ -39,8 +36,6 @@ def func(game_id, player, continue_game, action_space, attack_buttons_combinatio
         settings["hardcore"] = random.choices([True, False], [hardcore_probability, 1.0 - hardcore_probability])[0]
 
         return env_exec(settings, wrappers_settings, traj_rec_settings, args)
-
-        return 0
     except Exception as e:
         print(e)
         return 1

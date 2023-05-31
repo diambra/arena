@@ -1,5 +1,4 @@
 import os
-import sys
 import diambra.arena
 import logging
 import gym
@@ -22,10 +21,10 @@ class DiambraArena(gym.Env):
                 raise Exception("Loading environment spaces from file selected, but no file specified.")
             else:
                 self.env_spaces_file_name = config["env_spaces_file_name"]
-                
+
                 if not os.path.isfile(self.env_spaces_file_name):
-                    raise FileNotFoundError("Unable to load environment spaces from specified file ({}), no file found.".format(self.env_spaces_file_name))    
-                else:    
+                    raise FileNotFoundError("Unable to load environment spaces from specified file ({}), no file found.".format(self.env_spaces_file_name))
+                else:
                     self.load_spaces_from_file = config["load_spaces_from_file"]
         else:
             if "env_spaces_file_name" in config.keys():
@@ -70,7 +69,7 @@ class DiambraArena(gym.Env):
             self.logger.debug("Rank: {}".format(self.rank))
 
             self.env = diambra.arena.make(self.game_id, self.settings, self.wrappers_settings,
-                                        seed=self.seed + self.rank, rank=self.rank)
+                                          seed=self.seed + self.rank, rank=self.rank)
 
             env_spaces_dict = {}
             env_spaces_dict["action_space"] = self.env.action_space
