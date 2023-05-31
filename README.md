@@ -32,7 +32,7 @@
 
 ## Overview
 
-DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It provides a standard interface to popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym format**, that makes its adoption smooth and straightforward.
+AADIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It provides a standard interface to popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym format**, that makes its adoption smooth and straightforward.
 
 It **supports all major Operating Systems** (Linux, Windows and MacOS) and **can be easily installed via Python PIP**, as described in the **[installation section](#installation)** below. It is **completely free to use**, the user only needs to <a href="https://diambra.ai/register/" target="_blank">register on the official website</a>.
 
