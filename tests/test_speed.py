@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 import pytest
 from env_exec_interface import env_exec
-import sys
 import time
-import random
 from os.path import expanduser
-import os
-from engine_mock import DiambraEngineMock, EngineMockParams
 import diambra.arena
+from diambra.arena.utils.engine_mock import DiambraEngineMock
 import numpy as np
 import warnings
 
@@ -19,16 +16,14 @@ def reject_outliers(data):
 
 def func(player, wrappers_settings, target_speed, mocker):
 
-    diambra_engine_mock_params = EngineMockParams(round_winning_probability=0.5,
-                                                  perfect_probability=0.0, fps=500)
-    diambra_engine_mock = DiambraEngineMock(diambra_engine_mock_params)
+    diambra_engine_mock = DiambraEngineMock(fps=500)
 
-    mocker.patch('diambra.arena.engine.interface.DiambraEngine.__init__', diambra_engine_mock._mock__init__)
-    mocker.patch('diambra.arena.engine.interface.DiambraEngine._env_init', diambra_engine_mock._mock_env_init)
-    mocker.patch('diambra.arena.engine.interface.DiambraEngine._reset', diambra_engine_mock._mock_reset)
-    mocker.patch('diambra.arena.engine.interface.DiambraEngine._step_1p', diambra_engine_mock._mock_step_1p)
-    mocker.patch('diambra.arena.engine.interface.DiambraEngine._step_2p', diambra_engine_mock._mock_step_2p)
-    mocker.patch('diambra.arena.engine.interface.DiambraEngine.close', diambra_engine_mock._mock_close)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.__init__", diambra_engine_mock._mock__init__)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine._env_init", diambra_engine_mock._mock_env_init)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine._reset", diambra_engine_mock._mock_reset)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine._step_1p", diambra_engine_mock._mock_step_1p)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine._step_2p", diambra_engine_mock._mock_step_2p)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.close", diambra_engine_mock._mock_close)
 
     try:
         # Settings
