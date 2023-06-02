@@ -64,15 +64,13 @@ Additional details can be found in the <a href="https://docs.diambra.ai/envs/gam
 
 ## Competition Platform
 
-<img src="https://raw.githubusercontent.com/diambra/arena/main/img/leaderboard.jpg" alt="DIAMBRA Leaderboard" width="100%"/>
+<img src="https://raw.githubusercontent.com/diambra/.github/master/img/platform.jpg" alt="DIAMBRA Competition Platform" width="100%"/>
 
 Our competition platform allows you to submit your agents and compete with other coders around the globe in epic video games tournaments!
 
 It features a public global leaderboard where users are ranked by the best score achieved by their agents in our different environments.
 
 It also offers you the possibility to unlock cool achievements depending on the performances of your agent.
-
-<img src="https://raw.githubusercontent.com/diambra/arena/main/img/achievements.jpg" alt="DIAMBRA Achievements" width="100%"/>
 
 Submitted agents are evaluated and their episodes are streamed on our Twitch channel.
 
