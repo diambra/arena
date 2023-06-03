@@ -13,8 +13,20 @@
 </p>
 
 <p align="center">
-<a href="https://arxiv.org/abs/2210.10595"><img src="http://img.shields.io/badge/paper-arxiv.2210.10595-B31B1B.svg" alt="Paper"/></a>
+<a href="https://arxiv.org/abs/2210.10595"><img src="https://img.shields.io/badge/paper-arXiv:2210.10595-B31B1B?logo=arxiv" alt="Paper"/></a>
 </p>
+<p align="center">
+<a href="https://github.com/diambra/arena/actions/workflows/test.yaml"><img src="https://img.shields.io/github/actions/workflow/status/diambra/arena/test.yaml?label=arena%20tests&logo=github" alt="Arena Test"/></a>
+<a href="https://github.com/diambra/arena/actions/workflows/test_agents.yaml"><img src="https://img.shields.io/github/actions/workflow/status/diambra/arena/test_agents.yaml?label=agents%20tests&logo=github" alt="Agents Test"/></a>
+<a href="https://github.com/diambra/arena/tags"><img src="https://img.shields.io/github/v/tag/diambra/arena?label=latest%20tag&logo=github" alt="Latest Tag"/></a>
+<a href="https://pypi.org/project/diambra-arena/"><img src="https://img.shields.io/pypi/v/diambra-arena?logo=pypi" alt="Pypi version"/></a>
+</p>
+<p align="center">
+<a href="https://docs.diambra.ai/#installation"><img src="https://img.shields.io/badge/supported%20os-linux%20%7C%20win%20%7C%20macOS-blue?logo=docker" alt="Supported OS"/></a>
+<a href="https://docs.diambra.ai/"><img src="https://img.shields.io/github/last-commit/diambra/docs/main?label=docs%20last%20update&logo=readthedocs" alt="Last Docs Update"/></a>
+</p>
+
+
 
 # DIAMBRA Arena
 
