@@ -27,7 +27,7 @@ class EnvironmentSettings:
     rank: int = 0
     seed: int = -1
     env_address: str = "localhost:50051"
-    grpc_timeout: int = 60
+    grpc_timeout: int = 600
 
     # Game level
     player: str = "Random"
