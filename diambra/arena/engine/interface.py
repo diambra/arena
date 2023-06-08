@@ -20,8 +20,8 @@ class DiambraEngine:
 
         try:
             # Opening gRPC channel
-            self.client = Client(env_address, grpc_timeout)
             self.logger.info("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
+            self.client = Client(env_address, grpc_timeout)
         except grpc.FutureTimeoutError as e:
             raise Exception(CONNECTION_FAILED_ERROR_TEXT) from e
 
