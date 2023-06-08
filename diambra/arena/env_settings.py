@@ -48,7 +48,7 @@ class EnvironmentSettings:
         check_num_in_range("step_ratio", self.step_ratio, [1, 6])
         check_num_in_range("rank", self.rank, [0, MAX_VAL])
         check_num_in_range("seed", self.seed, [-1, MAX_VAL])
-        check_num_in_range("grpc_timeout", self.grpc_timeout, [0, 120])
+        check_num_in_range("grpc_timeout", self.grpc_timeout, [0, 3600])
 
         check_val_in_list("game_id", self.game_id, self.games_dict.keys())
         check_val_in_list("player", self.player, ["P1", "P2", "Random", "P1P2"])
