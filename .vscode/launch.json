@@ -1,11 +1,25 @@
 {
     "version": "0.2.0",
+    "inputs": [
+      {
+        "id": "example_script",
+        "type": "pickString",
+        "description": "Example script:",
+        "default": "diambra_arena_gist.py",
+        "options": [
+            "diambra_arena_gist.py",
+            "single_player_env.py",
+            "multi_player_env.py",
+            "wrappers_options.py"
+        ],
+      },
+    ],
     "configurations": [
       {
-        "name": "[Arena] (conda diambra-arena) Gist",
+        "name": "[Arena] (conda diambra-arena) Script",
         "type": "python",
         "request": "launch",
-        "program": "${workspaceFolder}/examples/diambra_arena_gist.py",
+        "program": "${workspaceFolder}/examples/${input:example_script}",
         "console": "integratedTerminal",
       }
     ]
