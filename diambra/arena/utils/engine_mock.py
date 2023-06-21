@@ -50,8 +50,6 @@ class DiambraEngineMock:
 
         self.ram_states["CharP1"][3] = self.char_p1
         self.ram_states["CharP2"][3] = self.char_p2
-        self.ram_states["Char1P1"][3] = self.char_p1
-        self.ram_states["Char1P2"][3] = self.char_p2
 
         if self.game_data["number_of_chars_per_round"] == 1:
             self.ram_states["HealthP1"][3] = self.health_p1
