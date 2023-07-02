@@ -247,7 +247,7 @@
                 "Hard": 8
             },
             "rounds_per_stage": 2,
-            "stages_per_game": 9,
+            "stages_per_game": 7,
             "number_of_chars_per_round": 1,
             "n_actions": [9, 5, 11],
             "health": [0, 125],
@@ -257,7 +257,7 @@
                 "SideP2": [0, 0, 1],
                 "WinsP1": [1, 0, 3],
                 "WinsP2": [1, 0, 3],
-                "stage": [1, 1, 9],
+                "stage": [1, 1, 7],
                 "CharP1": [2, 0, 27],
                 "CharP2": [2, 0, 27],
                 "RageOnP1": [0, 0, 1],
