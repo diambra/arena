@@ -39,7 +39,8 @@
                 "CharP1": [2, 0, 10],
                 "CharP2": [2, 0, 10],
                 "HealthP1": [1, 0, 208],
-                "HealthP2": [1, 0, 208]
+                "HealthP2": [1, 0, 208],
+                "timer": [1, 0, 40]
             },
             "cfg": {"H": "But6", "P": "But1", "K": "But2"}
         },
@@ -99,7 +100,8 @@
                 "SuperMaxCountP1": [1, 1, 3],
                 "SuperMaxCountP2": [1, 1, 3],
                 "HealthP1": [1, -1, 160],
-                "HealthP2": [1, -1, 160]
+                "HealthP2": [1, -1, 160],
+                "timer": [1, 0, 99]
             },
             "cfg": {"LP": "But4", "MP": "But1", "HP": "But5", "LK": "But3", "MK": "But2", "HK": "But6"}
         },
@@ -162,7 +164,8 @@
                 "ActiveCharP1": [0, 0, 1],
                 "ActiveCharP2": [0, 0, 1],
                 "BarStatusP1": [2, 0, 4],
-                "BarStatusP2": [2, 0, 4]
+                "BarStatusP2": [2, 0, 4],
+                "timer": [1, 0, 60]
             },
             "cfg": {"LP": "But4", "RP": "But1", "LK": "But3", "RK": "But2", "TAG": "But6"}
         },
@@ -211,7 +214,8 @@
                 "AggressorBarP1": [1, 0, 48],
                 "AggressorBarP2": [1, 0, 48],
                 "HealthP1": [1, 0, 166],
-                "HealthP2": [1, 0, 166]
+                "HealthP2": [1, 0, 166],
+                "timer": [1, 0, 100]
             },
             "cfg": {"HP": "But1", "HK": "But2", "LK": "But3",  "LP": "But4", "RUN": "But5", "BLK": "But6"}
         },
@@ -275,7 +279,8 @@
                 "PowerBarP1": [1, 0, 64],
                 "PowerBarP2": [1, 0, 64],
                 "HealthP1": [1, 0, 125],
-                "HealthP2": [1, 0, 125]
+                "HealthP2": [1, 0, 125],
+                "timer": [1, 0, 60]
             },
             "cfg": {"WS": "But1", "MS": "But2", "K": "But3", "M": "But4"}
         },
@@ -337,7 +342,8 @@
                 "WinsP1": [1, 0, 3],
                 "WinsP2": [1, 0, 3],
                 "BarTypeP1": [2, 0, 7],
-                "BarTypeP2": [2, 0, 7]
+                "BarTypeP2": [2, 0, 7],
+                "timer": [1, 0, 60]
             },
             "cfg": {"WP": "But1", "WK": "But2", "SP": "But3", "SK": "But4"}
         }

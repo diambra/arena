@@ -19,7 +19,7 @@ def func(game_id, player, continue_game, action_space, attack_buttons_combinatio
     args = {}
     args["interactive_viz"] = False
     args["n_episodes"] = 1
-
+    args["render"] = False
     args["no_action"] = random.choices([True, False], [no_action_probability, 1.0 - no_action_probability])[0]
 
     try:

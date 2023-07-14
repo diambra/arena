@@ -8,7 +8,8 @@ import warnings
 default_args = {
     "interactive_viz": False,
     "n_episodes": 1,
-    "no_action": False
+    "no_action": False,
+    "render": False
 }
 
 def env_exec(settings, wrappers_settings, traj_rec_settings, args=default_args):
@@ -92,7 +93,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings, args=default_args):
             print("done =", done)
             for k, v in info.items():
                 print("info[\"{}\"] = {}".format(k, v))
-            env.show_obs(observation, wait_key)
+            env.show_obs(observation, wait_key, args["render"])
             print("--")
             print("Current Cumulative Reward =", cumulative_ep_rew)
 
@@ -107,7 +108,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings, args=default_args):
                 cumulative_ep_rew = 0.0
 
                 observation = env.reset()
-                env.show_obs(observation, wait_key)
+                env.show_obs(observation, wait_key, args["render"])
 
             if np.any([info["round_done"], info["stage_done"], info["game_done"], info["ep_done"]]):
 
