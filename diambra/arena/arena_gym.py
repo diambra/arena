@@ -11,13 +11,13 @@ from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSetting
 from typing import Union
 
 # DIAMBRA Env Gym
-class DiambraGymHardcoreBase(gym.Env):
+class DiambraGymBase(gym.Env):
     """Diambra Environment gym interface"""
     metadata = {'render.modes': ['human']}
 
     def __init__(self, env_settings: Union[EnvironmentSettings1P, EnvironmentSettings2P]):
         self.logger = logging.getLogger(__name__)
-        super(DiambraGymHardcoreBase, self).__init__()
+        super(DiambraGymBase, self).__init__()
 
         self.reward_normalization_value = 1.0
         self.attack_but_combination = env_settings.attack_but_combination
@@ -107,16 +107,65 @@ class DiambraGymHardcoreBase(gym.Env):
         return [self.cumulative_reward_bounds[0] / (self.reward_normalization_value),
                 self.cumulative_reward_bounds[1] / (self.reward_normalization_value)]
 
-    # Step method to be implemented in derived classes
-    def step(self, action):
-        raise NotImplementedError()
+    # Return observation
+    def _get_obs(self, frame, data):
+        return frame
 
-    # Resetting the environment
+    # Step the environment
+    def step(self, action):
+
+        self.frame, reward, done, data = self.step_complete(action)
+        observation = self._get_obs(self.frame, data)
+
+        return observation, reward, done,\
+            {"round_done": data["round_done"], "stage_done": data["stage_done"],
+             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
+
+    # Integrate generic RAM states into observation
+    def _generic_ram_states_integration(self, data, frame):
+
+        observation = {}
+        observation["frame"] = frame
+        observation["stage"] = np.array([data["stage"]], dtype=np.int8)
+        observation["timer"] = np.array([data["timer"]], dtype=np.int8)
+
+        return observation
+
+    # Integrate player specific RAM states into observation
+    def _player_specific_ram_states_integration(self, data, player_side):
+
+        player_spec_dict = {}
+
+        # Adding env additional observations (side-specific)
+        for k, v in self.ram_states.items():
+
+            if k == "stage" or k == "timer":
+                continue
+
+            if k[-2:] == player_side:
+                knew = "own" + k[:-2]
+            else:
+                knew = "opp" + k[:-2]
+
+            # Box spaces
+            if v[0] == 1:
+                player_spec_dict[knew] = np.array([data[k]], dtype=np.int32)
+            else:  # Discrete spaces (binary / categorical)
+                player_spec_dict[knew] = data[k]
+
+        actions_dict = {
+            "move": data["moveAction{}".format(player_side)],
+            "attack": data["attackAction{}".format(player_side)],
+        }
+
+        player_spec_dict["actions"] = actions_dict
+
+        return player_spec_dict
+
+    # Reset the environment
     def reset(self):
-        cv2.destroyAllWindows()
-        self.render_gui_started = False
         self.frame, data, self.player_side = self.arena_engine.reset()
-        return self.frame
+        return self._get_obs(self.frame, data)
 
     # Rendering the environment
     def render(self, mode='human', wait_key=1):
@@ -194,7 +243,7 @@ class DiambraGymHardcoreBase(gym.Env):
         self.arena_engine.close()
 
 # DIAMBRA Gym base class for single player mode
-class DiambraGymHardcore1P(DiambraGymHardcoreBase):
+class DiambraGymHardcore1P(DiambraGymBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
@@ -246,17 +295,8 @@ class DiambraGymHardcore1P(DiambraGymHardcoreBase):
 
         return self.frame, reward, done, data
 
-    # Step the environment
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        return self.frame, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
-
 # DIAMBRA Gym base class for two players mode
-class DiambraGymHardcore2P(DiambraGymHardcoreBase):
+class DiambraGymHardcore2P(DiambraGymBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
@@ -319,15 +359,6 @@ class DiambraGymHardcore2P(DiambraGymHardcoreBase):
 
         return self.frame, reward, done, data
 
-    # Step the environment
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        return self.frame, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
-
 # DIAMBRA Gym base class providing frame and additional info as observations
 class DiambraGym1P(DiambraGymHardcore1P):
     def __init__(self, env_settings):
@@ -345,7 +376,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
         # Adding env additional observations (side-specific)
         for k, v in self.ram_states.items():
 
-            if k == "stage":
+            if k == "stage" or k == "timer":
                 continue
 
             if k[-2:] == "P1":
@@ -360,8 +391,7 @@ class DiambraGym1P(DiambraGymHardcore1P):
                 player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
                                                     shape=(1,), dtype=np.int32)
             else:
-                raise RuntimeError(
-                    "Only Discrete (Binary/Categorical) | Box Spaces allowed")
+                raise RuntimeError("Only Discrete (Binary/Categorical) | Box Spaces allowed")
 
         actions_dict = {
             "move": spaces.Discrete(self.n_actions[0]),
@@ -373,58 +403,17 @@ class DiambraGym1P(DiambraGymHardcore1P):
         observation_space_dict["stage"] = spaces.Box(low=self.ram_states["stage"][1],
                                                      high=self.ram_states["stage"][2],
                                                      shape=(1,), dtype=np.int8)
+        observation_space_dict["timer"] = spaces.Box(low=self.ram_states["timer"][1],
+                                                     high=self.ram_states["timer"][2],
+                                                     shape=(1,), dtype=np.int8)
 
         self.observation_space = spaces.Dict(observation_space_dict)
 
-    def ram_states_integration(self, frame, data):
+    def _get_obs(self, frame, data):
 
-        observation = {}
-        observation["frame"] = frame
-        observation["stage"] = np.array([data["stage"]], dtype=np.int8)
+        observation = self._generic_ram_states_integration(data, frame)
+        observation["P1"] = self._player_specific_ram_states_integration(data, self.player_side)
 
-        player_spec_dict = {}
-
-        # Adding env additional observations (side-specific)
-        for k, v in self.ram_states.items():
-
-            if k == "stage":
-                continue
-
-            if k[-2:] == self.player_side:
-                knew = "own" + k[:-2]
-            else:
-                knew = "opp" + k[:-2]
-
-            # Box spaces
-            if v[0] == 1:
-                player_spec_dict[knew] = np.array([data[k]], dtype=np.int32)
-            else:  # Discrete spaces (binary / categorical)
-                player_spec_dict[knew] = data[k]
-
-        actions_dict = {
-            "move": data["moveAction{}".format(self.player_side)],
-            "attack": data["attackAction{}".format(self.player_side)],
-        }
-
-        player_spec_dict["actions"] = actions_dict
-        observation["P1"] = player_spec_dict
-
-        return observation
-
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        observation = self.ram_states_integration(self.frame, data)
-
-        return observation, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
-
-    # Reset the environment
-    def reset(self):
-        self.frame, data, self.player_side = self.arena_engine.reset()
-        observation = self.ram_states_integration(self.frame, data)
         return observation
 
 # DIAMBRA Gym base class providing frame and additional info as observations
@@ -444,7 +433,7 @@ class DiambraGym2P(DiambraGymHardcore2P):
         # Adding env additional observations (side-specific)
         for k, v in self.ram_states.items():
 
-            if k == "stage":
+            if k == "stage" or k == "timer":
                 continue
 
             if k[-2:] == "P1":
@@ -482,59 +471,17 @@ class DiambraGym2P(DiambraGymHardcore2P):
         observation_space_dict["stage"] = spaces.Box(low=self.ram_states["stage"][1],
                                                      high=self.ram_states["stage"][2],
                                                      shape=(1,), dtype=np.int8)
+        observation_space_dict["timer"] = spaces.Box(low=self.ram_states["timer"][1],
+                                                     high=self.ram_states["timer"][2],
+                                                     shape=(1,), dtype=np.int8)
 
         self.observation_space = spaces.Dict(observation_space_dict)
 
-    def ram_states_integration(self, frame, data):
+    def _get_obs(self, frame, data):
 
-        observation = {}
-        observation["frame"] = frame
-        observation["stage"] = np.array([data["stage"]], dtype=np.int8)
+        observation = self._generic_ram_states_integration(data, frame)
 
-        for ielem, elem in enumerate(["P1", "P2"]):
+        observation["P1"] = self._player_specific_ram_states_integration(data, "P1")
+        observation["P2"] = self._player_specific_ram_states_integration(data, "P2")
 
-            player_spec_dict = {}
-
-            # Adding env additional observations (side-specific)
-            for k, v in self.ram_states.items():
-
-                if k == "stage":
-                    continue
-
-                if k[-2:] == elem:
-                    knew = "own" + k[:-2]
-                else:
-                    knew = "opp" + k[:-2]
-
-                # Box spaces
-                if v[0] == 1:
-                    player_spec_dict[knew] = np.array([data[k]], dtype=np.int32)
-                else:  # Discrete spaces (binary / categorical)
-                    player_spec_dict[knew] = data[k]
-
-            actions_dict = {
-                "move": data["moveAction{}".format(elem)],
-                "attack": data["attackAction{}".format(elem)],
-            }
-
-            player_spec_dict["actions"] = actions_dict
-            observation[elem] = player_spec_dict
-
-        return observation
-
-    # Step the environment
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-
-        observation = self.ram_states_integration(self.frame, data)
-
-        return observation, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
-
-    # Reset the environment
-    def reset(self):
-        self.frame, data, self.player_side = self.arena_engine.reset()
-        observation = self.ram_states_integration(self.frame, data)
         return observation

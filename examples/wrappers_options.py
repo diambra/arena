@@ -51,7 +51,7 @@ if __name__ == '__main__':
     # Flattening observation dictionary and filtering
     # a sub-set of the RAM states
     wrappers_settings["flatten"] = True
-    wrappers_settings["filter_keys"] = ["stage", "P1_ownSide", "P1_oppSide",
+    wrappers_settings["filter_keys"] = ["stage", "timer", "P1_ownSide", "P1_oppSide",
                                         "P1_ownHealth", "P1_oppChar",
                                         "P1_actions_move", "P1_actions_attack"]
 

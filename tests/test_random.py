@@ -22,6 +22,7 @@ def func(player, continue_game, action_space, attack_buttons_combination, frame_
     args["interactive_viz"] = False
     args["n_episodes"] = 1
     args["no_action"] = random.choices([True, False], [no_action_prob, 1.0 - no_action_prob])[0]
+    args["render"] = False
 
     diambra_engine_mock = DiambraEngineMock()
 
