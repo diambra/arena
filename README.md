@@ -94,11 +94,17 @@ We aimed at making the submission process as smooth as possible, **<a href="http
 
 - Install Docker Desktop: <a href="https://docs.docker.com/desktop/install/linux-install/" target="_blank">Linux</a> | <a href="https://docs.docker.com/desktop/windows/install/" target="_blank">Windows</a> | <a href="https://docs.docker.com/desktop/mac/install/" target="_blank">MacOS</a>
 
+- Install specific `wheel` and `setuptools` versions (temporary workaround to handle `gym v0.21` incompatibility with newest `pip` versions*):
+
+  `python3 -m pip install wheel==0.38.4 setuptools==66.0.0`
+
 - Install DIAMBRA Command Line Interface: `python3 -m pip install diambra`
 
 - Install DIAMBRA Arena: `python3 -m pip install diambra-arena`
 
 **Using a virtual environment to isolate your python packages installation is strongly suggested**
+
+*We are already working to support `gymnasium>=0.26.3` to solve all `gym v0.21` compatibility issues. This breaking change will happen very soon.
 
 ## Quickstart & Examples
 
