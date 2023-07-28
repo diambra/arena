@@ -1,0 +1,20 @@
+name: docs-rebuild-deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs-rebuild-deploy:
+    runs-on: ubuntu-22.04
+    permissions: write-all
+    steps:
+      - name: Repository Dispatch
+        run: |
+          curl -H "Accept: application/vnd.github.everest-preview+json" \
+          -H "Authorization: token ${{ secrets.ALEXPALMS_DOCS_TOKEN }}" \
+          --request POST \
+          --data '{"event_type": "rebuild-deploy", "client_payload": {}}' https://api.github.com/repos/diambra/docs/dispatches
+
+
