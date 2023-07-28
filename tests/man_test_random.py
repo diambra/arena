@@ -21,11 +21,12 @@ if __name__ == "__main__":
     parser.add_argument("--nEpisodes", type=int, default=1, help="Number of episodes")
     parser.add_argument("--continueGame", type=float, default=-1.0, help="ContinueGame flag (-inf,+1.0]")
     parser.add_argument("--actionSpace", type=str, default="discrete", help="discrete/multi_discrete")
-    parser.add_argument("--attButComb", type=bool, default=False, help="Use attack button combinations (0=F)/1=T")
+    parser.add_argument("--attButComb", type=bool, default=False, help="Use attack button combinations")
     parser.add_argument("--noAction", type=int, default=0, help="If to use no action policy (0=False)")
     parser.add_argument("--recordTraj", type=bool, default=False, help="If to record trajectories")
     parser.add_argument("--hardcore", type=bool, default=False, help="Hard core mode")
-    parser.add_argument("--interactiveViz", type=int, default=0, help="Interactive Visualization (0=False)")
+    parser.add_argument("--interactiveViz", type=bool, default=False, help="Interactive Visualization (False)")
+    parser.add_argument("--render", type=bool, default=True, help="Render frame (False)")
     parser.add_argument("--envAddress", type=str, default="", help="diambraEngine Address")
     parser.add_argument("--wrappers", type=bool, default=False, help="If to use wrappers")
     opt = parser.parse_args()
@@ -89,8 +90,9 @@ if __name__ == "__main__":
 
     # Args
     args = {}
-    args["interactive_viz"] = bool(opt.interactiveViz)
+    args["interactive_viz"] = opt.interactiveViz
     args["no_action"] = True if opt.noAction == 1 else False
     args["n_episodes"] = opt.nEpisodes
+    args["render"] = opt.render
 
     env_exec(settings, wrappers_settings, traj_rec_settings, args)

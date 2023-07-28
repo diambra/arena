@@ -2,7 +2,8 @@
     "python.testing.cwd": "${workspaceFolder}/tests/",
     "python.testing.pytestArgs": [
         "--rootdir",
-        "${workspaceFolder}/tests"
+        "${workspaceFolder}/tests",
+        "-s"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true
