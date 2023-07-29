@@ -1,0 +1,71 @@
+name: Installation tests
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+    branches:
+      - main
+  pull_request: {}
+  schedule:
+    - cron: '30 2 * * *'
+
+jobs:
+  installation-tests:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
+        installation-option: ['basic', 'stable-baselines', 'stable-baselines3', 'ray-rllib']
+        python-packages-version: ['default', 'latest']
+
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup environment configuration (default or latest)
+        run: |
+          if [ "${{ matrix.python-packages-version }}" == 'latest' ]; then
+            python3 -m pip install -U pip
+            python3 -m pip install -U setuptools
+          fi
+          pip list
+
+      - name: Pre-install packages needed because of various deprecations deprecation
+        run: |
+          python3 -m pip install -U wheel # Deprecated setup.py installation need to move to pyproject.toml
+          python3 -m pip install wheel==0.38.4 # Deprecated format of gym==0.21 setup.py
+          python3 -m pip install setuptools==66.0.0 # Deprecated format of gym==0.21 setup.py
+          pip list
+
+      - name: Define Package Path
+        id: set_package_path
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "package_path=diambra-arena" >> "$GITHUB_ENV"
+          else
+            echo "package_path=." >> "$GITHUB_ENV"
+          fi
+
+      - name: Checkout Main Branch and Install Package
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+        uses: actions/checkout@v3
+
+      - name: Checkout Pull Request Branch and Install Package
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Install Package via pip
+        if: ( ( ( matrix.installation-option == 'stable-baselines' || matrix.installation-option == 'basic' ) && matrix.python-version == '3.7' ) ||
+              ( matrix.installation-option != 'stable-baselines' && matrix.python-version != '3.7' ) )
+        run: |
+          if [ "${{ matrix.installation-option }}" == "basic" ]; then
+            pip install ${{ env.package_path }}
+          else
+            pip install ${{ env.package_path }}[${{ matrix.installation-option }}]
+          fi
+          pip list

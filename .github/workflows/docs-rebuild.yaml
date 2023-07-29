@@ -1,4 +1,4 @@
-name: docs-rebuild-deploy
+name: Documentation build & deploy trigger
 
 on:
   push:

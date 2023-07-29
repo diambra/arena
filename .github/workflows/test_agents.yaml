@@ -1,3 +1,5 @@
+name: DIAMBRA Agents tests
+
 on:
   pull_request: {}
 
