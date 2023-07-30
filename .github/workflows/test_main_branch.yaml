@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/reusable_agents_unit_tests.yaml
     with:
       arena_branch: 'main'
-  agents-unit-tests:
+  arena-installation-tests:
     name: Arena installation tests
     uses: ./.github/workflows/reusable_arena_installation_tests.yaml
     with:
