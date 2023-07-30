@@ -1,17 +1,18 @@
-name: Installation tests
+name: Reusable arena installation tests
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
-    branches:
-      - main
-  pull_request: {}
-  schedule:
-    - cron: '30 2 * * *'
+  workflow_call:
+    inputs:
+      arena_branch:
+        required: true
+        type: string
+      package:
+        required: false
+        type: string
 
 jobs:
-  installation-tests:
+  reusable_arena_installation_tests:
+    name: Reusable arena installation tests
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -40,24 +41,20 @@ jobs:
           python3 -m pip install setuptools==66.0.0 # Deprecated format of gym==0.21 setup.py
           pip list
 
-      - name: Define Package Path
+      - name: Define package path
         id: set_package_path
         run: |
-          if [ "${{ github.event_name }}" == "schedule" ]; then
+          if [ "${{ inputs.package }}" == "yes" ]; then
             echo "package_path=diambra-arena" >> "$GITHUB_ENV"
           else
             echo "package_path=." >> "$GITHUB_ENV"
           fi
 
-      - name: Checkout Main Branch and Install Package
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
-        uses: actions/checkout@v3
-
-      - name: Checkout Pull Request Branch and Install Package
-        if: github.event_name == 'pull_request'
+      - name: Checkout selected branch
+        if: ${{ inputs.package }} != "yes"
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: "${{ inputs.arena_branch }}"
 
       - name: Install Package via pip
         if: ( ( ( matrix.installation-option == 'stable-baselines' || matrix.installation-option == 'basic' ) && matrix.python-version == '3.7' ) ||
