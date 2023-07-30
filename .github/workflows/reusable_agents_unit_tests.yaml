@@ -12,5 +12,5 @@ jobs:
     name: Reusable agents unit tests
     uses: diambra/agents/.github/workflows/reusable-test.yaml@main
     with:
-      arena_requirement_specifier: 'git+https://github.com/diambra/arena.git@$${{ inputs.arena_branch }}#egg='
+      arena_requirement_specifier: 'git+https://github.com/diambra/arena.git@${{ inputs.arena_branch }}#egg='
       agents_ref: 'main'
