@@ -11,6 +11,11 @@ on:
 jobs:
   arena-unit-tests:
     name: Arena unit tests
-    uses: ./.github/workflows/test.yaml
+    uses: ./.github/workflows/reusable_arena_unit_tests.yaml
     with:
-      arena-branch: 'main'
+      arena_branch: 'main'
+  agents-unit-tests:
+    name: Agents unit tests
+    uses: ./.github/workflows/reusable_agents_unit_tests.yaml
+    with:
+      arena_branch: 'main'

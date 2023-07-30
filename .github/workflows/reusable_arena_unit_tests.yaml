@@ -1,31 +1,36 @@
-name: Reusable Arena unit tests
+name: Reusable arena unit tests
 
 on:
   workflow_call:
     inputs:
-      arena-branch:
+      arena_branch:
         required: true
         type: string
 
 jobs:
-  reusable-arena-unit-tests:
-    name: Reusable Arena unit tests
+  reusable_arena_unit_tests:
+    name: Reusable arena unit tests
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python_version: ['3.7', '3.8', '3.9', '3.10']
     steps:
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python ${{ matrix.python_version }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python_version: ${{ matrix.python_version }}
       - name: Pre-install pinned packages for deprecations
-        run: python3 -m pip install wheel==0.38.4 setuptools==66.0.0
+        run: |
+          python3 -m pip install wheel==0.38.4 setuptools==66.0.0
+          pip list
       - name: Checkout target branch
         uses: actions/checkout@v3
         with:
-          ref: "${{ inputs.arena-branch }}"
-      - run: python3 -m pip install .["tests"]
+          ref: "${{ inputs.arena_branch }}"
+      - name: Install tests dependencies
+        run: |
+          python3 -m pip install .["tests"]
+          pip list
       - name: Run tests
         run: |
           pytest tests/test_gym_settings.py
