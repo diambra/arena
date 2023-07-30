@@ -1,0 +1,16 @@
+name: Main branch tests
+
+on:
+  #push:
+  #  branches:
+  #    - main
+  #schedule:
+  #  - cron: '30 2 * * *'
+  pull_request:
+
+jobs:
+  arena-unit-tests:
+    name: Arena unit tests
+    uses: ./.github/workflows/test.yaml
+    with:
+      arena-branch: 'main'

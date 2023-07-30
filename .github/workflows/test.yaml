@@ -1,20 +1,35 @@
-name: DIAMBRA Arena tests
+name: Reusable Arena unit tests
 
 on:
-  pull_request: {}
+  workflow_call:
+    inputs:
+      arena-branch:
+        required: true
+        type: string
 
 jobs:
-  test:
+  reusable-arena-unit-tests:
+    name: Reusable Arena unit tests
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10']
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
-      - run: python3 -m pip install wheel==0.38.4
+          python-version: ${{ matrix.python-version }}
+      - name: Pre-install pinned packages for deprecations
+        run: python3 -m pip install wheel==0.38.4 setuptools==66.0.0
+      - name: Checkout target branch
+        uses: actions/checkout@v3
+        with:
+          ref: "${{ inputs.arena-branch }}"
       - run: python3 -m pip install .["tests"]
-      - run: pytest tests/test_gym_settings.py
-      - run: pytest tests/test_wrappers_settings.py
-      - run: pytest tests/test_recording_settings.py
-      - run: pytest tests/test_random.py
-      - run: pytest tests/test_speed.py
+      - name: Run tests
+        run: |
+          pytest tests/test_gym_settings.py
+          pytest tests/test_wrappers_settings.py
+          pytest tests/test_recording_settings.py
+          pytest tests/test_random.py
+          pytest tests/test_speed.py
