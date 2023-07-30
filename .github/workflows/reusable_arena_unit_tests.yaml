@@ -18,7 +18,7 @@ jobs:
       - name: Set up Python ${{ matrix.python_version }}
         uses: actions/setup-python@v4
         with:
-          python_version: ${{ matrix.python_version }}
+          python-version: ${{ matrix.python_version }}
       - name: Pre-install pinned packages for deprecations
         run: |
           python3 -m pip install wheel==0.38.4 setuptools==66.0.0
