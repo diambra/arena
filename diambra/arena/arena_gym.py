@@ -19,78 +19,124 @@ class DiambraGymBase(gym.Env):
         self.logger = logging.getLogger(__name__)
         super(DiambraGymBase, self).__init__()
 
+        self._frame = None
+        self._last_action = None
+
         self.reward_normalization_value = 1.0
-        self.attack_but_combination = env_settings.attack_but_combination
 
         self.env_settings = env_settings
         self.render_gui_started = False
 
-        # Launch DIAMBRA Arena
+        # Launch DIAMBRA Engine
         self.arena_engine = DiambraEngine(env_settings.env_address, env_settings.grpc_timeout)
 
         # Send environment settings, retrieve environment info
-        env_info_dict = self.arena_engine.env_init(self.env_settings)
-        self.env_info_process(env_info_dict)
-        self.player_side = self.env_settings.player
+        self.env_info = self.arena_engine.env_init(self.env_settings.get_pb_request())
         self.difficulty = self.env_settings.difficulty
 
         # Settings log
         self.logger.info(self.env_settings)
 
-        # Image as input:
-        self.observation_space = spaces.Box(low=0, high=255,
-                                            shape=(self.hwc_dim[0],
-                                                   self.hwc_dim[1],
-                                                   self.hwc_dim[2]),
-                                            dtype=np.uint8)
-
-    # Processing Environment info
-    def env_info_process(self, env_info_dict):
         # N actions
-        self.n_actions_but_comb = env_info_dict["n_actions"][0]
-        self.n_actions_no_but_comb = env_info_dict["n_actions"][1]
-        # N actions
-        if self.env_settings.player == "P1P2":
-            self.n_actions = [self.n_actions_but_comb, self.n_actions_but_comb]
-            for idx in range(2):
-                if self.attack_but_combination[idx] is False:
-                    self.n_actions[idx] = self.n_actions_no_but_comb
-        else:
-            self.n_actions = self.n_actions_but_comb
-            if self.attack_but_combination is False:
-                self.n_actions = self.n_actions_no_but_comb
+        self.n_actions = [self.env_info.available_actions.n_moves, \
+                          self.env_info.available_actions.n_attacks, \
+                          self.env_info.available_actions.n_attacks_no_comb]
 
-        # Frame height, width and channel dimensions
-        self.hwc_dim = env_info_dict["frame_shape"]
+        # Actions tuples and dict
+        move_tuple = ()
+        move_dict = {}
+        attack_tuple= ()
+        attack_dict = {}
+
+        for idx in range(len(self.env_info.available_actions.moves)):
+            move_tuple += (self.env_info.available_actions.moves[idx].key,)
+            move_dict[idx] = self.env_info.available_actions.moves[idx].label
+
+        for idx in range(len(self.env_info.available_actions.attacks)):
+            attack_tuple += (self.env_info.available_actions.attacks[idx].key,)
+            attack_dict[idx] = self.env_info.available_actions.attacks[idx].label
+
+        self.actions_tuples = (move_tuple, attack_tuple)
+        self.print_actions_dict = [move_dict, attack_dict]
 
         # Maximum difference in players health
-        self.max_delta_health = env_info_dict["delta_health"]
+        for k in sorted(self.env_info.ram_states.keys()):
+            if "health" in k:
+                self.max_delta_health = self.env_info.ram_states[k].max - self.env_info.ram_states[k].min
+                break
 
-        # Maximum number of stages (1P game vs COM)
-        self.max_stage = env_info_dict["max_stage"]
+    def _get_ram_states_obs_dict(self):
+        player_spec_dict = {}
+        generic_dict = {}
+        # Adding env additional observations (side-specific)
+        for k, v in self.env_info.ram_states.items():
+            if k[-2:] == "P1":
+                target_dict = player_spec_dict
+                knew = "own_" + k[:-2]
+            elif k[-2:] == "P2":
+                target_dict = player_spec_dict
+                knew = "opp_" + k[:-2]
+            else:
+                target_dict = generic_dict
+                knew = k
 
-        # Min-Max reward
-        self.cumulative_reward_bounds = env_info_dict["cumulative_reward_bounds"]
+            # Discrete spaces (binary / categorical)
+            if v.type == 0 or v.type == 2:
+                target_dict[knew] = spaces.Discrete(v.max + 1)
+            elif v.type == 1:  # Box spaces
+                target_dict[knew] = spaces.Box(low=v.min, high=v.max, shape=(1,), dtype=np.int32)
+            else:
+                raise RuntimeError("Only Discrete (Binary/Categorical) | Box Spaces allowed")
 
-        # Characters names list
-        self.char_names = env_info_dict["char_list"]
+        player_spec_dict["action_move"] = spaces.Discrete(self.n_actions[0])
+        player_spec_dict["action_attack"] = spaces.Discrete(self.n_actions[1])
 
-        # Action list
-        self.action_list = (tuple(env_info_dict["actions_list"][0]), tuple(env_info_dict["actions_list"][1]))
+        return generic_dict, player_spec_dict
 
-        # Action dict
-        self.print_actions_dict = env_info_dict["actions_dict"]
+    # Get frame
+    def _get_frame(self, response):
+        self._frame = np.frombuffer(response.observation.frame, dtype='uint8').reshape(self.env_info.frame_shape.h, \
+                                                                                       self.env_info.frame_shape.w, \
+                                                                                       self.env_info.frame_shape.c)
+        return self._frame
 
-        # Ram states map
-        self.ram_states = {}
-        for k in sorted(env_info_dict["ram_states"].keys()):
-            self.ram_states[k] = [env_info_dict["ram_states"][k].type,
-                                  env_info_dict["ram_states"][k].min,
-                                  env_info_dict["ram_states"][k].max]
+    # Get info
+    def _get_info(self, response):
+        return dict(response.info.game_states)
+
+    # Integrate player specific RAM states into observation
+    def _player_specific_ram_states_integration(self, response, idx):
+
+        player_spec_dict = {}
+        generic_dict = {}
+
+        # Adding env additional observations (side-specific)
+        player_role = self.env_settings.pb_model.variable_env_settings.player_env_settings[idx].role
+        for k, v in response.observation.ram_states.items():
+            if ("P1" in k or "P2" in k):
+                target_dict = player_spec_dict
+                if k[-2:] == player_role:
+                    knew = "own_" + k[:-2]
+                else:
+                    knew = "opp_" + k[:-2]
+            else:
+                target_dict = generic_dict
+                knew = k
+
+            # Box spaces
+            if v.type == 1:
+                target_dict[knew] = np.array([response.observation.ram_states[k].val], dtype=np.int32)
+            else:  # Discrete spaces (binary / categorical)
+                target_dict[knew] = response.observation.ram_states[k].val
+
+        player_spec_dict["action_move"] = self._last_action[idx][0]
+        player_spec_dict["action_attack"] = self._last_action[idx][1]
+
+        return generic_dict, player_spec_dict
 
     # Return env action list
-    def action_list(self):
-        return self.action_list
+    def get_actions_tuples(self):
+        return self.actions_tuples
 
     # Print Actions
     def print_actions(self):
@@ -104,68 +150,14 @@ class DiambraGymBase(gym.Env):
 
     # Return cumulative reward bounds for the environment
     def get_cumulative_reward_bounds(self):
-        return [self.cumulative_reward_bounds[0] / (self.reward_normalization_value),
-                self.cumulative_reward_bounds[1] / (self.reward_normalization_value)]
-
-    # Return observation
-    def _get_obs(self, frame, data):
-        return frame
-
-    # Step the environment
-    def step(self, action):
-
-        self.frame, reward, done, data = self.step_complete(action)
-        observation = self._get_obs(self.frame, data)
-
-        return observation, reward, done,\
-            {"round_done": data["round_done"], "stage_done": data["stage_done"],
-             "game_done": data["game_done"], "ep_done": data["ep_done"], "env_done": data["env_done"]}
-
-    # Integrate generic RAM states into observation
-    def _generic_ram_states_integration(self, data, frame):
-
-        observation = {}
-        observation["frame"] = frame
-        observation["stage"] = np.array([data["stage"]], dtype=np.int8)
-        observation["timer"] = np.array([data["timer"]], dtype=np.int8)
-
-        return observation
-
-    # Integrate player specific RAM states into observation
-    def _player_specific_ram_states_integration(self, data, player_side):
-
-        player_spec_dict = {}
-
-        # Adding env additional observations (side-specific)
-        for k, v in self.ram_states.items():
-
-            if k == "stage" or k == "timer":
-                continue
-
-            if k[-2:] == player_side:
-                knew = "own" + k[:-2]
-            else:
-                knew = "opp" + k[:-2]
-
-            # Box spaces
-            if v[0] == 1:
-                player_spec_dict[knew] = np.array([data[k]], dtype=np.int32)
-            else:  # Discrete spaces (binary / categorical)
-                player_spec_dict[knew] = data[k]
-
-        actions_dict = {
-            "move": data["moveAction{}".format(player_side)],
-            "attack": data["attackAction{}".format(player_side)],
-        }
-
-        player_spec_dict["actions"] = actions_dict
-
-        return player_spec_dict
+        return [self.env_info.cumulative_reward_bounds.min / (self.reward_normalization_value),
+                self.env_info.cumulative_reward_bounds.max / (self.reward_normalization_value)]
 
     # Reset the environment
     def reset(self):
-        self.frame, data, self.player_side = self.arena_engine.reset()
-        return self._get_obs(self.frame, data)
+        self._last_action = [[0, 0], [0, 0]]
+        response = self.arena_engine.reset()
+        return self._get_obs(response)
 
     # Rendering the environment
     def render(self, mode='human', wait_key=1):
@@ -179,62 +171,47 @@ class DiambraGymBase(gym.Env):
                     self.render_gui_started = True
                     wait_key = 100
 
-                cv2.imshow(self.window_name, self.frame[:, :, ::-1])
+                cv2.imshow(self.window_name, self._frame[:, :, ::-1])
                 cv2.waitKey(wait_key)
                 return True
             except:
                 return False
         elif mode == "rgb_array":
-            return self.frame
+            return self._frame
 
     # Print observation details to the console
-    def show_obs(self, observation, wait_key=1, viz=True):
+    def show_obs(self, observation, wait_key=1, viz=True, string="observation", key=None):
 
         if type(observation) == dict:
-            for k, v in observation.items():
-                if k != "frame":
-                    if type(v) == dict:
-                        for k2, v2 in v.items():
-                            if k2 == "actions":
-
-                                for k3, v3 in v2.items():
-                                    out_value = v3
-                                    additional_string = ": "
-                                    if type(v3) != int:
-                                        if self.env_settings.player == "P1P2":
-                                            n_actions = self.n_actions[0] if k == "P1" else self.n_actions[1]
-                                        else:
-                                            n_actions = self.n_actions
-                                        n_actions_stack = int(self.observation_space[k][k2][k3].n / (n_actions[0] if k3 == "move" else n_actions[1]))
-                                        out_value = np.reshape(v3, [n_actions_stack, -1])
-                                        additional_string = " (reshaped for visualization):\n"
-                                    print("observation[\"{}\"][\"{}\"][\"{}\"]{}{}".format(k, k2, k3, additional_string, out_value))
-                            elif "ownChar" in k2 or "oppChar" in k2:
-                                char_idx = v2 if type(v2) == int else np.where(v2 == 1)[0][0]
-                                print("observation[\"{}\"][\"{}\"]: {} / {}".format(k, k2, v2, self.char_names[char_idx]))
-                            else:
-                                print("observation[\"{}\"][\"{}\"]: {}".format(k, k2, v2))
-                    else:
-                        print("observation[\"{}\"]: {}".format(k, v))
-                else:
-                    frame = observation["frame"]
-                    print("observation[\"frame\"]: shape {} - min {} - max {}".format(frame.shape, np.amin(frame), np.amax(frame)))
-
-            if viz:
-                frame = observation["frame"]
+            for k, v in sorted(observation.items()):
+                self.show_obs(v, wait_key=wait_key, viz=viz, string=string + "[\"{}\"]".format(k), key=k)
         else:
-            if viz:
-                frame = observation
+            if key != "frame":
+                if "action" in key:
+                    out_value = observation
+                    additional_string = ": "
+                    if isinstance(observation, (int, np.integer)) is False:
+                        n_actions_stack = int(observation.size / (self.n_actions[0] if "move" in key else self.n_actions[1]))
+                        out_value = np.reshape(observation, [n_actions_stack, -1])
+                        additional_string = " (reshaped for visualization):\n"
+                    print(string + "{}{}".format(additional_string, out_value))
+                elif "own_char" in key or "opp_char" in key:
+                    char_idx = observation if type(observation) == int else np.where(observation == 1)[0][0]
+                    print(string + ": {} / {}".format(observation, self.env_info.char_list[char_idx]))
+                else:
+                    print(string + ": {}".format(observation))
+            else:
+                print(string + ": shape {} - min {} - max {}".format(observation.shape, np.amin(observation), np.amax(observation)))
 
-        if viz is True and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
-            try:
-                norm_factor = 255 if np.amax(frame) > 1.0 else 1.0
-                for idx in range(frame.shape[2]):
-                    cv2.imshow("[{}] Frame channel {}".format(os.getpid(), idx), frame[:, :, idx] / norm_factor)
+                if viz is True and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+                    try:
+                        norm_factor = 255 if np.amax(observation) > 1.0 else 1.0
+                        for idx in range(observation.shape[2]):
+                            cv2.imshow("[{}] Frame channel {}".format(os.getpid(), idx), observation[:, :, idx] / norm_factor)
 
-                cv2.waitKey(wait_key)
-            except:
-                pass
+                        cv2.waitKey(wait_key)
+                    except:
+                        pass
 
     # Closing the environment
     def close(self):
@@ -242,246 +219,136 @@ class DiambraGymBase(gym.Env):
         cv2.destroyAllWindows()
         self.arena_engine.close()
 
-# DIAMBRA Gym base class for single player mode
-class DiambraGymHardcore1P(DiambraGymBase):
+# DIAMBRA Gym 1P class
+class DiambraGym1P(DiambraGymBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
-        # Define action and observation space
-        # They must be gym.spaces objects
+        # Observation space
+        # Dictionary
+        observation_space_dict = {}
+        observation_space_dict['frame'] = spaces.Box(low=0, high=255, shape=(self.env_info.frame_shape.h,
+                                                                             self.env_info.frame_shape.w,
+                                                                             self.env_info.frame_shape.c),
+                                                                      dtype=np.uint8)
+        generic_obs_dict, player_obs_dict = self._get_ram_states_obs_dict()
+        observation_space_dict.update(generic_obs_dict)
+        observation_space_dict.update(player_obs_dict)
+        self.observation_space = spaces.Dict(observation_space_dict)
 
+        # Action space
+        # MultiDiscrete actions:
+        # - Arrows -> One discrete set
+        # - Buttons -> One discrete set
+        # Discrete actions:
+        # - Arrows U Buttons -> One discrete set
+        # NB: use the convention NOOP = 0
         if env_settings.action_space == "multi_discrete":
-            # MultiDiscrete actions:
-            # - Arrows -> One discrete set
-            # - Buttons -> One discrete set
-            # NB: use the convention NOOP = 0, and buttons combinations
-            #     can be prescripted:
-            #     e.g. NOOP = [0], ButA = [1], ButB = [2], ButA+ButB = [3]
-            #     or ignored:
-            #     e.g. NOOP = [0], ButA = [1], ButB = [2]
-            self.action_space = spaces.MultiDiscrete(self.n_actions)
+            self.action_space = spaces.MultiDiscrete(self.n_actions[:2])
             self.logger.debug("Using MultiDiscrete action space")
         elif env_settings.action_space == "discrete":
-            # Discrete actions:
-            # - Arrows U Buttons -> One discrete set
-            # NB: use the convention NOOP = 0, and buttons combinations
-            #     can be prescripted:
-            #     e.g. NOOP = [0], ButA = [1], ButB = [2], ButA+ButB = [3]
-            #     or ignored:
-            #     e.g. NOOP = [0], ButA = [1], ButB = [2]
             self.action_space = spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
             self.logger.debug("Using Discrete action space")
+
+    def _get_obs(self, response):
+
+        observation = {}
+        observation["frame"] = self._get_frame(response)
+        generic_obs_dict, player_obs_dict = self._player_specific_ram_states_integration(response, 0)
+        observation.update(generic_obs_dict)
+        observation.update(player_obs_dict)
+
+        return observation
+
+    # Return the no-op action
+    def get_no_op_action(self):
+        if isinstance(self.action_space, gym.spaces.MultiDiscrete):
+            return [0, 0]
         else:
-            raise Exception("Not recognized action space: {}".format(env_settings.action_space))
+            return 0
 
     # Step the environment
-    def step_complete(self, action):
-        # Actions initialization
-        mov_act = 0
-        att_act = 0
+    def step(self, action):
 
         # Defining move and attack actions P1/P2 as a function of action_space
-
         if isinstance(self.action_space, gym.spaces.MultiDiscrete):
-            mov_act = action[0]
-            att_act = action[1]
+            self._last_action[0] = action
         else:
-            # Discrete to multidiscrete conversion
-            mov_act, att_act = discrete_to_multi_discrete_action(
-                action, self.n_actions[0])
+            self._last_action[0] = list(discrete_to_multi_discrete_action(action, self.n_actions[0]))
 
-        self.frame, reward, data = self.arena_engine.step_1p(mov_act, att_act)
-        done = data["ep_done"]
+        response = self.arena_engine.step(self._last_action)
 
-        return self.frame, reward, done, data
+        observation = self._get_obs(response)
 
-# DIAMBRA Gym base class for two players mode
-class DiambraGymHardcore2P(DiambraGymBase):
+        return observation, response.reward, response.info.game_states["episode_done"], self._get_info(response)
+
+# DIAMBRA Gym 2P Class
+class DiambraGym2P(DiambraGymBase):
     def __init__(self, env_settings):
         super().__init__(env_settings)
 
-        # Define action spaces, they must be gym.spaces objects
+        # Dictionary observation space
+        observation_space_dict = {}
+        observation_space_dict['frame'] = spaces.Box(low=0, high=255,
+                                                     shape=(self.env_info.frame_shape.h,
+                                                            self.env_info.frame_shape.w,
+                                                            self.env_info.frame_shape.c),
+                                                     dtype=np.uint8)
+
+        generic_obs_dict, player_obs_dict = self._get_ram_states_obs_dict()
+        observation_space_dict.update(generic_obs_dict)
+        observation_space_dict["agent_0"] = spaces.Dict(player_obs_dict)
+        observation_space_dict["agent_1"] = spaces.Dict(player_obs_dict)
+
+        self.observation_space = spaces.Dict(observation_space_dict)
+
+        # Action space
+        # Dictionary
         action_space_dict = {}
         for idx in range(2):
             if env_settings.action_space[idx] == "multi_discrete":
-                action_space_dict["P{}".format(idx + 1)] =\
-                    spaces.MultiDiscrete(self.n_actions[idx])
-                self.logger.debug("Using MultiDiscrete action space for P{}".format(idx + 1))
+                action_space_dict["agent_{}".format(idx)] = spaces.MultiDiscrete(self.n_actions[:2])
             elif env_settings.action_space[idx] == "discrete":
-                action_space_dict["P{}".format(idx + 1)] =\
-                    spaces.Discrete(
-                        self.n_actions[idx][0] + self.n_actions[idx][1] - 1)
-                self.logger.debug("Using Discrete action space for P{}".format(idx + 1))
-            else:
-                raise Exception("Not recognized action space: {}".format(env_settings.action_space[idx]))
+                action_space_dict["agent_{}".format(idx)] = spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
+            self.logger.debug("Using {} action space for agent_{}".format(env_settings.action_space[idx], idx))
 
         self.action_space = spaces.Dict(action_space_dict)
 
+    def _get_obs(self, response):
+
+        observation = {}
+        observation["frame"] = self._get_frame(response)
+        for idx in range(2):
+            generic_obs_dict, player_obs_dict = self._player_specific_ram_states_integration(response, idx)
+            observation["agent_{}".format(idx)] = player_obs_dict
+        observation.update(generic_obs_dict)
+
+        return observation
+
+    # Return the no-op action
+    def get_no_op_action(self):
+        no_op_action = {}
+        for idx in range(2):
+            if self.env_settings.action_space[idx] == "multi_discrete":
+                no_op_action["agent_{}".format(idx)] = [0, 0]
+            elif self.env_settings.action_space[idx] == "discrete":
+                no_op_action["agent_{}".format(idx)] = 0
+
+        return no_op_action
+
     # Step the environment
-    def step_complete(self, action):
-        # Actions initialization
-        mov_act_p1 = 0
-        att_act_p1 = 0
-        mov_act_p2 = 0
-        att_act_p2 = 0
-
-        # Defining move and attack actions P1/P2 as a function of action_space
-        if isinstance(self.action_space["P1"], gym.spaces.MultiDiscrete):
-            # P1
-            mov_act_p1 = action[0]
-            att_act_p1 = action[1]
-            # P2
-            # P2 MultiDiscrete Action Space
-            if isinstance(self.action_space["P2"], gym.spaces.MultiDiscrete):
-                mov_act_p2 = action[2]
-                att_act_p2 = action[3]
-            else:  # P2 Discrete Action Space
-                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(action[2], self.n_actions[1][0])
-
-        else:  # P1 Discrete Action Space
-            # P2
-            # P2 MultiDiscrete Action Space
-            if isinstance(self.action_space["P2"], gym.spaces.MultiDiscrete):
-                # P1
-                # Discrete to multidiscrete conversion
-                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(action[0], self.n_actions[0][0])
-                mov_act_p2 = action[1]
-                att_act_p2 = action[2]
-            else:  # P2 Discrete Action Space
-                # P1
-                # Discrete to multidiscrete conversion
-                mov_act_p1, att_act_p1 = discrete_to_multi_discrete_action(action[0], self.n_actions[0][0])
-                mov_act_p2, att_act_p2 = discrete_to_multi_discrete_action(action[1], self.n_actions[1][0])
-
-        self.frame, reward, data = self.arena_engine.step_2p(mov_act_p1, att_act_p1, mov_act_p2, att_act_p2)
-        done = data["game_done"]
-        # data["ep_done"]   = done
-
-        return self.frame, reward, done, data
-
-# DIAMBRA Gym base class providing frame and additional info as observations
-class DiambraGym1P(DiambraGymHardcore1P):
-    def __init__(self, env_settings):
-        super().__init__(env_settings)
-
-        # Dictionary observation space
-        observation_space_dict = {}
-        observation_space_dict['frame'] = spaces.Box(low=0, high=255,
-                                                     shape=(self.hwc_dim[0],
-                                                            self.hwc_dim[1],
-                                                            self.hwc_dim[2]),
-                                                     dtype=np.uint8)
-        player_spec_dict = {}
-
-        # Adding env additional observations (side-specific)
-        for k, v in self.ram_states.items():
-
-            if k == "stage" or k == "timer":
-                continue
-
-            if k[-2:] == "P1":
-                knew = "own" + k[:-2]
+    def step(self, actions):
+        # NOTE: the assumption in current interface is that we have actions sorted as agent's order
+        actions = sorted(actions.items())
+        for idx, action in enumerate(actions):
+            # Defining move and attack actions P1/P2 as a function of action_space
+            if isinstance(self.action_space[action[0]], gym.spaces.MultiDiscrete):
+                self._last_action[idx] = action[1]
             else:
-                knew = "opp" + k[:-2]
+                self._last_action[idx] = list(discrete_to_multi_discrete_action(action[1], self.n_actions[0]))
 
-            # Discrete spaces (binary / categorical)
-            if v[0] == 0 or v[0] == 2:
-                player_spec_dict[knew] = spaces.Discrete(v[2] + 1)
-            elif v[0] == 1:  # Box spaces
-                player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
-                                                    shape=(1,), dtype=np.int32)
-            else:
-                raise RuntimeError("Only Discrete (Binary/Categorical) | Box Spaces allowed")
+        response = self.arena_engine.step(self._last_action)
 
-        actions_dict = {
-            "move": spaces.Discrete(self.n_actions[0]),
-            "attack": spaces.Discrete(self.n_actions[1])
-        }
+        observation = self._get_obs(response)
 
-        player_spec_dict["actions"] = spaces.Dict(actions_dict)
-        observation_space_dict["P1"] = spaces.Dict(player_spec_dict)
-        observation_space_dict["stage"] = spaces.Box(low=self.ram_states["stage"][1],
-                                                     high=self.ram_states["stage"][2],
-                                                     shape=(1,), dtype=np.int8)
-        observation_space_dict["timer"] = spaces.Box(low=self.ram_states["timer"][1],
-                                                     high=self.ram_states["timer"][2],
-                                                     shape=(1,), dtype=np.int8)
-
-        self.observation_space = spaces.Dict(observation_space_dict)
-
-    def _get_obs(self, frame, data):
-
-        observation = self._generic_ram_states_integration(data, frame)
-        observation["P1"] = self._player_specific_ram_states_integration(data, self.player_side)
-
-        return observation
-
-# DIAMBRA Gym base class providing frame and additional info as observations
-class DiambraGym2P(DiambraGymHardcore2P):
-    def __init__(self, env_settings):
-        super().__init__(env_settings)
-
-        # Dictionary observation space
-        observation_space_dict = {}
-        observation_space_dict['frame'] = spaces.Box(low=0, high=255,
-                                                     shape=(self.hwc_dim[0],
-                                                            self.hwc_dim[1],
-                                                            self.hwc_dim[2]),
-                                                     dtype=np.uint8)
-        player_spec_dict = {}
-
-        # Adding env additional observations (side-specific)
-        for k, v in self.ram_states.items():
-
-            if k == "stage" or k == "timer":
-                continue
-
-            if k[-2:] == "P1":
-                knew = "own" + k[:-2]
-            else:
-                knew = "opp" + k[:-2]
-
-            if v[0] == 0 or v[0] == 2:  # Discrete spaces
-                player_spec_dict[knew] = spaces.Discrete(v[2] + 1)
-            elif v[0] == 1:  # Box spaces
-                player_spec_dict[knew] = spaces.Box(low=v[1], high=v[2],
-                                                    shape=(1,), dtype=np.int32)
-
-            else:
-                raise RuntimeError("Only Discrete and Box Spaces allowed")
-
-        actions_dict = {
-            "move": spaces.Discrete(self.n_actions[0][0]),
-            "attack": spaces.Discrete(self.n_actions[0][1])
-        }
-
-        player_spec_dict["actions"] = spaces.Dict(actions_dict)
-        player_dict_p1 = player_spec_dict.copy()
-        observation_space_dict["P1"] = spaces.Dict(player_dict_p1)
-
-        actions_dict = {
-            "move": spaces.Discrete(self.n_actions[1][0]),
-            "attack": spaces.Discrete(self.n_actions[1][1])
-        }
-
-        player_spec_dict["actions"] = spaces.Dict(actions_dict)
-        player_dict_p2 = player_spec_dict.copy()
-        observation_space_dict["P2"] = spaces.Dict(player_dict_p2)
-
-        observation_space_dict["stage"] = spaces.Box(low=self.ram_states["stage"][1],
-                                                     high=self.ram_states["stage"][2],
-                                                     shape=(1,), dtype=np.int8)
-        observation_space_dict["timer"] = spaces.Box(low=self.ram_states["timer"][1],
-                                                     high=self.ram_states["timer"][2],
-                                                     shape=(1,), dtype=np.int8)
-
-        self.observation_space = spaces.Dict(observation_space_dict)
-
-    def _get_obs(self, frame, data):
-
-        observation = self._generic_ram_states_integration(data, frame)
-
-        observation["P1"] = self._player_specific_ram_states_integration(data, "P1")
-        observation["P2"] = self._player_specific_ram_states_integration(data, "P2")
-
-        return observation
+        return observation, response.reward, response.info.game_states["game_done"], self._get_info(response)

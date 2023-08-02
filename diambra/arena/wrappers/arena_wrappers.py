@@ -3,6 +3,8 @@ import numpy as np
 import gym
 import logging
 from diambra.arena.env_settings import WrappersSettings
+from diambra.arena.wrappers.observation import WarpFrame, GrayscaleFrame, FrameStack, FrameStackDilated,\
+                                               ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, no_op_max=6):
@@ -24,11 +26,8 @@ class NoopResetEnv(gym.Wrapper):
             no_ops = random.randint(1, self.no_op_max + 1)
         assert no_ops > 0
         obs = None
-        no_op_action = [0, 0, 0, 0]
-        if isinstance(self.action_space, gym.spaces.Discrete):
-            no_op_action = 0
         for _ in range(no_ops):
-            obs, _, done, _ = self.env.step(no_op_action)
+            obs, _, done, _ = self.env.step(self.env.get_no_op_action())
             if done:
                 obs = self.env.reset(**kwargs)
         return obs
@@ -47,18 +46,12 @@ class StickyActionsEnv(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         self.sticky_actions = sticky_actions
-
-        assert self.env.env_settings.step_ratio == 1, "sticky_actions can "\
-                                                      "be activated only "\
-                                                      "when stepRatio is "\
-                                                      "set equal to 1"
+        assert self.env.env_settings.step_ratio == 1, "sticky_actions can be activated only "\
+                                                      "when step_ratio is set equal to 1"
 
     def step(self, action):
-
         rew = 0.0
-
         for _ in range(self.sticky_actions):
-
             obs, rew_step, done, info = self.env.step(action)
             rew += rew_step
             if info["round_done"] is True:
@@ -88,7 +81,7 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         """
         Normalize the reward dividing it by the product of
         rewardNormalizationFactor multiplied by
-        the maximum character health variadtion (max - min).
+        the maximum character health variation (max - min).
         :param env: (Gym Environment) the environment
         :param rewardNormalizationFactor: multiplication factor
         """
@@ -97,21 +90,21 @@ class NormalizeRewardEnv(gym.RewardWrapper):
 
     def reward(self, reward):
         """
-        Nomralize reward dividing by reward normalization factor*max_delta_health
+        Normalize reward dividing by reward normalization factor*max_delta_health
         :param reward: (float)
         """
         return float(reward) / float(self.env.reward_normalization_value)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
-def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False):
+def env_wrapping(env, wrappers_settings: WrappersSettings):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
     :param no_op_max: (int) wrap the environment to perform
                     no_op_max no action steps at reset
     :param clipRewards: (bool) wrap the reward clipping wrapper
-    :param rewardNormalization: (bool) if to activate reward noramlization
-    :param rewardNormalizationFactor: (double) noramlization factor
+    :param rewardNormalization: (bool) if to activate reward normalization
+    :param rewardNormalizationFactor: (double) normalization factor
                                       for reward normalization wrapper
     :param frameStack: (int) wrap the frame stacking wrapper
                        using #frameStack frames
@@ -133,23 +126,27 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
     if wrappers_settings.sticky_actions > 1:
         env = StickyActionsEnv(env, sticky_actions=wrappers_settings.sticky_actions)
 
-    if hardcore is True:
-        from diambra.arena.wrappers.obs_wrapper_hardcore import WarpFrame,\
-            WarpFrame3C, FrameStack, FrameStackDilated,\
-            ScaledFloatObsNeg, ScaledFloatObs
-    else:
-        from diambra.arena.wrappers.obs_wrapper import WarpFrame, \
-            WarpFrame3C, FrameStack, FrameStackDilated,\
-            ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
+    if wrappers_settings.frame_shape[2] == 1:
+        if env.observation_space["frame"].shape[2] == 1:
+            env.logger.warning("Warning: skipping grayscaling as the frame is already single channel.")
+        else:
+            # Greyscaling frame to h x w x 1
+            env = GrayscaleFrame(env)
 
-    if wrappers_settings.hwc_obs_resize[2] == 1:
-        # Resizing observation from H x W x 3 to
-        # hwObsResize[0] x hwObsResize[1] x 1
-        env = WarpFrame(env, wrappers_settings.hwc_obs_resize)
-    elif wrappers_settings.hwc_obs_resize[2] == 3:
-        # Resizing observation from H x W x 3 to
-        # hwObsResize[0] x hwObsResize[1] x hwObsResize[2]
-        env = WarpFrame3C(env, wrappers_settings.hwc_obs_resize)
+    if wrappers_settings.frame_shape[0] != 0 and wrappers_settings.frame_shape[1] != 0:
+        # Resizing observation from H x W x C to
+        # frame_shape[0] x frame_shape[1] x C
+        # Check if frame shape is bigger than native shape
+        native_frame_size = env.observation_space["frame"].shape
+        if wrappers_settings.frame_shape[0] > native_frame_size[0] or wrappers_settings.frame_shape[1] > native_frame_size[1]:
+            warning_message  = "Warning: \"frame_shape\" greater than game native frame shape.\n"
+            warning_message += "   \"native frame shape\" = [" + str(native_frame_size[0])
+            warning_message += " X " + str(native_frame_size[1]) + "]\n"
+            warning_message += "   \"frame_shape\" = [" + str(wrappers_settings.frame_shape[0])
+            warning_message += " X " + str(wrappers_settings.frame_shape[1]) + "]"
+            env.logger.warning(warning_message)
+
+        env = WarpFrame(env, wrappers_settings.frame_shape[:2])
 
     # Normalize rewards
     if wrappers_settings.reward_normalization is True:
@@ -168,17 +165,14 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
             env = FrameStackDilated(env, wrappers_settings.frame_stack, wrappers_settings.dilation)
 
     # Stack #actionsStack actions together
-    if wrappers_settings.actions_stack > 1 and not hardcore:
+    if wrappers_settings.actions_stack > 1:
         env = ActionsStack(env, wrappers_settings.actions_stack)
 
     # Scales observations normalizing them
     if wrappers_settings.scale is True:
         if wrappers_settings.scale_mod == 0:
             # Between 0.0 and 1.0
-            if hardcore is False:
-                env = ScaledFloatObs(env, wrappers_settings.exclude_image_scaling, wrappers_settings.process_discrete_binary)
-            else:
-                env = ScaledFloatObs(env)
+            env = ScaledFloatObs(env, wrappers_settings.exclude_image_scaling, wrappers_settings.process_discrete_binary)
         elif wrappers_settings.scale_mod == -1:
             # Between -1.0 and 1.0
             raise RuntimeError("Scaling between -1.0 and 1.0 currently not implemented")
@@ -187,9 +181,6 @@ def env_wrapping(env, wrappers_settings: WrappersSettings, hardcore: bool=False)
             raise ValueError("Scale mod must be either 0 or -1")
 
     if wrappers_settings.flatten is True:
-        if hardcore is True:
-            logger.warning("Dictionary observation flattening is valid only for not hardcore mode, skipping it.")
-        else:
-            env = FlattenFilterDictObs(env, wrappers_settings.filter_keys)
+        env = FlattenFilterDictObs(env, wrappers_settings.filter_keys)
 
     return env

@@ -1,12 +1,12 @@
 import os
 import logging
 from dacite import from_dict
-from .arena_gym import DiambraGymHardcore1P, DiambraGym1P, DiambraGymHardcore2P, DiambraGym2P
-from .wrappers.arena_wrappers import env_wrapping
-from .env_settings import EnvironmentSettings1P, EnvironmentSettings2P, WrappersSettings, RecordingSettings
+from diambra.arena.arena_gym import DiambraGym1P, DiambraGym2P
+from diambra.arena.wrappers.arena_wrappers import env_wrapping
+from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P, WrappersSettings, RecordingSettings
+from diambra.arena.wrappers.episode_recording import EpisodeRecorder
 
-def make(game_id, env_settings={}, wrappers_settings={},
-         traj_rec_settings={}, seed=None, rank=0, log_level=logging.INFO):
+def make(game_id, env_settings={}, wrappers_settings={}, episode_recording_settings={}, rank=0, log_level=logging.INFO):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -36,41 +36,29 @@ def make(game_id, env_settings={}, wrappers_settings={},
 
     env_settings["env_address"] = env_addresses[rank]
     env_settings["rank"] = rank
-    if seed is not None:
-        env_settings["seed"] = seed
 
     # Checking settings and setting up default ones
-    if "player" in env_settings.keys() and env_settings["player"] == "P1P2":
+    if "n_players" in env_settings.keys() and env_settings["n_players"] == 2:
         env_settings = from_dict(EnvironmentSettings2P, env_settings)
     else:
+        env_settings["n_players"] = 1
         env_settings = from_dict(EnvironmentSettings1P, env_settings)
     env_settings.sanity_check()
 
     # Make environment
-    if env_settings.player != "P1P2":  # 1P Mode
-        if env_settings.hardcore is True:
-            env = DiambraGymHardcore1P(env_settings)
-        else:
-            env = DiambraGym1P(env_settings)
+    if env_settings.n_players == 1:  # 1P Mode
+        env = DiambraGym1P(env_settings)
     else:  # 2P Mode
-        if env_settings.hardcore is True:
-            env = DiambraGymHardcore2P(env_settings)
-        else:
-            env = DiambraGym2P(env_settings)
+        env = DiambraGym2P(env_settings)
+
+    # Apply episode recorder wrapper
+    if len(episode_recording_settings) != 0:
+        episode_recording_settings = from_dict(RecordingSettings, episode_recording_settings)
+        env = EpisodeRecorder(env, episode_recording_settings)
 
     # Apply environment wrappers
     wrappers_settings = from_dict(WrappersSettings, wrappers_settings)
     wrappers_settings.sanity_check()
-    env = env_wrapping(env, wrappers_settings, hardcore=env_settings.hardcore)
-
-    # Apply trajectories recorder wrappers
-    if len(traj_rec_settings) != 0:
-        traj_rec_settings = from_dict(RecordingSettings, traj_rec_settings)
-        if env_settings.hardcore is True:
-            from diambra.arena.wrappers.traj_rec_wrapper_hardcore import TrajectoryRecorder
-        else:
-            from diambra.arena.wrappers.traj_rec_wrapper import TrajectoryRecorder
-
-        env = TrajectoryRecorder(env, traj_rec_settings)
+    env = env_wrapping(env, wrappers_settings)
 
     return env

@@ -2,13 +2,12 @@
 import diambra.arena
 import numpy as np
 
-if __name__ == '__main__':
-
+def main():
     # Environment Settings
     settings = {}
 
     # 2 Players game
-    settings["player"] = "P1P2"
+    settings["n_players"] = 2
 
     # Characters to be used, automatically extended with "Random" for games
     # required to select more than one character (e.g. Tekken Tag Tournament)
@@ -20,9 +19,6 @@ if __name__ == '__main__':
     # If to use discrete or multi_discrete action space
     settings["action_space"] = ("discrete", "discrete")
 
-    # If to use attack buttons combinations actions
-    settings["attack_but_combination"] = (True, True)
-
     env = diambra.arena.make("doapp", settings)
 
     observation = env.reset()
@@ -31,7 +27,6 @@ if __name__ == '__main__':
     while True:
 
         actions = env.action_space.sample()
-        actions = np.append(actions["P1"], actions["P2"])
         print("Actions: {}".format(actions))
 
         observation, reward, done, info = env.step(actions)
@@ -46,3 +41,9 @@ if __name__ == '__main__':
             break
 
     env.close()
+
+    # Return success
+    return 0
+
+if __name__ == '__main__':
+    main()

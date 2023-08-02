@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import diambra.arena
 
-if __name__ == '__main__':
-
+def main():
     # Settings
     settings = {}
 
-    # Player side selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
-    settings["player"] = "P2"
+    # Player role selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
+    settings["role"] = "P1"
 
     # Number of steps performed by the game
     # for every environment step, bounds: [1, 6]
@@ -27,9 +26,6 @@ if __name__ == '__main__':
     # If to show game final when game is completed
     settings["show_final"] = False
 
-    # If to use hardcore mode in which observations are only made of game frame
-    settings["hardcore"] = False
-
     # Game-specific options (see documentation for details)
     # Game difficulty level
     settings["difficulty"] = 4
@@ -39,13 +35,10 @@ if __name__ == '__main__':
     settings["characters"] = "Random"
 
     # Character outfit
-    settings["char_outfits"] = 2
+    settings["outfits"] = 2
 
     # If to use discrete or multi_discrete action space
     settings["action_space"] = "multi_discrete"
-
-    # If to use attack buttons combinations actions
-    settings["attack_but_combination"] = True
 
     env = diambra.arena.make("doapp", settings)
 
@@ -69,3 +62,9 @@ if __name__ == '__main__':
             break
 
     env.close()
+
+    # Return success
+    return 0
+
+if __name__ == '__main__':
+    main()
