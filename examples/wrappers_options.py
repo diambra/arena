@@ -1,6 +1,8 @@
 import diambra.arena
 
-if __name__ == '__main__':
+def main():
+    # Environment settings
+    settings = {"n_players": 2} # Nested dictionaries are only present in 2P envs
 
     # Gym wrappers settings
     wrappers_settings = {}
@@ -16,7 +18,7 @@ if __name__ == '__main__':
     # WARNING: for speedup, avoid frame warping wrappers,
     #          use environment's native frame wrapping through
     #          "frame_shape" setting (see documentation for details).
-    wrappers_settings["hwc_obs_resize"] = (128, 128, 1)
+    wrappers_settings["frame_shape"] = (128, 128, 1)
 
     # Wrapper option for reward normalization
     # When activated, the reward normalization factor can be set (default = 0.5)
@@ -51,11 +53,11 @@ if __name__ == '__main__':
     # Flattening observation dictionary and filtering
     # a sub-set of the RAM states
     wrappers_settings["flatten"] = True
-    wrappers_settings["filter_keys"] = ["stage", "timer", "P1_ownSide", "P1_oppSide",
-                                        "P1_ownHealth", "P1_oppChar",
-                                        "P1_actions_move", "P1_actions_attack"]
+    wrappers_settings["filter_keys"] = ["stage", "timer", "agent_0_own_side", "agent_0_opp_side",
+                                        "agent_0_own_health", "agent_0_opp_char",
+                                        "agent_0_action_move", "agent_0_action_attack"]
 
-    env = diambra.arena.make("doapp", {}, wrappers_settings)
+    env = diambra.arena.make("doapp", settings, wrappers_settings)
 
     observation = env.reset()
     env.show_obs(observation)
@@ -77,3 +79,9 @@ if __name__ == '__main__':
             break
 
     env.close()
+
+    # Return success
+    return 0
+
+if __name__ == '__main__':
+    main()

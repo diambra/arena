@@ -1,17 +1,14 @@
 import gym
 import os
-import sys
 from gym import spaces
-import numpy as np
 import pickle
 import bz2
-import cv2
 import json
 from threading import Thread
 import hashlib
 
 # Save compressed pickle files in parallel
-class ParallelPickleWriter(Thread):  # def class typr thread
+class ParallelPickleWriter(Thread):  # def class type thread
     def __init__(self, save_path, to_save):
         Thread.__init__(self)   # thread init class (don't forget this)
 

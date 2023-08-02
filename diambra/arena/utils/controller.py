@@ -5,7 +5,9 @@ from collections import defaultdict
 from inputs import devices
 import pickle
 from os.path import expanduser
+
 home_dir = expanduser("~")
+CONFIG_FILE_PATH = os.path.join(home_dir, '.diambra/config/deviceConfig.cfg')
 
 # Create devices list
 def create_devices_list():
@@ -30,11 +32,8 @@ def create_devices_list():
 
 # Function to retrieve available devices and select one
 def available_devices():
-
     devices_list = create_devices_list()
-
     print("Available devices:\n")
-
     for idx, device_dict in devices_list.items():
         print("{} - {} ({}) [{}]".format(idx, device_dict["device"].name, device_dict["type"], device_dict["id"]))
 
@@ -57,7 +56,6 @@ def get_diambra_controller(action_list, cfg=["But1", "But2", "But3", "But4", "Bu
                 return DiambraKeyboard(device_dict["device"], action_list, cfg, force_configure, skip_configure)
             else:
                 return DiambraGamepad(device_dict["device"], action_list, cfg, force_configure, skip_configure)
-                
         except:
             raise Exception("Unable to initialize device, have you unplugged it during execution?")
     else:
@@ -80,7 +78,7 @@ class DiambraDevice(Thread):  # def class type thread
         self.select_but = 0
         self.event_hash_move = np.zeros(4)
         self.event_hash_attack = np.zeros(8)
-        self.device_config_file_name = os.path.join(home_dir, '.diambra/config/deviceConfig.cfg')
+        self.device_config_file_path = CONFIG_FILE_PATH
 
         self.all_actions_list = (("NoMove", "Left", "UpLeft", "Up", "UpRight",
                                   "Right", "DownRight", "Down", "DownLeft"),
@@ -151,7 +149,7 @@ class DiambraDevice(Thread):  # def class type thread
     # Save device configuration
     def save_device_configuration(self):
 
-        print("Saving configuration in {}".format(self.device_config_file_name))
+        print("Saving configuration in {}".format(self.device_config_file_path))
 
         # Convert device config dictionary
         cfg_dict_to_save = self.process_device_dict_for_save()
@@ -169,27 +167,19 @@ class DiambraDevice(Thread):  # def class type thread
         cfg_file_dict_list.append(cfg_dict_to_save)
 
         # Open file (new or overwrite previous one)
-        cfg_file = open(self.device_config_file_name, "wb")
+        cfg_file = open(self.device_config_file_path, "wb")
         pickle.dump(cfg_file_dict_list, cfg_file)
         cfg_file.close()
 
     # Load all devices configuration
     def load_all_device_configurations(self):
 
-        try:
-            cfg_file = open(self.device_config_file_name, "rb")
-
-            # Load Pickle Dict
-            cfg_file_dict_list = pickle.load(cfg_file)
-
-            cfg_file.close()
-
-        except OSError:
-            print("No device configuration file found in: {}".format(os.path.join(home_dir, '.diambra/config/')))
-            config_file_folder = os.path.join(home_dir, '.diambra/')
-            os.makedirs(config_file_folder, exist_ok=True)
-            config_file_folder = os.path.join(home_dir, '.diambra/config/')
-            os.makedirs(config_file_folder, exist_ok=True)
+        if os.path.exists(self.device_config_file_path):
+            with open(self.device_config_file_path, "rb") as cfg_file:
+                cfg_file_dict_list = pickle.load(cfg_file)
+        else:
+            print("No device configuration file found in: {}".format(os.path.dirname(self.device_config_file_path)))
+            os.makedirs(os.path.dirname(self.device_config_file_path), exist_ok=True)
             cfg_file_dict_list = []
 
         self.cfg_file_dict_list = cfg_file_dict_list
@@ -391,10 +381,10 @@ class DiambraKeyboard(DiambraDevice):
                         self.device_dict["Arrow"][item[0]] = item[1]
 
                     config_found = True
-                    print("Device configuration file found in: {}".format(os.path.join(home_dir, '.diambra/config/')))
+                    print("Device configuration file found in: {}".format(os.path.dirname(self.device_config_file_path)))
                     print("Device configuration file loaded.")
                 except:
-                    print("Invalid device configuration file found in: {}".format(os.path.join(home_dir, '.diambra/config/')))
+                    print("Invalid device configuration file found in: {}".format(os.path.dirname(self.device_config_file_path)))
 
         if not config_found:
             print("Configuration for this device not present in device configuration file")
@@ -661,10 +651,10 @@ class DiambraGamepad(DiambraDevice):
                             item[1], item[2], item[3], item[4]]
 
                     config_found = True
-                    print("Device configuration file found in: {}".format(os.path.join(home_dir, '.diambra/config/')))
+                    print("Device configuration file found in: {}".format(os.path.dirname(self.device_config_file_path)))
                     print("Device configuration file loaded.")
                 except:
-                    print("Invalid device configuration file found in: {}".format(os.path.join(home_dir, '.diambra/config/')))
+                    print("Invalid device configuration file found in: {}".format(os.path.dirname(self.device_config_file_path)))
 
         if not config_found:
             print("Configuration for this device not present in device configuration file")

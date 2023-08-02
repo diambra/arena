@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 import pytest
-from os.path import expanduser
 import diambra.arena
-from diambra.arena.utils.engine_mock import DiambraEngineMock
-from pytest_utils import generate_pytest_decorator_input
+from pytest_utils import generate_pytest_decorator_input, load_mocker
 from diambra.arena.utils.gym_utils import available_games
 
 # Example Usage:
@@ -13,9 +11,10 @@ from diambra.arena.utils.gym_utils import available_games
 #    -s (show output)
 #    -k "expression" (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. "wrappers and doapp")
 
-def env_exec(settings, wrappers_settings, traj_rec_settings):
+def func(settings, wrappers_settings, episode_recording_settings, mocker):
+    load_mocker(mocker)
     try:
-        env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, traj_rec_settings)
+        env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, episode_recording_settings)
         env.close()
 
         print("COMPLETED SUCCESSFULLY!")
@@ -25,24 +24,7 @@ def env_exec(settings, wrappers_settings, traj_rec_settings):
         print("ERROR, ABORTED.")
         return 1
 
-def func(settings, wrappers_settings, traj_rec_settings, mocker):
-
-    diambra_engine_mock = DiambraEngineMock()
-
-    mocker.patch("diambra.arena.engine.interface.DiambraEngine.__init__", diambra_engine_mock._mock__init__)
-    mocker.patch("diambra.arena.engine.interface.DiambraEngine._env_init", diambra_engine_mock._mock_env_init)
-    mocker.patch("diambra.arena.engine.interface.DiambraEngine._reset", diambra_engine_mock._mock_reset)
-    mocker.patch("diambra.arena.engine.interface.DiambraEngine._step_1p", diambra_engine_mock._mock_step_1p)
-    mocker.patch("diambra.arena.engine.interface.DiambraEngine._step_2p", diambra_engine_mock._mock_step_2p)
-    mocker.patch("diambra.arena.engine.interface.DiambraEngine.close", diambra_engine_mock._mock_close)
-
-    try:
-        return env_exec(settings, wrappers_settings, traj_rec_settings)
-    except Exception as e:
-        print(e)
-        return 1
-
-wrappers_settings_var_order = ["no_op_max", "sticky_actions", "hwc_obs_resize", "reward_normalization",
+wrappers_settings_var_order = ["no_op_max", "sticky_actions", "frame_shape", "reward_normalization",
                                "reward_normalization_factor", "clip_rewards", "frame_stack", "dilation",
                                "actions_stack", "scale", "scale_mod", "flatten", "filter_keys"]
 games_dict = available_games(False)
@@ -51,7 +33,7 @@ games_dict = available_games(False)
 ok_test_parameters = {
     "no_op_max": [0, 2],
     "sticky_actions": [1, 4],
-    "hwc_obs_resize": [(0, 0, 0), (84, 84, 1), (84, 84, 3), (84, 84, 0)],
+    "frame_shape": [(0, 0, 0), (84, 84, 1), (84, 84, 3), (84, 84, 0)],
     "reward_normalization": [True, False],
     "reward_normalization_factor": [0.2, 0.5],
     "clip_rewards": [True, False],
@@ -61,13 +43,13 @@ ok_test_parameters = {
     "scale": [True, False],
     "scale_mod": [0],
     "flatten": [True, False],
-    "filter_keys": [[], ["stage", "P1_ownSide"]]
+    "filter_keys": [[], ["stage", "own_side"]]
 }
 
 ko_test_parameters = {
     "no_op_max": [-1],
     "sticky_actions": [True],
-    "hwc_obs_resize": [(0, 84, 3), (0, 0, 1)],
+    "frame_shape": [(0, 84, 3), (0, 0, 1)], # TODO: FIXME: the second value is OK
     "reward_normalization": ["True"],
     "reward_normalization_factor": [-10],
     "clip_rewards": [0.5],
@@ -89,32 +71,27 @@ def pytest_generate_tests(metafunc):
 # Wrappers
 @pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("step_ratio", [1])
-@pytest.mark.parametrize("player", ["Random", "P1P2"])
-@pytest.mark.parametrize("hardcore", [False, True])
+@pytest.mark.parametrize("n_players", [1, 2])
 @pytest.mark.parametrize("action_space", ["discrete", "multi_discrete"])
-@pytest.mark.parametrize("attack_buttons_combination", [False, True])
-def test_settings_wrappers(game_id, step_ratio, player, action_space, attack_buttons_combination, hardcore,
-                           no_op_max, sticky_actions, hwc_obs_resize, reward_normalization,
-                           reward_normalization_factor, clip_rewards, frame_stack, dilation,
-                           actions_stack, scale, scale_mod, flatten, filter_keys, expected, mocker):
+def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_op_max, sticky_actions,
+                           frame_shape, reward_normalization, reward_normalization_factor,
+                           clip_rewards, frame_stack, dilation, actions_stack, scale, scale_mod,
+                           flatten, filter_keys, expected, mocker):
 
     # Env settings
     settings = {}
     settings["game_id"] = game_id
     settings["step_ratio"] = step_ratio
-    settings["player"] = player
-    settings["hardcore"] = hardcore
+    settings["n_players"] = n_players
     settings["action_space"] = action_space
-    settings["attack_buttons_combination"] = attack_buttons_combination
-    if player == "P1P2":
+    if n_players == 2:
         settings["action_space"] = (action_space, action_space)
-        settings["attack_buttons_combination"] = (attack_buttons_combination, attack_buttons_combination)
 
     # Env wrappers settings
     wrappers_settings = {}
     wrappers_settings["no_op_max"] = no_op_max
     wrappers_settings["sticky_actions"] = sticky_actions
-    wrappers_settings["hwc_obs_resize"] = hwc_obs_resize
+    wrappers_settings["frame_shape"] = frame_shape
     wrappers_settings["reward_normalization"] = reward_normalization
     wrappers_settings["clip_rewards"] = clip_rewards
     wrappers_settings["frame_stack"] = frame_stack
@@ -126,6 +103,6 @@ def test_settings_wrappers(game_id, step_ratio, player, action_space, attack_but
     wrappers_settings["filter_keys"] = filter_keys
 
     # Recording settings
-    traj_rec_settings = {}
+    episode_recording_settings = {}
 
-    assert func(settings, wrappers_settings, traj_rec_settings, mocker) == expected
+    assert func(settings, wrappers_settings, episode_recording_settings, mocker) == expected

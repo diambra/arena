@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 import diambra.arena
 
-if __name__ == '__main__':
-
+def main():
     # Environment creation
     env = diambra.arena.make("doapp")
 
@@ -27,3 +26,9 @@ if __name__ == '__main__':
 
     # Environment shutdown
     env.close()
+
+    # Return success
+    return 0
+
+if __name__ == '__main__':
+    main()

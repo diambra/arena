@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from diambra.arena.utils.engine_mock import DiambraEngineMock
+
 def generate_pytest_decorator_input(var_order, test_parameters, outcome):
 
     test_vars = ""
@@ -23,3 +25,12 @@ def generate_pytest_decorator_input(var_order, test_parameters, outcome):
         values_list.append(test_value_tuple)
 
     return test_vars, values_list
+
+def load_mocker(mocker):
+    diambra_engine_mock = DiambraEngineMock()
+
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.__init__", diambra_engine_mock.mock__init__)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.env_init", diambra_engine_mock.mock_env_init)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.reset", diambra_engine_mock.mock_reset)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.step", diambra_engine_mock.mock_step)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.close", diambra_engine_mock.mock_close)
