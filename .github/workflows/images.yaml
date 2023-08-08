@@ -53,24 +53,28 @@ jobs:
           username: diambra+github
           password: ${{ secrets.QUAY_TOKEN }}
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            ghcr.io/diambra/arena-${{ matrix.name }}
+            docker.io/diambra/arena-${{ matrix.name }}
+            quay.io/diambra/arena-${{ matrix.name }}
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
       - name: Build and push arena ${{ matrix.dir }}
         uses: docker/build-push-action@v3
         with:
           context: .
           file: ${{ matrix.dir }}/Dockerfile
           push: true
-          tags: |
-            ghcr.io/diambra/arena-${{ matrix.name }}:${{ github.sha }}
-            ghcr.io/diambra/arena-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
-            ${{ github.ref_name == 'main' && format('ghcr.io/diambra/arena-{0}:latest', matrix.name) || '' }}
-
-            docker.io/diambra/arena-${{ matrix.name }}:${{ github.sha }}
-            docker.io/diambra/arena-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
-            ${{ github.ref_name == 'main' && format('docker.io/diambra/arena-{0}:latest', matrix.name) || '' }}
-
-            quay.io/diambra/arena-${{ matrix.name }}:${{ github.sha }}
-            quay.io/diambra/arena-${{ matrix.name }}:${{ github.head_ref || github.ref_name }}
-            ${{ github.ref_name == 'main' &&  format('quay.io/diambra/arena-{0}:latest', matrix.name) || '' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: ${{ matrix.build_args }}
 
   build-and-push-agents-images:
