@@ -63,8 +63,8 @@ jobs:
             quay.io/diambra/arena-${{ matrix.name }}
           tags: |
             type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern=v{{version}}
+            type=semver,pattern=v{{major}}.{{minor}}
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push arena ${{ matrix.dir }}
