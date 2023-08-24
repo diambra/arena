@@ -2,37 +2,34 @@ import numpy as np
 import os
 import sys
 import cv2
-import gym
+import gymnasium as gym
 import logging
-from gym import spaces
 from diambra.arena.utils.gym_utils import discrete_to_multi_discrete_action
 from diambra.arena.engine.interface import DiambraEngine
 from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P
-from typing import Union
+from typing import Union, Any, Dict, List
 
 # DIAMBRA Env Gym
 class DiambraGymBase(gym.Env):
     """Diambra Environment gym interface"""
-    metadata = {'render.modes': ['human']}
+    metadata = {"render_modes": ["human", "rgb_array"]}
+    _frame = None
+    _last_action = None
+    reward_normalization_value = 1.0
+    render_gui_started = False
 
     def __init__(self, env_settings: Union[EnvironmentSettings1P, EnvironmentSettings2P]):
         self.logger = logging.getLogger(__name__)
         super(DiambraGymBase, self).__init__()
 
-        self._frame = None
-        self._last_action = None
-
-        self.reward_normalization_value = 1.0
-
         self.env_settings = env_settings
-        self.render_gui_started = False
 
         # Launch DIAMBRA Engine
         self.arena_engine = DiambraEngine(env_settings.env_address, env_settings.grpc_timeout)
 
         # Send environment settings, retrieve environment info
-        self.env_info = self.arena_engine.env_init(self.env_settings.get_pb_request())
-        self.difficulty = self.env_settings.difficulty
+        self.env_info = self.arena_engine.env_init(self.env_settings.get_pb_request(init=True))
+        self.env_settings.finalize_init(self.env_info)
 
         # Settings log
         self.logger.info(self.env_settings)
@@ -82,14 +79,14 @@ class DiambraGymBase(gym.Env):
 
             # Discrete spaces (binary / categorical)
             if v.type == 0 or v.type == 2:
-                target_dict[knew] = spaces.Discrete(v.max + 1)
+                target_dict[knew] = gym.spaces.Discrete(v.max + 1)
             elif v.type == 1:  # Box spaces
-                target_dict[knew] = spaces.Box(low=v.min, high=v.max, shape=(1,), dtype=np.int32)
+                target_dict[knew] = gym.spaces.Box(low=v.min, high=v.max, shape=(1,), dtype=np.int32)
             else:
                 raise RuntimeError("Only Discrete (Binary/Categorical) | Box Spaces allowed")
 
-        player_spec_dict["action_move"] = spaces.Discrete(self.n_actions[0])
-        player_spec_dict["action_attack"] = spaces.Discrete(self.n_actions[1])
+        player_spec_dict["action_move"] = gym.spaces.Discrete(self.n_actions[0])
+        player_spec_dict["action_attack"] = gym.spaces.Discrete(self.n_actions[1])
 
         return generic_dict, player_spec_dict
 
@@ -106,13 +103,12 @@ class DiambraGymBase(gym.Env):
 
     # Integrate player specific RAM states into observation
     def _player_specific_ram_states_integration(self, response, idx):
-
         player_spec_dict = {}
         generic_dict = {}
 
         # Adding env additional observations (side-specific)
         player_role = self.env_settings.pb_model.variable_env_settings.player_env_settings[idx].role
-        for k, v in response.observation.ram_states.items():
+        for k, v in self.env_info.ram_states.items():
             if ("P1" in k or "P2" in k):
                 target_dict = player_spec_dict
                 if k[-2:] == player_role:
@@ -125,9 +121,9 @@ class DiambraGymBase(gym.Env):
 
             # Box spaces
             if v.type == 1:
-                target_dict[knew] = np.array([response.observation.ram_states[k].val], dtype=np.int32)
+                target_dict[knew] = np.array([response.observation.ram_states[k]], dtype=np.int32)
             else:  # Discrete spaces (binary / categorical)
-                target_dict[knew] = response.observation.ram_states[k].val
+                target_dict[knew] = response.observation.ram_states[k]
 
         player_spec_dict["action_move"] = self._last_action[idx][0]
         player_spec_dict["action_attack"] = self._last_action[idx][1]
@@ -154,15 +150,18 @@ class DiambraGymBase(gym.Env):
                 self.env_info.cumulative_reward_bounds.max / (self.reward_normalization_value)]
 
     # Reset the environment
-    def reset(self):
+    def reset(self, seed: int = None, options: Dict[str, Any] = None):
         self._last_action = [[0, 0], [0, 0]]
-        response = self.arena_engine.reset()
-        return self._get_obs(response)
+        if options is None:
+            options = {}
+        options["seed"] = seed
+        request = self.env_settings.update_variable_env_settings(options)
+        response = self.arena_engine.reset(request.variable_env_settings)
+        return self._get_obs(response), self._get_info(response)
 
     # Rendering the environment
-    def render(self, mode='human', wait_key=1):
-
-        if mode == "human" and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+    def render(self, wait_key=1):
+        if self.env_settings.render_mode == "human" and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
             try:
                 if (self.render_gui_started is False):
                     self.window_name = "[{}] DIAMBRA Arena - {} - ({})".format(
@@ -176,12 +175,11 @@ class DiambraGymBase(gym.Env):
                 return True
             except:
                 return False
-        elif mode == "rgb_array":
+        elif self.env_settings.render_mode == "rgb_array":
             return self._frame
 
     # Print observation details to the console
     def show_obs(self, observation, wait_key=1, viz=True, string="observation", key=None):
-
         if type(observation) == dict:
             for k, v in sorted(observation.items()):
                 self.show_obs(v, wait_key=wait_key, viz=viz, string=string + "[\"{}\"]".format(k), key=k)
@@ -197,7 +195,7 @@ class DiambraGymBase(gym.Env):
                     print(string + "{}{}".format(additional_string, out_value))
                 elif "own_char" in key or "opp_char" in key:
                     char_idx = observation if type(observation) == int else np.where(observation == 1)[0][0]
-                    print(string + ": {} / {}".format(observation, self.env_info.char_list[char_idx]))
+                    print(string + ": {} / {}".format(observation, self.env_info.characters_info.char_list[char_idx]))
                 else:
                     print(string + ": {}".format(observation))
             else:
@@ -227,14 +225,14 @@ class DiambraGym1P(DiambraGymBase):
         # Observation space
         # Dictionary
         observation_space_dict = {}
-        observation_space_dict['frame'] = spaces.Box(low=0, high=255, shape=(self.env_info.frame_shape.h,
+        observation_space_dict['frame'] = gym.spaces.Box(low=0, high=255, shape=(self.env_info.frame_shape.h,
                                                                              self.env_info.frame_shape.w,
                                                                              self.env_info.frame_shape.c),
                                                                       dtype=np.uint8)
         generic_obs_dict, player_obs_dict = self._get_ram_states_obs_dict()
         observation_space_dict.update(generic_obs_dict)
         observation_space_dict.update(player_obs_dict)
-        self.observation_space = spaces.Dict(observation_space_dict)
+        self.observation_space = gym.spaces.Dict(observation_space_dict)
 
         # Action space
         # MultiDiscrete actions:
@@ -244,14 +242,13 @@ class DiambraGym1P(DiambraGymBase):
         # - Arrows U Buttons -> One discrete set
         # NB: use the convention NOOP = 0
         if env_settings.action_space == "multi_discrete":
-            self.action_space = spaces.MultiDiscrete(self.n_actions[:2])
+            self.action_space = gym.spaces.MultiDiscrete(self.n_actions[:2])
             self.logger.debug("Using MultiDiscrete action space")
         elif env_settings.action_space == "discrete":
-            self.action_space = spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
+            self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
             self.logger.debug("Using Discrete action space")
 
     def _get_obs(self, response):
-
         observation = {}
         observation["frame"] = self._get_frame(response)
         generic_obs_dict, player_obs_dict = self._player_specific_ram_states_integration(response, 0)
@@ -268,19 +265,16 @@ class DiambraGym1P(DiambraGymBase):
             return 0
 
     # Step the environment
-    def step(self, action):
-
+    def step(self, action: Union[int, List[int]]):
         # Defining move and attack actions P1/P2 as a function of action_space
         if isinstance(self.action_space, gym.spaces.MultiDiscrete):
             self._last_action[0] = action
         else:
             self._last_action[0] = list(discrete_to_multi_discrete_action(action, self.n_actions[0]))
-
         response = self.arena_engine.step(self._last_action)
-
         observation = self._get_obs(response)
 
-        return observation, response.reward, response.info.game_states["episode_done"], self._get_info(response)
+        return observation, response.reward, response.info.game_states["episode_done"], False, self._get_info(response)
 
 # DIAMBRA Gym 2P Class
 class DiambraGym2P(DiambraGymBase):
@@ -289,7 +283,7 @@ class DiambraGym2P(DiambraGymBase):
 
         # Dictionary observation space
         observation_space_dict = {}
-        observation_space_dict['frame'] = spaces.Box(low=0, high=255,
+        observation_space_dict['frame'] = gym.spaces.Box(low=0, high=255,
                                                      shape=(self.env_info.frame_shape.h,
                                                             self.env_info.frame_shape.w,
                                                             self.env_info.frame_shape.c),
@@ -297,25 +291,24 @@ class DiambraGym2P(DiambraGymBase):
 
         generic_obs_dict, player_obs_dict = self._get_ram_states_obs_dict()
         observation_space_dict.update(generic_obs_dict)
-        observation_space_dict["agent_0"] = spaces.Dict(player_obs_dict)
-        observation_space_dict["agent_1"] = spaces.Dict(player_obs_dict)
+        observation_space_dict["agent_0"] = gym.spaces.Dict(player_obs_dict)
+        observation_space_dict["agent_1"] = gym.spaces.Dict(player_obs_dict)
 
-        self.observation_space = spaces.Dict(observation_space_dict)
+        self.observation_space = gym.spaces.Dict(observation_space_dict)
 
         # Action space
         # Dictionary
         action_space_dict = {}
         for idx in range(2):
             if env_settings.action_space[idx] == "multi_discrete":
-                action_space_dict["agent_{}".format(idx)] = spaces.MultiDiscrete(self.n_actions[:2])
+                action_space_dict["agent_{}".format(idx)] = gym.spaces.MultiDiscrete(self.n_actions[:2])
             elif env_settings.action_space[idx] == "discrete":
-                action_space_dict["agent_{}".format(idx)] = spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
+                action_space_dict["agent_{}".format(idx)] = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
             self.logger.debug("Using {} action space for agent_{}".format(env_settings.action_space[idx], idx))
 
-        self.action_space = spaces.Dict(action_space_dict)
+        self.action_space = gym.spaces.Dict(action_space_dict)
 
     def _get_obs(self, response):
-
         observation = {}
         observation["frame"] = self._get_frame(response)
         for idx in range(2):
@@ -337,7 +330,7 @@ class DiambraGym2P(DiambraGymBase):
         return no_op_action
 
     # Step the environment
-    def step(self, actions):
+    def step(self, actions: Dict[str, Union[int, List[int]]]):
         # NOTE: the assumption in current interface is that we have actions sorted as agent's order
         actions = sorted(actions.items())
         for idx, action in enumerate(actions):
@@ -346,9 +339,7 @@ class DiambraGym2P(DiambraGymBase):
                 self._last_action[idx] = action[1]
             else:
                 self._last_action[idx] = list(discrete_to_multi_discrete_action(action[1], self.n_actions[0]))
-
         response = self.arena_engine.step(self._last_action)
-
         observation = self._get_obs(response)
 
-        return observation, response.reward, response.info.game_states["game_done"], self._get_info(response)
+        return observation, response.reward, response.info.game_states["game_done"], False, self._get_info(response)

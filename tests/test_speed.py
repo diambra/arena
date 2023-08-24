@@ -20,7 +20,7 @@ def func(n_players, wrappers_settings, target_speed, mocker):
         settings["n_players"] = n_players
 
         env = diambra.arena.make("doapp", settings, wrappers_settings)
-        observation = env.reset()
+        observation, info = env.reset()
 
         n_step = 0
         fps_val = []
@@ -29,13 +29,13 @@ def func(n_players, wrappers_settings, target_speed, mocker):
             actions = env.action_space.sample()
 
             tic = time.time()
-            observation, reward, done, info = env.step(actions)
+            observation, reward, terminated, truncated, info = env.step(actions)
             toc = time.time()
             fps = 1 / (toc - tic)
             fps_val.append(fps)
 
-            if done:
-                observation = env.reset()
+            if terminated or truncated:
+                observation, info = env.reset()
                 break
 
         env.close()

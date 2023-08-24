@@ -39,7 +39,7 @@ if __name__ == "__main__":
         settings["env_address"] = opt.envAddress
     settings["n_players"] = opt.nPlayers
     settings["role"] = (opt.role0, opt.role1)
-    settings["difficulty"] = opt.difficulty
+    settings["difficulty"] = opt.difficulty if opt.difficulty != 0 else "Random"
     settings["characters"] = ((opt.character0, opt.character0_2, opt.character0_3),
                               (opt.character1, opt.character1_2, opt.character1_3))
     settings["step_ratio"] = opt.stepRatio
@@ -90,8 +90,8 @@ if __name__ == "__main__":
     # Args
     args = {}
     args["interactive"] = bool(opt.interactive)
-    args["no_action"] = True if opt.noAction == 1 else False
+    args["no_action_probability"] = 1.0 if opt.noAction == 1 else 0.0
     args["n_episodes"] = opt.nEpisodes
     args["render"] = bool(opt.render)
 
-    env_exec(settings, wrappers_settings, episode_recording_settings, args)
+    env_exec(settings, [settings], wrappers_settings, episode_recording_settings, args)

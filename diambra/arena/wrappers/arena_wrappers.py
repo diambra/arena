@@ -1,10 +1,10 @@
 import random
 import numpy as np
-import gym
+import gymnasium as gym
 import logging
 from diambra.arena.env_settings import WrappersSettings
-from diambra.arena.wrappers.observation import WarpFrame, GrayscaleFrame, FrameStack, FrameStackDilated,\
-                                               ActionsStack, ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
+from diambra.arena.wrappers.observation import WarpFrame, GrayscaleFrame, FrameStack, ActionsStack, \
+                                               ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
 
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, no_op_max=6):
@@ -158,11 +158,7 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
 
     # Stack #frameStack frames together
     if wrappers_settings.frame_stack > 1:
-        if wrappers_settings.dilation == 1:
-            env = FrameStack(env, wrappers_settings.frame_stack)
-        else:
-            logger.debug("Using frame stacking with dilation = {}".format(wrappers_settings.dilation))
-            env = FrameStackDilated(env, wrappers_settings.frame_stack, wrappers_settings.dilation)
+        env = FrameStack(env, wrappers_settings.frame_stack, wrappers_settings.dilation)
 
     # Stack #actionsStack actions together
     if wrappers_settings.actions_stack > 1:

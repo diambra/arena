@@ -49,7 +49,7 @@ ok_test_parameters = {
 ko_test_parameters = {
     "no_op_max": [-1],
     "sticky_actions": [True],
-    "frame_shape": [(0, 84, 3), (0, 0, 1)], # TODO: FIXME: the second value is OK
+    "frame_shape": [(0, 84, 3), (128, 0, 1)],
     "reward_normalization": ["True"],
     "reward_normalization_factor": [-10],
     "clip_rewards": [0.5],
@@ -63,9 +63,7 @@ ko_test_parameters = {
 }
 
 def pytest_generate_tests(metafunc):
-    test_vars, values_list_ok = generate_pytest_decorator_input(wrappers_settings_var_order, ok_test_parameters, 0)
-    test_vars, values_list_ko = generate_pytest_decorator_input(wrappers_settings_var_order, ko_test_parameters, 1)
-    values_list = values_list_ok + values_list_ko
+    test_vars, values_list = generate_pytest_decorator_input(wrappers_settings_var_order, ok_test_parameters, ko_test_parameters)
     metafunc.parametrize(test_vars, values_list)
 
 # Wrappers
@@ -93,6 +91,7 @@ def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_op_m
     wrappers_settings["sticky_actions"] = sticky_actions
     wrappers_settings["frame_shape"] = frame_shape
     wrappers_settings["reward_normalization"] = reward_normalization
+    wrappers_settings["reward_normalization_factor"] = reward_normalization_factor
     wrappers_settings["clip_rewards"] = clip_rewards
     wrappers_settings["frame_stack"] = frame_stack
     wrappers_settings["dilation"] = dilation

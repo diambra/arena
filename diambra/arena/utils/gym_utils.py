@@ -1,6 +1,5 @@
-import gym
+import gymnasium as gym
 import os
-from gym import spaces
 import pickle
 import bz2
 import json

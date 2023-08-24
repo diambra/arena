@@ -57,24 +57,24 @@ def main():
                                         "agent_0_own_health", "agent_0_opp_char",
                                         "agent_0_action_move", "agent_0_action_attack"]
 
-    env = diambra.arena.make("doapp", settings, wrappers_settings)
+    env = diambra.arena.make("doapp", settings, wrappers_settings, render_mode="human")
 
-    observation = env.reset()
+    observation, info = env.reset(seed=42)
     env.show_obs(observation)
 
     while True:
-
         actions = env.action_space.sample()
         print("Actions: {}".format(actions))
 
-        observation, reward, done, info = env.step(actions)
+        observation, reward, terminated, truncated, info = env.step(actions)
+        done = terminated or truncated
         env.show_obs(observation)
         print("Reward: {}".format(reward))
         print("Done: {}".format(done))
         print("Info: {}".format(info))
 
         if done:
-            observation = env.reset()
+            observation, info = env.reset()
             env.show_obs(observation)
             break
 

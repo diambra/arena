@@ -5,8 +5,10 @@ def main():
     # Settings
     settings = {}
 
-    # Player role selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
-    settings["role"] = "P1"
+    # --- Fixed environment settings ---
+
+    # Number players to use
+    settings["n_players"] = 1 # Single player env, "Standard RL"
 
     # Number of steps performed by the game
     # for every environment step, bounds: [1, 6]
@@ -16,6 +18,14 @@ def main():
     settings["frame_shape"] = (128, 128, 0)  # RBG with 128x128 size
     # settings["frame_shape"] = (0, 0, 1) # Grayscale with original size
     # settings["frame_shape"] = (0, 0, 0) # Deactivated (Original size RBG)
+
+    # If to use discrete or multi_discrete action space
+    settings["action_space"] = "multi_discrete"
+
+    # --- Variable environment settings ---
+
+    # Player role selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
+    settings["role"] = "P1"
 
     # Game continue logic (0.0 by default):
     # - [0.0, 1.0]: probability of continuing game at game over
@@ -37,27 +47,32 @@ def main():
     # Character outfit
     settings["outfits"] = 2
 
-    # If to use discrete or multi_discrete action space
-    settings["action_space"] = "multi_discrete"
+    env = diambra.arena.make("doapp", settings, render_mode="human")
 
-    env = diambra.arena.make("doapp", settings)
-
-    observation = env.reset()
+    observation, info = env.reset(seed=42)
     env.show_obs(observation)
 
     while True:
-
         actions = env.action_space.sample()
         print("Actions: {}".format(actions))
 
-        observation, reward, done, info = env.step(actions)
+        observation, reward, terminated, truncated, info = env.step(actions)
+        done = terminated or truncated
         env.show_obs(observation)
         print("Reward: {}".format(reward))
         print("Done: {}".format(done))
         print("Info: {}".format(info))
 
         if done:
-            observation = env.reset()
+            # Optionally, change variable environment settings here
+            options = {}
+            options["role"] = "P2"
+            options["continue_game"] = 0.0
+            options["difficulty"] = "Random"
+            options["characters"] = "Raidou"
+            options["outfits"] = 4
+
+            observation, info = env.reset(options=options)
             env.show_obs(observation)
             break
 

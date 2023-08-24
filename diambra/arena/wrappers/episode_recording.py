@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import datetime
-import gym
+import gymnasium as gym
 from diambra.arena.utils.gym_utils import ParallelPickleWriter
 from diambra.arena.env_settings import RecordingSettings
 import copy
@@ -33,11 +33,11 @@ class EpisodeRecorder(gym.Wrapper):
         """
         self.episode_data = []
 
-        obs = self.env.reset(**kwargs)
+        obs, info = self.env.reset(**kwargs)
         self._last_obs = copy.deepcopy(obs)
         _, self._last_obs["frame"] = cv2.imencode('.jpg', obs["frame"], self.compression_parameters)
 
-        return obs
+        return obs, info
 
     def step(self, action):
         """
@@ -46,18 +46,19 @@ class EpisodeRecorder(gym.Wrapper):
         :param action: ([int] or [float]) the action
         :return: new observation, reward, done, information
         """
-        obs, reward, done, info = self.env.step(action)
+        obs, reward, terminated, truncated, info = self.env.step(action)
 
         self.episode_data.append({
             "obs": self._last_obs,
             "action": action,
             "reward": reward,
-            "done": done,
+            "terminated": terminated,
+            "truncated": truncated,
             "info": info})
         self._last_obs = copy.deepcopy(obs)
         _, self._last_obs["frame"] = cv2.imencode('.jpg', obs["frame"], self.compression_parameters)
 
-        if done:
+        if terminated or truncated:
             to_save = {}
             to_save["episode_summary"] = {
                 "steps": len(self.episode_data),
@@ -71,4 +72,4 @@ class EpisodeRecorder(gym.Wrapper):
             pickle_writer = ParallelPickleWriter(os.path.join(self.dataset_path, save_path), to_save)
             pickle_writer.start()
 
-        return obs, reward, done, info
+        return obs, reward, terminated, truncated, info

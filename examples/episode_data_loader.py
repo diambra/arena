@@ -14,15 +14,16 @@ def main(dataset_path_input):
     n_loops = data_loader.reset()
 
     while n_loops == 0:
-        observation, action, reward, done, info = data_loader.step()
+        observation, action, reward, terminated, truncated, info = data_loader.step()
         print("Observation: {}".format(observation))
         print("Action: {}".format(action))
         print("Reward: {}".format(reward))
-        print("Done: {}".format(done))
+        print("Terminated: {}".format(terminated))
+        print("Truncated: {}".format(truncated))
         print("Info: {}".format(info))
         data_loader.render()
 
-        if done:
+        if terminated or truncated:
             n_loops = data_loader.reset()
 
     # Return success

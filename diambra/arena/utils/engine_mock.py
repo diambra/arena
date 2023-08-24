@@ -78,8 +78,8 @@ class DiambraEngineMock:
         self.episode_done_ = False
         self.env_done_ = False
 
-        self.side["P1"] = 0
-        self.side["P2"] = 1
+        self.side["P1"] = 0 if self.settings.variable_env_settings.player_env_settings[0].role == "P1" else 1
+        self.side["P2"] = 1 if self.settings.variable_env_settings.player_env_settings[0].role == "P1" else 0
         self.health["P1"] = self.game_data["health"][1]
         self.health["P2"] = self.game_data["health"][1]
         self.timer = self.game_data["ram_states"]["timer"][2]
@@ -88,16 +88,11 @@ class DiambraEngineMock:
 
         # Characters
         for idx in range(self.settings.n_players):
-            if (self.settings.variable_env_settings.player_env_settings[idx].characters[0] == "Random"):
-                self.char[self.settings.variable_env_settings.player_env_settings[idx].role] =\
-                    random.choice(range(len(self.game_data["char_list"])))
-            else:
-                self.char[self.settings.variable_env_settings.player_env_settings[idx].role] =\
-                    self.game_data["char_list"].index(self.settings.characters.p1[0])
+            self.char[self.settings.variable_env_settings.player_env_settings[idx].role] =\
+                self.game_data["char_list"].index(self.settings.variable_env_settings.player_env_settings[idx].characters[0])
 
     # Update game state
     def _new_game_state(self, actions):
-
         # Sleep to simulate computer time elapsed
         time.sleep(1.0/(self.settings.step_ratio * self.fps))
 
@@ -212,10 +207,7 @@ class DiambraEngineMock:
         # Ram states
         self._generate_ram_states()
         for k, v in self.ram_states.items():
-            response.observation.ram_states[k].type = v[0]
-            response.observation.ram_states[k].min = v[1]
-            response.observation.ram_states[k].max = v[2]
-            response.observation.ram_states[k].val = v[3]
+            response.observation.ram_states[k] = v[3]
 
         # Game state
         response.info.game_states["round_done"] = self.round_done_
@@ -239,10 +231,6 @@ class DiambraEngineMock:
     # Send env settings, retrieve env info and int variables list [pb low level]
     def mock_env_init(self, env_settings_pb):
         self.settings = env_settings_pb
-
-        # Random seed
-        random.seed(env_settings_pb.variable_env_settings.random_seed)
-        np.random.seed(env_settings_pb.variable_env_settings.random_seed)
 
         # Print settings
         print("Settings:")
@@ -322,8 +310,15 @@ class DiambraEngineMock:
         response.cumulative_reward_bounds.min = -((self.game_data["rounds_per_stage"] - 1) * (self.game_data["stages_per_game"] - 1) + self.game_data["rounds_per_stage"]) * self.delta_health
         response.cumulative_reward_bounds.max = self.game_data["rounds_per_stage"] * self.game_data["stages_per_game"] * self.delta_health
 
-        # Char list
-        response.char_list.extend(self.game_data["char_list"])
+        # Characters info
+        response.characters_info.char_list.extend(self.game_data["char_list"])
+        response.characters_info.char_forbidden_list.extend(self.game_data["char_forbidden_list"])
+        for key, value in self.game_data["char_homonymy_map"].items():
+            response.characters_info.char_homonymy_map[key] = value
+
+        # Difficulty bounds
+        response.difficulty_bounds.min = self.game_data["difficulty"][0]
+        response.difficulty_bounds.max = self.game_data["difficulty"][1]
 
         # RAM states
         self._generate_ram_states()
@@ -331,12 +326,17 @@ class DiambraEngineMock:
             response.ram_states[k].type = v[0]
             response.ram_states[k].min = v[1]
             response.ram_states[k].max = v[2]
-            response.ram_states[k].val = v[3]
 
         return response
 
     # Reset the environment [pb low level]
-    def mock_reset(self):
+    def mock_reset(self, variable_env_settings):
+        # Update variable env settings
+        self.settings.variable_env_settings.CopyFrom(variable_env_settings)
+
+        # Random seed
+        random.seed(self.settings.variable_env_settings.random_seed)
+        np.random.seed(self.settings.variable_env_settings.random_seed)
 
         self._reset_state()
 

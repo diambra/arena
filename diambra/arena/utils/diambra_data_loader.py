@@ -42,7 +42,7 @@ class DiambraDataLoader:
         step_data["obs"]["frame"] = self.frame
         self.step_idx += 1
 
-        return step_data["obs"], step_data["action"], step_data["reward"], step_data["done"], step_data["info"],
+        return step_data["obs"], step_data["action"], step_data["reward"], step_data["terminated"], step_data["truncated"], step_data["info"],
 
     # Resetting the environment
     def reset(self):
