@@ -17,17 +17,17 @@ def main(use_controller):
     home_dir = expanduser("~")
     game_id = "doapp"
     recording_settings = {}
-    recording_settings["dataset_path"] = os.path.join(home_dir, "DIAMBRA/episode_recording", game_id)
+    recording_settings["dataset_path"] = os.path.join(home_dir, "DIAMBRA/episode_recording", game_id if use_controller else "mock")
     recording_settings["username"] = "alexpalms"
 
-    env = diambra.arena.make(game_id, settings, episode_recording_settings=recording_settings)
+    env = diambra.arena.make(game_id, settings, episode_recording_settings=recording_settings, render_mode="human")
 
     if use_controller is True:
         # Controller initialization
         controller = get_diambra_controller(env.get_actions_tuples())
         controller.start()
 
-    observation = env.reset()
+    observation, info = env.reset(seed=42)
 
     while True:
         env.render()
@@ -35,9 +35,10 @@ def main(use_controller):
             actions = controller.get_actions()
         else:
             actions = env.action_space.sample()
-        observation, reward, done, info = env.step(actions)
+        observation, reward, terminated, truncated, info = env.step(actions)
+        done = terminated or truncated
         if done:
-            observation = env.reset()
+            observation, info = env.reset()
             break
 
     if use_controller is True:

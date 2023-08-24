@@ -1,5 +1,4 @@
-from gym import spaces
-import gym
+import gymnasium as gym
 from copy import deepcopy
 import numpy as np
 from collections import deque
@@ -18,7 +17,7 @@ class GrayscaleFrame(gym.ObservationWrapper):
         gym.ObservationWrapper.__init__(self, env)
         self.width = self.observation_space.spaces["frame"].shape[1]
         self.height = self.observation_space.spaces["frame"].shape[0]
-        self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255, shape=(self.height, self.width, 1),
+        self.observation_space.spaces["frame"] = gym.spaces.Box(low=0, high=255, shape=(self.height, self.width, 1),
                                                             dtype=self.observation_space["frame"].dtype)
 
     def observation(self, obs):
@@ -42,7 +41,7 @@ class WarpFrame(gym.ObservationWrapper):
         self.width = frame_shape[1]
         self.height = frame_shape[0]
         channels = self.observation_space.spaces["frame"].shape[2]
-        self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255, shape=(self.height, self.width, channels),
+        self.observation_space.spaces["frame"] = gym.spaces.Box(low=0, high=255, shape=(self.height, self.width, channels),
                                                             dtype=self.observation_space["frame"].dtype)
 
     def observation(self, obs):
@@ -55,48 +54,6 @@ class WarpFrame(gym.ObservationWrapper):
         return obs
 
 class FrameStack(gym.Wrapper):
-    def __init__(self, env, n_frames):
-        """Stack n_frames last frames.
-
-        :param env: (Gym Environment) the environment
-        :param n_frames: (int) the number of frames to stack
-        """
-        gym.Wrapper.__init__(self, env)
-        self.n_frames = n_frames
-        self.frames = deque([], maxlen=n_frames)
-        shp = self.observation_space["frame"].shape
-        self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
-                                                            shape=(shp[0], shp[1], shp[2] * n_frames),
-                                                            dtype=self.observation_space["frame"].dtype)
-
-    def reset(self, **kwargs):
-        obs = self.env.reset(**kwargs)
-        # Fill the stack upon reset to avoid black frames
-        for _ in range(self.n_frames):
-            self.frames.append(obs["frame"])
-
-        obs["frame"] = self.get_ob()
-        return obs
-
-    def step(self, action):
-        obs, reward, done, info = self.env.step(action)
-        self.frames.append(obs["frame"])
-
-        # Add last obs n_frames - 1 times in case of
-        # new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
-            for _ in range(self.n_frames - 1):
-                self.frames.append(obs["frame"])
-
-        obs["frame"] = self.get_ob()
-        return obs, reward, done, info
-
-    def get_ob(self):
-        assert len(self.frames) == self.n_frames
-        return np.concatenate(self.frames, axis=2)
-
-
-class FrameStackDilated(gym.Wrapper):
     def __init__(self, env, n_frames, dilation):
         """Stack n_frames last frames with dilation factor.
         :param env: (Gym Environment) the environment
@@ -110,29 +67,29 @@ class FrameStackDilated(gym.Wrapper):
         # then extract the subset given by the dilation factor
         self.frames = deque([], maxlen=n_frames * dilation)
         shp = self.observation_space["frame"].shape
-        self.observation_space.spaces["frame"] = spaces.Box(low=0, high=255,
+        self.observation_space.spaces["frame"] = gym.spaces.Box(low=0, high=255,
                                                             shape=(shp[0], shp[1], shp[2] * n_frames),
                                                             dtype=self.observation_space["frame"].dtype)
 
     def reset(self, **kwargs):
-        obs = self.env.reset(**kwargs)
+        obs, info = self.env.reset(**kwargs)
         for _ in range(self.n_frames * self.dilation):
             self.frames.append(obs["frame"])
         obs["frame"] = self.get_ob()
-        return obs
+        return obs, info
 
     def step(self, action):
-        obs, reward, done, info = self.env.step(action)
+        obs, reward, terminated, truncated, info = self.env.step(action)
         self.frames.append(obs["frame"])
 
         # Add last obs n_frames - 1 times in case of
         # new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not (terminated or truncated)):
             for _ in range(self.n_frames * self.dilation - 1):
                 self.frames.append(obs["frame"])
 
         obs["frame"] = self.get_ob()
-        return obs, reward, done, info
+        return obs, reward, terminated, truncated, info
 
     def get_ob(self):
         frames_subset = list(self.frames)[self.dilation - 1::self.dilation]
@@ -155,12 +112,12 @@ class ActionsStack(gym.Wrapper):
             self.attack_action_stack.append(deque([0 for _ in range(n_actions_stack)], maxlen=n_actions_stack))
 
         if self.env.env_settings.n_players == 1:
-            self.observation_space["action_move"] = spaces.MultiDiscrete([self.n_actions[0]] * n_actions_stack)
-            self.observation_space["action_attack"] = spaces.MultiDiscrete([self.n_actions[1]] * n_actions_stack)
+            self.observation_space["action_move"] = gym.spaces.MultiDiscrete([self.n_actions[0]] * n_actions_stack)
+            self.observation_space["action_attack"] = gym.spaces.MultiDiscrete([self.n_actions[1]] * n_actions_stack)
         else:
             for idx in range(self.env.env_settings.n_players):
-                self.observation_space["agent_{}".format(idx)]["action_move"] = spaces.MultiDiscrete([self.n_actions[0]] * n_actions_stack)
-                self.observation_space["agent_{}".format(idx)]["action_attack"] = spaces.MultiDiscrete([self.n_actions[1]] * n_actions_stack)
+                self.observation_space["agent_{}".format(idx)]["action_move"] = gym.spaces.MultiDiscrete([self.n_actions[0]] * n_actions_stack)
+                self.observation_space["agent_{}".format(idx)]["action_attack"] = gym.spaces.MultiDiscrete([self.n_actions[1]] * n_actions_stack)
 
     def fill_stack(self, value=0):
         # Fill the actions stack with no action after reset
@@ -180,12 +137,12 @@ class ActionsStack(gym.Wrapper):
         return obs
 
     def reset(self, **kwargs):
-        obs = self.env.reset(**kwargs)
+        obs, info = self.env.reset(**kwargs)
         self.fill_stack()
-        return self._process_obs(obs)
+        return self._process_obs(obs), info
 
     def step(self, action):
-        obs, reward, done, info = self.env.step(action)
+        obs, reward, terminated, truncated, info = self.env.step(action)
 
         if self.env.env_settings.n_players == 1:
             self.move_action_stack[0].append(obs["action_move"])
@@ -197,15 +154,15 @@ class ActionsStack(gym.Wrapper):
 
         # Add noAction for n_actions_stack - 1 times
         # in case of new round / stage / continueGame
-        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not done):
+        if ((info["round_done"] or info["stage_done"] or info["game_done"]) and not (terminated or truncated)):
             self.fill_stack()
 
-        return self._process_obs(obs), reward, done, info
+        return self._process_obs(obs), reward, terminated, truncated, info
 
 class ScaledFloatObsNeg(gym.ObservationWrapper):
     def __init__(self, env):
         gym.ObservationWrapper.__init__(self, env)
-        self.observation_space.spaces["frame"] = spaces.Box(low=-1.0, high=1.0,
+        self.observation_space.spaces["frame"] = gym.spaces.Box(low=-1.0, high=1.0,
                                                             shape=self.observation_space["frame"].shape,
                                                             dtype=np.float32)
 
@@ -232,19 +189,19 @@ class ScaledFloatObs(gym.ObservationWrapper):
         # Updating observation space dict
         for k, v in obs_dict.spaces.items():
 
-            if isinstance(v, spaces.dict.Dict):
+            if isinstance(v, gym.spaces.Dict):
                 self.scaled_float_obs_space_func(v)
             else:
-                if isinstance(v, spaces.MultiDiscrete):
+                if isinstance(v, gym.spaces.MultiDiscrete):
                     # One hot encoding x nStack
                     n_val = v.nvec.shape[0]
                     max_val = v.nvec[0]
-                    obs_dict.spaces[k] = spaces.MultiBinary(n_val * max_val)
-                elif isinstance(v, spaces.Discrete) and (v.n > 2 or self.process_discrete_binary is True):
+                    obs_dict.spaces[k] = gym.spaces.MultiBinary(n_val * max_val)
+                elif isinstance(v, gym.spaces.Discrete) and (v.n > 2 or self.process_discrete_binary is True):
                     # One hot encoding
-                    obs_dict.spaces[k] = spaces.MultiBinary(v.n)
-                elif isinstance(v, spaces.Box) and (self.exclude_image_scaling is False or len(v.shape) < 3):
-                    obs_dict.spaces[k] = spaces.Box(low=0.0, high=1.0, shape=v.shape, dtype=np.float32)
+                    obs_dict.spaces[k] = gym.spaces.MultiBinary(v.n)
+                elif isinstance(v, gym.spaces.Box) and (self.exclude_image_scaling is False or len(v.shape) < 3):
+                    obs_dict.spaces[k] = gym.spaces.Box(low=0.0, high=1.0, shape=v.shape, dtype=np.float32)
 
     # Recursive function to modify obs dict
     def scaled_float_obs_func(self, observation, observation_space):
@@ -256,18 +213,18 @@ class ScaledFloatObs(gym.ObservationWrapper):
                 self.scaled_float_obs_func(v, observation_space.spaces[k])
             else:
                 v_space = observation_space.spaces[k]
-                if isinstance(v_space, spaces.MultiDiscrete):
+                if isinstance(v_space, gym.spaces.MultiDiscrete):
                     n_act = observation_space.spaces[k].nvec[0]
                     buf_len = observation_space.spaces[k].nvec.shape[0]
                     actions_vector = np.zeros((buf_len * n_act), dtype=np.uint8)
                     for iact in range(buf_len):
                         actions_vector[iact * n_act + observation[k][iact]] = 1
                     observation[k] = actions_vector
-                elif isinstance(v_space, spaces.Discrete) and (v_space.n > 2 or self.process_discrete_binary is True):
+                elif isinstance(v_space, gym.spaces.Discrete) and (v_space.n > 2 or self.process_discrete_binary is True):
                     var_vector = np.zeros((observation_space.spaces[k].n), dtype=np.uint8)
                     var_vector[observation[k]] = 1
                     observation[k] = var_vector
-                elif isinstance(v_space, spaces.Box) and (self.exclude_image_scaling is False or len(v_space.shape) < 3):
+                elif isinstance(v_space, gym.spaces.Box) and (self.exclude_image_scaling is False or len(v_space.shape) < 3):
                     high_val = np.max(v_space.high)
                     low_val = np.min(v_space.low)
                     observation[k] = np.array((observation[k] - low_val) / (high_val - low_val), dtype=np.float32)
@@ -291,7 +248,7 @@ def flatten_filter_obs_space_func(input_dictionary, filter_keys):
     def visit(subdict, flattened_dict, partial_key, check_method):
         for k, v in subdict.spaces.items():
             new_key = k if partial_key == _FLAG_FIRST else partial_key + "_" + k
-            if isinstance(v, Mapping) or isinstance(v, spaces.Dict):
+            if isinstance(v, Mapping) or isinstance(v, gym.spaces.Dict):
                 visit(v, flattened_dict, new_key, check_method)
             else:
                 if check_method(new_key):
@@ -317,7 +274,7 @@ def flatten_filter_obs_func(input_dictionary, filter_keys):
     def visit(subdict, flattened_dict, partial_key, check_method):
         for k, v in subdict.items():
             new_key = k if partial_key == _FLAG_FIRST else partial_key + "_" + k
-            if isinstance(v, Mapping) or isinstance(v, spaces.Dict):
+            if isinstance(v, Mapping) or isinstance(v, gym.spaces.Dict):
                 visit(v, flattened_dict, new_key, check_method)
             else:
                 if check_method(new_key):
@@ -341,7 +298,7 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
                 self.filter_keys += ["frame"]
 
         original_obs_space_keys = (flatten_filter_obs_space_func(self.observation_space, None)).keys()
-        self.observation_space = spaces.Dict(flatten_filter_obs_space_func(self.observation_space, self.filter_keys))
+        self.observation_space = gym.spaces.Dict(flatten_filter_obs_space_func(self.observation_space, self.filter_keys))
 
         if filter_keys is not None:
             if (sorted(self.observation_space.spaces.keys()) != sorted(self.filter_keys)):

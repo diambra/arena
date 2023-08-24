@@ -13,14 +13,14 @@ import os
 #    -s (show output)
 #    -k "expression" (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. "wrappers and doapp")
 
-def func(game_id, n_players, roles, continue_game, action_space, frame_shape, wrappers_settings,
-         episode_recording_settings, no_action_probability, use_mock_env, mocker):
+def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
+         no_action_probability, use_mock_env, mocker):
 
     # Args
     args = {}
     args["interactive"] = False
     args["n_episodes"] = 1
-    args["no_action"] = random.choices([True, False], [no_action_probability, 1.0 - no_action_probability])[0]
+    args["no_action_probability"] = no_action_probability
     args["render"] = False
 
     if use_mock_env is True:
@@ -33,45 +33,47 @@ def func(game_id, n_players, roles, continue_game, action_space, frame_shape, wr
         settings["frame_shape"] = frame_shape
         settings["n_players"] = n_players
         settings["action_space"] = (action_space, action_space)
-        settings["role"] = (roles[0], roles[1])
-        settings["continue_game"] = continue_game
         if settings["n_players"] == 1:
-            settings["role"] = settings["role"][0]
             settings["action_space"] = settings["action_space"][0]
 
-        return env_exec(settings, wrappers_settings, episode_recording_settings, args)
+        # Options (settings to change at reset)
+        options_list = []
+        roles = [["P1", "P2"], ["P2", "P1"]]
+        continue_games = [-1.0, 0.0, 0.3]
+        for role in roles:
+            role_value = (role[0], role[1])
+            if settings["n_players"] == 1:
+                role_value = role_value[0]
+                for continue_val in continue_games:
+                    options_list.append({"role": role_value, "continue_game": continue_val})
+            else:
+                options_list.append({"role": role_value})
+
+        return env_exec(settings, options_list, wrappers_settings, {}, args)
     except Exception as e:
         print(e)
         return 1
 
 game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
 n_players = [1, 2]
-roles = [["P1", "P2"], ["P2", "P1"]]
-continue_games = [-1.0, 0.0, 0.3]
 action_spaces = ["discrete", "multi_discrete"]
-no_action_probability = 0.5
-episode_recording_probability = 0.5
+no_action_probability = 0.25
 
 @pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("n_players", n_players)
-@pytest.mark.parametrize("roles", roles)
-@pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
-def test_random_gym_mock(game_id, n_players, roles, continue_game, action_space, mocker):
+def test_random_gym_mock(game_id, n_players, action_space, mocker):
     frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
     use_mock_env = True
     wrappers_settings = {}
-    episode_recording_settings = {}
-    assert func(game_id, n_players, roles, continue_game, action_space, frame_shape, wrappers_settings,
-                episode_recording_settings, no_action_probability, use_mock_env, mocker) == 0
+    assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
+                no_action_probability, use_mock_env, mocker) == 0
 
 @pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("n_players", n_players)
-@pytest.mark.parametrize("roles", roles)
 @pytest.mark.parametrize("action_space", action_spaces)
-def test_random_wrappers_mock(game_id, n_players, roles, action_space, mocker):
+def test_random_wrappers_mock(game_id, n_players, action_space, mocker):
     frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
-    continue_game = 0.0
     use_mock_env = True
 
     # Env wrappers settings
@@ -93,25 +95,13 @@ def test_random_wrappers_mock(game_id, n_players, roles, action_space, mocker):
     wrappers_settings["filter_keys"] = ["stage", "timer", suffix+"own_side", suffix+"opp_side",
                                         suffix+"opp_char", suffix+"action_move", suffix+"action_attack"]
 
-    # Recording settings
-    home_dir = expanduser("~")
-    episode_recording_settings = {}
-    episode_recording_settings["username"] = "alexpalms"
-    subfolder = game_id if use_mock_env is False else "mock"
-    episode_recording_settings["dataset_path"] = os.path.join(home_dir, "DIAMBRA/episode_recording", subfolder)
-
-    if (random.choices([True, False], [episode_recording_probability, 1.0 - episode_recording_probability])[0] is False):
-        episode_recording_settings = {}
-
-    assert func(game_id, n_players, roles, continue_game, action_space, frame_shape,
-                wrappers_settings, episode_recording_settings, no_action_probability, use_mock_env, mocker) == 0
+    assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
+                no_action_probability, use_mock_env, mocker) == 0
 
 @pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("n_players", n_players)
-@pytest.mark.parametrize("roles", roles)
-@pytest.mark.parametrize("continue_game", continue_games)
 @pytest.mark.parametrize("action_space", action_spaces)
-def test_random_integration(game_id, n_players, roles, continue_game, action_space, mocker):
+def test_random_integration(game_id, n_players, action_space, mocker):
     frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
     use_mock_env = False
 
@@ -134,15 +124,5 @@ def test_random_integration(game_id, n_players, roles, continue_game, action_spa
     wrappers_settings["filter_keys"] = ["stage", "timer", suffix+"own_side", suffix+"opp_side",
                                         suffix+"opp_char", suffix+"action_move", suffix+"action_attack"]
 
-    # Recording settings
-    home_dir = expanduser("~")
-    episode_recording_settings = {}
-    episode_recording_settings["username"] = "alexpalms"
-    subfolder = game_id if use_mock_env is False else "mock"
-    episode_recording_settings["dataset_path"] = os.path.join(home_dir, "DIAMBRA/episode_recording", subfolder)
-
-    if (random.choices([True, False], [episode_recording_probability, 1.0 - episode_recording_probability])[0] is False):
-        episode_recording_settings = {}
-
-    assert func(game_id, n_players, roles, continue_game, action_space, frame_shape,
-                wrappers_settings, episode_recording_settings, no_action_probability, use_mock_env, mocker) == 0
+    assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
+                no_action_probability, use_mock_env, mocker) == 0

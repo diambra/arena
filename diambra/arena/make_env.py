@@ -6,7 +6,7 @@ from diambra.arena.wrappers.arena_wrappers import env_wrapping
 from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P, WrappersSettings, RecordingSettings
 from diambra.arena.wrappers.episode_recording import EpisodeRecorder
 
-def make(game_id, env_settings={}, wrappers_settings={}, episode_recording_settings={}, rank=0, log_level=logging.INFO):
+def make(game_id, env_settings={}, wrappers_settings={}, episode_recording_settings={}, render_mode=None, rank=0, log_level=logging.INFO):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -17,8 +17,9 @@ def make(game_id, env_settings={}, wrappers_settings={}, episode_recording_setti
     logging.basicConfig(level=log_level)
     logger = logging.getLogger(__name__)
 
-    # Include game_id in env_settings
+    # Include game_id and render_mode in env_settings
     env_settings["game_id"] = game_id
+    env_settings["render_mode"] = render_mode
 
     # Check if DIAMBRA_ENVS var present
     env_addresses = os.getenv("DIAMBRA_ENVS", "").split()
@@ -43,7 +44,6 @@ def make(game_id, env_settings={}, wrappers_settings={}, episode_recording_setti
     else:
         env_settings["n_players"] = 1
         env_settings = from_dict(EnvironmentSettings1P, env_settings)
-    env_settings.sanity_check()
 
     # Make environment
     if env_settings.n_players == 1:  # 1P Mode

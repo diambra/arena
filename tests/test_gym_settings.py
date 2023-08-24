@@ -16,6 +16,7 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
     load_mocker(mocker)
     try:
         env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, traj_rec_settings)
+        env.reset()
         env.close()
         print("COMPLETED SUCCESSFULLY!")
         return 0
@@ -25,50 +26,48 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
         return 1
 
 games_dict = available_games(False)
-gym_settings_var_order = ["frame_shape", "step_ratio", "action_space", "continue_game",
+gym_settings_var_order = ["frame_shape", "step_ratio", "action_space", "difficulty", "continue_game",
                           "tower", "role", "super_art", "fighting_style", "ultimate_style"]
 
 ok_test_parameters = {
     "frame_shape": [(0, 0, 0), (0, 0, 1), (82, 82, 0), (82, 82, 1)],
     "step_ratio": [1, 3, 6],
     "action_space": ["discrete", "multi_discrete"],
+    "difficulty": ["Random", 1, 3],
     "continue_game": [-1.0, 0.0, 0.3],
     "tower": [1, 3, 4],
     "role": [["P1", "P2"], ["P2", "P1"], ["Random", "Random"]],
-    "super_art": ["Random", 0, 1, 3],
-    "fighting_style": ["Random", 0, 1, 3],
-    "ultimate_style": [("Random", "Random", "Random"), (0, 0, 0), (1, 2, 0), (2, 2, 2)],
+    "super_art": ["Random", 1, 3],
+    "fighting_style": ["Random", 1, 3],
+    "ultimate_style": [("Random", "Random", "Random"), (2, 2, 2)],
 }
 
 ko_test_parameters = {
     "frame_shape": [(0, 82, 0), (0, 0, 4), (-100, -100, 3)],
     "step_ratio": [8],
+    "difficulty": [True, 0, "random"],
     "action_space": ["random", 12],
     "continue_game": [1.3, "string"],
     "tower": [5],
     "role": [[5, 4], ["P1P2", "Random"]],
-    "super_art": ["value", 4],
-    "fighting_style": [False, 6],
-    "ultimate_style": [(10, 0, 0), "string"],
+    "super_art": ["value", 4, 0],
+    "fighting_style": [False, 6, 0],
+    "ultimate_style": [(10, 0, 0), "string", ("Random", 2, "Random")],
 }
 
 def pytest_generate_tests(metafunc):
-    test_vars, values_list_ok = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters, 0)
-    test_vars, values_list_ko = generate_pytest_decorator_input(gym_settings_var_order, ko_test_parameters, 1)
-    values_list = values_list_ok + values_list_ko
+    test_vars, values_list = generate_pytest_decorator_input(gym_settings_var_order, ok_test_parameters, ko_test_parameters)
     metafunc.parametrize(test_vars, values_list)
 
 # Gym
 @pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("n_players", [1, 2])
-def test_gym_settings(game_id, n_players, frame_shape,  step_ratio, action_space, continue_game,
+def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space, difficulty, continue_game,
                       tower, role, super_art, fighting_style, ultimate_style, expected, mocker):
 
     game_data = games_dict[game_id]
-    difficulty_range = range(0, game_data["difficulty"][1] + 1)
     characters_list = ["Random"] + game_data["char_list"]
     outfits_range = range(game_data["outfits"][0], game_data["outfits"][1] + 1)
-    difficulty = random.choice(difficulty_range)
     characters = random.choice(characters_list)
     outfits = random.choice(outfits_range)
 

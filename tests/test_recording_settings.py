@@ -41,9 +41,7 @@ ko_test_parameters = {
 }
 
 def pytest_generate_tests(metafunc):
-    test_vars, values_list_ok = generate_pytest_decorator_input(episode_recording_settings_var_order, ok_test_parameters, 0)
-    test_vars, values_list_ko = generate_pytest_decorator_input(episode_recording_settings_var_order, ko_test_parameters, 1)
-    values_list = values_list_ok + values_list_ko
+    test_vars, values_list = generate_pytest_decorator_input(episode_recording_settings_var_order, ok_test_parameters, ko_test_parameters)
     metafunc.parametrize(test_vars, values_list)
 
 

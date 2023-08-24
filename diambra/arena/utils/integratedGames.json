@@ -11,6 +11,8 @@
             "char_list": ["Kasumi", "Zack", "Hayabusa", "Bayman",
                          "Lei-Fang", "Raidou", "Gen-Fu", "Tina",
                          "Bass", "Jann-Lee", "Ayane"],
+            "char_forbidden_list": [],
+            "char_homonymy_map": {},
             "outfits": [1, 4],
             "difficulty": [1, 4, 3],
             "difficulty_to_cluster_map": {
@@ -56,6 +58,8 @@
             "char_list": ["Alex", "Twelve", "Hugo", "Sean", "Makoto", "Elena",
                          "Ibuki", "Chun-Li", "Dudley", "Necro", "Q", "Oro",
                          "Urien", "Remy", "Ryu", "Gouki", "Yun", "Yang", "Ken", "Gill"],
+            "char_forbidden_list": ["Gill"],
+            "char_homonymy_map": {},
             "outfits": [1, 7],
             "difficulty": [1, 8, 6],
             "difficulty_to_cluster_map": {
@@ -121,6 +125,19 @@
                          "Lee", "Wang", "P.Jack", "Devil", "True Ogre", "Ogre",
                          "Roger", "Tetsujin", "Panda", "Tiger", "Angel", "Alex",
                          "Mokujin", "Unknown"],
+            "char_forbidden_list": ["Unknown"],
+            "char_homonymy_map": {
+                "Tetsujin": "Mokujin",
+                "Mokujin":  "Tetsujin",
+                "Tiger":    "Eddy",
+                "Eddy":     "Tiger",
+                "Angel":    "Devil",
+                "Devil":    "Angel",
+                "Panda":    "Kuma",
+                "Kuma":     "Panda",
+                "Alex":     "Roger",
+                "Roger":    "Alex"
+            },
             "outfits": [1, 5],
             "difficulty": [1, 9, 7],
             "difficulty_to_cluster_map": {
@@ -183,6 +200,8 @@
                          "Shang Tsung", "Nightwolf", "Sub-Zero-2", "Cyrax", "Liu Kang",
                          "Jade", "Sub-Zero", "Kung Lao", "Smoke", "Skorpion",
                          "Human Smoke", "Noob Saibot", "Motaro", "Shao Kahn"],
+            "char_forbidden_list": ["Noob Saibot", "Human Smoke", "Motaro", "Shao Kahn"],
+            "char_homonymy_map": {},
             "outfits": [1, 1],
             "difficulty": [1, 5, 4],
             "difficulty_to_cluster_map": {
@@ -233,6 +252,8 @@
                          "Ukyo", "Yoshitora", "Gaoh", "Haohmaru", "Genjuro",
                          "Shizumaru", "Kazuki", "Tamtam", "Rasetsumaru", "Rimururu",
                          "Mina", "Zankuro", "Nakoruru", "Rera", "Yunfei", "Basara", "Mizuki"],
+            "char_forbidden_list": [],
+            "char_homonymy_map": {},
             "outfits": [1, 4],
             "difficulty": [1, 8, 6],
             "difficulty_to_cluster_map": {
@@ -298,6 +319,8 @@
                          "Kim","Chang","Choi","Yashiro","Shermie","Chris","Yamazaki","Blue","Billy",
                          "Iori","Mature","Vice","Heidern","Takuma","Saisyu","Heavy-D!","Lucky","Brian",
                          "Eiji","Kasumi","Shingo","Rugal","Geese","Krauser","Mr.Big","Goenitz","Orochi"],
+            "char_forbidden_list": ["Goenitz","Orochi"],
+            "char_homonymy_map": {},
             "outfits": [1, 4],
             "difficulty": [1, 8, 6],
             "difficulty_to_cluster_map": {

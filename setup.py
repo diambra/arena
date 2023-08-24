@@ -32,18 +32,17 @@ setuptools.setup(
     install_requires=[
             'pip>=21',
             'importlib-metadata<=4.12.0; python_version <= "3.7"', # problem with gym for importlib-metadata==5.0.0 and python <=3.7
-            'setuptools<=66.0.0', # Required until we can upgrade to gym >= 0.22.0
+            'setuptools',
             'distro>=1',
-            'gym<=0.21.0',
+            'gymnasium>=0.26.3',
             'inputs',
             'screeninfo',
             'tk',
             'opencv-python>=4.4.0.42',
             'grpcio',
-            'diambra-engine>=2.1.0rc7,<2.2.0',
+            'diambra-engine>=2.2.0',
             'dacite'],
-        packages=[package for package in setuptools.find_packages(
-        ) if package.startswith("diambra")],
+        packages=[package for package in setuptools.find_packages() if package.startswith("diambra")],
     include_package_data=True,
     extras_require=extras,
     classifiers=[
