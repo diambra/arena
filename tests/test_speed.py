@@ -2,7 +2,7 @@
 import pytest
 import time
 import diambra.arena
-from pytest_utils import load_mocker
+from diambra.arena.utils.engine_mock import load_mocker
 import numpy as np
 import warnings
 

@@ -35,9 +35,7 @@ class DiambraGymBase(gym.Env):
         self.logger.info(self.env_settings)
 
         # N actions
-        self.n_actions = [self.env_info.available_actions.n_moves, \
-                          self.env_info.available_actions.n_attacks, \
-                          self.env_info.available_actions.n_attacks_no_comb]
+        self.n_actions = [self.env_info.available_actions.n_moves, self.env_info.available_actions.n_attacks]
 
         # Actions tuples and dict
         move_tuple = ()
@@ -99,7 +97,9 @@ class DiambraGymBase(gym.Env):
 
     # Get info
     def _get_info(self, response):
-        return dict(response.info.game_states)
+        info = dict(response.info.game_states)
+        info["settings"] = self.env_settings.pb_model
+        return info
 
     # Integrate player specific RAM states into observation
     def _player_specific_ram_states_integration(self, response, idx):
@@ -242,7 +242,7 @@ class DiambraGym1P(DiambraGymBase):
         # - Arrows U Buttons -> One discrete set
         # NB: use the convention NOOP = 0
         if env_settings.action_space == "multi_discrete":
-            self.action_space = gym.spaces.MultiDiscrete(self.n_actions[:2])
+            self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
             self.logger.debug("Using MultiDiscrete action space")
         elif env_settings.action_space == "discrete":
             self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
@@ -301,7 +301,7 @@ class DiambraGym2P(DiambraGymBase):
         action_space_dict = {}
         for idx in range(2):
             if env_settings.action_space[idx] == "multi_discrete":
-                action_space_dict["agent_{}".format(idx)] = gym.spaces.MultiDiscrete(self.n_actions[:2])
+                action_space_dict["agent_{}".format(idx)] = gym.spaces.MultiDiscrete(self.n_actions)
             elif env_settings.action_space[idx] == "discrete":
                 action_space_dict["agent_{}".format(idx)] = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
             self.logger.debug("Using {} action space for agent_{}".format(env_settings.action_space[idx], idx))

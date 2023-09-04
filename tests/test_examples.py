@@ -2,7 +2,7 @@ import pytest
 import sys
 from os.path import expanduser
 import os
-from pytest_utils import load_mocker
+from diambra.arena.utils.engine_mock import load_mocker
 
 # Add the scripts directory to sys.path
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "examples"))

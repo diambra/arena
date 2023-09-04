@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import pytest
 import diambra.arena
-from pytest_utils import generate_pytest_decorator_input, load_mocker
+from pytest_utils import generate_pytest_decorator_input
+from diambra.arena.utils.engine_mock import load_mocker
 from diambra.arena.utils.gym_utils import available_games
 
 # Example Usage:
@@ -24,13 +25,14 @@ def func(settings, wrappers_settings, episode_recording_settings, mocker):
         print("ERROR, ABORTED.")
         return 1
 
-wrappers_settings_var_order = ["no_op_max", "sticky_actions", "frame_shape", "reward_normalization",
+wrappers_settings_var_order = ["no_attack_buttons_combinations", "no_op_max", "sticky_actions", "frame_shape", "reward_normalization",
                                "reward_normalization_factor", "clip_rewards", "frame_stack", "dilation",
                                "actions_stack", "scale", "scale_mod", "flatten", "filter_keys"]
 games_dict = available_games(False)
 
 
 ok_test_parameters = {
+    "no_attack_buttons_combinations": [True, False],
     "no_op_max": [0, 2],
     "sticky_actions": [1, 4],
     "frame_shape": [(0, 0, 0), (84, 84, 1), (84, 84, 3), (84, 84, 0)],
@@ -47,6 +49,7 @@ ok_test_parameters = {
 }
 
 ko_test_parameters = {
+    "no_attack_buttons_combinations": [-1],
     "no_op_max": [-1],
     "sticky_actions": [True],
     "frame_shape": [(0, 84, 3), (128, 0, 1)],
@@ -71,7 +74,7 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.parametrize("step_ratio", [1])
 @pytest.mark.parametrize("n_players", [1, 2])
 @pytest.mark.parametrize("action_space", ["discrete", "multi_discrete"])
-def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_op_max, sticky_actions,
+def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_attack_buttons_combinations, no_op_max, sticky_actions,
                            frame_shape, reward_normalization, reward_normalization_factor,
                            clip_rewards, frame_stack, dilation, actions_stack, scale, scale_mod,
                            flatten, filter_keys, expected, mocker):
@@ -87,6 +90,7 @@ def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_op_m
 
     # Env wrappers settings
     wrappers_settings = {}
+    wrappers_settings["no_attack_buttons_combinations"] = no_attack_buttons_combinations
     wrappers_settings["no_op_max"] = no_op_max
     wrappers_settings["sticky_actions"] = sticky_actions
     wrappers_settings["frame_shape"] = frame_shape

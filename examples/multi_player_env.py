@@ -20,7 +20,7 @@ def main():
     settings["characters"] = ("Random", "Random")
 
     # Characters outfit
-    settings["char_outfits"] = (2, 2)
+    settings["outfits"] = (2, 2)
 
     env = diambra.arena.make("sfiii3n", settings, render_mode="human")
 

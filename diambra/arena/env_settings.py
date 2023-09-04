@@ -244,7 +244,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
     def _get_player_specific_values(self):
         player_env_settings = model.EnvSettings.VariableEnvSettings.PlayerEnvSettings(
             role=self.role,
-            characters=[self.characters[0], self.characters[1], self.characters[2]],
+            characters=[self.characters[idx] for idx in range(self.env_info.characters_info.chars_to_select)],
             outfits=self.outfits,
             super_art=self.super_art,
             fighting_style=self.fighting_style,
@@ -336,7 +336,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
 
             player_env_settings = model.EnvSettings.VariableEnvSettings.PlayerEnvSettings(
                 role=self.role[idx],
-                characters=[self.characters[idx][0], self.characters[idx][1], self.characters[idx][2]],
+                characters=[self.characters[idx][jdx] for jdx in range(self.env_info.characters_info.chars_to_select)],
                 outfits=self.outfits[idx],
                 super_art=self.super_art[idx],
                 fighting_style=self.fighting_style[idx],
@@ -349,6 +349,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
 
 @dataclass
 class WrappersSettings:
+    no_attack_buttons_combinations: bool = False
     no_op_max: int = 0
     sticky_actions: int = 1
     clip_rewards: bool = False
@@ -364,6 +365,7 @@ class WrappersSettings:
     frame_shape: Tuple[int, int, int] = (0, 0, 0)
     flatten: bool = False
     filter_keys: List[str] = None
+    additional_wrappers_list: List[List[Any]] = None
 
     def sanity_check(self):
         check_num_in_range("no_op_max", self.no_op_max, [0, 12])

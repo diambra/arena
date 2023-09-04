@@ -1,12 +1,13 @@
 import os
 import logging
-from dacite import from_dict
+from dacite import from_dict, Config
 from diambra.arena.arena_gym import DiambraGym1P, DiambraGym2P
 from diambra.arena.wrappers.arena_wrappers import env_wrapping
 from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P, WrappersSettings, RecordingSettings
 from diambra.arena.wrappers.episode_recording import EpisodeRecorder
 
-def make(game_id, env_settings={}, wrappers_settings={}, episode_recording_settings={}, render_mode=None, rank=0, log_level=logging.INFO):
+def make(game_id, env_settings:dict={}, wrappers_settings:dict={}, episode_recording_settings:dict={},
+         render_mode=None, rank=0, log_level=logging.INFO):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -40,10 +41,10 @@ def make(game_id, env_settings={}, wrappers_settings={}, episode_recording_setti
 
     # Checking settings and setting up default ones
     if "n_players" in env_settings.keys() and env_settings["n_players"] == 2:
-        env_settings = from_dict(EnvironmentSettings2P, env_settings)
+        env_settings = from_dict(EnvironmentSettings2P, env_settings, config=Config(strict=True))
     else:
         env_settings["n_players"] = 1
-        env_settings = from_dict(EnvironmentSettings1P, env_settings)
+        env_settings = from_dict(EnvironmentSettings1P, env_settings, config=Config(strict=True))
 
     # Make environment
     if env_settings.n_players == 1:  # 1P Mode
