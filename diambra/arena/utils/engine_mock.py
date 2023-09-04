@@ -6,7 +6,7 @@ from diambra.engine import model
 
 class DiambraEngineMock:
 
-    def __init__(self, fps=1000):
+    def __init__(self, fps=1000, override_perfect_probability=None):
 
         # Game features
         self.game_data = None
@@ -23,6 +23,141 @@ class DiambraEngineMock:
         self.health = {"P1": 0, "P2": 0}
         self.player = ""
         self.perfect = False
+        self.override_perfect_probability = override_perfect_probability
+
+    def mock__init__(self, env_address, grpc_timeout=60):
+        print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
+        print("... done (MOCKED!).")
+
+    # Send env settings, retrieve env info and int variables list [pb low level]
+    def mock_env_init(self, env_settings_pb):
+        self.settings = env_settings_pb
+
+        # Print settings
+        print("Settings:")
+        print(self.settings)
+
+        # Retrieve game info
+        self.game_data = diambra.arena.available_games(print_out=False)[self.settings.game_id]
+
+        # Setting win and perfect probability based on game difficulty
+        probability_maps = {
+            "Easy": [0.75, 0.4],
+            "Medium": [0.5, 0.2],
+            "Hard": [0.25, 0.1],
+        }
+
+        difficulty = self.settings.variable_env_settings.difficulty
+        if difficulty == 0:
+            difficulty = random.choice(range(self.game_data["difficulty"][0], self.game_data["difficulty"][1] + 1))
+        difficulty_level = self.game_data["difficulty_to_cluster_map"][str(difficulty)]
+
+        self.base_round_winning_probability = probability_maps[difficulty_level][0] ** (1.0/self.game_data["stages_per_game"])
+        self.perfect_probability = probability_maps[difficulty_level][1]
+        if self.override_perfect_probability is not None:
+            self.perfect_probability = self.override_perfect_probability
+
+        self.frame_shape = self.game_data["frame_shape"]
+        if (self.settings.frame_shape.h > 0 and self.settings.frame_shape.w > 0):
+            self.frame_shape[0] = self.settings.frame_shape.h
+            self.frame_shape[1] = self.settings.frame_shape.w
+        if (self.settings.frame_shape.c == 1):
+            self.frame_shape[2] = self.settings.frame_shape.c
+
+        continue_game_setting = self.settings.variable_env_settings.continue_game
+        self.continue_per_episode = - int(continue_game_setting) if continue_game_setting < 0.0 else int(continue_game_setting*10)
+        self.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
+        self.base_hit = int(self.delta_health * self.game_data["n_actions"][1] /
+                              ((self.game_data["n_actions"][0] + self.game_data["n_actions"][1]) *
+                               (self.game_data["ram_states"]["timer"][2] / self.settings.step_ratio)))
+
+        # Generate the ram states map
+        self.ram_states = self.game_data["ram_states"]
+        for k, v in self.ram_states.items():
+                self.ram_states[k].append(0)
+
+        # Build the response
+        response = model.EnvInitResponse()
+
+        # Frame
+        response.frame_shape.h = self.frame_shape[0]
+        response.frame_shape.w = self.frame_shape[1]
+        response.frame_shape.c = self.frame_shape[2]
+
+        # Available actions
+        response.available_actions.n_moves = self.game_data["n_actions"][0]
+        response.available_actions.n_attacks = self.game_data["n_actions"][1]
+        response.available_actions.n_attacks_no_comb = self.game_data["n_actions"][2]
+
+        move_keys = ["NoMove", "Left", "UpLeft", "Up", "UpRight", "Right", "DownRight", "Down", "DownLeft"]
+        move_labels = [" ", "\u2190", "\u2196", "\u2191", "\u2197", "\u2192", "\u2198", "\u2193", "\u2199"]
+        for idx in range(self.game_data["n_actions"][0]):
+            button = model.EnvInitResponse.AvailableActions.Button()
+            button.key = move_keys[idx]
+            button.label = move_labels[idx]
+            response.available_actions.moves.append(button)
+
+        attack_keys = ["But{}".format(i) for i in range(self.game_data["n_actions"][2])] +\
+                      ["But{}But{}".format(i - self.game_data["n_actions"][2] + 1, i - self.game_data["n_actions"][2] + 2)\
+                          for i in range(self.game_data["n_actions"][2], self.game_data["n_actions"][1])]
+        attack_labels = [" "]
+        for i in range(1, self.game_data["n_actions"][1]):
+            attack_labels += ["Attack{}".format(i)]
+        for idx in range(self.game_data["n_actions"][1]):
+            button = model.EnvInitResponse.AvailableActions.Button()
+            button.key = attack_keys[idx]
+            button.label = attack_labels[idx]
+            response.available_actions.attacks.append(button)
+
+        # Cumulative reward bounds
+        response.cumulative_reward_bounds.min = -((self.game_data["rounds_per_stage"] - 1) * (self.game_data["stages_per_game"] - 1) + self.game_data["rounds_per_stage"]) * self.delta_health
+        response.cumulative_reward_bounds.max = self.game_data["rounds_per_stage"] * self.game_data["stages_per_game"] * self.delta_health
+
+        # Characters info
+        response.characters_info.char_list.extend(self.game_data["char_list"])
+        response.characters_info.char_forbidden_list.extend(self.game_data["char_forbidden_list"])
+        for key, value in self.game_data["char_homonymy_map"].items():
+            response.characters_info.char_homonymy_map[key] = value
+        response.characters_info.chars_per_round = self.game_data["number_of_chars_per_round"]
+        response.characters_info.chars_to_select = self.game_data["number_of_chars_to_select"]
+
+        # Difficulty bounds
+        response.difficulty_bounds.min = self.game_data["difficulty"][0]
+        response.difficulty_bounds.max = self.game_data["difficulty"][1]
+
+        # RAM states
+        self._generate_ram_states()
+        for k, v in self.ram_states.items():
+            response.ram_states[k].type = v[0]
+            response.ram_states[k].min = v[1]
+            response.ram_states[k].max = v[2]
+
+        return response
+
+    # Reset the environment [pb low level]
+    def mock_reset(self, variable_env_settings):
+        # Update variable env settings
+        self.settings.variable_env_settings.CopyFrom(variable_env_settings)
+
+        # Random seed
+        random.seed(self.settings.variable_env_settings.random_seed)
+        np.random.seed(self.settings.variable_env_settings.random_seed)
+
+        self._reset_state()
+
+        return self._update_step_reset_response()
+
+    # Step the environment [pb low level]
+    def mock_step(self, actions):
+
+        # Update class state
+        self._new_game_state(actions)
+
+        return self._update_step_reset_response()
+
+    # Closing DIAMBRA Arena
+    def mock_close(self):
+        pass
 
     def _generate_ram_states(self):
 
@@ -224,132 +359,11 @@ class DiambraEngineMock:
 
         return response
 
-    def mock__init__(self, env_address, grpc_timeout=60):
-        print("Trying to connect to DIAMBRA Engine server (timeout={}s)...".format(grpc_timeout))
-        print("... done (MOCKED!).")
+def load_mocker(mocker, **kwargs):
+    diambra_engine_mock = DiambraEngineMock(**kwargs)
 
-    # Send env settings, retrieve env info and int variables list [pb low level]
-    def mock_env_init(self, env_settings_pb):
-        self.settings = env_settings_pb
-
-        # Print settings
-        print("Settings:")
-        print(self.settings)
-
-        # Retrieve game info
-        self.game_data = diambra.arena.available_games(print_out=False)[self.settings.game_id]
-
-        # Setting win and perfect probability based on game difficulty
-        probability_maps = {
-            "Easy": [0.75, 0.4],
-            "Medium": [0.5, 0.2],
-            "Hard": [0.25, 0.1],
-        }
-
-        difficulty = self.settings.variable_env_settings.difficulty
-        if difficulty == 0:
-            difficulty = random.choice(range(self.game_data["difficulty"][0], self.game_data["difficulty"][1] + 1))
-        difficulty_level = self.game_data["difficulty_to_cluster_map"][str(difficulty)]
-
-        self.base_round_winning_probability = probability_maps[difficulty_level][0] ** (1.0/self.game_data["stages_per_game"])
-        self.perfect_probability = probability_maps[difficulty_level][1]
-
-        self.frame_shape = self.game_data["frame_shape"]
-        if (self.settings.frame_shape.h > 0 and self.settings.frame_shape.w > 0):
-            self.frame_shape[0] = self.settings.frame_shape.h
-            self.frame_shape[1] = self.settings.frame_shape.w
-        if (self.settings.frame_shape.c == 1):
-            self.frame_shape[2] = self.settings.frame_shape.c
-
-        continue_game_setting = self.settings.variable_env_settings.continue_game
-        self.continue_per_episode = - int(continue_game_setting) if continue_game_setting < 0.0 else int(continue_game_setting*10)
-        self.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
-        self.base_hit = int(self.delta_health * self.game_data["n_actions"][1] /
-                              ((self.game_data["n_actions"][0] + self.game_data["n_actions"][1]) *
-                               (self.game_data["ram_states"]["timer"][2] / self.settings.step_ratio)))
-
-        # Generate the ram states map
-        self.ram_states = self.game_data["ram_states"]
-        for k, v in self.ram_states.items():
-                self.ram_states[k].append(0)
-
-        # Build the response
-        response = model.EnvInitResponse()
-
-        # Frame
-        response.frame_shape.h = self.frame_shape[0]
-        response.frame_shape.w = self.frame_shape[1]
-        response.frame_shape.c = self.frame_shape[2]
-
-        # Available actions
-        response.available_actions.n_moves = self.game_data["n_actions"][0]
-        response.available_actions.n_attacks = self.game_data["n_actions"][1]
-        response.available_actions.n_attacks_no_comb = self.game_data["n_actions"][2]
-
-        move_keys = ["NoMove", "Left", "UpLeft", "Up", "UpRight", "Right", "DownRight", "Down", "DownLeft"]
-        move_labels = [" ", "\u2190", "\u2196", "\u2191", "\u2197", "\u2192", "\u2198", "\u2193", "\u2199"]
-        for idx in range(self.game_data["n_actions"][0]):
-            button = model.EnvInitResponse.AvailableActions.Button()
-            button.key = move_keys[idx]
-            button.label = move_labels[idx]
-            response.available_actions.moves.append(button)
-
-        attack_keys = ["But{}".format(i) for i in range(self.game_data["n_actions"][2])] +\
-                      ["But{}But{}".format(i - self.game_data["n_actions"][2] + 1, i - self.game_data["n_actions"][2] + 2)\
-                          for i in range(self.game_data["n_actions"][2], self.game_data["n_actions"][1])]
-        attack_labels = [" "]
-        for i in range(1, self.game_data["n_actions"][1]):
-            attack_labels += ["Attack{}".format(i)]
-        for idx in range(self.game_data["n_actions"][1]):
-            button = model.EnvInitResponse.AvailableActions.Button()
-            button.key = attack_keys[idx]
-            button.label = attack_labels[idx]
-            response.available_actions.attacks.append(button)
-
-        # Cumulative reward bounds
-        response.cumulative_reward_bounds.min = -((self.game_data["rounds_per_stage"] - 1) * (self.game_data["stages_per_game"] - 1) + self.game_data["rounds_per_stage"]) * self.delta_health
-        response.cumulative_reward_bounds.max = self.game_data["rounds_per_stage"] * self.game_data["stages_per_game"] * self.delta_health
-
-        # Characters info
-        response.characters_info.char_list.extend(self.game_data["char_list"])
-        response.characters_info.char_forbidden_list.extend(self.game_data["char_forbidden_list"])
-        for key, value in self.game_data["char_homonymy_map"].items():
-            response.characters_info.char_homonymy_map[key] = value
-
-        # Difficulty bounds
-        response.difficulty_bounds.min = self.game_data["difficulty"][0]
-        response.difficulty_bounds.max = self.game_data["difficulty"][1]
-
-        # RAM states
-        self._generate_ram_states()
-        for k, v in self.ram_states.items():
-            response.ram_states[k].type = v[0]
-            response.ram_states[k].min = v[1]
-            response.ram_states[k].max = v[2]
-
-        return response
-
-    # Reset the environment [pb low level]
-    def mock_reset(self, variable_env_settings):
-        # Update variable env settings
-        self.settings.variable_env_settings.CopyFrom(variable_env_settings)
-
-        # Random seed
-        random.seed(self.settings.variable_env_settings.random_seed)
-        np.random.seed(self.settings.variable_env_settings.random_seed)
-
-        self._reset_state()
-
-        return self._update_step_reset_response()
-
-    # Step the environment [pb low level]
-    def mock_step(self, actions):
-
-        # Update class state
-        self._new_game_state(actions)
-
-        return self._update_step_reset_response()
-
-    # Closing DIAMBRA Arena
-    def mock_close(self):
-        pass
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.__init__", diambra_engine_mock.mock__init__)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.env_init", diambra_engine_mock.mock_env_init)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.reset", diambra_engine_mock.mock_reset)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.step", diambra_engine_mock.mock_step)
+    mocker.patch("diambra.arena.engine.interface.DiambraEngine.close", diambra_engine_mock.mock_close)

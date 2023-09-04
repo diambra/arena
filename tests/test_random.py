@@ -2,9 +2,7 @@
 import pytest
 from env_exec_interface import env_exec
 import random
-from os.path import expanduser
-from pytest_utils import load_mocker
-import os
+from diambra.arena.utils.engine_mock import load_mocker
 
 # Example Usage:
 # pytest

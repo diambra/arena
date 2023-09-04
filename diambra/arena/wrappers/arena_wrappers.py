@@ -6,6 +6,29 @@ from diambra.arena.env_settings import WrappersSettings
 from diambra.arena.wrappers.observation import WarpFrame, GrayscaleFrame, FrameStack, ActionsStack, \
                                                ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
 
+# Remove attack buttons combinations
+class NoAttackButtonsCombinations(gym.Wrapper):
+    def __init__(self, env):
+        """
+        Limit attack actions to single buttons removing attack buttons combinations
+        :param env: (Gym Environment) the environment to wrap
+        """
+        gym.Wrapper.__init__(self, env)
+        # N actions
+        self.n_actions = [self.env_info.available_actions.n_moves, self.env_info.available_actions.n_attacks_no_comb]
+        if self.env_settings.action_space == "multi_discrete":
+            self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
+            self.logger.debug("Using MultiDiscrete action space without attack buttons combinations")
+        elif self.env_settings.action_space == "discrete":
+            self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
+            self.logger.debug("Using Discrete action space without attack buttons combinations")
+
+    def reset(self, **kwargs):
+        return self.env.reset(**kwargs)
+
+    def step(self, action):
+        return self.env.step(action)
+
 class NoopResetEnv(gym.Wrapper):
     def __init__(self, env, no_op_max=6):
         """
@@ -35,7 +58,6 @@ class NoopResetEnv(gym.Wrapper):
     def step(self, action):
         return self.env.step(action)
 
-
 class StickyActionsEnv(gym.Wrapper):
     def __init__(self, env, sticky_actions):
         """
@@ -58,7 +80,6 @@ class StickyActionsEnv(gym.Wrapper):
                 break
 
         return obs, rew, done, info
-
 
 class ClipRewardEnv(gym.RewardWrapper):
     def __init__(self, env):
@@ -100,25 +121,13 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
     """
     Typical standard environment wrappers
     :param env: (Gym Environment) the diambra environment
-    :param no_op_max: (int) wrap the environment to perform
-                    no_op_max no action steps at reset
-    :param clipRewards: (bool) wrap the reward clipping wrapper
-    :param rewardNormalization: (bool) if to activate reward normalization
-    :param rewardNormalizationFactor: (double) normalization factor
-                                      for reward normalization wrapper
-    :param frameStack: (int) wrap the frame stacking wrapper
-                       using #frameStack frames
-    :param dilation (frame stacking): (int) stack one frame every
-                                      #dilation frames, useful to assure
-                                      action every step considering
-                                      a dilated subset of previous frames
-    :param actionsStack: (int) wrap the frame stacking wrapper
-                         using #frameStack frames
-    :param scale: (bool) wrap the scaling observation wrapper
-    :param scaleMod: (int) them scaling method: 0->[0,1] 1->[-1,1]
+    :param wrappers_settings: (WrappersSettings) settings for the wrappers
     :return: (Gym Environment) the wrapped diambra environment
     """
     logger = logging.getLogger(__name__)
+
+    if wrappers_settings.no_attack_buttons_combinations is True:
+        env = NoAttackButtonsCombinations(env)
 
     if wrappers_settings.no_op_max > 0:
         env = NoopResetEnv(env, no_op_max=wrappers_settings.no_op_max)
@@ -178,5 +187,10 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
 
     if wrappers_settings.flatten is True:
         env = FlattenFilterDictObs(env, wrappers_settings.filter_keys)
+
+    # Apply all additional wrappers in sequence
+    if wrappers_settings.additional_wrappers_list is not None:
+        for wrapper in wrappers_settings.additional_wrappers_list:
+            env = wrapper[0](env, **wrapper[1])
 
     return env

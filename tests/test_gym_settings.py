@@ -3,7 +3,8 @@ import pytest
 import random
 import diambra.arena
 from diambra.arena.utils.gym_utils import available_games
-from pytest_utils import generate_pytest_decorator_input, load_mocker
+from pytest_utils import generate_pytest_decorator_input
+from diambra.arena.utils.engine_mock import load_mocker
 
 # Example Usage:
 # pytest

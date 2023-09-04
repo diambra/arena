@@ -3,7 +3,8 @@ import pytest
 from os.path import expanduser
 import os
 import diambra.arena
-from pytest_utils import generate_pytest_decorator_input, load_mocker
+from pytest_utils import generate_pytest_decorator_input
+from diambra.arena.utils.engine_mock import load_mocker
 from diambra.arena.utils.gym_utils import available_games
 
 # Example Usage:
