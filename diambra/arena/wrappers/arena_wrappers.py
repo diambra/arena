@@ -15,13 +15,13 @@ class NoAttackButtonsCombinations(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         # N actions
-        self.n_actions = [self.env_info.available_actions.n_moves, self.env_info.available_actions.n_attacks_no_comb]
-        if self.env_settings.action_space == "multi_discrete":
+        self.n_actions = [self.unwrapped.env_info.available_actions.n_moves, self.unwrapped.env_info.available_actions.n_attacks_no_comb]
+        if self.unwrapped.env_settings.action_space == "multi_discrete":
             self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
-            self.logger.debug("Using MultiDiscrete action space without attack buttons combinations")
-        elif self.env_settings.action_space == "discrete":
+            self.unwrapped.logger.debug("Using MultiDiscrete action space without attack buttons combinations")
+        elif self.unwrapped.env_settings.action_space == "discrete":
             self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
-            self.logger.debug("Using Discrete action space without attack buttons combinations")
+            self.unwrapped.logger.debug("Using Discrete action space without attack buttons combinations")
 
     def reset(self, **kwargs):
         return self.env.reset(**kwargs)
@@ -50,7 +50,7 @@ class NoopResetEnv(gym.Wrapper):
         assert no_ops > 0
         obs = None
         for _ in range(no_ops):
-            obs, _, done, _ = self.env.step(self.env.get_no_op_action())
+            obs, _, done, _ = self.env.step(self.unwrapped.env.get_no_op_action())
             if done:
                 obs = self.env.reset(**kwargs)
         return obs
@@ -68,7 +68,7 @@ class StickyActionsEnv(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         self.sticky_actions = sticky_actions
-        assert self.env.env_settings.step_ratio == 1, "sticky_actions can be activated only "\
+        assert self.unwrapped.env_settings.step_ratio == 1, "sticky_actions can be activated only "\
                                                       "when step_ratio is set equal to 1"
 
     def step(self, action):
@@ -96,7 +96,6 @@ class ClipRewardEnv(gym.RewardWrapper):
         """
         return np.sign(reward)
 
-
 class NormalizeRewardEnv(gym.RewardWrapper):
     def __init__(self, env, reward_normalization_factor):
         """
@@ -107,14 +106,14 @@ class NormalizeRewardEnv(gym.RewardWrapper):
         :param rewardNormalizationFactor: multiplication factor
         """
         gym.RewardWrapper.__init__(self, env)
-        self.env.reward_normalization_value = reward_normalization_factor * self.env.max_delta_health
+        self.unwrapped.reward_normalization_value = reward_normalization_factor * self.unwrapped.max_delta_health
 
     def reward(self, reward):
         """
         Normalize reward dividing by reward normalization factor*max_delta_health
         :param reward: (float)
         """
-        return float(reward) / float(self.env.reward_normalization_value)
+        return float(reward) / float(self.unwrapped.reward_normalization_value)
 
 # Environment Wrapping (rewards normalization, resizing, grayscaling, etc)
 def env_wrapping(env, wrappers_settings: WrappersSettings):
