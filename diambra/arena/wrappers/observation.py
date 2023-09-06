@@ -107,31 +107,31 @@ class ActionsStack(gym.Wrapper):
         self.n_actions_stack = n_actions_stack
         self.move_action_stack = []
         self.attack_action_stack = []
-        for _ in range(self.env.env_settings.n_players):
+        for _ in range(self.unwrapped.env_settings.n_players):
             self.move_action_stack.append(deque([0 for _ in range(n_actions_stack)], maxlen=n_actions_stack))
             self.attack_action_stack.append(deque([0 for _ in range(n_actions_stack)], maxlen=n_actions_stack))
 
-        if self.env.env_settings.n_players == 1:
-            self.observation_space["action_move"] = gym.spaces.MultiDiscrete([self.n_actions[0]] * n_actions_stack)
-            self.observation_space["action_attack"] = gym.spaces.MultiDiscrete([self.n_actions[1]] * n_actions_stack)
+        if self.unwrapped.env_settings.n_players == 1:
+            self.observation_space["action_move"] = gym.spaces.MultiDiscrete([self.unwrapped.n_actions[0]] * n_actions_stack)
+            self.observation_space["action_attack"] = gym.spaces.MultiDiscrete([self.unwrapped.n_actions[1]] * n_actions_stack)
         else:
-            for idx in range(self.env.env_settings.n_players):
-                self.observation_space["agent_{}".format(idx)]["action_move"] = gym.spaces.MultiDiscrete([self.n_actions[0]] * n_actions_stack)
-                self.observation_space["agent_{}".format(idx)]["action_attack"] = gym.spaces.MultiDiscrete([self.n_actions[1]] * n_actions_stack)
+            for idx in range(self.unwrapped.env_settings.n_players):
+                self.observation_space["agent_{}".format(idx)]["action_move"] = gym.spaces.MultiDiscrete([self.unwrapped.n_actions[0]] * n_actions_stack)
+                self.observation_space["agent_{}".format(idx)]["action_attack"] = gym.spaces.MultiDiscrete([self.unwrapped.n_actions[1]] * n_actions_stack)
 
     def fill_stack(self, value=0):
         # Fill the actions stack with no action after reset
         for _ in range(self.n_actions_stack):
-            for idx in range(self.env.env_settings.n_players):
+            for idx in range(self.unwrapped.env_settings.n_players):
                 self.move_action_stack[idx].append(value)
                 self.attack_action_stack[idx].append(value)
 
     def _process_obs(self, obs):
-        if self.env.env_settings.n_players == 1:
+        if self.unwrapped.env_settings.n_players == 1:
             obs["action_move"] = np.array(self.move_action_stack[0])
             obs["action_attack"] = np.array(self.attack_action_stack[0])
         else:
-            for idx in range(self.env.env_settings.n_players):
+            for idx in range(self.unwrapped.env_settings.n_players):
                 obs["agent_{}".format(idx)]["action_move"] = np.array(self.move_action_stack[idx])
                 obs["agent_{}".format(idx)]["action_attack"] = np.array(self.attack_action_stack[idx])
         return obs
@@ -144,11 +144,11 @@ class ActionsStack(gym.Wrapper):
     def step(self, action):
         obs, reward, terminated, truncated, info = self.env.step(action)
 
-        if self.env.env_settings.n_players == 1:
+        if self.unwrapped.env_settings.n_players == 1:
             self.move_action_stack[0].append(obs["action_move"])
             self.attack_action_stack[0].append(obs["action_attack"])
         else:
-            for idx in range(self.env.env_settings.n_players):
+            for idx in range(self.unwrapped.env_settings.n_players):
                 self.move_action_stack[idx].append(obs["agent_{}".format(idx)]["action_move"])
                 self.attack_action_stack[idx].append(obs["agent_{}".format(idx)]["action_attack"])
 

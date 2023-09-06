@@ -1,9 +1,4 @@
 from stable_baselines3.common.callbacks import BaseCallback
-import cv2
-import os
-import time
-import json
-import numpy as np
 from pathlib import Path
 
 # Linear scheduler for RL agent parameters
