@@ -14,7 +14,7 @@ extras= {
     'tests': ['pytest', 'pytest-mock', 'testresources'],
     'stable-baselines': ['stable-baselines==2.10.2', 'gym<=0.21.0', "protobuf==3.20.1", "pyyaml"],
     'stable-baselines3': ['stable-baselines3[extra]==2.1.0', "pyyaml"],
-    'ray-rllib': ['ray[rllib]==2.0.0', 'tensorflow<=2.10.0', 'torch<=1.12.1', "pyyaml"],
+    'ray-rllib': ['ray[rllib]==2.6.3', 'tensorflow', 'torch', "pyyaml"],
 }
 
 # NOTE Package data is inside MANIFEST.In
