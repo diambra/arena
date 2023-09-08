@@ -1,15 +1,13 @@
 import os
 import diambra.arena
 import logging
-import gym
+import gymnasium as gym
 from ray.rllib.env.env_context import EnvContext
 from copy import deepcopy
 import pickle
 
 class DiambraArena(gym.Env):
-
     def __init__(self, config: EnvContext):
-
         self.logger = logging.getLogger(__name__)
 
         # If to load environment spaces from a file
@@ -31,7 +29,6 @@ class DiambraArena(gym.Env):
                 self.env_spaces_file_name = config["env_spaces_file_name"]
 
         if self.load_spaces_from_file is False:
-
             if "is_rollout" not in config.keys():
                 message = "Environment initialized without a preprocessed config file."
                 message += " Make sure to call \"preprocess_ray_config\" before initializing Ray RL Algorithms."
@@ -40,7 +37,7 @@ class DiambraArena(gym.Env):
             self.game_id = config["game_id"]
             self.settings = config["settings"] if "settings" in config.keys() else {}
             self.wrappers_settings = config["wrappers_settings"] if "wrappers_settings" in config.keys() else {}
-            self.seed = config["seed"] if "seed" in config.keys() else 0
+            self.render_mode = config["render_mode"] if "render_mode" in config.keys() else None
 
             num_rollout_workers = config["num_workers"]
             num_eval_workers = config["evaluation_num_workers"]
@@ -68,8 +65,7 @@ class DiambraArena(gym.Env):
 
             self.logger.debug("Rank: {}".format(self.rank))
 
-            self.env = diambra.arena.make(self.game_id, self.settings, self.wrappers_settings,
-                                          seed=self.seed + self.rank, rank=self.rank)
+            self.env = diambra.arena.make(self.game_id, self.settings, self.wrappers_settings, render_mode=self.render_mode, rank=self.rank)
 
             env_spaces_dict = {}
             env_spaces_dict["action_space"] = self.env.action_space
@@ -93,8 +89,11 @@ class DiambraArena(gym.Env):
         self.action_space = env_spaces_dict["action_space"]
         self.observation_space = env_spaces_dict["observation_space"]
 
-    def reset(self):
-        return self.env.reset()
+    def reset(self, seed=None, options=None):
+        if self.load_spaces_from_file is True:
+            return self.observation_space.sample(), {}
+        else:
+            return self.env.reset(seed=seed, options=options)
 
     def step(self, action):
         return self.env.step(action)
@@ -103,7 +102,6 @@ class DiambraArena(gym.Env):
         return self.env.render()
 
 def preprocess_ray_config(config):
-
     logger = logging.getLogger(__name__)
 
     num_envs_required = 0
