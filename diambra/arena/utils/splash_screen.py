@@ -4,7 +4,6 @@ import screeninfo
 
 gif_file_path = os.path.join(os.path.dirname(__file__), ".splash_screen.gif")
 
-
 def get_monitor_from_coord(x, y):
     monitors = screeninfo.get_monitors()
 
@@ -13,12 +12,8 @@ def get_monitor_from_coord(x, y):
             return m
     return monitors[0]
 
-# Class to manage gampad
-
-
 class SplashScreen():
     def __init__(self, time_interval=100, timeout=5000):
-
         self.timeout = timeout
         self.time_interval = time_interval
         # self.labels = (t*"\u25AE" for t in range(int((timeout-750)/time_interval)))
@@ -30,14 +25,13 @@ class SplashScreen():
         self.window.wm_attributes("-topmost", True)
 
         # Get the screen which contains top
-        current_screen = get_monitor_from_coord(
-            self.window.winfo_x(), self.window.winfo_y())
+        current_screen = get_monitor_from_coord(self.window.winfo_x(), self.window.winfo_y())
 
         # Get the monitor's size
         width = current_screen.width
         height = current_screen.height
 
-        image = tk.PhotoImage(file=gif_file_path)
+        image = tk.PhotoImage(master=self.window, file=gif_file_path)
         hw_dim = [image.height(), image.width()]
         self.window.geometry(
             '%dx%d+%d+%d' % (hw_dim[1], hw_dim[0],
