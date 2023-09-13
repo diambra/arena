@@ -23,6 +23,7 @@ def check_val_in_list(key, value, valid_list):
 
 @dataclass
 class EnvironmentSettings:
+    """Generic Environment Settings Class"""
     env_info = None
     games_dict = None
 
@@ -183,7 +184,7 @@ class EnvironmentSettings:
 
 @dataclass
 class EnvironmentSettings1P(EnvironmentSettings):
-    # Player level
+    """Single Agent Environment Settings Class"""
     role: str = "Random"
     characters: Union[str, Tuple[str], Tuple[str, str], Tuple[str, str, str]] = ("Random", "Random", "Random")
     outfits: int = 1
@@ -255,7 +256,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
 
 @dataclass
 class EnvironmentSettings2P(EnvironmentSettings):
-    # Player level
+    """Single Agent Environment Settings Class"""
     role: Tuple[str, str] = ("Random", "Random")
     characters: Union[Tuple[str, str], Tuple[Tuple[str], Tuple[str]],
                       Tuple[Tuple[str, str], Tuple[str, str]],
@@ -299,14 +300,14 @@ class EnvironmentSettings2P(EnvironmentSettings):
         super()._process_random_values()
 
         characters_tmp = [[],[]]
-        for idx in range(2):
-            sampled_characters = self._sample_characters()
 
+        for idx, characters in enumerate(self.characters):
+            sampled_characters = self._sample_characters()
             for jdx in range(3):
-                if self.characters[idx][jdx] == "Random":
+                if characters[jdx] == "Random":
                     characters_tmp[idx].append(sampled_characters[jdx])
                 else:
-                    characters_tmp[idx].append(self.characters[idx][jdx])
+                    characters_tmp[idx].append(characters[jdx])
 
         self.characters = (tuple(characters_tmp[0]), tuple(characters_tmp[1]))
 
@@ -324,8 +325,8 @@ class EnvironmentSettings2P(EnvironmentSettings):
         self.ultimate_style = tuple([[random.choice(list(range(1, 3))) if self.ultimate_style[idx][jdx] == "Random" else self.ultimate_style[idx][jdx] for jdx in range(3)] for idx in range(2)])
 
     def _get_action_spaces(self):
-        action_spaces = [model.EnvSettings.ActionSpace.ACTION_SPACE_DISCRETE if self.action_space[idx] == "discrete" else \
-                         model.EnvSettings.ActionSpace.ACTION_SPACE_MULTI_DISCRETE for idx in range(2)]
+        action_spaces = [model.EnvSettings.ActionSpace.ACTION_SPACE_DISCRETE if action_space == "discrete" else \
+                         model.EnvSettings.ActionSpace.ACTION_SPACE_MULTI_DISCRETE for action_space in self.action_space]
 
         return action_spaces
 
