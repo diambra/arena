@@ -33,7 +33,7 @@ gym_settings_var_order = ["frame_shape", "step_ratio", "action_space", "difficul
 ok_test_parameters = {
     "frame_shape": [(0, 0, 0), (0, 0, 1), (82, 82, 0), (82, 82, 1)],
     "step_ratio": [1, 3, 6],
-    "action_space": ["discrete", "multi_discrete"],
+    "action_space": [diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE],
     "difficulty": ["Random", 1, 3],
     "continue_game": [-1.0, 0.0, 0.3],
     "tower": [1, 3, 4],
@@ -47,7 +47,7 @@ ko_test_parameters = {
     "frame_shape": [(0, 82, 0), (0, 0, 4), (-100, -100, 3)],
     "step_ratio": [8],
     "difficulty": [True, 0, "random"],
-    "action_space": ["random", 12],
+    "action_space": ["random", 12, "discrete", diambra.arena.SpaceType.BOX],
     "continue_game": [1.3, "string"],
     "tower": [5],
     "role": [[5, 4], ["P1P2", "Random"]],

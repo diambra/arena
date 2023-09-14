@@ -9,7 +9,8 @@ default_args = {
     "interactive": False,
     "n_episodes": 1,
     "no_action_probability": 0.0,
-    "render": False
+    "render": False,
+    "log_output": False,
 }
 
 def env_exec(settings, options_list, wrappers_settings, episode_recording_settings, args=default_args):
@@ -25,11 +26,13 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
         env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, episode_recording_settings)
 
         # Print environment obs and action spaces summary
-        env_spaces_summary(env)
+        if args["log_output"] is True:
+            env_spaces_summary(env)
 
         for options in options_list:
             observation, info = env.reset(options=options)
-            env.show_obs(observation, wait_key, args["render"])
+            if args["log_output"] is True:
+                env.show_obs(observation, wait_key, args["render"])
 
             cumulative_ep_rew = 0.0
             cumulative_ep_rew_all = []
@@ -45,56 +48,52 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
 
                 if env.env_settings.n_players == 1:
                     if no_action is True:
-                        if env.env_settings.action_space == "multi_discrete":
-                            for iel, _ in enumerate(actions):
-                                actions[iel] = 0
-                        else:
-                            actions = 0
+                        actions = env.get_no_op_action()
 
-                    if env.env_settings.action_space == "discrete":
+                    if env.env_settings.action_space == diambra.arena.SpaceType.DISCRETE:
                         move_action, att_action = discrete_to_multi_discrete_action(actions, env.n_actions[0])
                     else:
                         move_action, att_action = actions[0], actions[1]
 
-                    print("(agent_0) {} {}".format(env.print_actions_dict[0][move_action], env.print_actions_dict[1][att_action]))
+                    if args["log_output"] is True:
+                        print("(agent_0) {} {}".format(env.print_actions_dict[0][move_action], env.print_actions_dict[1][att_action]))
 
                 else:
                     if no_action is True:
-                        if env.env_settings.action_space[0] == "multi_discrete":
-                            actions["agent_0"] = np.array([0, 0])
-                        else:
-                            actions["agent_0"] = 0
+                        actions["agent_0"] = env.get_no_op_action()["agent_0"]
 
                     for idx in range(env.env_settings.n_players):
-                        if env.env_settings.action_space[idx] == "discrete":
+                        if env.env_settings.action_space[idx] == diambra.arena.SpaceType.DISCRETE:
                             move_action, att_action = discrete_to_multi_discrete_action(actions["agent_{}".format(idx)], env.n_actions[0])
                         else:
                             move_action, att_action = actions["agent_{}".format(idx)][0], actions["agent_{}".format(idx)][1]
 
-                        print("(agent_{}) {} {}".format(idx, env.print_actions_dict[0][move_action], env.print_actions_dict[1][att_action]))
+                        if args["log_output"] is True:
+                            print("(agent_{}) {} {}".format(idx, env.print_actions_dict[0][move_action], env.print_actions_dict[1][att_action]))
 
                 observation, reward, terminated, truncated, info = env.step(actions)
 
                 cumulative_ep_rew += reward
-                print("action =", actions)
-                print("reward =", reward)
-                print("done =", terminated or truncated)
-                for k, v in info.items():
-                    print("info[\"{}\"] = {}".format(k, v))
-                env.show_obs(observation, wait_key, args["render"])
-                print("--")
-                print("Current Cumulative Reward =", cumulative_ep_rew)
+                if args["log_output"] is True:
+                    print("action =", actions)
+                    print("reward =", reward)
+                    print("done =", terminated or truncated)
+                    for k, v in info.items():
+                        print("info[\"{}\"] = {}".format(k, v))
+                    env.show_obs(observation, wait_key, args["render"])
+                    print("--")
+                    print("Current Cumulative Reward =", cumulative_ep_rew)
 
-                print("----------")
+                    print("----------")
 
                 if terminated or truncated:
-                    print("Resetting Env")
                     observation, info = env.reset()
-                    env.show_obs(observation, wait_key, args["render"])
+                    if args["log_output"] is True:
+                        env.show_obs(observation, wait_key, args["render"])
+                        print("Ep. # = ", curr_num_ep)
+                        print("Ep. Cumulative Rew # = ", cumulative_ep_rew)
                     curr_num_ep += 1
                     no_action = random.choices([True, False], [args["no_action_probability"], 1.0 - args["no_action_probability"]])[0]
-                    print("Ep. # = ", curr_num_ep)
-                    print("Ep. Cumulative Rew # = ", cumulative_ep_rew)
                     cumulative_ep_rew_all.append(cumulative_ep_rew)
                     cumulative_ep_rew = 0.0
 
@@ -108,7 +107,7 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
                         else:
                             ram_state_values = [observation["agent_0"]["own_side"], observation["agent_0"]["opp_side"]]
 
-                    if env.env_settings.pb_model.variable_env_settings.player_env_settings[0].role == "P2":
+                    if env.env_settings.pb_model.episode_settings.player_settings[0].role == "P2":
                         if (ram_state_values[0] != 1.0 or ram_state_values[1] != 0.0):
                             raise RuntimeError("Wrong starting sides:", ram_state_values[0], ram_state_values[1])
                     else:
@@ -125,9 +124,10 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
                                                 "not equal. Dones =", info["round_done"], info["stage_done"],
                                                 info["game_done"], info["episode_done"])
 
-            print("Cumulative reward = ", cumulative_ep_rew_all)
-            print("Mean cumulative reward = ", np.mean(cumulative_ep_rew_all))
-            print("Std cumulative reward = ", np.std(cumulative_ep_rew_all))
+            if args["log_output"] is True:
+                print("Cumulative reward = ", cumulative_ep_rew_all)
+                print("Mean cumulative reward = ", np.mean(cumulative_ep_rew_all))
+                print("Std cumulative reward = ", np.std(cumulative_ep_rew_all))
 
             if len(cumulative_ep_rew_all) != max_num_ep:
                 raise RuntimeError("Not run all episodes")

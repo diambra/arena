@@ -47,7 +47,7 @@ class DiambraEngineMock:
             "Hard": [0.25, 0.1],
         }
 
-        difficulty = self.settings.variable_env_settings.difficulty
+        difficulty = self.settings.episode_settings.difficulty
         if difficulty == 0:
             difficulty = random.choice(range(self.game_data["difficulty"][0], self.game_data["difficulty"][1] + 1))
         difficulty_level = self.game_data["difficulty_to_cluster_map"][str(difficulty)]
@@ -64,7 +64,7 @@ class DiambraEngineMock:
         if (self.settings.frame_shape.c == 1):
             self.frame_shape[2] = self.settings.frame_shape.c
 
-        continue_game_setting = self.settings.variable_env_settings.continue_game
+        continue_game_setting = self.settings.episode_settings.continue_game
         self.continue_per_episode = - int(continue_game_setting) if continue_game_setting < 0.0 else int(continue_game_setting*10)
         self.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
         self.base_hit = int(self.delta_health * self.game_data["n_actions"][1] /
@@ -128,20 +128,20 @@ class DiambraEngineMock:
         # RAM states
         self._generate_ram_states()
         for k, v in self.ram_states.items():
-            response.ram_states[k].type = v[0]
+            response.ram_states[k].type = model.SpaceType.Value(v[0])
             response.ram_states[k].min = v[1]
             response.ram_states[k].max = v[2]
 
         return response
 
     # Reset the environment [pb low level]
-    def mock_reset(self, variable_env_settings):
+    def mock_reset(self, episode_settings):
         # Update variable env settings
-        self.settings.variable_env_settings.CopyFrom(variable_env_settings)
+        self.settings.episode_settings.CopyFrom(episode_settings)
 
         # Random seed
-        random.seed(self.settings.variable_env_settings.random_seed)
-        np.random.seed(self.settings.variable_env_settings.random_seed)
+        random.seed(self.settings.episode_settings.random_seed)
+        np.random.seed(self.settings.episode_settings.random_seed)
 
         self._reset_state()
 
@@ -166,17 +166,17 @@ class DiambraEngineMock:
 
         # Setting meaningful values to ram states
         self.ram_states["stage"][3] = self.current_stage_number
-        self.ram_states["sideP1"][3] = self.side["P1"]
-        self.ram_states["sideP2"][3] = self.side["P2"]
-        self.ram_states["winsP1"][3] = self.n_rounds_won
-        self.ram_states["winsP2"][3] = self.n_rounds_lost
+        self.ram_states["side_P1"][3] = self.side["P1"]
+        self.ram_states["side_P2"][3] = self.side["P2"]
+        self.ram_states["wins_P1"][3] = self.n_rounds_won
+        self.ram_states["wins_P2"][3] = self.n_rounds_lost
 
         values = [self.char, self.health]
 
         for idx, state in enumerate(["char", "health"]):
             for text in ["", "_1", "_2", "_3"]:
                 for player in ["P1", "P2"]:
-                    key = "{}{}{}".format(state, text, player)
+                    key = "{}{}_{}".format(state, text, player)
                     if (key in self.ram_states):
                         self.ram_states[key][3] = values[idx][player]
 
@@ -213,8 +213,8 @@ class DiambraEngineMock:
         self.episode_done_ = False
         self.env_done_ = False
 
-        self.side["P1"] = 0 if self.settings.variable_env_settings.player_env_settings[0].role == "P1" else 1
-        self.side["P2"] = 1 if self.settings.variable_env_settings.player_env_settings[0].role == "P1" else 0
+        self.side["P1"] = 0 if self.settings.episode_settings.player_settings[0].role == "P1" else 1
+        self.side["P2"] = 1 if self.settings.episode_settings.player_settings[0].role == "P1" else 0
         self.health["P1"] = self.game_data["health"][1]
         self.health["P2"] = self.game_data["health"][1]
         self.timer = self.game_data["ram_states"]["timer"][2]
@@ -223,8 +223,8 @@ class DiambraEngineMock:
 
         # Characters
         for idx in range(self.settings.n_players):
-            self.char[self.settings.variable_env_settings.player_env_settings[idx].role] =\
-                self.game_data["char_list"].index(self.settings.variable_env_settings.player_env_settings[idx].characters[0])
+            self.char[self.settings.episode_settings.player_settings[idx].role] =\
+                self.game_data["char_list"].index(self.settings.episode_settings.player_settings[idx].characters[0])
 
     # Update game state
     def _new_game_state(self, actions):
@@ -253,7 +253,7 @@ class DiambraEngineMock:
         hit_prob = self.base_round_winning_probability ** self.current_stage_number
 
         for idx in range(self.settings.n_players):
-            role = self.settings.variable_env_settings.player_env_settings[idx].role
+            role = self.settings.episode_settings.player_settings[idx].role
             opponent_role = "P2" if role == "P1" else "P1"
             if self.player_actions[idx][1] != 0:
                 self.health[opponent_role] -= random.choices([self.base_hit, 0], [hit_prob, 1.0 - hit_prob])[0]
@@ -263,7 +263,7 @@ class DiambraEngineMock:
         for role in ["P1", "P2"]:
             self.health[role] = max(self.health[role], self.game_data["health"][0])
 
-        role_0 = self.settings.variable_env_settings.player_env_settings[0].role
+        role_0 = self.settings.episode_settings.player_settings[0].role
         opponent_role_0 = "P2" if role_0 == "P1" else "P1"
 
         if (min(self.health["P1"], self.health["P2"]) == self.game_data["health"][0]) or (self.timer <= 0):

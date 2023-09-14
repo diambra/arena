@@ -27,7 +27,7 @@ def func(settings, wrappers_settings, episode_recording_settings, mocker):
 
 wrappers_settings_var_order = ["no_attack_buttons_combinations", "no_op_max", "sticky_actions", "frame_shape", "reward_normalization",
                                "reward_normalization_factor", "clip_rewards", "frame_stack", "dilation",
-                               "actions_stack", "scale", "scale_mod", "flatten", "filter_keys"]
+                               "actions_stack", "scale", "scale_mod", "flatten", "filter_keys", "wrappers"]
 games_dict = available_games(False)
 
 
@@ -45,7 +45,8 @@ ok_test_parameters = {
     "scale": [True, False],
     "scale_mod": [0],
     "flatten": [True, False],
-    "filter_keys": [[], ["stage", "own_side"]]
+    "filter_keys": [[], ["stage", "own_side"]],
+    "wrappers": [[]],
 }
 
 ko_test_parameters = {
@@ -62,7 +63,8 @@ ko_test_parameters = {
     "scale": [10],
     "scale_mod": [2],
     "flatten": [None],
-    "filter_keys": [12]
+    "filter_keys": [12],
+    "wrappers": ["test"],
 }
 
 def pytest_generate_tests(metafunc):
@@ -73,11 +75,11 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("step_ratio", [1])
 @pytest.mark.parametrize("n_players", [1, 2])
-@pytest.mark.parametrize("action_space", ["discrete", "multi_discrete"])
+@pytest.mark.parametrize("action_space", [diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE])
 def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_attack_buttons_combinations, no_op_max, sticky_actions,
                            frame_shape, reward_normalization, reward_normalization_factor,
                            clip_rewards, frame_stack, dilation, actions_stack, scale, scale_mod,
-                           flatten, filter_keys, expected, mocker):
+                           flatten, filter_keys, wrappers, expected, mocker):
 
     # Env settings
     settings = {}
@@ -104,6 +106,7 @@ def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_atta
     wrappers_settings["scale_mod"] = scale_mod
     wrappers_settings["flatten"] = flatten
     wrappers_settings["filter_keys"] = filter_keys
+    wrappers_settings["wrappers"] = wrappers
 
     # Recording settings
     episode_recording_settings = {}

@@ -49,7 +49,7 @@ def pytest_generate_tests(metafunc):
 # Recording
 @pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("n_players", [1, 2])
-@pytest.mark.parametrize("action_space", ["discrete", "multi_discrete"])
+@pytest.mark.parametrize("action_space", [diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE])
 def test_settings_recording(game_id ,username, dataset_path, n_players, action_space, expected, mocker):
 
     # Env settings

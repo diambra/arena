@@ -5,7 +5,7 @@ def main():
     # Settings
     settings = {}
 
-    # --- Fixed environment settings ---
+    # --- Environment settings ---
 
     # Number players to use
     settings["n_players"] = 1 # Single player env, "Standard RL"
@@ -20,9 +20,9 @@ def main():
     # settings["frame_shape"] = (0, 0, 0) # Deactivated (Original size RBG)
 
     # If to use discrete or multi_discrete action space
-    settings["action_space"] = "multi_discrete"
+    settings["action_space"] = diambra.arena.SpaceType.MULTI_DISCRETE
 
-    # --- Variable environment settings ---
+    # --- Episode settings ---
 
     # Player role selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
     settings["role"] = "P1"
@@ -64,7 +64,7 @@ def main():
         print("Info: {}".format(info))
 
         if done:
-            # Optionally, change variable environment settings here
+            # Optionally, change episode settings here
             options = {}
             options["role"] = "P2"
             options["continue_game"] = 0.0

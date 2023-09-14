@@ -47,8 +47,8 @@ class DiambraEngine:
         return response
 
     # Reset the environment [pb low level]
-    def reset(self, variable_env_settings):
-        return self.client.Reset(variable_env_settings)
+    def reset(self, episode_settings):
+        return self.client.Reset(episode_settings)
 
     # Step the environment [pb low level]
     def step(self, action_list):

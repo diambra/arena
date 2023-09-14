@@ -93,5 +93,6 @@ if __name__ == "__main__":
     args["no_action_probability"] = 1.0 if opt.noAction == 1 else 0.0
     args["n_episodes"] = opt.nEpisodes
     args["render"] = bool(opt.render)
+    args["log_output"] = True
 
     env_exec(settings, [settings], wrappers_settings, episode_recording_settings, args)
