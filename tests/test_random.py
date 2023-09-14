@@ -3,6 +3,7 @@ import pytest
 from env_exec_interface import env_exec
 import random
 from diambra.arena.utils.engine_mock import load_mocker
+import diambra.arena
 
 # Example Usage:
 # pytest
@@ -20,6 +21,7 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
     args["n_episodes"] = 1
     args["no_action_probability"] = no_action_probability
     args["render"] = False
+    args["log_output"] = False
 
     if use_mock_env is True:
         load_mocker(mocker)
@@ -54,7 +56,7 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
 
 game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
 n_players = [1, 2]
-action_spaces = ["discrete", "multi_discrete"]
+action_spaces = [diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE]
 no_action_probability = 0.25
 
 @pytest.mark.parametrize("game_id", game_ids)

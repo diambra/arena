@@ -8,6 +8,7 @@ from diambra.arena.utils.gym_utils import discrete_to_multi_discrete_action
 from diambra.arena.engine.interface import DiambraEngine
 from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P
 from typing import Union, Any, Dict, List
+from diambra.engine import model, SpaceType
 
 class DiambraGymBase(gym.Env):
     """Diambra Environment gymnasium base interface"""
@@ -84,8 +85,8 @@ class DiambraGymBase(gym.Env):
         if options is None:
             options = {}
         options["seed"] = seed
-        request = self.env_settings.update_variable_env_settings(options)
-        response = self.arena_engine.reset(request.variable_env_settings)
+        request = self.env_settings.update_episode_settings(options)
+        response = self.arena_engine.reset(request.episode_settings)
         return self._get_obs(response), self._get_info(response)
 
     # Rendering the environment
@@ -153,18 +154,17 @@ class DiambraGymBase(gym.Env):
         for k, v in self.env_info.ram_states.items():
             if k.endswith("P1"):
                 target_dict = player_spec_dict
-                knew = "own_" + k[:-2]
+                knew = "own_" + k[:-3]
             elif k.endswith("P2"):
                 target_dict = player_spec_dict
-                knew = "opp_" + k[:-2]
+                knew = "opp_" + k[:-3]
             else:
                 target_dict = generic_dict
                 knew = k
 
-            # Discrete spaces (binary / categorical)
-            if v.type == 0 or v.type == 2:
+            if  v.type == SpaceType.BINARY or v.type == SpaceType.DISCRETE:
                 target_dict[knew] = gym.spaces.Discrete(v.max + 1)
-            elif v.type == 1:  # Box spaces
+            elif v.type == SpaceType.BOX:
                 target_dict[knew] = gym.spaces.Box(low=v.min, high=v.max, shape=(1,), dtype=np.int32)
             else:
                 raise RuntimeError("Only Discrete (Binary/Categorical) | Box Spaces allowed")
@@ -193,20 +193,20 @@ class DiambraGymBase(gym.Env):
         generic_dict = {}
 
         # Adding env additional observations (side-specific)
-        player_role = self.env_settings.pb_model.variable_env_settings.player_env_settings[idx].role
+        player_role = self.env_settings.pb_model.episode_settings.player_settings[idx].role
         for k, v in self.env_info.ram_states.items():
             if (k.endswith("P1") or k.endswith("P2")):
                 target_dict = player_spec_dict
                 if k[-2:] == player_role:
-                    knew = "own_" + k[:-2]
+                    knew = "own_" + k[:-3]
                 else:
-                    knew = "opp_" + k[:-2]
+                    knew = "opp_" + k[:-3]
             else:
                 target_dict = generic_dict
                 knew = k
 
             # Box spaces
-            if v.type == 1:
+            if v.type == SpaceType.BOX:
                 target_dict[knew] = np.array([response.observation.ram_states[k]], dtype=np.int32)
             else:  # Discrete spaces (binary / categorical)
                 target_dict[knew] = response.observation.ram_states[k]
@@ -240,12 +240,11 @@ class DiambraGym1P(DiambraGymBase):
         # Discrete actions:
         # - Arrows U Buttons -> One discrete set
         # NB: use the convention NOOP = 0
-        if env_settings.action_space == "multi_discrete":
+        if env_settings.action_space == SpaceType.MULTI_DISCRETE:
             self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
-            self.logger.debug("Using MultiDiscrete action space")
-        elif env_settings.action_space == "discrete":
+        elif env_settings.action_space == SpaceType.DISCRETE:
             self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
-            self.logger.debug("Using Discrete action space")
+        self.logger.debug("Using {} action space".format(SpaceType.Name(env_settings.action_space)))
 
     # Return the no-op action
     def get_no_op_action(self):
@@ -297,17 +296,17 @@ class DiambraGym2P(DiambraGymBase):
 
         # Action space
         # Dictionary
-        action_spaces_values = {"multi_discrete": gym.spaces.MultiDiscrete(self.n_actions),
-                                "discrete": gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)}
-        action_space_dict = self._update_dict(action_spaces_values)
+        action_spaces_values = {SpaceType.MULTI_DISCRETE: gym.spaces.MultiDiscrete(self.n_actions),
+                                SpaceType.DISCRETE: gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)}
+        action_space_dict = self._map_action_spaces_to_agents(action_spaces_values)
         self.logger.debug("Using the following action spaces: {}".format(action_space_dict))
         self.action_space = gym.spaces.Dict(action_space_dict)
 
     # Return the no-op action
     def get_no_op_action(self):
-        no_op_values = {"multi_discrete": [0, 0],
-                        "discrete": 0}
-        return self._update_dict(no_op_values)
+        no_op_values = {SpaceType.MULTI_DISCRETE: [0, 0],
+                        SpaceType.DISCRETE: 0}
+        return self._map_action_spaces_to_agents(no_op_values)
 
     # Step the environment
     def step(self, actions: Dict[str, Union[int, List[int]]]):
@@ -324,7 +323,7 @@ class DiambraGym2P(DiambraGymBase):
 
         return observation, response.reward, response.info.game_states["game_done"], False, self._get_info(response)
 
-    def _update_dict(self, values_dict):
+    def _map_action_spaces_to_agents(self, values_dict):
         out_dict = {}
         for idx, action_space in enumerate(self.env_settings.action_space):
             out_dict["agent_{}".format(idx)] = values_dict[action_space]

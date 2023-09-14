@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Union, List, Tuple, Any, Dict
 from diambra.arena.utils.gym_utils import available_games
+from diambra.arena import SpaceType
 import numpy as np
 import random
 from diambra.engine import model
@@ -20,6 +21,10 @@ def check_val_in_list(key, value, valid_list):
     error_message = "ERROR: \"{}\" ({}) admissible values are {}".format(key, value, valid_list)
     assert (value in valid_list), error_message
     assert (type(value)==type(valid_list[valid_list.index(value)])), error_message
+
+def check_space_type(key, value, valid_list):
+    error_message = "ERROR: \"{}\" ({}) admissible values are {}".format(key, SpaceType.Name(value), [SpaceType.Name(elem) for elem in valid_list])
+    assert (value in valid_list), error_message
 
 @dataclass
 class EnvironmentSettings:
@@ -50,7 +55,7 @@ class EnvironmentSettings:
     _last_seed: int = None
     pb_model: model = None
 
-    variable_env_settings = ["seed", "difficulty", "continue_game", "show_final", "tower", "role",
+    episode_settings = ["seed", "difficulty", "continue_game", "show_final", "tower", "role",
                              "characters", "outfits", "super_art", "fighting_style", "ultimate_style"]
 
     # Transforming env settings dict to pb request
@@ -74,18 +79,18 @@ class EnvironmentSettings:
         if init is False:
             self._process_random_values()
 
-            player_env_settings = self._get_player_specific_values()
+            player_settings = self._get_player_specific_values()
 
-            variable_env_settings = model.EnvSettings.VariableEnvSettings(
+            episode_settings = model.EnvSettings.EpisodeSettings(
                 random_seed=self.seed,
                 difficulty=self.difficulty,
                 continue_game=self.continue_game,
                 show_final=self.show_final,
                 tower=self.tower,
-                player_env_settings=player_env_settings,
+                player_settings=player_settings,
             )
         else:
-            variable_env_settings = model.EnvSettings.VariableEnvSettings()
+            episode_settings = model.EnvSettings.EpisodeSettings()
 
         request = model.EnvSettings(
             game_id=self.game_id,
@@ -96,7 +101,7 @@ class EnvironmentSettings:
             disable_joystick=self.disable_joystick,
             rank=self.rank,
             action_spaces=action_spaces,
-            variable_env_settings=variable_env_settings,
+            episode_settings=episode_settings,
         )
 
         self.pb_model = request
@@ -111,16 +116,16 @@ class EnvironmentSettings:
         self.valid_characters = [character for character in self.env_info.characters_info.char_list \
                                            if character not in self.env_info.characters_info.char_forbidden_list]
 
-    def update_variable_env_settings(self, options: Dict[str, Any] = None):
+    def update_episode_settings(self, options: Dict[str, Any] = None):
         for k, v in options.items():
-            if k in self.variable_env_settings:
+            if k in self.episode_settings:
                 setattr(self, k, v)
 
         self._sanity_check()
 
         # Storing original attributes before sampling random ones
         original_settings_values =  {}
-        for k in self.variable_env_settings:
+        for k in self.episode_settings:
             original_settings_values[k] = getattr(self, k)
 
         request = self.get_pb_request()
@@ -188,7 +193,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
     role: str = "Random"
     characters: Union[str, Tuple[str], Tuple[str, str], Tuple[str, str, str]] = ("Random", "Random", "Random")
     outfits: int = 1
-    action_space: str = "multi_discrete"
+    action_space: int = SpaceType.MULTI_DISCRETE
     super_art: Union[int, str] = "Random"  # SFIII Specific
     fighting_style: Union[int, str] = "Random" # KOF Specific
     ultimate_style: Union[Tuple[str, str, str], Tuple[int, int, int]] = ("Random", "Random", "Random") # KOF Specific
@@ -203,7 +208,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
                 self.characters += ("Random", )
 
         check_num_in_range("n_players", self.n_players, [1, 1])
-        check_val_in_list("action_space", self.action_space, ["discrete", "multi_discrete"])
+        check_space_type("action_space", self.action_space, [SpaceType.DISCRETE, SpaceType.MULTI_DISCRETE])
         check_val_in_list("role", self.role, ["P1", "P2", "Random"])
         # Check for characters
         char_list = list(self.env_info.characters_info.char_list)
@@ -217,10 +222,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
             check_val_in_list("ultimate_style[{}]".format(idx), self.ultimate_style[idx], ["Random", 1, 2])
 
     def _get_action_spaces(self):
-        action_space = model.EnvSettings.ActionSpace.ACTION_SPACE_DISCRETE if self.action_space == "discrete" else \
-                       model.EnvSettings.ActionSpace.ACTION_SPACE_MULTI_DISCRETE
-
-        return [action_space]
+        return [self.action_space]
 
     def _process_random_values(self):
         super()._process_random_values()
@@ -243,7 +245,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
         self.ultimate_style = tuple([random.choice(list(range(1, 3))) if self.ultimate_style[idx] == "Random" else self.ultimate_style[idx] for idx in range(3)])
 
     def _get_player_specific_values(self):
-        player_env_settings = model.EnvSettings.VariableEnvSettings.PlayerEnvSettings(
+        player_settings = model.EnvSettings.EpisodeSettings.PlayerSettings(
             role=self.role,
             characters=[self.characters[idx] for idx in range(self.env_info.characters_info.chars_to_select)],
             outfits=self.outfits,
@@ -252,7 +254,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
             ultimate_style={"dash": self.ultimate_style[0], "evade": self.ultimate_style[1], "bar": self.ultimate_style[2]}
         )
 
-        return [player_env_settings]
+        return [player_settings]
 
 @dataclass
 class EnvironmentSettings2P(EnvironmentSettings):
@@ -263,7 +265,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
                       Tuple[Tuple[str, str, str], Tuple[str, str, str]]] =\
                     (("Random", "Random", "Random"), ("Random", "Random", "Random"))
     outfits: Tuple[int, int] = (1, 1)
-    action_space: Tuple[str, str] = ("multi_discrete", "multi_discrete")
+    action_space: Tuple[int, int] = (SpaceType.MULTI_DISCRETE, SpaceType.MULTI_DISCRETE)
     super_art: Union[Tuple[str, str], Tuple[int, int], Tuple[str, int], Tuple[int, str]] = ("Random", "Random")  # SFIII Specific
     fighting_style: Union[Tuple[str, str], Tuple[int, int], Tuple[str, int], Tuple[int, str]] = ("Random", "Random")  # KOF Specific
     ultimate_style: Union[Tuple[Tuple[str, str, str], Tuple[str, str, str]], Tuple[Tuple[int, int, int], Tuple[int, int, int]]] =\
@@ -286,7 +288,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
         char_list = list(self.env_info.characters_info.char_list)
         char_list.append("Random")
         for idx in range(2):
-            check_val_in_list("action_space[{}]".format(idx), self.action_space[idx], ["discrete", "multi_discrete"])
+            check_space_type("action_space[{}]".format(idx), self.action_space[idx], [SpaceType.DISCRETE, SpaceType.MULTI_DISCRETE])
             check_val_in_list("role[{}]".format(idx), self.role[idx], ["P1", "P2", "Random"])
             for jdx in range(3):
                 check_val_in_list("characters[{}][{}]".format(idx, jdx), self.characters[idx][jdx], char_list)
@@ -325,17 +327,14 @@ class EnvironmentSettings2P(EnvironmentSettings):
         self.ultimate_style = tuple([[random.choice(list(range(1, 3))) if self.ultimate_style[idx][jdx] == "Random" else self.ultimate_style[idx][jdx] for jdx in range(3)] for idx in range(2)])
 
     def _get_action_spaces(self):
-        action_spaces = [model.EnvSettings.ActionSpace.ACTION_SPACE_DISCRETE if action_space == "discrete" else \
-                         model.EnvSettings.ActionSpace.ACTION_SPACE_MULTI_DISCRETE for action_space in self.action_space]
-
-        return action_spaces
+        return [action_space for action_space in self.action_space]
 
     def _get_player_specific_values(self):
         players_env_settings = []
 
         for idx in range(2):
 
-            player_env_settings = model.EnvSettings.VariableEnvSettings.PlayerEnvSettings(
+            player_settings = model.EnvSettings.EpisodeSettings.PlayerSettings(
                 role=self.role[idx],
                 characters=[self.characters[idx][jdx] for jdx in range(self.env_info.characters_info.chars_to_select)],
                 outfits=self.outfits[idx],
@@ -344,7 +343,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
                 ultimate_style={"dash": self.ultimate_style[idx][0], "evade": self.ultimate_style[idx][1], "bar": self.ultimate_style[idx][2]}
             )
 
-            players_env_settings.append(player_env_settings)
+            players_env_settings.append(player_settings)
 
         return players_env_settings
 
@@ -366,7 +365,7 @@ class WrappersSettings:
     frame_shape: Tuple[int, int, int] = (0, 0, 0)
     flatten: bool = False
     filter_keys: List[str] = None
-    additional_wrappers_list: List[List[Any]] = None
+    wrappers: List[List[Any]] = None
 
     def sanity_check(self):
         check_num_in_range("no_op_max", self.no_op_max, [0, 12])

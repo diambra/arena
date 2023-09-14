@@ -12,6 +12,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 # out-of-tree builds.
 # Need to pin the specific version of tensorflow 1.15.0 due to
 # numpy incompatibilities with gymnasium of different versions
+# see https://github.com/diambra/arena/issues/89
 RUN --mount=target=/usr/src/arena,type=bind,source=. \
     cp -r /usr/src/arena /tmp/arena && \
     pip install /tmp/arena[stable-baselines] && \

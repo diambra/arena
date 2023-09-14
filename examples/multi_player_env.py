@@ -5,15 +5,15 @@ def main():
     # Environment Settings
     settings = {}
 
-    # --- Fixed environment settings ---
+    # --- Environment settings ---
 
     # 2 Players game
     settings["n_players"] = 2
 
     # If to use discrete or multi_discrete action space
-    settings["action_space"] = ("discrete", "discrete")
+    settings["action_space"] = (diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.DISCRETE)
 
-    # --- Variable environment settings ---
+    # --- Episode settings ---
 
     # Characters to be used, automatically extended with "Random" for games
     # required to select more than one character (e.g. Tekken Tag Tournament)
@@ -39,7 +39,7 @@ def main():
         print("Info: {}".format(info))
 
         if done:
-            # Optionally, change variable environment settings here
+            # Optionally, change episode settings here
             options = {}
             options["characters"] = ("Ryu", "Ken")
             options["char_outfits"] = (5, 5)

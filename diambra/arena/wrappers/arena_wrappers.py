@@ -188,8 +188,8 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
         env = FlattenFilterDictObs(env, wrappers_settings.filter_keys)
 
     # Apply all additional wrappers in sequence
-    if wrappers_settings.additional_wrappers_list is not None:
-        for wrapper in wrappers_settings.additional_wrappers_list:
+    if wrappers_settings.wrappers is not None:
+        for wrapper in wrappers_settings.wrappers:
             env = wrapper[0](env, **wrapper[1])
 
     return env

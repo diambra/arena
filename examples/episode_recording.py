@@ -11,7 +11,7 @@ def main(use_controller):
     settings["role"] = "Random"
     settings["step_ratio"] = 1
     settings["frame_shape"] = (256, 256, 1)
-    settings["action_space"] = "multi_discrete"
+    settings["action_space"] = diambra.arena.SpaceType.MULTI_DISCRETE
 
     # Recording settings
     home_dir = expanduser("~")

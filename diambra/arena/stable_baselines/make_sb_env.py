@@ -40,11 +40,11 @@ def make_sb_env(game_id: str, env_settings: dict={}, wrappers_settings: dict={},
 
     # Add the conversion from gymnasium to gym
     old_gym_wrapper = [OldGymWrapper, {}]
-    if 'additional_wrappers_list' in wrappers_settings:
-        wrappers_settings['additional_wrappers_list'].insert(0, old_gym_wrapper)
+    if 'wrappers' in wrappers_settings:
+        wrappers_settings['wrappers'].insert(0, old_gym_wrapper)
     else:
         # If it's not present, add the key with a new list containing your custom element
-        wrappers_settings['additional_wrappers_list'] = [old_gym_wrapper]
+        wrappers_settings['wrappers'] = [old_gym_wrapper]
 
     def _make_sb_env(rank):
         def _init():
@@ -78,12 +78,11 @@ class OldGymWrapper(gym.Wrapper):
         :param env: (Gym<=0.21 Environment) the resulting environment
         """
         gym.Wrapper.__init__(self, env)
-        if self.env_settings.action_space == "multi_discrete":
+        if self.env_settings.action_space == diambra.arena.SpaceType.MULTI_DISCRETE:
             self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
-            self.logger.debug("Using MultiDiscrete action space")
-        elif self.env_settings.action_space == "discrete":
+        elif self.env_settings.action_space == diambra.arena.SpaceType.DISCRETE:
             self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
-            self.logger.debug("Using Discrete action space")
+        self.logger.debug("Using {} action space".format(diambra.arena.SpaceType.Name(self.env_settings.action_space)))
 
     def reset(self, **kwargs):
         obs, _ = self.env.reset(**kwargs)
