@@ -1,6 +1,7 @@
 import os
 from os.path import expanduser
 import diambra.arena
+from diambra.arena import SpaceTypes
 from diambra.arena.utils.controller import get_diambra_controller
 import argparse
 
@@ -11,7 +12,7 @@ def main(use_controller):
     settings["role"] = None
     settings["step_ratio"] = 1
     settings["frame_shape"] = (256, 256, 1)
-    settings["action_space"] = diambra.arena.SpaceType.MULTI_DISCRETE
+    settings["action_space"] = SpaceTypes.MULTI_DISCRETE
 
     # Recording settings
     home_dir = expanduser("~")

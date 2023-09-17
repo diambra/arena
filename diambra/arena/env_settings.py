@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Union, List, Tuple, Any, Dict
 from diambra.arena.utils.gym_utils import available_games
-from diambra.arena import SpaceType
+from diambra.arena import SpaceTypes, Roles
 import numpy as np
 import random
 from diambra.engine import model
@@ -23,7 +23,11 @@ def check_val_in_list(key, value, valid_list):
     assert (type(value)==type(valid_list[valid_list.index(value)])), error_message
 
 def check_space_type(key, value, valid_list):
-    error_message = "ERROR: \"{}\" ({}) admissible values are {}".format(key, SpaceType.Name(value), [SpaceType.Name(elem) for elem in valid_list])
+    error_message = "ERROR: \"{}\" ({}) admissible values are {}".format(key, SpaceTypes.Name(value), [SpaceTypes.Name(elem) for elem in valid_list])
+    assert (value in valid_list), error_message
+
+def check_roles(key, value, valid_list):
+    error_message = "ERROR: \"{}\" ({}) admissible values are {}".format(key, Roles.Name(value), [Roles.Name(elem) for elem in valid_list])
     assert (value in valid_list), error_message
 
 @dataclass
@@ -192,10 +196,10 @@ class EnvironmentSettings1P(EnvironmentSettings):
     """Single Agent Environment Settings Class"""
 
     # Env settings
-    action_space: int = SpaceType.MULTI_DISCRETE
+    action_space: int = SpaceTypes.MULTI_DISCRETE
 
     # Episode settings
-    role: Union[None, str] = None
+    role: Union[None, int] = None
     characters: Union[None, str, Tuple[str], Tuple[str, str], Tuple[str, str, str]] = None
     outfits: int = 1
     super_art: Union[None, int] = None  # SFIII Specific
@@ -207,10 +211,11 @@ class EnvironmentSettings1P(EnvironmentSettings):
 
         # Env settings
         check_num_in_range("n_players", self.n_players, [1, 1])
-        check_space_type("action_space", self.action_space, [SpaceType.DISCRETE, SpaceType.MULTI_DISCRETE])
+        check_space_type("action_space", self.action_space, [SpaceTypes.DISCRETE, SpaceTypes.MULTI_DISCRETE])
 
         # Episode settings
-        check_val_in_list("role", self.role, [None, "P1", "P2"])
+        if self.role is not None:
+            check_roles("role", self.role, [Roles.P1, Roles.P2])
         if isinstance(self.characters, str) or self.characters is None:
             self.characters = (self.characters, None, None)
         else:
@@ -243,7 +248,7 @@ class EnvironmentSettings1P(EnvironmentSettings):
         self.characters = tuple(characters_tmp)
 
         if self.role is None:
-            self.role = random.choice(["P1", "P2"])
+            self.role = random.choice([Roles.P1, Roles.P2])
         if self.super_art is None:
             self.super_art = random.choice(list(range(1, 4)))
         if self.fighting_style is None:
@@ -267,10 +272,10 @@ class EnvironmentSettings1P(EnvironmentSettings):
 class EnvironmentSettings2P(EnvironmentSettings):
     """Single Agent Environment Settings Class"""
     # Env Settings
-    action_space: Tuple[int, int] = (SpaceType.MULTI_DISCRETE, SpaceType.MULTI_DISCRETE)
+    action_space: Tuple[int, int] = (SpaceTypes.MULTI_DISCRETE, SpaceTypes.MULTI_DISCRETE)
 
     # Episode Settings
-    role: Union[Tuple[None, None], Tuple[str, str]] = (None, None)
+    role: Union[Tuple[None, None], Tuple[int, int]] = (None, None)
     characters: Union[Tuple[None, None], Tuple[str, None], Tuple[None, str], Tuple[str, str],
                       Tuple[Tuple[str], Tuple[str]], Tuple[Tuple[str, str], Tuple[str, str]],
                       Tuple[Tuple[str, str, str], Tuple[str, str, str]]] = (None, None)
@@ -285,7 +290,7 @@ class EnvironmentSettings2P(EnvironmentSettings):
         # Env Settings
         check_num_in_range("n_players", self.n_players, [2, 2])
         for idx in range(2):
-            check_space_type("action_space[{}]".format(idx), self.action_space[idx], [SpaceType.DISCRETE, SpaceType.MULTI_DISCRETE])
+            check_space_type("action_space[{}]".format(idx), self.action_space[idx], [SpaceTypes.DISCRETE, SpaceTypes.MULTI_DISCRETE])
 
         # Episode Settings
         if isinstance(self.characters[0], str) or self.characters[0] is None:
@@ -299,7 +304,8 @@ class EnvironmentSettings2P(EnvironmentSettings):
         char_list = list(self.env_info.characters_info.char_list)
         char_list.append(None)
         for idx in range(2):
-            check_val_in_list("role[{}]".format(idx), self.role[idx], [None, "P1", "P2"])
+            if self.role[idx] is not None:
+                check_roles("role[{}]".format(idx), self.role[idx], [Roles.P1, Roles.P2])
             for jdx in range(3):
                 check_val_in_list("characters[{}][{}]".format(idx, jdx), self.characters[idx][jdx], char_list)
             check_num_in_range("outfits[{}]".format(idx), self.outfits[idx], self.games_dict[self.game_id]["outfits"])
@@ -326,13 +332,13 @@ class EnvironmentSettings2P(EnvironmentSettings):
 
         if self.role[0] is None:
             if self.role[1] is None:
-                idx = random.choice([1, 2])
-                self.role = ("P{}".format(idx), "P{}".format((idx % 2) + 1))
+                coin = random.choice([True, False])
+                self.role = (Roles.P1, Roles.P2) if coin is True else (Roles.P2, Roles.P1)
             else:
-                self.role = ("P1" if self.role[1] == "P2" else "P2", self.role[1])
+                self.role = (Roles.P1 if self.role[1] == Roles.P2 else Roles.P2, self.role[1])
         else:
             if self.role[1] is None:
-                self.role = (self.role[0], "P1" if self.role[0] == "P2" else "P2")
+                self.role = (self.role[0], Roles.P1 if self.role[0] == Roles.P2 else Roles.P2)
 
         self.super_art = tuple([random.choice(list(range(1, 4))) if self.super_art[idx] is None else self.super_art[idx] for idx in range(2)])
         self.fighting_style = tuple([random.choice(list(range(1, 4))) if self.fighting_style[idx] is None else self.fighting_style[idx] for idx in range(2)])
@@ -360,20 +366,21 @@ class EnvironmentSettings2P(EnvironmentSettings):
 
 @dataclass
 class WrappersSettings:
-    no_attack_buttons_combinations: bool = False
     no_op_max: int = 0
     sticky_actions: int = 1
-    clip_rewards: bool = False
     reward_normalization: bool = False
     reward_normalization_factor: float = 0.5
+    clip_rewards: bool = False
+    no_attack_buttons_combinations: bool = False
+    frame_shape: Tuple[int, int, int] = (0, 0, 0)
     frame_stack: int = 1
     dilation: int = 1
+    add_last_action_to_observation: bool = False
     actions_stack: int = 1
     scale: bool = False
     exclude_image_scaling: bool = False
     process_discrete_binary: bool = False
-    scale_mod: int = 0
-    frame_shape: Tuple[int, int, int] = (0, 0, 0)
+    role_relative_observation: bool = False
     flatten: bool = False
     filter_keys: List[str] = None
     wrappers: List[List[Any]] = None
@@ -383,8 +390,10 @@ class WrappersSettings:
         check_num_in_range("sticky_actions", self.sticky_actions, [1, 12])
         check_num_in_range("frame_stack", self.frame_stack, [1, MAX_STACK_VALUE])
         check_num_in_range("dilation", self.dilation, [1, MAX_STACK_VALUE])
-        check_num_in_range("actions_stack", self.actions_stack, [1, MAX_STACK_VALUE])
-        check_num_in_range("scale_mod", self.scale_mod, [0, 0])
+        actions_stack_bounds = [1, 1]
+        if self.add_last_action_to_observation is True:
+            actions_stack_bounds = [1, MAX_STACK_VALUE]
+        check_num_in_range("actions_stack", self.actions_stack, actions_stack_bounds)
         check_num_in_range("reward_normalization_factor", self.reward_normalization_factor, [0.0, 1000000])
 
         check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1, 3])

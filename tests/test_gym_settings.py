@@ -2,6 +2,7 @@
 import pytest
 import random
 import diambra.arena
+from diambra.arena import SpaceTypes, Roles
 from diambra.arena.utils.gym_utils import available_games
 from pytest_utils import generate_pytest_decorator_input
 from diambra.arena.utils.engine_mock import load_mocker
@@ -33,11 +34,11 @@ gym_settings_var_order = ["frame_shape", "step_ratio", "action_space", "difficul
 ok_test_parameters = {
     "frame_shape": [(0, 0, 0), (0, 0, 1), (82, 82, 0), (82, 82, 1)],
     "step_ratio": [1, 3, 6],
-    "action_space": [diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE],
+    "action_space": [SpaceTypes.DISCRETE, SpaceTypes.MULTI_DISCRETE],
     "difficulty": [None, 1, 3],
     "continue_game": [-1.0, 0.0, 0.3],
     "tower": [1, 3, 4],
-    "role": [["P1", "P2"], ["P2", "P1"], [None, None]],
+    "role": [[Roles.P1, Roles.P2], [Roles.P2, Roles.P1], [None, None]],
     "characters": [[None, None], [None, "TBD"], ["TBD", "TBD"]],
     "super_art": [None, 1, 3],
     "fighting_style": [None, 1, 3],
@@ -48,10 +49,10 @@ ko_test_parameters = {
     "frame_shape": [(0, 82, 0), (0, 0, 4), (-100, -100, 3)],
     "step_ratio": [8],
     "difficulty": [True, 0, "Random"],
-    "action_space": ["Random", 12, "discrete", diambra.arena.SpaceType.BOX],
+    "action_space": ["Random", 12, "discrete", SpaceTypes.BOX],
     "continue_game": [1.3, "string"],
     "tower": [5],
-    "role": [[5, 4], ["P1P2", "Random"], ["Random", "Random"]],
+    "role": [["P1", "P2"], [5, 4], ["P1P2", "Random"], ["Random", "Random"]],
     "characters": [["Random", "TBD"], ["NoName", None]],
     "super_art": ["Random", 4, 0],
     "fighting_style": [False, 6, 0, "Random"],

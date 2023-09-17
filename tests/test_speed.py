@@ -76,15 +76,16 @@ def test_speed_wrappers(n_players, mocker):
     wrappers_settings["clip_rewards"] = False
     wrappers_settings["frame_stack"] = 4
     wrappers_settings["dilation"] = 1
+    wrappers_settings["add_last_action_to_observation"] = True
     wrappers_settings["actions_stack"] = 12
     wrappers_settings["scale"] = True
-    wrappers_settings["scale_mod"] = 0
+    wrappers_settings["role_relative_observation"] = True
     wrappers_settings["flatten"] = True
 
     suffix = ""
     if n_players == 2:
         suffix = "agent_0_"
-    wrappers_settings["filter_keys"] = ["stage", "timer", suffix+"own_side", suffix+"opp_side", suffix+"opp_side",
-                                        suffix+"opp_char", suffix+"action_move", suffix+"action_attack"]
+    wrappers_settings["filter_keys"] = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                        suffix + "opp_character", suffix + "action"]
 
     assert func(n_players, wrappers_settings, target_speeds[1], mocker) == 0

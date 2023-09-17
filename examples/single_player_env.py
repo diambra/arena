@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import diambra.arena
+from diambra.arena import SpaceTypes, Roles
 
 def main():
     # Settings
@@ -20,12 +21,12 @@ def main():
     # settings["frame_shape"] = (0, 0, 0) # Deactivated (Original size RBG)
 
     # If to use discrete or multi_discrete action space
-    settings["action_space"] = diambra.arena.SpaceType.MULTI_DISCRETE
+    settings["action_space"] = SpaceTypes.MULTI_DISCRETE
 
     # --- Episode settings ---
 
-    # Player role selection: P1 (left), P2 (right), Random (50% P1, 50% P2)
-    settings["role"] = "P1"
+    # Player role selection: P1 (left), P2 (right), None (50% P1, 50% P2)
+    settings["role"] = Roles.P1
 
     # Game continue logic (0.0 by default):
     # - [0.0, 1.0]: probability of continuing game at game over
@@ -66,7 +67,7 @@ def main():
         if done:
             # Optionally, change episode settings here
             options = {}
-            options["role"] = "P2"
+            options["role"] = Roles.P2
             options["continue_game"] = 0.0
             options["difficulty"] = None
             options["characters"] = None
