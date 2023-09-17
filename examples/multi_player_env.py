@@ -15,9 +15,9 @@ def main():
 
     # --- Episode settings ---
 
-    # Characters to be used, automatically extended with "Random" for games
-    # required to select more than one character (e.g. Tekken Tag Tournament)
-    settings["characters"] = ("Random", "Random")
+    # Characters to be used, automatically extended with None for games
+    # requiring to select more than one character (e.g. Tekken Tag Tournament)
+    settings["characters"] = ("Ryu", "Ken")
 
     # Characters outfit
     settings["outfits"] = (2, 2)
@@ -41,7 +41,7 @@ def main():
         if done:
             # Optionally, change episode settings here
             options = {}
-            options["characters"] = ("Ryu", "Ken")
+            options["characters"] = (None, None)
             options["char_outfits"] = (5, 5)
             observation, info = env.reset(options=options)
             env.show_obs(observation)

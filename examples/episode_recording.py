@@ -8,7 +8,7 @@ def main(use_controller):
     # Environment Settings
     settings = {}
     settings["n_players"] = 1
-    settings["role"] = "Random"
+    settings["role"] = None
     settings["step_ratio"] = 1
     settings["frame_shape"] = (256, 256, 1)
     settings["action_space"] = diambra.arena.SpaceType.MULTI_DISCRETE

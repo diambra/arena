@@ -40,9 +40,9 @@ def main():
     # Game difficulty level
     settings["difficulty"] = 4
 
-    # Character to be used, automatically extended with "Random" for games
-    # required to select more than one character (e.g. Tekken Tag Tournament)
-    settings["characters"] = "Random"
+    # Character to be used, automatically extended with None for games
+    # requiring to select more than one character (e.g. Tekken Tag Tournament)
+    settings["characters"] = "Kasumi"
 
     # Character outfit
     settings["outfits"] = 2
@@ -68,8 +68,8 @@ def main():
             options = {}
             options["role"] = "P2"
             options["continue_game"] = 0.0
-            options["difficulty"] = "Random"
-            options["characters"] = "Raidou"
+            options["difficulty"] = None
+            options["characters"] = None
             options["outfits"] = 4
 
             observation, info = env.reset(options=options)

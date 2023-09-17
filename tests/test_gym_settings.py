@@ -28,32 +28,34 @@ def func(settings, wrappers_settings, traj_rec_settings, mocker):
 
 games_dict = available_games(False)
 gym_settings_var_order = ["frame_shape", "step_ratio", "action_space", "difficulty", "continue_game",
-                          "tower", "role", "super_art", "fighting_style", "ultimate_style"]
+                          "tower", "role", "characters", "super_art", "fighting_style", "ultimate_style"]
 
 ok_test_parameters = {
     "frame_shape": [(0, 0, 0), (0, 0, 1), (82, 82, 0), (82, 82, 1)],
     "step_ratio": [1, 3, 6],
     "action_space": [diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE],
-    "difficulty": ["Random", 1, 3],
+    "difficulty": [None, 1, 3],
     "continue_game": [-1.0, 0.0, 0.3],
     "tower": [1, 3, 4],
-    "role": [["P1", "P2"], ["P2", "P1"], ["Random", "Random"]],
-    "super_art": ["Random", 1, 3],
-    "fighting_style": ["Random", 1, 3],
-    "ultimate_style": [("Random", "Random", "Random"), (2, 2, 2)],
+    "role": [["P1", "P2"], ["P2", "P1"], [None, None]],
+    "characters": [[None, None], [None, "TBD"], ["TBD", "TBD"]],
+    "super_art": [None, 1, 3],
+    "fighting_style": [None, 1, 3],
+    "ultimate_style": [None, (2, 2, 2)],
 }
 
 ko_test_parameters = {
     "frame_shape": [(0, 82, 0), (0, 0, 4), (-100, -100, 3)],
     "step_ratio": [8],
-    "difficulty": [True, 0, "random"],
-    "action_space": ["random", 12, "discrete", diambra.arena.SpaceType.BOX],
+    "difficulty": [True, 0, "Random"],
+    "action_space": ["Random", 12, "discrete", diambra.arena.SpaceType.BOX],
     "continue_game": [1.3, "string"],
     "tower": [5],
-    "role": [[5, 4], ["P1P2", "Random"]],
-    "super_art": ["value", 4, 0],
-    "fighting_style": [False, 6, 0],
-    "ultimate_style": [(10, 0, 0), "string", ("Random", 2, "Random")],
+    "role": [[5, 4], ["P1P2", "Random"], ["Random", "Random"]],
+    "characters": [["Random", "TBD"], ["NoName", None]],
+    "super_art": ["Random", 4, 0],
+    "fighting_style": [False, 6, 0, "Random"],
+    "ultimate_style": [(10, 0, 0), "string", (None, None, None), ("Random", "Random", "Random")],
 }
 
 def pytest_generate_tests(metafunc):
@@ -64,12 +66,12 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("n_players", [1, 2])
 def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space, difficulty, continue_game,
-                      tower, role, super_art, fighting_style, ultimate_style, expected, mocker):
+                      tower, role, characters, super_art, fighting_style, ultimate_style, expected, mocker):
 
     game_data = games_dict[game_id]
-    characters_list = ["Random"] + game_data["char_list"]
+
     outfits_range = range(game_data["outfits"][0], game_data["outfits"][1] + 1)
-    characters = random.choice(characters_list)
+    characters = [random.choice(game_data["char_list"]) if characters[idx] == "TBD" else characters[idx] for idx in range(2)]
     outfits = random.choice(outfits_range)
 
     # Env settings
@@ -85,7 +87,7 @@ def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space,
     settings["tower"] = tower
 
     settings["role"] = (role[0], role[1])
-    settings["characters"] = (characters, characters)
+    settings["characters"] = (characters[0], characters[1])
     settings["outfits"] = (outfits, outfits)
     settings["super_art"] = (super_art, super_art)
     settings["fighting_style"] = (fighting_style, fighting_style)
