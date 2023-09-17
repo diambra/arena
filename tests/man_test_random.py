@@ -4,6 +4,7 @@ from env_exec_interface import env_exec
 import os
 from os.path import expanduser
 import random
+import diambra.arena
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -38,13 +39,14 @@ if __name__ == "__main__":
     if opt.envAddress != "":
         settings["env_address"] = opt.envAddress
     settings["n_players"] = opt.nPlayers
-    settings["role"] = (opt.role0, opt.role1)
-    settings["difficulty"] = opt.difficulty if opt.difficulty != 0 else "Random"
+    settings["role"] = (opt.role0 if opt.role0 != "Random" else None, opt.role1 if opt.role1 != "Random" else None)
+    settings["difficulty"] = opt.difficulty if opt.difficulty != 0 else None
     settings["characters"] = ((opt.character0, opt.character0_2, opt.character0_3),
                               (opt.character1, opt.character1_2, opt.character1_3))
     settings["step_ratio"] = opt.stepRatio
     settings["continue_game"] = opt.continueGame
-    settings["action_space"] = (opt.actionSpace, opt.actionSpace)
+    settings["action_space"] = (diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.DISCRETE) if opt.actionSpace == "discrete" else \
+                               (diambra.arena.SpaceType.MULTI_DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE)
     if settings["n_players"] == 1:
         settings["role"] = settings["role"][0]
         settings["characters"] = settings["characters"][0]

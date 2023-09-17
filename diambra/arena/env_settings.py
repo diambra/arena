@@ -32,31 +32,31 @@ class EnvironmentSettings:
     env_info = None
     games_dict = None
 
-    # Fixed at startup
+    # Environment settings
     game_id: str
     frame_shape: Tuple[int, int, int] = (0, 0, 0)
     step_ratio: int = 6
     n_players: int = 1
     disable_keyboard: bool = True
     disable_joystick: bool = True
-    render_mode: Union[str, None] = None
+    render_mode: Union[None, str] = None
     rank: int = 0
     env_address: str = "localhost:50051"
     grpc_timeout: int = 600
 
-    # Variable at reset
-    seed: Union[int, None] = None
-    difficulty: Union[int, str] = "Random"
+    # Episode settings
+    seed: Union[None, str] = None
+    difficulty: Union[None, int] = None
     continue_game: float = 0.0
     show_final: bool = False
-    tower: int = 3  # UMK3 Specific
+    tower: Union[None, int] = 3  # UMK3 Specific
 
     # Bookeeping variables
-    _last_seed: int = None
+    _last_seed: Union[None, int] = None
     pb_model: model = None
 
     episode_settings = ["seed", "difficulty", "continue_game", "show_final", "tower", "role",
-                             "characters", "outfits", "super_art", "fighting_style", "ultimate_style"]
+                        "characters", "outfits", "super_art", "fighting_style", "ultimate_style"]
 
     # Transforming env settings dict to pb request
     def get_pb_request(self, init=False):
@@ -176,50 +176,56 @@ class EnvironmentSettings:
         if self.seed is not None:
             check_num_in_range("seed", self.seed, [-1, MAX_VAL])
         difficulty_admissible_values = list(range(self.env_info.difficulty_bounds.min, self.env_info.difficulty_bounds.max + 1))
-        difficulty_admissible_values.append("Random")
+        difficulty_admissible_values.append(None)
         check_val_in_list("difficulty", self.difficulty, difficulty_admissible_values)
         check_num_in_range("continue_game", self.continue_game, [MIN_VAL, 1.0])
-        check_val_in_list("tower", self.tower, ["Random", 1, 2, 3, 4])
+        check_val_in_list("tower", self.tower, [None, 1, 2, 3, 4])
 
     def _process_random_values(self):
-        if self.difficulty == "Random":
+        if self.difficulty is None:
             self.difficulty = random.choice(list(range(self.env_info.difficulty_bounds.min, self.env_info.difficulty_bounds.max + 1)))
-        if self.tower == "Random":
+        if self.tower is None:
             self.tower = random.choice(list(range(1, 5)))
 
 @dataclass
 class EnvironmentSettings1P(EnvironmentSettings):
     """Single Agent Environment Settings Class"""
-    role: str = "Random"
-    characters: Union[str, Tuple[str], Tuple[str, str], Tuple[str, str, str]] = ("Random", "Random", "Random")
-    outfits: int = 1
+
+    # Env settings
     action_space: int = SpaceType.MULTI_DISCRETE
-    super_art: Union[int, str] = "Random"  # SFIII Specific
-    fighting_style: Union[int, str] = "Random" # KOF Specific
-    ultimate_style: Union[Tuple[str, str, str], Tuple[int, int, int]] = ("Random", "Random", "Random") # KOF Specific
+
+    # Episode settings
+    role: Union[None, str] = None
+    characters: Union[None, str, Tuple[str], Tuple[str, str], Tuple[str, str, str]] = None
+    outfits: int = 1
+    super_art: Union[None, int] = None  # SFIII Specific
+    fighting_style: Union[None, int] = None # KOF Specific
+    ultimate_style: Union[None, Tuple[int, int, int]] = None # KOF Specific
 
     def _sanity_check(self):
         super()._sanity_check()
 
-        if isinstance(self.characters, str):
-            self.characters = (self.characters, "Random", "Random")
-        else:
-            for _ in range(len(self.characters), 3):
-                self.characters += ("Random", )
-
+        # Env settings
         check_num_in_range("n_players", self.n_players, [1, 1])
         check_space_type("action_space", self.action_space, [SpaceType.DISCRETE, SpaceType.MULTI_DISCRETE])
-        check_val_in_list("role", self.role, ["P1", "P2", "Random"])
-        # Check for characters
+
+        # Episode settings
+        check_val_in_list("role", self.role, [None, "P1", "P2"])
+        if isinstance(self.characters, str) or self.characters is None:
+            self.characters = (self.characters, None, None)
+        else:
+            for _ in range(len(self.characters), 3):
+                self.characters += (None, )
         char_list = list(self.env_info.characters_info.char_list)
-        char_list.append("Random")
+        char_list.append(None)
         for idx in range(3):
             check_val_in_list("characters[{}]".format(idx), self.characters[idx], char_list)
         check_num_in_range("outfits", self.outfits, self.games_dict[self.game_id]["outfits"])
-        check_val_in_list("super_art", self.super_art, ["Random", 1, 2, 3])
-        check_val_in_list("fighting_style", self.fighting_style, ["Random", 1, 2, 3])
-        for idx in range(3):
-            check_val_in_list("ultimate_style[{}]".format(idx), self.ultimate_style[idx], ["Random", 1, 2])
+        check_val_in_list("super_art", self.super_art, [None, 1, 2, 3])
+        check_val_in_list("fighting_style", self.fighting_style, [None, 1, 2, 3])
+        if self.ultimate_style is not None:
+            for idx in range(3):
+                check_val_in_list("ultimate_style[{}]".format(idx), self.ultimate_style[idx], [1, 2])
 
     def _get_action_spaces(self):
         return [self.action_space]
@@ -230,19 +236,20 @@ class EnvironmentSettings1P(EnvironmentSettings):
         sampled_characters = self._sample_characters()
         characters_tmp = []
         for idx in range(3):
-            if self.characters[idx] == "Random":
+            if self.characters[idx] is None:
                 characters_tmp.append(sampled_characters[idx])
             else:
                 characters_tmp.append(self.characters[idx])
         self.characters = tuple(characters_tmp)
 
-        if self.role == "Random":
+        if self.role is None:
             self.role = random.choice(["P1", "P2"])
-        if self.super_art == "Random":
+        if self.super_art is None:
             self.super_art = random.choice(list(range(1, 4)))
-        if self.fighting_style == "Random":
+        if self.fighting_style is None:
             self.fighting_style = random.choice(list(range(1, 4)))
-        self.ultimate_style = tuple([random.choice(list(range(1, 3))) if self.ultimate_style[idx] == "Random" else self.ultimate_style[idx] for idx in range(3)])
+        if self.ultimate_style is None:
+            self.ultimate_style = tuple([random.choice(list(range(1, 3))) for _ in range(3)])
 
     def _get_player_specific_values(self):
         player_settings = model.EnvSettings.EpisodeSettings.PlayerSettings(
@@ -259,44 +266,48 @@ class EnvironmentSettings1P(EnvironmentSettings):
 @dataclass
 class EnvironmentSettings2P(EnvironmentSettings):
     """Single Agent Environment Settings Class"""
-    role: Tuple[str, str] = ("Random", "Random")
-    characters: Union[Tuple[str, str], Tuple[Tuple[str], Tuple[str]],
-                      Tuple[Tuple[str, str], Tuple[str, str]],
-                      Tuple[Tuple[str, str, str], Tuple[str, str, str]]] =\
-                    (("Random", "Random", "Random"), ("Random", "Random", "Random"))
-    outfits: Tuple[int, int] = (1, 1)
+    # Env Settings
     action_space: Tuple[int, int] = (SpaceType.MULTI_DISCRETE, SpaceType.MULTI_DISCRETE)
-    super_art: Union[Tuple[str, str], Tuple[int, int], Tuple[str, int], Tuple[int, str]] = ("Random", "Random")  # SFIII Specific
-    fighting_style: Union[Tuple[str, str], Tuple[int, int], Tuple[str, int], Tuple[int, str]] = ("Random", "Random")  # KOF Specific
-    ultimate_style: Union[Tuple[Tuple[str, str, str], Tuple[str, str, str]], Tuple[Tuple[int, int, int], Tuple[int, int, int]]] =\
-                        (("Random", "Random", "Random"), ("Random", "Random", "Random"))  # KOF Specific
+
+    # Episode Settings
+    role: Union[Tuple[None, None], Tuple[str, str]] = (None, None)
+    characters: Union[Tuple[None, None], Tuple[str, None], Tuple[None, str], Tuple[str, str],
+                      Tuple[Tuple[str], Tuple[str]], Tuple[Tuple[str, str], Tuple[str, str]],
+                      Tuple[Tuple[str, str, str], Tuple[str, str, str]]] = (None, None)
+    outfits: Tuple[int, int] = (1, 1)
+    super_art: Union[Tuple[None, None], Tuple[int, int]] = (None, None)  # SFIII Specific
+    fighting_style: Union[Tuple[None, None], Tuple[int, int]] = (None, None)  # KOF Specific
+    ultimate_style: Union[Tuple[None, None], Tuple[Tuple[int, int, int], Tuple[int, int, int]]] = (None, None)  # KOF Specific
 
     def _sanity_check(self):
         super()._sanity_check()
 
-        if isinstance(self.characters[0], str):
-            self.characters = ((self.characters[0], "Random", "Random"),
-                            (self.characters[1], "Random", "Random"))
+        # Env Settings
+        check_num_in_range("n_players", self.n_players, [2, 2])
+        for idx in range(2):
+            check_space_type("action_space[{}]".format(idx), self.action_space[idx], [SpaceType.DISCRETE, SpaceType.MULTI_DISCRETE])
+
+        # Episode Settings
+        if isinstance(self.characters[0], str) or self.characters[0] is None:
+            self.characters = ((self.characters[0], None, None), (self.characters[1], None, None))
         else:
             tmp_chars = [self.characters[0], self.characters[1]]
             for _ in range(len(self.characters[0]), 3):
                 for jdx in range(2):
-                    tmp_chars[jdx] += ("Random", )
+                    tmp_chars[jdx] += (None, )
             self.characters = tuple(tmp_chars)
-
-        check_num_in_range("n_players", self.n_players, [2, 2])
         char_list = list(self.env_info.characters_info.char_list)
-        char_list.append("Random")
+        char_list.append(None)
         for idx in range(2):
-            check_space_type("action_space[{}]".format(idx), self.action_space[idx], [SpaceType.DISCRETE, SpaceType.MULTI_DISCRETE])
-            check_val_in_list("role[{}]".format(idx), self.role[idx], ["P1", "P2", "Random"])
+            check_val_in_list("role[{}]".format(idx), self.role[idx], [None, "P1", "P2"])
             for jdx in range(3):
                 check_val_in_list("characters[{}][{}]".format(idx, jdx), self.characters[idx][jdx], char_list)
             check_num_in_range("outfits[{}]".format(idx), self.outfits[idx], self.games_dict[self.game_id]["outfits"])
-            check_val_in_list("super_art[{}]".format(idx), self.super_art[idx], ["Random", 1, 2, 3])
-            check_val_in_list("fighting_style[{}]".format(idx), self.fighting_style[idx], ["Random", 1, 2, 3])
-            for jdx in range(3):
-                check_val_in_list("ultimate_style[{}][{}]".format(idx, jdx), self.ultimate_style[idx][jdx], ["Random", 1, 2])
+            check_val_in_list("super_art[{}]".format(idx), self.super_art[idx], [None, 1, 2, 3])
+            check_val_in_list("fighting_style[{}]".format(idx), self.fighting_style[idx], [None, 1, 2, 3])
+            if self.ultimate_style[idx] is not None:
+                for jdx in range(3):
+                    check_val_in_list("ultimate_style[{}][{}]".format(idx, jdx), self.ultimate_style[idx][jdx], [1, 2])
 
     def _process_random_values(self):
         super()._process_random_values()
@@ -306,25 +317,26 @@ class EnvironmentSettings2P(EnvironmentSettings):
         for idx, characters in enumerate(self.characters):
             sampled_characters = self._sample_characters()
             for jdx in range(3):
-                if characters[jdx] == "Random":
+                if characters[jdx] is None:
                     characters_tmp[idx].append(sampled_characters[jdx])
                 else:
                     characters_tmp[idx].append(characters[jdx])
 
         self.characters = (tuple(characters_tmp[0]), tuple(characters_tmp[1]))
 
-        if self.role[0] == "Random":
-            if self.role[1] == "Random":
+        if self.role[0] is None:
+            if self.role[1] is None:
                 idx = random.choice([1, 2])
                 self.role = ("P{}".format(idx), "P{}".format((idx % 2) + 1))
             else:
                 self.role = ("P1" if self.role[1] == "P2" else "P2", self.role[1])
         else:
-            if self.role[1] == "Random":
+            if self.role[1] is None:
                 self.role = (self.role[0], "P1" if self.role[0] == "P2" else "P2")
-        self.super_art = tuple([random.choice(list(range(1, 4))) if self.super_art[idx] == "Random" else self.super_art[idx] for idx in range(2)])
-        self.fighting_style = tuple([random.choice(list(range(1, 4))) if self.fighting_style[idx] == "Random" else self.fighting_style[idx] for idx in range(2)])
-        self.ultimate_style = tuple([[random.choice(list(range(1, 3))) if self.ultimate_style[idx][jdx] == "Random" else self.ultimate_style[idx][jdx] for jdx in range(3)] for idx in range(2)])
+
+        self.super_art = tuple([random.choice(list(range(1, 4))) if self.super_art[idx] is None else self.super_art[idx] for idx in range(2)])
+        self.fighting_style = tuple([random.choice(list(range(1, 4))) if self.fighting_style[idx] is None else self.fighting_style[idx] for idx in range(2)])
+        self.ultimate_style = tuple([[random.choice(list(range(1, 3))) for _ in range(3)] if self.ultimate_style[idx] is None else self.ultimate_style[idx] for idx in range(2)])
 
     def _get_action_spaces(self):
         return [action_space for action_space in self.action_space]
@@ -333,7 +345,6 @@ class EnvironmentSettings2P(EnvironmentSettings):
         players_env_settings = []
 
         for idx in range(2):
-
             player_settings = model.EnvSettings.EpisodeSettings.PlayerSettings(
                 role=self.role[idx],
                 characters=[self.characters[idx][jdx] for jdx in range(self.env_info.characters_info.chars_to_select)],
