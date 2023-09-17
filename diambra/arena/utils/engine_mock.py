@@ -2,7 +2,9 @@ import time
 import random
 import numpy as np
 import diambra.arena
+from copy import deepcopy
 from diambra.engine import model
+from diambra.arena import Roles
 
 class DiambraEngineMock:
 
@@ -14,13 +16,12 @@ class DiambraEngineMock:
 
         # Class state variables initialization
         self.timer = 0
-        self.n_rounds_won = 0
-        self.n_rounds_lost = 0
         self.current_stage_number = 1
         self.n_continue = 0
-        self.side = {"P1": 0, "P2": 1}
-        self.char = {"P1": 0, "P2": 0}
-        self.health = {"P1": 0, "P2": 0}
+        self.side = {Roles.P1: 0, Roles.P2: 1}
+        self.char = {Roles.P1: 0, Roles.P2: 0}
+        self.health = {Roles.P1: 0, Roles.P2: 0}
+        self.wins = {Roles.P1: 0, Roles.P2: 0}
         self.player = ""
         self.perfect = False
         self.override_perfect_probability = override_perfect_probability
@@ -69,12 +70,16 @@ class DiambraEngineMock:
         self.delta_health = self.game_data["health"][1] - self.game_data["health"][0]
         self.base_hit = int(self.delta_health * self.game_data["n_actions"][1] /
                               ((self.game_data["n_actions"][0] + self.game_data["n_actions"][1]) *
-                               (self.game_data["ram_states"]["timer"][2] / self.settings.step_ratio)))
+                               (self.game_data["ram_states"]["common"]["timer"][2] / self.settings.step_ratio)))
 
         # Generate the ram states map
-        self.ram_states = self.game_data["ram_states"]
+        self.ram_states = {}
+        self.ram_states[model.RamStatesCategories.common] = self.game_data["ram_states"]["common"]
+        self.ram_states[model.RamStatesCategories.P1] = deepcopy(self.game_data["ram_states"]["Px"])
+        self.ram_states[model.RamStatesCategories.P2] = deepcopy(self.game_data["ram_states"]["Px"])
         for k, v in self.ram_states.items():
-                self.ram_states[k].append(0)
+            for k2, v2 in v.items():
+                self.ram_states[k][k2].append(0)
 
         # Build the response
         response = model.EnvInitResponse()
@@ -128,9 +133,11 @@ class DiambraEngineMock:
         # RAM states
         self._generate_ram_states()
         for k, v in self.ram_states.items():
-            response.ram_states[k].type = model.SpaceType.Value(v[0])
-            response.ram_states[k].min = v[1]
-            response.ram_states[k].max = v[2]
+            for k2, v2 in v.items():
+                k2_enum =model.RamStates.Value(k2)
+                response.ram_states_categories[k].ram_states[k2_enum].type = model.SpaceTypes.Value(v2[0])
+                response.ram_states_categories[k].ram_states[k2_enum].min = v2[1]
+                response.ram_states_categories[k].ram_states[k2_enum].max = v2[2]
 
         return response
 
@@ -149,7 +156,6 @@ class DiambraEngineMock:
 
     # Step the environment [pb low level]
     def mock_step(self, actions):
-
         # Update class state
         self._new_game_state(actions)
 
@@ -160,27 +166,22 @@ class DiambraEngineMock:
         pass
 
     def _generate_ram_states(self):
-
         for k, v in self.ram_states.items():
-            self.ram_states[k][3] = random.choice(range(v[1], v[2] + 1))
+            for k2, v2 in v.items():
+                self.ram_states[k][k2][3] = random.choice(range(v2[1], v2[2] + 1))
 
         # Setting meaningful values to ram states
-        self.ram_states["stage"][3] = self.current_stage_number
-        self.ram_states["side_P1"][3] = self.side["P1"]
-        self.ram_states["side_P2"][3] = self.side["P2"]
-        self.ram_states["wins_P1"][3] = self.n_rounds_won
-        self.ram_states["wins_P2"][3] = self.n_rounds_lost
+        values = [self.char, self.health, self.wins, self.side]
 
-        values = [self.char, self.health]
-
-        for idx, state in enumerate(["char", "health"]):
+        for idx, state in enumerate(["character", "health", "wins", "side"]):
             for text in ["", "_1", "_2", "_3"]:
-                for player in ["P1", "P2"]:
-                    key = "{}{}_{}".format(state, text, player)
-                    if (key in self.ram_states):
-                        self.ram_states[key][3] = values[idx][player]
+                for player in [Roles.P1, Roles.P2]:
+                    key = "{}{}".format(state, text)
+                    if (key in self.ram_states[player]):
+                        self.ram_states[player][key][3] = values[idx][player]
 
-        self.ram_states["timer"][3] = int(self.timer)
+        self.ram_states[model.RamStatesCategories.common]["stage"][3] = int(self.current_stage_number)
+        self.ram_states[model.RamStatesCategories.common]["timer"][3] = int(self.timer)
 
     def _generate_frame(self):
         frame = np.ones((self.frame_shape), dtype=np.int8) * ((self.current_stage_number * self.game_data["rounds_per_stage"] + int(self.timer)) % 255)
@@ -195,8 +196,6 @@ class DiambraEngineMock:
     # Reset game state
     def _reset_state(self):
         # Reset class state
-        self.n_rounds_won = 0
-        self.n_rounds_lost = 0
         self.current_stage_number = 1
         self.n_continue = 0
 
@@ -213,11 +212,13 @@ class DiambraEngineMock:
         self.episode_done_ = False
         self.env_done_ = False
 
-        self.side["P1"] = 0 if self.settings.episode_settings.player_settings[0].role == "P1" else 1
-        self.side["P2"] = 1 if self.settings.episode_settings.player_settings[0].role == "P1" else 0
-        self.health["P1"] = self.game_data["health"][1]
-        self.health["P2"] = self.game_data["health"][1]
-        self.timer = self.game_data["ram_states"]["timer"][2]
+        self.side[Roles.P1] = 0
+        self.side[Roles.P2] = 1
+        self.health[Roles.P1] = self.game_data["health"][1]
+        self.health[Roles.P2] = self.game_data["health"][1]
+        self.wins[Roles.P1] = 0
+        self.wins[Roles.P2] = 0
+        self.timer = self.game_data["ram_states"]["common"]["timer"][2]
 
         self.reward = 0
 
@@ -245,8 +246,8 @@ class DiambraEngineMock:
         self.timer -= (1.0 * self.settings.step_ratio) / 60.0
 
         starting_health = {
-            "P1": self.health["P1"],
-            "P2": self.health["P2"]
+            Roles.P1: self.health[Roles.P1],
+            Roles.P2: self.health[Roles.P2]
         }
 
         # Health evolution
@@ -254,39 +255,39 @@ class DiambraEngineMock:
 
         for idx in range(self.settings.n_players):
             role = self.settings.episode_settings.player_settings[idx].role
-            opponent_role = "P2" if role == "P1" else "P1"
+            opponent_role = Roles.P2 if role == Roles.P1 else Roles.P1
             if self.player_actions[idx][1] != 0:
                 self.health[opponent_role] -= random.choices([self.base_hit, 0], [hit_prob, 1.0 - hit_prob])[0]
             if not self.perfect:
                 self.health[role] -= random.choices([self.base_hit, 0], [1.0 - hit_prob, hit_prob])[0]
 
-        for role in ["P1", "P2"]:
+        for role in [Roles.P1, Roles.P2]:
             self.health[role] = max(self.health[role], self.game_data["health"][0])
 
         role_0 = self.settings.episode_settings.player_settings[0].role
-        opponent_role_0 = "P2" if role_0 == "P1" else "P1"
+        opponent_role_0 = Roles.P2 if role_0 == Roles.P1 else Roles.P1
 
-        if (min(self.health["P1"], self.health["P2"]) == self.game_data["health"][0]) or (self.timer <= 0):
+        if (min(self.health[Roles.P1], self.health[Roles.P2]) == self.game_data["health"][0]) or (self.timer <= 0):
             self.round_done_ = True
 
             if self.health[role_0] > self.health[opponent_role_0]:
                 self.health[opponent_role_0] = self.game_data["health"][0]
                 print("Round won")
-                self.n_rounds_won += 1
+                self.wins[role_0] += 1
             elif self.health[role_0] < self.health[opponent_role_0]:
                 self.health[role_0] = self.game_data["health"][0]
                 print("Round lost")
-                self.n_rounds_lost += 1
+                self.wins[opponent_role_0] += 1
             else:
                 print("Draw, forcing lost")
-                self.n_rounds_lost += 1
+                self.wins[opponent_role_0] += 1
                 self.health[role_0] = self.game_data["health"][0]
 
-        if self.n_rounds_won == self.game_data["rounds_per_stage"]:
+        if self.wins[role_0] == self.game_data["rounds_per_stage"]:
             self.stage_done_ = True
             self.current_stage_number += 1
-            self.n_rounds_won = 0
-            self.n_rounds_lost = 0
+            self.wins[role_0] = 0
+            self.wins[opponent_role_0] = 0
             if self.settings.n_players == 2:
                 self.game_done_ = True
                 self.episode_done_ = True
@@ -295,7 +296,7 @@ class DiambraEngineMock:
             print("Stage done")
             print("Moving to stage {} of {}".format(self.current_stage_number, self.game_data["stages_per_game"]))
 
-        if self.n_rounds_lost == self.game_data["rounds_per_stage"]:
+        if self.wins[opponent_role_0] == self.game_data["rounds_per_stage"]:
             print("Game done")
             self.game_done_ = True
             if self.n_continue >= self.continue_per_episode:
@@ -304,8 +305,8 @@ class DiambraEngineMock:
             else:
                 print("Continuing game")
                 self.n_continue += 1
-                self.n_rounds_won = 0
-                self.n_rounds_lost = 0
+                self.wins[role_0] = 0
+                self.wins[opponent_role_0] = 0
 
         if self.current_stage_number == self.game_data["stages_per_game"]:
             print("Episode done")
@@ -316,23 +317,23 @@ class DiambraEngineMock:
         self.env_done_ = self.episode_done_
 
         delta = {
-            "P1": starting_health["P1"] - self.health["P1"],
-            "P2": starting_health["P2"] - self.health["P2"]
+            Roles.P1: starting_health[Roles.P1] - self.health[Roles.P1],
+            Roles.P2: starting_health[Roles.P2] - self.health[Roles.P2]
         }
         self.reward = delta[opponent_role_0] - delta[role_0]
 
         if np.any([self.round_done_, self.stage_done_, self.game_done_]):
-            self.side["P1"] = 0
-            self.side["P2"] = 1
-            self.health["P1"] = self.game_data["health"][1]
-            self.health["P2"] = self.game_data["health"][1]
-            self.timer = self.game_data["ram_states"]["timer"][2]
+            self.side[Roles.P1] = 0
+            self.side[Roles.P2] = 1
+            self.health[Roles.P1] = self.game_data["health"][1]
+            self.health[Roles.P2] = self.game_data["health"][1]
+            self.timer = self.game_data["ram_states"]["common"]["timer"][2]
 
             # Set perfect chance
             self._set_perfect_chance()
         else:
-            self.side["P1"] = random.choices([0, 1], [0.3, 0.7])[0]
-            self.side["P2"] = random.choices([(self.side["P1"] + 1) % 2, self.side["P1"]], [0.97, 0.03])[0]
+            self.side[Roles.P1] = random.choices([0, 1], [0.3, 0.7])[0]
+            self.side[Roles.P2] = random.choices([(self.side[Roles.P1] + 1) % 2, self.side[Roles.P2]], [0.97, 0.03])[0]
 
     def _update_step_reset_response(self):
 
@@ -342,14 +343,15 @@ class DiambraEngineMock:
         # Ram states
         self._generate_ram_states()
         for k, v in self.ram_states.items():
-            response.observation.ram_states[k] = v[3]
+            for k2, v2 in v.items():
+                response.observation.ram_states_categories[k].ram_states[model.RamStates.Value(k2)] = v2[3]
 
         # Game state
-        response.info.game_states["round_done"] = self.round_done_
-        response.info.game_states["stage_done"] = self.stage_done_
-        response.info.game_states["game_done"] = self.game_done_
-        response.info.game_states["episode_done"] = self.episode_done_
-        response.info.game_states["env_done"] = self.env_done_
+        response.info.game_states[model.GameStates.round_done] = self.round_done_
+        response.info.game_states[model.GameStates.stage_done] = self.stage_done_
+        response.info.game_states[model.GameStates.game_done] = self.game_done_
+        response.info.game_states[model.GameStates.episode_done] = self.episode_done_
+        response.info.game_states[model.GameStates.env_done] = self.env_done_
 
         # Frame
         response.observation.frame = self._generate_frame()

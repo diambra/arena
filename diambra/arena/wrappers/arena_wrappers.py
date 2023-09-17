@@ -4,7 +4,8 @@ import gymnasium as gym
 import logging
 from diambra.arena.env_settings import WrappersSettings
 from diambra.arena.wrappers.observation import WarpFrame, GrayscaleFrame, FrameStack, ActionsStack, \
-                                               ScaledFloatObsNeg, ScaledFloatObs, FlattenFilterDictObs
+                                               NormalizeObservation, FlattenFilterDictObs, \
+                                               AddLastActionToObservation, RoleRelativeObservation
 
 # Remove attack buttons combinations
 class NoAttackButtonsCombinations(gym.Wrapper):
@@ -29,7 +30,7 @@ class NoAttackButtonsCombinations(gym.Wrapper):
     def step(self, action):
         return self.env.step(action)
 
-class NoopResetEnv(gym.Wrapper):
+class NoopReset(gym.Wrapper):
     def __init__(self, env, no_op_max=6):
         """
         Sample initial states by taking random number of no-ops on reset.
@@ -50,7 +51,7 @@ class NoopResetEnv(gym.Wrapper):
         assert no_ops > 0
         obs = None
         for _ in range(no_ops):
-            obs, _, done, _ = self.env.step(self.unwrapped.env.get_no_op_action())
+            obs, _, done, _ = self.env.step(self.unwrapped.get_no_op_action())
             if done:
                 obs = self.env.reset(**kwargs)
         return obs
@@ -58,7 +59,7 @@ class NoopResetEnv(gym.Wrapper):
     def step(self, action):
         return self.env.step(action)
 
-class StickyActionsEnv(gym.Wrapper):
+class StickyActions(gym.Wrapper):
     def __init__(self, env, sticky_actions):
         """
         Apply sticky actions
@@ -68,8 +69,8 @@ class StickyActionsEnv(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         self.sticky_actions = sticky_actions
-        assert self.unwrapped.env_settings.step_ratio == 1, "sticky_actions can be activated only "\
-                                                      "when step_ratio is set equal to 1"
+        assert self.unwrapped.env_settings.step_ratio == 1, "StickyActions wrapper can be activated only "\
+                                                            "when step_ratio is set equal to 1"
 
     def step(self, action):
         rew = 0.0
@@ -81,7 +82,7 @@ class StickyActionsEnv(gym.Wrapper):
 
         return obs, rew, done, info
 
-class ClipRewardEnv(gym.RewardWrapper):
+class ClipReward(gym.RewardWrapper):
     def __init__(self, env):
         """
         clips the reward to {+1, 0, -1} by its sign.
@@ -96,7 +97,7 @@ class ClipRewardEnv(gym.RewardWrapper):
         """
         return np.sign(reward)
 
-class NormalizeRewardEnv(gym.RewardWrapper):
+class NormalizeReward(gym.RewardWrapper):
     def __init__(self, env, reward_normalization_factor):
         """
         Normalize the reward dividing it by the product of
@@ -125,15 +126,25 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
     """
     logger = logging.getLogger(__name__)
 
+    ### Generic wrappers(s)
+    if wrappers_settings.no_op_max > 0:
+        env = NoopReset(env, no_op_max=wrappers_settings.no_op_max)
+
+    if wrappers_settings.sticky_actions > 1:
+        env = StickyActions(env, sticky_actions=wrappers_settings.sticky_actions)
+
+    ### Reward wrappers(s)
+    if wrappers_settings.reward_normalization is True:
+        env = NormalizeReward(env, wrappers_settings.reward_normalization_factor)
+
+    if wrappers_settings.clip_rewards is True:
+        env = ClipReward(env)
+
+    ### Action space wrapper(s)
     if wrappers_settings.no_attack_buttons_combinations is True:
         env = NoAttackButtonsCombinations(env)
 
-    if wrappers_settings.no_op_max > 0:
-        env = NoopResetEnv(env, no_op_max=wrappers_settings.no_op_max)
-
-    if wrappers_settings.sticky_actions > 1:
-        env = StickyActionsEnv(env, sticky_actions=wrappers_settings.sticky_actions)
-
+    ### Observation space wrappers(s)
     if wrappers_settings.frame_shape[2] == 1:
         if env.observation_space["frame"].shape[2] == 1:
             env.logger.warning("Warning: skipping grayscaling as the frame is already single channel.")
@@ -156,33 +167,25 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
 
         env = WarpFrame(env, wrappers_settings.frame_shape[:2])
 
-    # Normalize rewards
-    if wrappers_settings.reward_normalization is True:
-        env = NormalizeRewardEnv(env, wrappers_settings.reward_normalization_factor)
-
-    # Clip rewards using sign function
-    if wrappers_settings.clip_rewards is True:
-        env = ClipRewardEnv(env)
-
     # Stack #frameStack frames together
     if wrappers_settings.frame_stack > 1:
         env = FrameStack(env, wrappers_settings.frame_stack, wrappers_settings.dilation)
 
-    # Stack #actionsStack actions together
-    if wrappers_settings.actions_stack > 1:
-        env = ActionsStack(env, wrappers_settings.actions_stack)
+    # Add last action to observation
+    if wrappers_settings.add_last_action_to_observation:
+        env = AddLastActionToObservation(env)
 
-    # Scales observations normalizing them
+        # Stack #actionsStack actions together
+        if wrappers_settings.actions_stack > 1:
+            env = ActionsStack(env, wrappers_settings.actions_stack)
+
+    # Scales observations normalizing them between 0.0 and 1.0
     if wrappers_settings.scale is True:
-        if wrappers_settings.scale_mod == 0:
-            # Between 0.0 and 1.0
-            env = ScaledFloatObs(env, wrappers_settings.exclude_image_scaling, wrappers_settings.process_discrete_binary)
-        elif wrappers_settings.scale_mod == -1:
-            # Between -1.0 and 1.0
-            raise RuntimeError("Scaling between -1.0 and 1.0 currently not implemented")
-            env = ScaledFloatObsNeg(env)
-        else:
-            raise ValueError("Scale mod must be either 0 or -1")
+        env = NormalizeObservation(env, wrappers_settings.exclude_image_scaling, wrappers_settings.process_discrete_binary)
+
+    # Convert base observation to role-relative observation
+    if wrappers_settings.role_relative_observation is True:
+        env = RoleRelativeObservation(env)
 
     if wrappers_settings.flatten is True:
         env = FlattenFilterDictObs(env, wrappers_settings.filter_keys)

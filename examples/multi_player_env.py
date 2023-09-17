@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import diambra.arena
+from diambra.arena import SpaceTypes
 
 def main():
     # Environment Settings
@@ -11,7 +12,7 @@ def main():
     settings["n_players"] = 2
 
     # If to use discrete or multi_discrete action space
-    settings["action_space"] = (diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.DISCRETE)
+    settings["action_space"] = (SpaceTypes.DISCRETE, SpaceTypes.DISCRETE)
 
     # --- Episode settings ---
 

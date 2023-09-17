@@ -54,11 +54,11 @@ def make(game_id, env_settings:dict={}, wrappers_settings:dict={}, episode_recor
 
     # Apply episode recorder wrapper
     if len(episode_recording_settings) != 0:
-        episode_recording_settings = from_dict(RecordingSettings, episode_recording_settings)
+        episode_recording_settings = from_dict(RecordingSettings, episode_recording_settings, config=Config(strict=True))
         env = EpisodeRecorder(env, episode_recording_settings)
 
     # Apply environment wrappers
-    wrappers_settings = from_dict(WrappersSettings, wrappers_settings)
+    wrappers_settings = from_dict(WrappersSettings, wrappers_settings, config=Config(strict=True))
     wrappers_settings.sanity_check()
     env = env_wrapping(env, wrappers_settings)
 

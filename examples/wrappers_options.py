@@ -1,11 +1,14 @@
 import diambra.arena
+from diambra.arena import SpaceTypes
 
 def main():
     # Environment settings
-    settings = {"n_players": 2} # Nested dictionaries are only present in 2P envs
+    settings = {"n_players": 1, "action_space": SpaceTypes.MULTI_DISCRETE}
 
     # Gym wrappers settings
     wrappers_settings = {}
+
+    ### Generic wrappers
 
     # Number of no-Op actions to be executed
     # at the beginning of the episode (0 by default)
@@ -14,11 +17,7 @@ def main():
     # Number of steps for which the same action should be sent (1 by default)
     wrappers_settings["sticky_actions"] = 1
 
-    # Frame resize operation spec (deactivated by default)
-    # WARNING: for speedup, avoid frame warping wrappers,
-    #          use environment's native frame wrapping through
-    #          "frame_shape" setting (see documentation for details).
-    wrappers_settings["frame_shape"] = (128, 128, 1)
+    ### Reward wrappers
 
     # Wrapper option for reward normalization
     # When activated, the reward normalization factor can be set (default = 0.5)
@@ -31,36 +30,58 @@ def main():
     # If to clip rewards (False by default)
     wrappers_settings["clip_rewards"] = False
 
+    ### Action space wrapper(s)
+
+    # Limit the action space to single attack buttons, removing attack buttons combinations (False by default)
+    wrappers_settings["no_attack_buttons_combinations"] = False
+
+    ### Observation space wrapper(s)
+
+    # Frame resize operation spec (deactivated by default)
+    # WARNING: for speedup, avoid frame warping wrappers,
+    #          use environment's native frame wrapping through
+    #          "frame_shape" setting (see documentation for details).
+    wrappers_settings["frame_shape"] = (128, 128, 1)
+
     # Number of frames to be stacked together (1 by default)
     wrappers_settings["frame_stack"] = 4
 
     # Frames interval when stacking (1 by default)
     wrappers_settings["dilation"] = 1
 
-    # How many past actions to stack together (1 by default)
-    wrappers_settings["actions_stack"] = 12
+    # Add last action to observation (False by default)
+    wrappers_settings["add_last_action_to_observation"] = True
 
-    # If to scale observation numerical values (deactivated by default)
-    # optionally exclude images from normalization (deactivated by default)
-    # and optionally perform one-hot encoding also on discrete binary variables (deactivated by default)
+    # How many past actions to stack together (1 by default)
+    # NOTE: needs "add_last_action_to_observation" wrapper to be active
+    wrappers_settings["actions_stack"] = 6
+
+    # If to scale observation numerical values (False by default)
+    # optionally exclude images from normalization (False by default)
+    # and optionally perform one-hot encoding also on discrete binary variables (False by default)
     wrappers_settings["scale"] = True
     wrappers_settings["exclude_image_scaling"] = True
-    wrappers_settings["process_discrete_binary"] = True
+    wrappers_settings["process_discrete_binary"] = False
 
-    # Scaling interval (0 = [0.0, 1.0], 1 = [-1.0, 1.0])
-    wrappers_settings["scale_mod"] = 0
+    # If to make the observation relative to the agent as a function to its role (P1 or P2) (deactivate by default)
+    # i.e.:
+    #  - In 1P environments, if the agent is P1 then the observation "P1" nesting level becomes "own" and "P2" becomes "opp"
+    #  - In 2P environments, if "agent_0" role is P1 and "agent_1" role is P2, then the player specific nesting levels observation (P1 - P2)
+    #    are grouped under "agent_0" and "agent_1", and:
+    #    - Under "agent_0", "P1" nesting level becomes "own" and "P2" becomes "opp"
+    #    - Under "agent_1", "P1" nesting level becomes "opp" and "P2" becomes "own"
+    wrappers_settings["role_relative_observation"] = True
 
     # Flattening observation dictionary and filtering
     # a sub-set of the RAM states
     wrappers_settings["flatten"] = True
-    wrappers_settings["filter_keys"] = ["stage", "timer", "agent_0_own_side", "agent_0_opp_side",
-                                        "agent_0_own_health", "agent_0_opp_char",
-                                        "agent_0_action_move", "agent_0_action_attack"]
+    wrappers_settings["filter_keys"] = ["stage", "timer", "action", "own_side", "opp_side",
+                                        "own_health", "opp_health", "opp_character"]
 
     env = diambra.arena.make("doapp", settings, wrappers_settings, render_mode="human")
 
     observation, info = env.reset(seed=42)
-    env.show_obs(observation)
+    env.unwrapped.show_obs(observation)
 
     while True:
         actions = env.action_space.sample()
@@ -68,14 +89,14 @@ def main():
 
         observation, reward, terminated, truncated, info = env.step(actions)
         done = terminated or truncated
-        env.show_obs(observation)
+        env.unwrapped.show_obs(observation)
         print("Reward: {}".format(reward))
         print("Done: {}".format(done))
         print("Info: {}".format(info))
 
         if done:
             observation, info = env.reset()
-            env.show_obs(observation)
+            env.unwrapped.show_obs(observation)
             break
 
     env.close()

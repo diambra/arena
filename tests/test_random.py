@@ -4,6 +4,7 @@ from env_exec_interface import env_exec
 import random
 from diambra.arena.utils.engine_mock import load_mocker
 import diambra.arena
+from diambra.arena import SpaceTypes, Roles
 
 # Example Usage:
 # pytest
@@ -38,7 +39,7 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
 
         # Options (settings to change at reset)
         options_list = []
-        roles = [["P1", "P2"], ["P2", "P1"]]
+        roles = [[Roles.P1, Roles.P2], [Roles.P2, Roles.P1]]
         continue_games = [-1.0, 0.0, 0.3]
         for role in roles:
             role_value = (role[0], role[1])
@@ -56,7 +57,7 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
 
 game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
 n_players = [1, 2]
-action_spaces = [diambra.arena.SpaceType.DISCRETE, diambra.arena.SpaceType.MULTI_DISCRETE]
+action_spaces = [SpaceTypes.DISCRETE, SpaceTypes.MULTI_DISCRETE]
 no_action_probability = 0.25
 
 @pytest.mark.parametrize("game_id", game_ids)
@@ -85,15 +86,16 @@ def test_random_wrappers_mock(game_id, n_players, action_space, mocker):
     wrappers_settings["clip_rewards"] = False
     wrappers_settings["frame_stack"] = 4
     wrappers_settings["dilation"] = 1
+    wrappers_settings["add_last_action_to_observation"] = True
     wrappers_settings["actions_stack"] = 12
     wrappers_settings["scale"] = True
-    wrappers_settings["scale_mod"] = 0
+    wrappers_settings["role_relative_observation"] = True
     wrappers_settings["flatten"] = True
     suffix = ""
     if n_players == 2:
         suffix = "agent_0_"
-    wrappers_settings["filter_keys"] = ["stage", "timer", suffix+"own_side", suffix+"opp_side",
-                                        suffix+"opp_char", suffix+"action_move", suffix+"action_attack"]
+    wrappers_settings["filter_keys"] = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                        suffix + "opp_character", suffix + "action"]
 
     assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
                 no_action_probability, use_mock_env, mocker) == 0
@@ -114,15 +116,16 @@ def test_random_integration(game_id, n_players, action_space, mocker):
     wrappers_settings["clip_rewards"] = False
     wrappers_settings["frame_stack"] = 4
     wrappers_settings["dilation"] = 1
+    wrappers_settings["add_last_action_to_observation"] = True
     wrappers_settings["actions_stack"] = 12
     wrappers_settings["scale"] = True
-    wrappers_settings["scale_mod"] = 0
+    wrappers_settings["role_relative_observation"] = True
     wrappers_settings["flatten"] = True
     suffix = ""
     if n_players == 2:
         suffix = "agent_0_"
-    wrappers_settings["filter_keys"] = ["stage", "timer", suffix+"own_side", suffix+"opp_side",
-                                        suffix+"opp_char", suffix+"action_move", suffix+"action_attack"]
+    wrappers_settings["filter_keys"] = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                        suffix + "opp_character", suffix + "action"]
 
     assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
                 no_action_probability, use_mock_env, mocker) == 0

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+from diambra.arena import Roles
 from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P
 from diambra.arena.utils.engine_mock import DiambraEngineMock
 from dacite import from_dict
@@ -37,7 +38,8 @@ if __name__ == "__main__":
     settings = {}
     settings["game_id"] = opt.gameId
     settings["n_players"] = opt.nPlayers
-    settings["role"] = (opt.role0, opt.role1)
+    settings["role"] = (Roles.P1 if opt.role0 == "P1" else Roles.P2 if opt.role0 == "P2" else None,
+                        Roles.P1 if opt.role1 == "P1" else Roles.P2 if opt.role1 == "P2" else None)
     settings["difficulty"] = opt.difficulty
     settings["characters"] = ((opt.character0, opt.character0_2, opt.character0_3),
                               (opt.character1, opt.character1_2, opt.character1_3))
