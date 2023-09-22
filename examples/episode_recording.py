@@ -1,25 +1,23 @@
 import os
 from os.path import expanduser
 import diambra.arena
-from diambra.arena import SpaceTypes
+from diambra.arena import SpaceTypes, EnvironmentSettings, RecordingSettings
 from diambra.arena.utils.controller import get_diambra_controller
 import argparse
 
 def main(use_controller):
     # Environment Settings
-    settings = {}
-    settings["n_players"] = 1
-    settings["role"] = None
-    settings["step_ratio"] = 1
-    settings["frame_shape"] = (256, 256, 1)
-    settings["action_space"] = SpaceTypes.MULTI_DISCRETE
+    settings = EnvironmentSettings()
+    settings.step_ratio = 1
+    settings.frame_shape = (256, 256, 1)
+    settings.action_space = SpaceTypes.MULTI_DISCRETE
 
     # Recording settings
     home_dir = expanduser("~")
     game_id = "doapp"
-    recording_settings = {}
-    recording_settings["dataset_path"] = os.path.join(home_dir, "DIAMBRA/episode_recording", game_id if use_controller else "mock")
-    recording_settings["username"] = "alexpalms"
+    recording_settings = RecordingSettings()
+    recording_settings.dataset_path = os.path.join(home_dir, "DIAMBRA/episode_recording", game_id if use_controller else "mock")
+    recording_settings.username = "alexpalms"
 
     env = diambra.arena.make(game_id, settings, episode_recording_settings=recording_settings, render_mode="human")
 

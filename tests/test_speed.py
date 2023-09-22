@@ -2,6 +2,7 @@
 import pytest
 import time
 import diambra.arena
+from diambra.arena import EnvironmentSettings, EnvironmentSettingsMultiAgent, WrappersSettings
 from diambra.arena.utils.engine_mock import load_mocker
 import numpy as np
 import warnings
@@ -16,8 +17,10 @@ def func(n_players, wrappers_settings, target_speed, mocker):
     load_mocker(mocker)
     try:
         # Settings
-        settings = {}
-        settings["n_players"] = n_players
+        if (n_players == 1):
+            settings = EnvironmentSettings()
+        else:
+            settings = EnvironmentSettingsMultiAgent()
 
         env = diambra.arena.make("doapp", settings, wrappers_settings)
         observation, info = env.reset()
@@ -62,30 +65,29 @@ target_speeds = [400, 300]
 
 @pytest.mark.parametrize("n_players", n_players)
 def test_speed_gym(n_players, mocker):
-    wrappers_settings = {}
-    assert func(n_players, wrappers_settings, target_speeds[0], mocker) == 0
+    assert func(n_players, WrappersSettings(), target_speeds[0], mocker) == 0
 
 @pytest.mark.parametrize("n_players", n_players)
 def test_speed_wrappers(n_players, mocker):
 
     # Env wrappers settings
-    wrappers_settings = {}
-    wrappers_settings["no_op_max"] = 0
-    wrappers_settings["sticky_actions"] = 1
-    wrappers_settings["reward_normalization"] = True
-    wrappers_settings["clip_rewards"] = False
-    wrappers_settings["frame_stack"] = 4
-    wrappers_settings["dilation"] = 1
-    wrappers_settings["add_last_action_to_observation"] = True
-    wrappers_settings["actions_stack"] = 12
-    wrappers_settings["scale"] = True
-    wrappers_settings["role_relative_observation"] = True
-    wrappers_settings["flatten"] = True
+    wrappers_settings = WrappersSettings()
+    wrappers_settings.no_op_max = 0
+    wrappers_settings.sticky_actions = 1
+    wrappers_settings.reward_normalization = True
+    wrappers_settings.clip_rewards = False
+    wrappers_settings.frame_stack = 4
+    wrappers_settings.dilation = 1
+    wrappers_settings.add_last_action_to_observation = True
+    wrappers_settings.actions_stack = 12
+    wrappers_settings.scale = True
+    wrappers_settings.role_relative_observation = True
+    wrappers_settings.flatten = True
 
     suffix = ""
     if n_players == 2:
         suffix = "agent_0_"
-    wrappers_settings["filter_keys"] = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
-                                        suffix + "opp_character", suffix + "action"]
+    wrappers_settings.filter_keys = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                     suffix + "opp_character", suffix + "action"]
 
     assert func(n_players, wrappers_settings, target_speeds[1], mocker) == 0

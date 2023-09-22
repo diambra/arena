@@ -333,15 +333,15 @@ class FlattenFilterDictObs(gym.ObservationWrapper):
         gym.ObservationWrapper.__init__(self, env)
 
         self.filter_keys = filter_keys
-        if (filter_keys is not None):
+        if len(filter_keys) != 0:
             self.filter_keys = list(set(filter_keys))
             if "frame" not in filter_keys:
                 self.filter_keys += ["frame"]
 
-        original_obs_space_keys = (flatten_filter_obs_space_func(self.observation_space, None)).keys()
+        original_obs_space_keys = (flatten_filter_obs_space_func(self.observation_space, [])).keys()
         self.observation_space = gym.spaces.Dict(flatten_filter_obs_space_func(self.observation_space, self.filter_keys))
 
-        if filter_keys is not None:
+        if len(filter_keys) != 0:
             if (sorted(self.observation_space.spaces.keys()) != sorted(self.filter_keys)):
                 raise Exception("Specified observation key(s) not found:",
                     "       Available key(s):", sorted(original_obs_space_keys),
@@ -371,7 +371,7 @@ def flatten_filter_obs_space_func(input_dictionary, filter_keys):
                 if check_method(new_key):
                     flattened_dict[new_key] = v
 
-    if filter_keys is not None:
+    if len(filter_keys) != 0:
         visit(input_dictionary, flattened_dict, _FLAG_FIRST, check_filter)
     else:
         visit(input_dictionary, flattened_dict, _FLAG_FIRST, dummy_check)
@@ -397,7 +397,7 @@ def flatten_filter_obs_func(input_dictionary, filter_keys):
                 if check_method(new_key):
                     flattened_dict[new_key] = v
 
-    if filter_keys is not None:
+    if len(filter_keys) != 0:
         visit(input_dictionary, flattened_dict, _FLAG_FIRST, check_filter)
     else:
         visit(input_dictionary, flattened_dict, _FLAG_FIRST, dummy_check)

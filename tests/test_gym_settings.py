@@ -2,7 +2,7 @@
 import pytest
 import random
 import diambra.arena
-from diambra.arena import SpaceTypes, Roles
+from diambra.arena import SpaceTypes, Roles, EnvironmentSettings, EnvironmentSettingsMultiAgent
 from diambra.arena.utils.gym_utils import available_games
 from pytest_utils import generate_pytest_decorator_input
 from diambra.arena.utils.engine_mock import load_mocker
@@ -14,10 +14,10 @@ from diambra.arena.utils.engine_mock import load_mocker
 #    -s (show output)
 #    -k "expression" (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. "wrappers and doapp")
 
-def func(settings, wrappers_settings, traj_rec_settings, mocker):
+def func(settings, mocker):
     load_mocker(mocker)
     try:
-        env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, traj_rec_settings)
+        env = diambra.arena.make(settings.game_id, settings)
         env.reset()
         env.close()
         print("COMPLETED SUCCESSFULLY!")
@@ -76,30 +76,29 @@ def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space,
     outfits = random.choice(outfits_range)
 
     # Env settings
-    settings = {}
-    settings["game_id"] = game_id
-    settings["frame_shape"] = frame_shape
-    settings["step_ratio"] = step_ratio
-    settings["n_players"] = n_players
-    settings["action_space"] = (action_space, action_space)
+    if (n_players == 1):
+        settings = EnvironmentSettings()
+    else:
+        settings = EnvironmentSettingsMultiAgent()
+    settings.game_id = game_id
+    settings.frame_shape = frame_shape
+    settings.step_ratio = step_ratio
+    settings.action_space = (action_space, action_space)
 
-    settings["difficulty"] = difficulty
-    settings["continue_game"] = continue_game
-    settings["tower"] = tower
+    settings.difficulty = difficulty
+    settings.continue_game = continue_game
+    settings.tower = tower
 
-    settings["role"] = (role[0], role[1])
-    settings["characters"] = (characters[0], characters[1])
-    settings["outfits"] = (outfits, outfits)
-    settings["super_art"] = (super_art, super_art)
-    settings["fighting_style"] = (fighting_style, fighting_style)
-    settings["ultimate_style"] = (ultimate_style, ultimate_style)
+    settings.role = (role[0], role[1])
+    settings.characters = (characters[0], characters[1])
+    settings.outfits = (outfits, outfits)
+    settings.super_art = (super_art, super_art)
+    settings.fighting_style = (fighting_style, fighting_style)
+    settings.ultimate_style = (ultimate_style, ultimate_style)
 
-    if settings["n_players"] != 2:
+    if n_players != 2:
         for key in ["action_space", "role", "characters" , "outfits",
                     "super_art", "fighting_style", "ultimate_style"]:
-            settings[key] = settings[key][0]
+            setattr(settings, key, getattr(settings, key)[0])
 
-    wrappers_settings = {}
-    traj_rec_settings = {}
-
-    assert func(settings, wrappers_settings, traj_rec_settings, mocker) == expected
+    assert func(settings, mocker) == expected

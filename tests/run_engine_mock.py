@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 from diambra.arena import Roles
-from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P
+from diambra.arena.env_settings import EnvironmentSettings, EnvironmentSettingsMultiAgent
 from diambra.arena.utils.engine_mock import DiambraEngineMock
-from dacite import from_dict
 import random
 
 def print_response(response):
@@ -35,26 +34,24 @@ if __name__ == "__main__":
     print(opt)
 
     # Settings
-    settings = {}
-    settings["game_id"] = opt.gameId
-    settings["n_players"] = opt.nPlayers
-    settings["role"] = (Roles.P1 if opt.role0 == "P1" else Roles.P2 if opt.role0 == "P2" else None,
-                        Roles.P1 if opt.role1 == "P1" else Roles.P2 if opt.role1 == "P2" else None)
-    settings["difficulty"] = opt.difficulty
-    settings["characters"] = ((opt.character0, opt.character0_2, opt.character0_3),
-                              (opt.character1, opt.character1_2, opt.character1_3))
-    settings["step_ratio"] = opt.stepRatio
-    settings["continue_game"] = opt.continueGame
-    if settings["n_players"] == 1:
-        settings["role"] = settings["role"][0]
-        settings["characters"] = settings["characters"][0]
-
-    # Checking settings and setting up default ones
-    if "n_players" in settings.keys() and settings["n_players"] == 2:
-        settings = from_dict(EnvironmentSettings2P, settings)
+    if opt.nPlayers == 1:
+        settings = EnvironmentSettings()
     else:
-        settings["n_players"] = 1
-        settings = from_dict(EnvironmentSettings1P, settings)
+        settings = EnvironmentSettingsMultiAgent()
+
+    settings = {}
+    settings.game_id = opt.gameId
+    settings.role = (Roles.P1 if opt.role0 == "P1" else Roles.P2 if opt.role0 == "P2" else None,
+                     Roles.P1 if opt.role1 == "P1" else Roles.P2 if opt.role1 == "P2" else None)
+    settings.difficulty = opt.difficulty
+    settings.characters = ((opt.character0, opt.character0_2, opt.character0_3),
+                           (opt.character1, opt.character1_2, opt.character1_3))
+    settings.step_ratio = opt.stepRatio
+    settings.continue_game = opt.continueGame
+    if settings.n_players == 1:
+        settings.role = settings.role[0]
+        settings.characters = settings.characters[0]
+
     settings.sanity_check()
 
     engine_mock = DiambraEngineMock()

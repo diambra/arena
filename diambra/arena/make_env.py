@@ -1,13 +1,14 @@
 import os
 import logging
-from dacite import from_dict, Config
 from diambra.arena.arena_gym import DiambraGym1P, DiambraGym2P
 from diambra.arena.wrappers.arena_wrappers import env_wrapping
-from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P, WrappersSettings, RecordingSettings
+from diambra.arena import EnvironmentSettings, EnvironmentSettingsMultiAgent, WrappersSettings, RecordingSettings
 from diambra.arena.wrappers.episode_recording import EpisodeRecorder
+from typing import Union
 
-def make(game_id, env_settings:dict={}, wrappers_settings:dict={}, episode_recording_settings:dict={},
-         render_mode=None, rank=0, log_level=logging.INFO):
+def make(game_id, env_settings: Union[EnvironmentSettings, EnvironmentSettingsMultiAgent]=EnvironmentSettings(),
+         wrappers_settings: WrappersSettings=WrappersSettings(), episode_recording_settings: RecordingSettings=RecordingSettings(),
+         render_mode: str=None, rank: int=0, log_level=logging.INFO):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -19,8 +20,8 @@ def make(game_id, env_settings:dict={}, wrappers_settings:dict={}, episode_recor
     logger = logging.getLogger(__name__)
 
     # Include game_id and render_mode in env_settings
-    env_settings["game_id"] = game_id
-    env_settings["render_mode"] = render_mode
+    env_settings.game_id = game_id
+    env_settings.render_mode = render_mode
 
     # Check if DIAMBRA_ENVS var present
     env_addresses = os.getenv("DIAMBRA_ENVS", "").split()
@@ -31,20 +32,13 @@ def make(game_id, env_settings:dict={}, wrappers_settings:dict={}, episode_recor
             "# of env servers: {}".format(len(env_addresses)),
             "# rank of client: {} (0-based index)".format(rank))
     else:  # If not present, set default value
-        if "env_address" not in env_settings:
+        if env_settings.env_address is None:
             env_addresses = ["localhost:50051"]
         else:
-            env_addresses = [env_settings["env_address"]]
+            env_addresses = [env_settings.env_address]
 
-    env_settings["env_address"] = env_addresses[rank]
-    env_settings["rank"] = rank
-
-    # Checking settings and setting up default ones
-    if "n_players" in env_settings.keys() and env_settings["n_players"] == 2:
-        env_settings = from_dict(EnvironmentSettings2P, env_settings, config=Config(strict=True))
-    else:
-        env_settings["n_players"] = 1
-        env_settings = from_dict(EnvironmentSettings1P, env_settings, config=Config(strict=True))
+    env_settings.env_address = env_addresses[rank]
+    env_settings.rank = rank
 
     # Make environment
     if env_settings.n_players == 1:  # 1P Mode
@@ -53,12 +47,11 @@ def make(game_id, env_settings:dict={}, wrappers_settings:dict={}, episode_recor
         env = DiambraGym2P(env_settings)
 
     # Apply episode recorder wrapper
-    if len(episode_recording_settings) != 0:
-        episode_recording_settings = from_dict(RecordingSettings, episode_recording_settings, config=Config(strict=True))
+    if episode_recording_settings.dataset_path is not None:
+        episode_recording_settings.sanity_check()
         env = EpisodeRecorder(env, episode_recording_settings)
 
     # Apply environment wrappers
-    wrappers_settings = from_dict(WrappersSettings, wrappers_settings, config=Config(strict=True))
     wrappers_settings.sanity_check()
     env = env_wrapping(env, wrappers_settings)
 
