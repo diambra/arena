@@ -2,7 +2,7 @@
 import pytest
 import diambra.arena
 from pytest_utils import generate_pytest_decorator_input
-from diambra.arena import SpaceTypes
+from diambra.arena import SpaceTypes, EnvironmentSettings, EnvironmentSettingsMultiAgent, WrappersSettings
 from diambra.arena.utils.engine_mock import load_mocker
 from diambra.arena.utils.gym_utils import available_games
 
@@ -13,10 +13,10 @@ from diambra.arena.utils.gym_utils import available_games
 #    -s (show output)
 #    -k "expression" (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. "wrappers and doapp")
 
-def func(settings, wrappers_settings, episode_recording_settings, mocker):
+def func(settings, wrappers_settings, mocker):
     load_mocker(mocker)
     try:
-        env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, episode_recording_settings)
+        env = diambra.arena.make(settings.game_id, settings, wrappers_settings)
         env.close()
 
         print("COMPLETED SUCCESSFULLY!")
@@ -87,34 +87,33 @@ def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_op_m
                            flatten, filter_keys, wrappers, expected, mocker):
 
     # Env settings
-    settings = {}
-    settings["game_id"] = game_id
-    settings["step_ratio"] = step_ratio
-    settings["n_players"] = n_players
-    settings["action_space"] = action_space
+    if (n_players == 1):
+        settings = EnvironmentSettings()
+    else:
+        settings = EnvironmentSettingsMultiAgent()
+    settings.game_id = game_id
+    settings.step_ratio = step_ratio
+    settings.action_space = action_space
     if n_players == 2:
-        settings["action_space"] = (action_space, action_space)
+        settings.action_space = (action_space, action_space)
 
     # Env wrappers settings
-    wrappers_settings = {}
-    wrappers_settings["no_op_max"] = no_op_max
-    wrappers_settings["sticky_actions"] = sticky_actions
-    wrappers_settings["reward_normalization"] = reward_normalization
-    wrappers_settings["reward_normalization_factor"] = reward_normalization_factor
-    wrappers_settings["clip_rewards"] = clip_rewards
-    wrappers_settings["no_attack_buttons_combinations"] = no_attack_buttons_combinations
-    wrappers_settings["frame_shape"] = frame_shape
-    wrappers_settings["frame_stack"] = frame_stack
-    wrappers_settings["dilation"] = dilation
-    wrappers_settings["add_last_action_to_observation"] = add_last_action_to_observation
-    wrappers_settings["actions_stack"] = 1 if add_last_action_to_observation is False and expected == 0 else actions_stack
-    wrappers_settings["scale"] = scale
-    wrappers_settings["role_relative_observation"] = role_relative_observation
-    wrappers_settings["flatten"] = flatten
-    wrappers_settings["filter_keys"] = filter_keys
-    wrappers_settings["wrappers"] = wrappers
+    wrappers_settings = WrappersSettings()
+    wrappers_settings.no_op_max = no_op_max
+    wrappers_settings.sticky_actions = sticky_actions
+    wrappers_settings.reward_normalization = reward_normalization
+    wrappers_settings.reward_normalization_factor = reward_normalization_factor
+    wrappers_settings.clip_rewards = clip_rewards
+    wrappers_settings.no_attack_buttons_combinations = no_attack_buttons_combinations
+    wrappers_settings.frame_shape = frame_shape
+    wrappers_settings.frame_stack = frame_stack
+    wrappers_settings.dilation = dilation
+    wrappers_settings.add_last_action_to_observation = add_last_action_to_observation
+    wrappers_settings.actions_stack = 1 if add_last_action_to_observation is False and expected == 0 else actions_stack
+    wrappers_settings.scale = scale
+    wrappers_settings.role_relative_observation = role_relative_observation
+    wrappers_settings.flatten = flatten
+    wrappers_settings.filter_keys = filter_keys
+    wrappers_settings.wrappers = wrappers
 
-    # Recording settings
-    episode_recording_settings = {}
-
-    assert func(settings, wrappers_settings, episode_recording_settings, mocker) == expected
+    assert func(settings, wrappers_settings, mocker) == expected

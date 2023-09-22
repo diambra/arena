@@ -4,7 +4,7 @@ from env_exec_interface import env_exec
 import os
 from os.path import expanduser
 import random
-from diambra.arena import SpaceTypes, Roles
+from diambra.arena import SpaceTypes, Roles, EnvironmentSettings, EnvironmentSettingsMultiAgent, WrappersSettings, RecordingSettings
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -33,29 +33,31 @@ if __name__ == "__main__":
     print(opt)
 
     # Settings
-    settings = {}
-    settings["game_id"] = opt.gameId
-    settings["frame_shape"] = random.choice([(128, 128, 1), (256, 256, 0)])
+    if (opt.nPlayers == 1):
+        settings = EnvironmentSettings()
+    else:
+        settings = EnvironmentSettingsMultiAgent()
+    settings.game_id = opt.gameId
+    settings.frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
     if opt.envAddress != "":
-        settings["env_address"] = opt.envAddress
-    settings["n_players"] = opt.nPlayers
-    settings["role"] = (Roles.P1 if opt.role0 == "P1" else Roles.P2 if opt.role0 == "P2" else None,
-                        Roles.P1 if opt.role1 == "P1" else Roles.P2 if opt.role1 == "P2" else None)
-    settings["difficulty"] = opt.difficulty if opt.difficulty != 0 else None
-    settings["characters"] = ((opt.character0, opt.character0_2, opt.character0_3),
-                              (opt.character1, opt.character1_2, opt.character1_3))
-    settings["characters"] = tuple([None if "Random" in settings["characters"][idx] else settings["characters"] for idx in range(2)])
-    settings["step_ratio"] = opt.stepRatio
-    settings["continue_game"] = opt.continueGame
-    settings["action_space"] = (SpaceTypes.DISCRETE, SpaceTypes.DISCRETE) if opt.actionSpace == "discrete" else \
+        settings.env_address = opt.envAddress
+    settings.role = (Roles.P1 if opt.role0 == "P1" else Roles.P2 if opt.role0 == "P2" else None,
+                     Roles.P1 if opt.role1 == "P1" else Roles.P2 if opt.role1 == "P2" else None)
+    settings.difficulty = opt.difficulty if opt.difficulty != 0 else None
+    settings.characters = ((opt.character0, opt.character0_2, opt.character0_3),
+                           (opt.character1, opt.character1_2, opt.character1_3))
+    settings.characters = tuple([None if "Random" in settings["characters"][idx] else settings["characters"] for idx in range(2)])
+    settings.step_ratio = opt.stepRatio
+    settings.continue_game = opt.continueGame
+    settings.action_space = (SpaceTypes.DISCRETE, SpaceTypes.DISCRETE) if opt.actionSpace == "discrete" else \
                                (SpaceTypes.MULTI_DISCRETE, SpaceTypes.MULTI_DISCRETE)
-    if settings["n_players"] == 1:
-        settings["role"] = settings["role"][0]
-        settings["characters"] = settings["characters"][0]
-        settings["action_space"] = settings["action_space"][0]
+    if settings.n_players == 1:
+        settings.role = settings.role[0]
+        settings.characters = settings.characters[0]
+        settings.action_space = settings.action_space[0]
 
     # Env wrappers settings
-    wrappers_settings = {}
+    wrappers_settings = WrappersSettings()
     wrappers_settings["no_op_max"] = 0
     wrappers_settings["sticky_actions"] = 1
     wrappers_settings["frame_shape"] = random.choice([(128, 128, 1), (256, 256, 0)])
@@ -65,7 +67,6 @@ if __name__ == "__main__":
     wrappers_settings["dilation"] = 1
     wrappers_settings["actions_stack"] = 12
     wrappers_settings["scale"] = True
-    wrappers_settings["scale_mod"] = 0
     wrappers_settings["flatten"] = True
     suffix = ""
     if opt.nPlayers == 2:
@@ -80,16 +81,34 @@ if __name__ == "__main__":
                                             suffix+"own_health_2", suffix+"opp_health_2",
                                             suffix+"action_move", suffix+"action_attack"]
 
-    if bool(opt.wrappers) is False:
-        wrappers_settings = {}
+
+        # Env wrappers settings
+    wrappers_settings = WrappersSettings()
+    if bool(opt.wrappers) is True:
+        wrappers_settings.no_op_max = 0
+        wrappers_settings.sticky_actions = 1
+        wrappers_settings.frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
+        wrappers_settings.reward_normalization = True
+        wrappers_settings.clip_rewards = False
+        wrappers_settings.frame_stack = 4
+        wrappers_settings.dilation = 1
+        wrappers_settings.add_last_action_to_observation = True
+        wrappers_settings.actions_stack = 12
+        wrappers_settings.scale = True
+        wrappers_settings.role_relative_observation = True
+        wrappers_settings.flatten = True
+        suffix = ""
+        if settings.n_players == 2:
+            suffix = "agent_0_"
+        wrappers_settings.filter_keys = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                        suffix + "opp_character", suffix + "action"]
 
     # Recording settings
-    home_dir = expanduser("~")
-    episode_recording_settings = {}
-    episode_recording_settings["username"] = "alexpalms"
-    episode_recording_settings["dataset_path"] = os.path.join(home_dir, "DIAMBRA/episode_recording", opt.gameId)
-    if bool(opt.recordEpisode) is False:
-        episode_recording_settings = {}
+    episode_recording_settings = RecordingSettings()
+    if bool(opt.recordEpisode) is True:
+        home_dir = expanduser("~")
+        episode_recording_settings["username"] = "alexpalms"
+        episode_recording_settings["dataset_path"] = os.path.join(home_dir, "DIAMBRA/episode_recording", opt.gameId)
 
     # Args
     args = {}
@@ -99,4 +118,4 @@ if __name__ == "__main__":
     args["render"] = bool(opt.render)
     args["log_output"] = True
 
-    env_exec(settings, [settings], wrappers_settings, episode_recording_settings, args)
+    env_exec(settings, [{}], wrappers_settings, episode_recording_settings, args)

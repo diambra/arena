@@ -3,8 +3,7 @@ import pytest
 from env_exec_interface import env_exec
 import random
 from diambra.arena.utils.engine_mock import load_mocker
-import diambra.arena
-from diambra.arena import SpaceTypes, Roles
+from diambra.arena import SpaceTypes, Roles, EnvironmentSettings, EnvironmentSettingsMultiAgent, WrappersSettings, RecordingSettings
 
 # Example Usage:
 # pytest
@@ -29,13 +28,15 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
 
     try:
         # Settings
-        settings = {}
-        settings["game_id"] = game_id
-        settings["frame_shape"] = frame_shape
-        settings["n_players"] = n_players
-        settings["action_space"] = (action_space, action_space)
-        if settings["n_players"] == 1:
-            settings["action_space"] = settings["action_space"][0]
+        if (n_players == 1):
+            settings = EnvironmentSettings()
+        else:
+            settings = EnvironmentSettingsMultiAgent()
+        settings.game_id = game_id
+        settings.frame_shape = frame_shape
+        settings.action_space = (action_space, action_space)
+        if settings.n_players == 1:
+            settings.action_space = settings.action_space[0]
 
         # Options (settings to change at reset)
         options_list = []
@@ -43,14 +44,14 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
         continue_games = [-1.0, 0.0, 0.3]
         for role in roles:
             role_value = (role[0], role[1])
-            if settings["n_players"] == 1:
+            if settings.n_players == 1:
                 role_value = role_value[0]
                 for continue_val in continue_games:
                     options_list.append({"role": role_value, "continue_game": continue_val})
             else:
                 options_list.append({"role": role_value})
 
-        return env_exec(settings, options_list, wrappers_settings, {}, args)
+        return env_exec(settings, options_list, wrappers_settings, RecordingSettings(), args)
     except Exception as e:
         print(e)
         return 1
@@ -66,8 +67,7 @@ no_action_probability = 0.25
 def test_random_gym_mock(game_id, n_players, action_space, mocker):
     frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
     use_mock_env = True
-    wrappers_settings = {}
-    assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
+    assert func(game_id, n_players, action_space, frame_shape, WrappersSettings(),
                 no_action_probability, use_mock_env, mocker) == 0
 
 @pytest.mark.parametrize("game_id", game_ids)
@@ -78,24 +78,24 @@ def test_random_wrappers_mock(game_id, n_players, action_space, mocker):
     use_mock_env = True
 
     # Env wrappers settings
-    wrappers_settings = {}
-    wrappers_settings["no_op_max"] = 0
-    wrappers_settings["sticky_actions"] = 1
-    wrappers_settings["frame_shape"] = random.choice([(128, 128, 1), (256, 256, 0)])
-    wrappers_settings["reward_normalization"] = True
-    wrappers_settings["clip_rewards"] = False
-    wrappers_settings["frame_stack"] = 4
-    wrappers_settings["dilation"] = 1
-    wrappers_settings["add_last_action_to_observation"] = True
-    wrappers_settings["actions_stack"] = 12
-    wrappers_settings["scale"] = True
-    wrappers_settings["role_relative_observation"] = True
-    wrappers_settings["flatten"] = True
+    wrappers_settings = WrappersSettings()
+    wrappers_settings.no_op_max = 0
+    wrappers_settings.sticky_actions = 1
+    wrappers_settings.frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
+    wrappers_settings.reward_normalization = True
+    wrappers_settings.clip_rewards = False
+    wrappers_settings.frame_stack = 4
+    wrappers_settings.dilation = 1
+    wrappers_settings.add_last_action_to_observation = True
+    wrappers_settings.actions_stack = 12
+    wrappers_settings.scale = True
+    wrappers_settings.role_relative_observation = True
+    wrappers_settings.flatten = True
     suffix = ""
     if n_players == 2:
         suffix = "agent_0_"
-    wrappers_settings["filter_keys"] = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
-                                        suffix + "opp_character", suffix + "action"]
+    wrappers_settings.filter_keys = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                     suffix + "opp_character", suffix + "action"]
 
     assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
                 no_action_probability, use_mock_env, mocker) == 0
@@ -108,24 +108,24 @@ def test_random_integration(game_id, n_players, action_space, mocker):
     use_mock_env = False
 
     # Env wrappers settings
-    wrappers_settings = {}
-    wrappers_settings["no_op_max"] = 0
-    wrappers_settings["sticky_actions"] = 1
-    wrappers_settings["frame_shape"] = (128, 128, 1)
-    wrappers_settings["reward_normalization"] = True
-    wrappers_settings["clip_rewards"] = False
-    wrappers_settings["frame_stack"] = 4
-    wrappers_settings["dilation"] = 1
-    wrappers_settings["add_last_action_to_observation"] = True
-    wrappers_settings["actions_stack"] = 12
-    wrappers_settings["scale"] = True
-    wrappers_settings["role_relative_observation"] = True
-    wrappers_settings["flatten"] = True
+    wrappers_settings = WrappersSettings()
+    wrappers_settings.no_op_max = 0
+    wrappers_settings.sticky_actions = 1
+    wrappers_settings.frame_shape = (128, 128, 1)
+    wrappers_settings.reward_normalization = True
+    wrappers_settings.clip_rewards = False
+    wrappers_settings.frame_stack = 4
+    wrappers_settings.dilation = 1
+    wrappers_settings.add_last_action_to_observation = True
+    wrappers_settings.actions_stack = 12
+    wrappers_settings.scale = True
+    wrappers_settings.role_relative_observation = True
+    wrappers_settings.flatten = True
     suffix = ""
     if n_players == 2:
         suffix = "agent_0_"
-    wrappers_settings["filter_keys"] = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
-                                        suffix + "opp_character", suffix + "action"]
+    wrappers_settings.filter_keys = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                     suffix + "opp_character", suffix + "action"]
 
     assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
                 no_action_probability, use_mock_env, mocker) == 0

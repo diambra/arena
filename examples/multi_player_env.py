@@ -1,27 +1,24 @@
 #!/usr/bin/env python3
 import diambra.arena
-from diambra.arena import SpaceTypes
+from diambra.arena import SpaceTypes, EnvironmentSettingsMultiAgent
 
 def main():
     # Environment Settings
-    settings = {}
+    settings = EnvironmentSettingsMultiAgent() # Multi Agents environment
 
     # --- Environment settings ---
 
-    # 2 Players game
-    settings["n_players"] = 2
-
     # If to use discrete or multi_discrete action space
-    settings["action_space"] = (SpaceTypes.DISCRETE, SpaceTypes.DISCRETE)
+    settings.action_space = (SpaceTypes.DISCRETE, SpaceTypes.DISCRETE)
 
     # --- Episode settings ---
 
     # Characters to be used, automatically extended with None for games
     # requiring to select more than one character (e.g. Tekken Tag Tournament)
-    settings["characters"] = ("Ryu", "Ken")
+    settings.characters = ("Ryu", "Ken")
 
     # Characters outfit
-    settings["outfits"] = (2, 2)
+    settings.outfits = (2, 2)
 
     env = diambra.arena.make("sfiii3n", settings, render_mode="human")
 

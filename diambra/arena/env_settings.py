@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Union, List, Tuple, Any, Dict
 from diambra.arena.utils.gym_utils import available_games
 from diambra.arena import SpaceTypes, Roles
@@ -6,6 +6,10 @@ import numpy as np
 import random
 from diambra.engine import model
 import time
+from dacite import from_dict, Config
+
+def load_settings_flat_dict(target_class, settings: dict):
+    return from_dict(target_class, settings, config=Config(strict=True))
 
 MAX_VAL = float("inf")
 MIN_VAL = float("-inf")
@@ -22,6 +26,13 @@ def check_val_in_list(key, value, valid_list):
     assert (value in valid_list), error_message
     assert (type(value)==type(valid_list[valid_list.index(value)])), error_message
 
+def check_type(key, value, expected_type, admit_none=True):
+    error_message = "ERROR: \"{}\" ({}) is of type {}, admissible types are {}".format(key, value, type(value), expected_type)
+    if value is not None:
+        assert isinstance(value, expected_type), error_message
+    else:
+        assert admit_none==True, "ERROR: \"{}\" ({}) cannot be NoneType".format(key, value)
+
 def check_space_type(key, value, valid_list):
     error_message = "ERROR: \"{}\" ({}) admissible values are {}".format(key, SpaceTypes.Name(value), [SpaceTypes.Name(elem) for elem in valid_list])
     assert (value in valid_list), error_message
@@ -31,21 +42,20 @@ def check_roles(key, value, valid_list):
     assert (value in valid_list), error_message
 
 @dataclass
-class EnvironmentSettings:
+class EnvironmentSettingsBase:
     """Generic Environment Settings Class"""
     env_info = None
     games_dict = None
 
     # Environment settings
-    game_id: str
+    game_id: str = "doapp"
     frame_shape: Tuple[int, int, int] = (0, 0, 0)
     step_ratio: int = 6
-    n_players: int = 1
     disable_keyboard: bool = True
     disable_joystick: bool = True
     render_mode: Union[None, str] = None
     rank: int = 0
-    env_address: str = "localhost:50051"
+    env_address: str = None
     grpc_timeout: int = 600
 
     # Episode settings
@@ -55,7 +65,7 @@ class EnvironmentSettings:
     show_final: bool = False
     tower: Union[None, int] = 3  # UMK3 Specific
 
-    # Bookeeping variables
+    # Bookkeeping variables
     _last_seed: Union[None, int] = None
     pb_model: model = None
 
@@ -161,21 +171,22 @@ class EnvironmentSettings:
 
     def _sanity_check(self):
         if self.env_info is None or self.games_dict is None:
-            raise("EnvironmentSettings class not correctly initialized")
+            raise Exception("EnvironmentSettings class not correctly initialized")
 
         # TODO: consider using typing.Literal to specify lists of admissible values: NOTE: It requires Python 3.8+
         check_val_in_list("game_id", self.game_id, list(self.games_dict.keys()))
-        if self.render_mode is not None:
-            check_val_in_list("render_mode", self.render_mode, ["human", "rgb_array"])
+        check_num_in_range("step_ratio", self.step_ratio, [1, 6])
         check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_FRAME_RES])
         check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, MAX_FRAME_RES])
         if (min(self.frame_shape[0], self.frame_shape[1]) == 0 and
             max(self.frame_shape[0], self.frame_shape[1]) != 0):
             raise Exception("\"frame_shape[0] and frame_shape[1]\" must be either both different from or equal to 0")
         check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1])
-        check_num_in_range("step_ratio", self.step_ratio, [1, 6])
-        check_num_in_range("grpc_timeout", self.grpc_timeout, [0, 3600])
+        if self.render_mode is not None:
+            check_val_in_list("render_mode", self.render_mode, ["human", "rgb_array"])
         check_num_in_range("rank", self.rank, [0, MAX_VAL])
+        check_type("env_address", self.env_address, str)
+        check_num_in_range("grpc_timeout", self.grpc_timeout, [0, 3600])
 
         if self.seed is not None:
             check_num_in_range("seed", self.seed, [-1, MAX_VAL])
@@ -183,6 +194,7 @@ class EnvironmentSettings:
         difficulty_admissible_values.append(None)
         check_val_in_list("difficulty", self.difficulty, difficulty_admissible_values)
         check_num_in_range("continue_game", self.continue_game, [MIN_VAL, 1.0])
+        check_type("show_final", self.show_final, bool)
         check_val_in_list("tower", self.tower, [None, 1, 2, 3, 4])
 
     def _process_random_values(self):
@@ -192,10 +204,10 @@ class EnvironmentSettings:
             self.tower = random.choice(list(range(1, 5)))
 
 @dataclass
-class EnvironmentSettings1P(EnvironmentSettings):
+class EnvironmentSettings(EnvironmentSettingsBase):
     """Single Agent Environment Settings Class"""
-
     # Env settings
+    n_players: int = 1
     action_space: int = SpaceTypes.MULTI_DISCRETE
 
     # Episode settings
@@ -269,9 +281,10 @@ class EnvironmentSettings1P(EnvironmentSettings):
         return [player_settings]
 
 @dataclass
-class EnvironmentSettings2P(EnvironmentSettings):
-    """Single Agent Environment Settings Class"""
+class EnvironmentSettingsMultiAgent(EnvironmentSettingsBase):
+    """Multi Agent Environment Settings Class"""
     # Env Settings
+    n_players: int = 2
     action_space: Tuple[int, int] = (SpaceTypes.MULTI_DISCRETE, SpaceTypes.MULTI_DISCRETE)
 
     # Episode Settings
@@ -382,28 +395,42 @@ class WrappersSettings:
     process_discrete_binary: bool = False
     role_relative_observation: bool = False
     flatten: bool = False
-    filter_keys: List[str] = None
-    wrappers: List[List[Any]] = None
+    filter_keys: List[str] = field(default_factory=list)
+    wrappers: List[List[Any]] = field(default_factory=list)
 
     def sanity_check(self):
         check_num_in_range("no_op_max", self.no_op_max, [0, 12])
         check_num_in_range("sticky_actions", self.sticky_actions, [1, 12])
-        check_num_in_range("frame_stack", self.frame_stack, [1, MAX_STACK_VALUE])
-        check_num_in_range("dilation", self.dilation, [1, MAX_STACK_VALUE])
-        actions_stack_bounds = [1, 1]
-        if self.add_last_action_to_observation is True:
-            actions_stack_bounds = [1, MAX_STACK_VALUE]
-        check_num_in_range("actions_stack", self.actions_stack, actions_stack_bounds)
+        check_type("reward_normalization", self.reward_normalization, bool, admit_none=False)
         check_num_in_range("reward_normalization_factor", self.reward_normalization_factor, [0.0, 1000000])
-
+        check_type("clip_rewards", self.clip_rewards, bool, admit_none=False)
+        check_type("no_attack_buttons_combinations", self.no_attack_buttons_combinations, bool, admit_none=False)
         check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1, 3])
         check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_FRAME_RES])
         check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, MAX_FRAME_RES])
         if (min(self.frame_shape[0], self.frame_shape[1]) == 0 and
             max(self.frame_shape[0], self.frame_shape[1]) != 0):
             raise Exception("\"frame_shape[0] and frame_shape[1]\" must be both different from 0")
+        check_num_in_range("frame_stack", self.frame_stack, [1, MAX_STACK_VALUE])
+        check_num_in_range("dilation", self.dilation, [1, MAX_STACK_VALUE])
+        check_type("add_last_action_to_observation", self.add_last_action_to_observation, bool, admit_none=False)
+        actions_stack_bounds = [1, 1]
+        if self.add_last_action_to_observation is True:
+            actions_stack_bounds = [1, MAX_STACK_VALUE]
+        check_num_in_range("actions_stack", self.actions_stack, actions_stack_bounds)
+        check_type("scale", self.scale, bool, admit_none=False)
+        check_type("exclude_image_scaling", self.exclude_image_scaling, bool, admit_none=False)
+        check_type("process_discrete_binary", self.process_discrete_binary, bool, admit_none=False)
+        check_type("role_relative_observation", self.role_relative_observation, bool, admit_none=False)
+        check_type("flatten", self.flatten, bool, admit_none=False)
+        check_type("filter_keys", self.filter_keys, list, admit_none=False)
+        check_type("wrappers", self.wrappers, list, admit_none=False)
 
 @dataclass
 class RecordingSettings:
-    dataset_path: str = "./"
-    username: str = "username"
+    dataset_path:  Union[None, str] = None
+    username: Union[None, str] = None
+
+    def sanity_check(self):
+        check_type("dataset_path", self.dataset_path, str)
+        check_type("username", self.username, str)

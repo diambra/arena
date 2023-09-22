@@ -6,7 +6,7 @@ import gymnasium as gym
 import logging
 from diambra.arena.utils.gym_utils import discrete_to_multi_discrete_action
 from diambra.arena.engine.interface import DiambraEngine
-from diambra.arena.env_settings import EnvironmentSettings1P, EnvironmentSettings2P
+from diambra.arena.env_settings import EnvironmentSettings, EnvironmentSettingsMultiAgent
 from typing import Union, Any, Dict, List
 from diambra.engine import model, SpaceTypes
 
@@ -17,7 +17,7 @@ class DiambraGymBase(gym.Env):
     reward_normalization_value = 1.0
     render_gui_started = False
 
-    def __init__(self, env_settings: Union[EnvironmentSettings1P, EnvironmentSettings2P]):
+    def __init__(self, env_settings: Union[EnvironmentSettings, EnvironmentSettingsMultiAgent]):
         self.logger = logging.getLogger(__name__)
         super(DiambraGymBase, self).__init__()
 
@@ -210,7 +210,7 @@ class DiambraGymBase(gym.Env):
 
 class DiambraGym1P(DiambraGymBase):
     """Diambra Environment gymnasium single agent interface"""
-    def __init__(self, env_settings):
+    def __init__(self, env_settings: EnvironmentSettings):
         super().__init__(env_settings)
 
         # Action space
@@ -244,7 +244,7 @@ class DiambraGym1P(DiambraGymBase):
 
 class DiambraGym2P(DiambraGymBase):
     """Diambra Environment gymnasium multi-agent interface"""
-    def __init__(self, env_settings):
+    def __init__(self, env_settings: EnvironmentSettingsMultiAgent):
         super().__init__(env_settings)
 
         # Action space

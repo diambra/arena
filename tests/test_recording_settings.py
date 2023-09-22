@@ -3,7 +3,7 @@ import pytest
 from os.path import expanduser
 import os
 import diambra.arena
-from diambra.arena import SpaceTypes
+from diambra.arena import SpaceTypes, EnvironmentSettings, EnvironmentSettingsMultiAgent, WrappersSettings, RecordingSettings
 from pytest_utils import generate_pytest_decorator_input
 from diambra.arena.utils.engine_mock import load_mocker
 from diambra.arena.utils.gym_utils import available_games
@@ -18,7 +18,7 @@ from diambra.arena.utils.gym_utils import available_games
 def func(settings, wrappers_settings, episode_recording_settings, mocker):
     load_mocker(mocker)
     try:
-        env = diambra.arena.make(settings["game_id"], settings, wrappers_settings, episode_recording_settings)
+        env = diambra.arena.make(settings.game_id, settings, wrappers_settings, episode_recording_settings)
         env.close()
 
         print("COMPLETED SUCCESSFULLY!")
@@ -52,27 +52,28 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.parametrize("n_players", [1, 2])
 @pytest.mark.parametrize("action_space", [SpaceTypes.DISCRETE, SpaceTypes.MULTI_DISCRETE])
 def test_settings_recording(game_id ,username, dataset_path, n_players, action_space, expected, mocker):
-
     # Env settings
-    settings = {}
-    settings["game_id"] = game_id
-    settings["n_players"] = n_players
-    settings["action_space"] = action_space
+    if (n_players == 1):
+        settings = EnvironmentSettings()
+    else:
+        settings = EnvironmentSettingsMultiAgent()
+    settings.game_id = game_id
+    settings.action_space = action_space
     if n_players == 2:
-        settings["action_space"] = (action_space, action_space)
+        settings.action_space = (action_space, action_space)
 
     # Env wrappers settings
-    wrappers_settings = {}
-    wrappers_settings["frame_shape"] = (128, 128, 1)
-    wrappers_settings["reward_normalization"] = True
-    wrappers_settings["frame_stack"] = 4
-    wrappers_settings["add_last_action_to_observation"] = True
-    wrappers_settings["actions_stack"] = 12
-    wrappers_settings["scale"] = True
+    wrappers_settings = WrappersSettings()
+    wrappers_settings.frame_shape = (128, 128, 1)
+    wrappers_settings.reward_normalization = True
+    wrappers_settings.frame_stack = 4
+    wrappers_settings.add_last_action_to_observation = True
+    wrappers_settings.actions_stack = 12
+    wrappers_settings.scale = True
 
     # Recording settings
-    episode_recording_settings = {}
-    episode_recording_settings["username"] = username
-    episode_recording_settings["dataset_path"] = dataset_path
+    episode_recording_settings = RecordingSettings()
+    episode_recording_settings.username = username
+    episode_recording_settings.dataset_path = dataset_path
 
     assert func(settings, wrappers_settings, episode_recording_settings, mocker) == expected
