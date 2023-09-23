@@ -132,7 +132,6 @@ class AddLastActionToObservation(gym.Wrapper):
         obs, reward, terminated, truncated, info = self.env.step(action)
         return self._add_last_action_to_obs(obs, action), reward, terminated, truncated, info
 
-
 class ActionsStack(gym.Wrapper):
     def __init__(self, env, n_actions_stack):
         """Stack n_actions_stack last actions.
@@ -145,7 +144,7 @@ class ActionsStack(gym.Wrapper):
         no_op_action = self.unwrapped.get_no_op_action()
 
         if self.unwrapped.env_settings.n_players == 1:
-            assert "action" in self.observation_space.keys(), "ActionsStack wrapper can be activated only "\
+            assert "action" in self.observation_space.spaces, "ActionsStack wrapper can be activated only "\
                                                               "when \"action\" info is in the observation space"
 
             if isinstance(self.action_space, gym.spaces.MultiDiscrete):

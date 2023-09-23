@@ -1,6 +1,7 @@
 import os
 import time
 import diambra.arena
+from diambra.arena import SpaceTypes, EnvironmentSettings, WrappersSettings, RecordingSettings
 import gym
 
 from stable_baselines import logger
@@ -9,9 +10,11 @@ from stable_baselines.common.vec_env import DummyVecEnv, SubprocVecEnv
 from stable_baselines.common import set_global_seeds
 
 # Make Stable Baselines Env function
-def make_sb_env(game_id: str, env_settings: dict={}, wrappers_settings: dict={},
-                episode_recording_settings: dict={}, render_mode: str="rgb_array", seed: int=None,
-                start_index: int=0, allow_early_resets: bool=True, start_method: str=None,
+def make_sb_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSettings(),
+                wrappers_settings: WrappersSettings=WrappersSettings(),
+                episode_recording_settings: RecordingSettings=RecordingSettings(),
+                render_mode: str="rgb_array", seed: int=None, start_index: int=0,
+                allow_early_resets: bool=True, start_method: str=None,
                 no_vec: bool=False, use_subprocess: bool=False):
     """
     Create a wrapped, monitored VecEnv.
@@ -36,15 +39,11 @@ def make_sb_env(game_id: str, env_settings: dict={}, wrappers_settings: dict={},
     # Seed management
     if seed is None:
         seed = int(time.time())
-    env_settings["seed"] = seed
+    env_settings.seed = seed
 
     # Add the conversion from gymnasium to gym
     old_gym_wrapper = [OldGymWrapper, {}]
-    if 'wrappers' in wrappers_settings:
-        wrappers_settings['wrappers'].insert(0, old_gym_wrapper)
-    else:
-        # If it's not present, add the key with a new list containing your custom element
-        wrappers_settings['wrappers'] = [old_gym_wrapper]
+    wrappers_settings.wrappers.insert(0, old_gym_wrapper)
 
     def _make_sb_env(rank):
         def _init():
@@ -78,11 +77,12 @@ class OldGymWrapper(gym.Wrapper):
         :param env: (Gym<=0.21 Environment) the resulting environment
         """
         gym.Wrapper.__init__(self, env)
-        if self.env_settings.action_space == diambra.arena.SpaceType.MULTI_DISCRETE:
+        if self.env_settings.action_space == SpaceTypes.MULTI_DISCRETE:
             self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
-        elif self.env_settings.action_space == diambra.arena.SpaceType.DISCRETE:
+        elif self.env_settings.action_space == SpaceTypes.DISCRETE:
             self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
-        self.logger.debug("Using {} action space".format(diambra.arena.SpaceType.Name(self.env_settings.action_space)))
+        self.logger.debug("Using {} action space".format(SpaceTypes.Name(self.env_settings.action_space)))
+
 
     def reset(self, **kwargs):
         obs, _ = self.env.reset(**kwargs)
