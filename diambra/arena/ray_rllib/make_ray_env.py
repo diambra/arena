@@ -1,5 +1,6 @@
 import os
 import diambra.arena
+from diambra.arena import EnvironmentSettings, WrappersSettings
 import logging
 import gymnasium as gym
 from ray.rllib.env.env_context import EnvContext
@@ -35,8 +36,8 @@ class DiambraArena(gym.Env):
                 raise Exception(message)
 
             self.game_id = config["game_id"]
-            self.settings = config["settings"] if "settings" in config.keys() else {}
-            self.wrappers_settings = config["wrappers_settings"] if "wrappers_settings" in config.keys() else {}
+            self.settings = config["settings"] if "settings" in config.keys() else EnvironmentSettings()
+            self.wrappers_settings = config["wrappers_settings"] if "wrappers_settings" in config.keys() else WrappersSettings()
             self.render_mode = config["render_mode"] if "render_mode" in config.keys() else None
 
             num_rollout_workers = config["num_workers"]
@@ -77,7 +78,6 @@ class DiambraArena(gym.Env):
             env_spaces_file = open(self.env_spaces_file_name, "wb")
             pickle.dump(env_spaces_dict, env_spaces_file)
             env_spaces_file.close()
-
         else:
             print("Loading environment spaces from: {}".format(self.env_spaces_file_name))
             self.logger.info("Loading environment spaces from: {}".format(self.env_spaces_file_name))

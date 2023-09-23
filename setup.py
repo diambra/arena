@@ -12,9 +12,9 @@ pipmain(['install', 'distro'])
 extras= {
     'core': [],
     'tests': ['pytest', 'pytest-mock', 'testresources'],
-    'stable-baselines': ['stable-baselines==2.10.2', 'gym<=0.21.0', "protobuf==3.20.1", "pyyaml"],
-    'stable-baselines3': ['stable-baselines3[extra]==2.1.*', "pyyaml"],
-    'ray-rllib': ['ray[rllib]==2.6.*', 'tensorflow', 'torch', "pyyaml"],
+    'stable-baselines': ['stable-baselines~=2.10.2', 'gym<=0.21.0', "protobuf==3.20.1", "pyyaml"],
+    'stable-baselines3': ['stable-baselines3[extra]~=2.1.0', "pyyaml"],
+    'ray-rllib': ['ray[rllib]~=2.7.0', 'tensorflow', 'torch', "pyyaml"],
 }
 
 # NOTE Package data is inside MANIFEST.In
@@ -40,7 +40,7 @@ setuptools.setup(
             'tk',
             'opencv-python>=4.4.0.42',
             'grpcio',
-            'diambra-engine>=2.2.0',
+            'diambra-engine~=2.2.0',
             'dacite'],
         packages=[package for package in setuptools.find_packages() if package.startswith("diambra")],
     include_package_data=True,

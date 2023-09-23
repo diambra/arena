@@ -106,7 +106,10 @@ class AddLastActionToObservation(gym.Wrapper):
         """
         gym.Wrapper.__init__(self, env)
         if self.unwrapped.env_settings.n_players == 1:
-            self.observation_space["action"] = self.action_space
+            self.observation_space = gym.spaces.Dict({
+                **self.observation_space.spaces,
+                "action": self.action_space,
+            })
             def _add_last_action_to_obs_1p(obs, last_action):
                 obs["action"] = last_action
                 return obs
@@ -115,7 +118,10 @@ class AddLastActionToObservation(gym.Wrapper):
             for idx in range(self.unwrapped.env_settings.n_players):
                 action_dictionary = {}
                 action_dictionary["action"] = self.action_space["agent_{}".format(idx)]
-                self.observation_space["agent_{}".format(idx)] = gym.spaces.Dict(action_dictionary)
+                self.observation_space = gym.spaces.Dict({
+                    **self.observation_space.spaces,
+                    "agent_{}".format(idx): gym.spaces.Dict(action_dictionary),
+                })
             def _add_last_action_to_obs_2p(obs, last_action):
                 for idx in range(self.unwrapped.env_settings.n_players):
                     action_dictionary = {}
