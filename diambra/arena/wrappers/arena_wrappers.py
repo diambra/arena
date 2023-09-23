@@ -2,7 +2,7 @@ import random
 import numpy as np
 import gymnasium as gym
 import logging
-from diambra.arena.env_settings import WrappersSettings
+from diambra.arena import SpaceTypes, WrappersSettings
 from diambra.arena.wrappers.observation import WarpFrame, GrayscaleFrame, FrameStack, ActionsStack, \
                                                NormalizeObservation, FlattenFilterDictObs, \
                                                AddLastActionToObservation, RoleRelativeObservation
@@ -17,12 +17,24 @@ class NoAttackButtonsCombinations(gym.Wrapper):
         gym.Wrapper.__init__(self, env)
         # N actions
         self.n_actions = [self.unwrapped.env_info.available_actions.n_moves, self.unwrapped.env_info.available_actions.n_attacks_no_comb]
-        if self.unwrapped.env_settings.action_space == "multi_discrete":
-            self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
-            self.unwrapped.logger.debug("Using MultiDiscrete action space without attack buttons combinations")
-        elif self.unwrapped.env_settings.action_space == "discrete":
-            self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
-            self.unwrapped.logger.debug("Using Discrete action space without attack buttons combinations")
+        if self.unwrapped.env_settings.n_players == 1:
+            if self.unwrapped.env_settings.action_space == SpaceTypes.MULTI_DISCRETE:
+                self.action_space = gym.spaces.MultiDiscrete(self.n_actions)
+            elif self.unwrapped.env_settings.action_space == SpaceTypes.DISCRETE:
+                self.action_space = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
+            else:
+                raise Exception("Action space not recognized in \"NoAttackButtonsCombinations\" wrapper")
+            self.unwrapped.logger.debug("Using {} action space without attack buttons combinations".format(SpaceTypes.Name(self.unwrapped.env_settings.action_space)))
+        else:
+            self.unwrapped.logger.warning("Warning: \"NoAttackButtonsCombinations\" is by default applied on all agents actions space")
+            for idx in range(self.unwrapped.env_settings.n_players):
+                if self.unwrapped.env_settings.action_space[idx] == SpaceTypes.MULTI_DISCRETE:
+                    self.action_space["agent_{}".format(idx)] = gym.spaces.MultiDiscrete(self.n_actions)
+                elif self.unwrapped.env_settings.action_space[idx] == SpaceTypes.DISCRETE:
+                    self.action_space["agent_{}".format(idx)] = gym.spaces.Discrete(self.n_actions[0] + self.n_actions[1] - 1)
+                else:
+                    raise Exception("Action space not recognized in \"NoAttackButtonsCombinations\" wrapper")
+                self.unwrapped.logger.debug("Using {} action space for agent_{} without attack buttons combinations".format(SpaceTypes.Name(self.unwrapped.env_settings.action_space[idx]), idx))
 
     def reset(self, **kwargs):
         return self.env.reset(**kwargs)
