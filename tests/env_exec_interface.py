@@ -133,7 +133,7 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
             if (no_action is True and (np.mean(cumulative_ep_rew_all) > -(max_continue + 1) * round_max_reward * n_rounds + 0.001)):
                 message = "NoAction policy and average reward different than {} ({})".format(
                     -(max_continue + 1) * round_max_reward * n_rounds, np.mean(cumulative_ep_rew_all))
-                warnings.warn(UserWarning(message))
+                raise RuntimeError(message)
 
         env.close()
 
