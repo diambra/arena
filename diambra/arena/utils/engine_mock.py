@@ -7,7 +7,6 @@ from diambra.engine import model
 from diambra.arena import Roles
 
 class DiambraEngineMock:
-
     def __init__(self, fps=1000, override_perfect_probability=None):
 
         # Game features

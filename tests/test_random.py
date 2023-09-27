@@ -13,7 +13,7 @@ from diambra.arena import SpaceTypes, Roles, EnvironmentSettings, EnvironmentSet
 #    -k "expression" (filter tests using case-insensitive with parts of the test name and/or parameters values combined with boolean operators, e.g. "wrappers and doapp")
 
 def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
-         no_action_probability, use_mock_env, mocker):
+         no_action_probability, continue_games, use_mock_env, mocker):
 
     # Args
     args = {}
@@ -24,7 +24,10 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
     args["log_output"] = False
 
     if use_mock_env is True:
-        load_mocker(mocker)
+        override_perfect_probability = None
+        if no_action_probability == 1.0:
+            override_perfect_probability = 0.0
+        load_mocker(mocker, override_perfect_probability=override_perfect_probability)
 
     try:
         # Settings
@@ -41,7 +44,6 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
         # Options (settings to change at reset)
         options_list = []
         roles = [[Roles.P1, Roles.P2], [Roles.P2, Roles.P1]]
-        continue_games = [-1.0, 0.0, 0.3]
         for role in roles:
             role_value = (role[0], role[1])
             if settings.n_players == 1:
@@ -59,22 +61,26 @@ def func(game_id, n_players, action_space, frame_shape, wrappers_settings,
 game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
 n_players = [1, 2]
 action_spaces = [SpaceTypes.DISCRETE, SpaceTypes.MULTI_DISCRETE]
-no_action_probability = 0.25
+no_action_probabilities = [0.0, 1.0]
 
 @pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("n_players", n_players)
 @pytest.mark.parametrize("action_space", action_spaces)
-def test_random_gym_mock(game_id, n_players, action_space, mocker):
+@pytest.mark.parametrize("no_action_probability", no_action_probabilities)
+def test_random_gym_mock(game_id, n_players, action_space, no_action_probability, mocker):
     frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
+    continue_games = [0.0]
     use_mock_env = True
     assert func(game_id, n_players, action_space, frame_shape, WrappersSettings(),
-                no_action_probability, use_mock_env, mocker) == 0
+                no_action_probability, continue_games, use_mock_env, mocker) == 0
 
 @pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("n_players", n_players)
 @pytest.mark.parametrize("action_space", action_spaces)
-def test_random_wrappers_mock(game_id, n_players, action_space, mocker):
+@pytest.mark.parametrize("no_action_probability", no_action_probabilities)
+def test_random_wrappers_mock(game_id, n_players, action_space, no_action_probability, mocker):
     frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
+    continue_games = [0.0]
     use_mock_env = True
 
     # Env wrappers settings
@@ -98,13 +104,15 @@ def test_random_wrappers_mock(game_id, n_players, action_space, mocker):
                                      suffix + "opp_character", suffix + "action"]
 
     assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
-                no_action_probability, use_mock_env, mocker) == 0
+                no_action_probability, continue_games, use_mock_env, mocker) == 0
 
 @pytest.mark.parametrize("game_id", game_ids)
 @pytest.mark.parametrize("n_players", n_players)
 @pytest.mark.parametrize("action_space", action_spaces)
-def test_random_integration(game_id, n_players, action_space, mocker):
+@pytest.mark.parametrize("no_action_probability", [0.0])
+def test_random_integration(game_id, n_players, action_space, no_action_probability, mocker):
     frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
+    continue_games = [-1.0, 0.0, 0.3]
     use_mock_env = False
 
     # Env wrappers settings
