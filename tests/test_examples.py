@@ -23,8 +23,9 @@ def func(script, mocker, *args):
 home_dir = expanduser("~")
 dataset_path = os.path.join(home_dir, "DIAMBRA/episode_recording/mock")
 use_controller = False
+#[episode_data_loader, (dataset_path,)] # Removing episode data loader from tests because of unavailability of trajectories
 scripts = [[diambra_arena_gist, ()], [single_player_env, ()], [multi_player_env, ()], [wrappers_options, ()],
-           [episode_recording, (use_controller,)], [episode_data_loader, (dataset_path,)]]
+           [episode_recording, (use_controller,)]]
 
 @pytest.mark.parametrize("script", scripts)
 def test_example_scripts(script, mocker):
