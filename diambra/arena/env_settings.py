@@ -380,30 +380,30 @@ class EnvironmentSettingsMultiAgent(EnvironmentSettingsBase):
 @dataclass
 class WrappersSettings:
     no_op_max: int = 0
-    sticky_actions: int = 1
-    reward_normalization: bool = False
-    reward_normalization_factor: float = 0.5
-    clip_rewards: bool = False
+    repeat_action: int = 1
+    normalize_reward: bool = False
+    normalization_factor: float = 0.5
+    clip_reward: bool = False
     no_attack_buttons_combinations: bool = False
     frame_shape: Tuple[int, int, int] = (0, 0, 0)
-    frame_stack: int = 1
+    stack_frames: int = 1
     dilation: int = 1
-    add_last_action_to_observation: bool = False
-    actions_stack: int = 1
+    add_last_action: bool = False
+    stack_actions: int = 1
     scale: bool = False
     exclude_image_scaling: bool = False
     process_discrete_binary: bool = False
-    role_relative_observation: bool = False
+    role_relative: bool = False
     flatten: bool = False
     filter_keys: List[str] = field(default_factory=list)
     wrappers: List[List[Any]] = field(default_factory=list)
 
     def sanity_check(self):
         check_num_in_range("no_op_max", self.no_op_max, [0, 12])
-        check_num_in_range("sticky_actions", self.sticky_actions, [1, 12])
-        check_type("reward_normalization", self.reward_normalization, bool, admit_none=False)
-        check_num_in_range("reward_normalization_factor", self.reward_normalization_factor, [0.0, 1000000])
-        check_type("clip_rewards", self.clip_rewards, bool, admit_none=False)
+        check_num_in_range("repeat_action", self.repeat_action, [1, 12])
+        check_type("normalize_reward", self.normalize_reward, bool, admit_none=False)
+        check_num_in_range("normalization_factor", self.normalization_factor, [0.0, 1000000])
+        check_type("clip_reward", self.clip_reward, bool, admit_none=False)
         check_type("no_attack_buttons_combinations", self.no_attack_buttons_combinations, bool, admit_none=False)
         check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1, 3])
         check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_FRAME_RES])
@@ -411,17 +411,17 @@ class WrappersSettings:
         if (min(self.frame_shape[0], self.frame_shape[1]) == 0 and
             max(self.frame_shape[0], self.frame_shape[1]) != 0):
             raise Exception("\"frame_shape[0] and frame_shape[1]\" must be both different from 0")
-        check_num_in_range("frame_stack", self.frame_stack, [1, MAX_STACK_VALUE])
+        check_num_in_range("stack_frames", self.stack_frames, [1, MAX_STACK_VALUE])
         check_num_in_range("dilation", self.dilation, [1, MAX_STACK_VALUE])
-        check_type("add_last_action_to_observation", self.add_last_action_to_observation, bool, admit_none=False)
-        actions_stack_bounds = [1, 1]
-        if self.add_last_action_to_observation is True:
-            actions_stack_bounds = [1, MAX_STACK_VALUE]
-        check_num_in_range("actions_stack", self.actions_stack, actions_stack_bounds)
+        check_type("add_last_action", self.add_last_action, bool, admit_none=False)
+        stack_actions_bounds = [1, 1]
+        if self.add_last_action is True:
+            stack_actions_bounds = [1, MAX_STACK_VALUE]
+        check_num_in_range("stack_actions", self.stack_actions, stack_actions_bounds)
         check_type("scale", self.scale, bool, admit_none=False)
         check_type("exclude_image_scaling", self.exclude_image_scaling, bool, admit_none=False)
         check_type("process_discrete_binary", self.process_discrete_binary, bool, admit_none=False)
-        check_type("role_relative_observation", self.role_relative_observation, bool, admit_none=False)
+        check_type("role_relative", self.role_relative, bool, admit_none=False)
         check_type("flatten", self.flatten, bool, admit_none=False)
         check_type("filter_keys", self.filter_keys, list, admit_none=False)
         check_type("wrappers", self.wrappers, list, admit_none=False)

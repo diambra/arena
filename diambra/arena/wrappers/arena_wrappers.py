@@ -142,14 +142,14 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
     if wrappers_settings.no_op_max > 0:
         env = NoopReset(env, no_op_max=wrappers_settings.no_op_max)
 
-    if wrappers_settings.sticky_actions > 1:
-        env = StickyActions(env, sticky_actions=wrappers_settings.sticky_actions)
+    if wrappers_settings.repeat_action > 1:
+        env = StickyActions(env, sticky_actions=wrappers_settings.repeat_action)
 
     ### Reward wrappers(s)
-    if wrappers_settings.reward_normalization is True:
-        env = NormalizeReward(env, wrappers_settings.reward_normalization_factor)
+    if wrappers_settings.normalize_reward is True:
+        env = NormalizeReward(env, wrappers_settings.normalization_factor)
 
-    if wrappers_settings.clip_rewards is True:
+    if wrappers_settings.clip_reward is True:
         env = ClipReward(env)
 
     ### Action space wrapper(s)
@@ -180,23 +180,23 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
         env = WarpFrame(env, wrappers_settings.frame_shape[:2])
 
     # Stack #frameStack frames together
-    if wrappers_settings.frame_stack > 1:
-        env = FrameStack(env, wrappers_settings.frame_stack, wrappers_settings.dilation)
+    if wrappers_settings.stack_frames > 1:
+        env = FrameStack(env, wrappers_settings.stack_frames, wrappers_settings.dilation)
 
     # Add last action to observation
-    if wrappers_settings.add_last_action_to_observation:
+    if wrappers_settings.add_last_action:
         env = AddLastActionToObservation(env)
 
         # Stack #actionsStack actions together
-        if wrappers_settings.actions_stack > 1:
-            env = ActionsStack(env, wrappers_settings.actions_stack)
+        if wrappers_settings.stack_actions > 1:
+            env = ActionsStack(env, wrappers_settings.stack_actions)
 
     # Scales observations normalizing them between 0.0 and 1.0
     if wrappers_settings.scale is True:
         env = NormalizeObservation(env, wrappers_settings.exclude_image_scaling, wrappers_settings.process_discrete_binary)
 
     # Convert base observation to role-relative observation
-    if wrappers_settings.role_relative_observation is True:
+    if wrappers_settings.role_relative is True:
         env = RoleRelativeObservation(env)
 
     if wrappers_settings.flatten is True:

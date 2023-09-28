@@ -86,16 +86,16 @@ def test_random_wrappers_mock(game_id, n_players, action_space, no_action_probab
     # Env wrappers settings
     wrappers_settings = WrappersSettings()
     wrappers_settings.no_op_max = 0
-    wrappers_settings.sticky_actions = 1
+    wrappers_settings.repeat_action = 1
     wrappers_settings.frame_shape = random.choice([(128, 128, 1), (256, 256, 0)])
-    wrappers_settings.reward_normalization = True
-    wrappers_settings.clip_rewards = False
-    wrappers_settings.frame_stack = 4
+    wrappers_settings.normalize_reward = True
+    wrappers_settings.clip_reward = False
+    wrappers_settings.stack_frames = 4
     wrappers_settings.dilation = 1
-    wrappers_settings.add_last_action_to_observation = True
-    wrappers_settings.actions_stack = 12
+    wrappers_settings.add_last_action = True
+    wrappers_settings.stack_actions = 12
     wrappers_settings.scale = True
-    wrappers_settings.role_relative_observation = True
+    wrappers_settings.role_relative = True
     wrappers_settings.flatten = True
     suffix = ""
     if n_players == 2:
@@ -118,16 +118,16 @@ def test_random_integration(game_id, n_players, action_space, no_action_probabil
     # Env wrappers settings
     wrappers_settings = WrappersSettings()
     wrappers_settings.no_op_max = 0
-    wrappers_settings.sticky_actions = 1
+    wrappers_settings.repeat_action = 1
     wrappers_settings.frame_shape = (128, 128, 1)
-    wrappers_settings.reward_normalization = True
-    wrappers_settings.clip_rewards = False
-    wrappers_settings.frame_stack = 4
+    wrappers_settings.normalize_reward = True
+    wrappers_settings.clip_reward = False
+    wrappers_settings.stack_frames = 4
     wrappers_settings.dilation = 1
-    wrappers_settings.add_last_action_to_observation = True
-    wrappers_settings.actions_stack = 12
+    wrappers_settings.add_last_action = True
+    wrappers_settings.stack_actions = 12
     wrappers_settings.scale = True
-    wrappers_settings.role_relative_observation = True
+    wrappers_settings.role_relative = True
     wrappers_settings.flatten = True
     suffix = ""
     if n_players == 2:

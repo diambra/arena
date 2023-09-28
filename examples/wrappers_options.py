@@ -16,7 +16,7 @@ def main():
     wrappers_settings.no_op_max = 0
 
     # Number of steps for which the same action should be sent (1 by default)
-    wrappers_settings.sticky_actions = 1
+    wrappers_settings.repeat_action = 1
 
     ### Reward wrappers
 
@@ -25,11 +25,11 @@ def main():
     # The normalization is performed by dividing the reward value
     # by the product of the factor times the value of the full health bar
     # reward = reward / (C * fullHealthBarValue)
-    wrappers_settings.reward_normalization = True
-    wrappers_settings.reward_normalization_factor = 0.5
+    wrappers_settings.normalize_reward = True
+    wrappers_settings.normalization_factor = 0.5
 
     # If to clip rewards (False by default)
-    wrappers_settings.clip_rewards = False
+    wrappers_settings.clip_reward = False
 
     ### Action space wrapper(s)
 
@@ -45,17 +45,17 @@ def main():
     wrappers_settings.frame_shape = (128, 128, 1)
 
     # Number of frames to be stacked together (1 by default)
-    wrappers_settings.frame_stack = 4
+    wrappers_settings.stack_frames = 4
 
     # Frames interval when stacking (1 by default)
     wrappers_settings.dilation = 1
 
     # Add last action to observation (False by default)
-    wrappers_settings.add_last_action_to_observation = True
+    wrappers_settings.add_last_action = True
 
     # How many past actions to stack together (1 by default)
     # NOTE: needs "add_last_action_to_observation" wrapper to be active
-    wrappers_settings.actions_stack = 6
+    wrappers_settings.stack_actions = 6
 
     # If to scale observation numerical values (False by default)
     # optionally exclude images from normalization (False by default)
@@ -71,7 +71,7 @@ def main():
     #    are grouped under "agent_0" and "agent_1", and:
     #    - Under "agent_0", "P1" nesting level becomes "own" and "P2" becomes "opp"
     #    - Under "agent_1", "P1" nesting level becomes "opp" and "P2" becomes "own"
-    wrappers_settings.role_relative_observation = True
+    wrappers_settings.role_relative = True
 
     # Flattening observation dictionary and filtering
     # a sub-set of the RAM states

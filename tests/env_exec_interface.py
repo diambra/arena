@@ -99,7 +99,7 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
 
                 if info["round_done"]:
                     # Side check when no wrappers active:
-                    if (wrappers_settings.role_relative_observation is False and wrappers_settings.flatten is False):
+                    if (wrappers_settings.role_relative is False and wrappers_settings.flatten is False):
                         if (observation["P1"]["side"] != 0.0 or observation["P2"]["side"] != 1.0):
                             raise RuntimeError("Wrong starting sides:", observation["P1"]["side"], observation["P2"]["side"])
 

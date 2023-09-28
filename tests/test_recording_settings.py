@@ -65,10 +65,10 @@ def test_settings_recording(game_id ,username, dataset_path, n_players, action_s
     # Env wrappers settings
     wrappers_settings = WrappersSettings()
     wrappers_settings.frame_shape = (128, 128, 1)
-    wrappers_settings.reward_normalization = True
-    wrappers_settings.frame_stack = 4
-    wrappers_settings.add_last_action_to_observation = True
-    wrappers_settings.actions_stack = 12
+    wrappers_settings.normalize_reward = True
+    wrappers_settings.stack_frames = 4
+    wrappers_settings.add_last_action = True
+    wrappers_settings.stack_actions = 12
     wrappers_settings.scale = True
 
     # Recording settings
