@@ -3,7 +3,7 @@ on:
 
 jobs:
   test:
-    uses: diambra/agents/.github/workflows/reusable-test.yaml@main
+    uses: diambra/agents/.github/workflows/reusable_unit_tests.yaml@main
     with:
       arena_requirement_specifier: 'git+https://github.com/diambra/arena.git@${{ github.ref }}#egg='
       agents_ref: 'main'
