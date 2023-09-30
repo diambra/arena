@@ -51,7 +51,7 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
                         actions = env.get_no_op_action()
 
                     if settings.action_space == SpaceTypes.DISCRETE:
-                        move_action, att_action = discrete_to_multi_discrete_action(actions, env.n_actions[0])
+                        move_action, att_action = discrete_to_multi_discrete_action(actions, env.unwrapped.n_actions[0])
                     else:
                         move_action, att_action = actions[0], actions[1]
 
@@ -64,7 +64,7 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
 
                     for idx in range(settings.n_players):
                         if settings.action_space[idx] == SpaceTypes.DISCRETE:
-                            move_action, att_action = discrete_to_multi_discrete_action(actions["agent_{}".format(idx)], env.n_actions[0])
+                            move_action, att_action = discrete_to_multi_discrete_action(actions["agent_{}".format(idx)], env.unwrapped.n_actions[0])
                         else:
                             move_action, att_action = actions["agent_{}".format(idx)][0], actions["agent_{}".format(idx)][1]
 
@@ -121,15 +121,15 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
             if len(cumulative_ep_rew_all) != max_num_ep:
                 raise RuntimeError("Not run all episodes")
 
-            if env.env_settings.continue_game <= 0.0 and env.env_settings.n_players == 1:
-                max_continue = int(-env.env_settings.continue_game)
+            if env.unwrapped.env_settings.continue_game <= 0.0 and env.unwrapped.env_settings.n_players == 1:
+                max_continue = int(-env.unwrapped.env_settings.continue_game)
             else:
                 max_continue = 0
 
-            if env.env_settings.game_id == "tektagt":
+            if env.unwrapped.env_settings.game_id == "tektagt":
                 max_continue = (max_continue + 1) * 0.7 - 1
 
-            round_max_reward = env.max_delta_health / env.reward_normalization_value
+            round_max_reward = env.unwrapped.max_delta_health / env.unwrapped.reward_normalization_value
             if (no_action is True and (np.mean(cumulative_ep_rew_all) > -(max_continue + 1) * round_max_reward * n_rounds + 0.001)):
                 message = "NoAction policy and average reward different than {} ({})".format(
                     -(max_continue + 1) * round_max_reward * n_rounds, np.mean(cumulative_ep_rew_all))

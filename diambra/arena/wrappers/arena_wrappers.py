@@ -159,7 +159,7 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
     ### Observation space wrappers(s)
     if wrappers_settings.frame_shape[2] == 1:
         if env.observation_space["frame"].shape[2] == 1:
-            env.logger.warning("Warning: skipping grayscaling as the frame is already single channel.")
+            env.unwrapped.logger.warning("Warning: skipping grayscaling as the frame is already single channel.")
         else:
             # Greyscaling frame to h x w x 1
             env = GrayscaleFrame(env)
