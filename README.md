@@ -44,7 +44,7 @@
 
 ## Overview
 
-DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It provides a standard interface to popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym format**, that makes its adoption smooth and straightforward.
+DIAMBRA Arena is a software package featuring a collection of **high-quality environments for Reinforcement Learning research and experimentation**. It provides a standard interface to popular arcade emulated video games, offering a **Python API fully compliant with OpenAI Gym/Gymnasium format**, that makes its adoption smooth and straightforward.
 
 It **supports all major Operating Systems** (Linux, Windows and MacOS) and **can be easily installed via Python PIP**, as described in the **[installation section](#installation)** below. It is **completely free to use**, the user only needs to <a href="https://diambra.ai/register/" target="_blank">register on the official website</a>.
 
@@ -52,7 +52,7 @@ In addition, it comes with a <a href="https://docs.diambra.ai" target="_blank">c
 
 #### Main Features
 
-All environments are episodic Reinforcement Learning tasks, with discrete actions (gamepad buttons) and observations composed by screen pixels plus additional numerical data (RAM values like characters health bars or characters stage side).
+All environments are episodic Reinforcement Learning tasks, with discrete actions (gamepad buttons) and observations composed by screen pixels plus specific RAM states (like characters health bars or characters stage side).
 
 They all **support both single player (1P) as well as two players (2P) mode**, making them the perfect resource to explore all the following Reinforcement Learning subfields:
 
@@ -94,17 +94,11 @@ We aimed at making the submission process as smooth as possible, **<a href="http
 
 - Install Docker Desktop: <a href="https://docs.docker.com/desktop/install/linux-install/" target="_blank">Linux</a> | <a href="https://docs.docker.com/desktop/windows/install/" target="_blank">Windows</a> | <a href="https://docs.docker.com/desktop/mac/install/" target="_blank">MacOS</a>
 
-- Install specific `wheel` and `setuptools` versions (temporary workaround to handle `gym v0.21` incompatibility with newest `pip` versions*):
-
-  `python3 -m pip install wheel==0.38.4 setuptools==66.0.0`
-
 - Install DIAMBRA Command Line Interface: `python3 -m pip install diambra`
 
 - Install DIAMBRA Arena: `python3 -m pip install diambra-arena`
 
 **Using a virtual environment to isolate your python packages installation is strongly suggested**
-
-*We are already working to support `gymnasium>=0.26.3` to solve all `gym v0.21` compatibility issues. This breaking change will happen very soon.
 
 ## Quickstart & Examples
 
@@ -153,24 +147,22 @@ Correct ROM file for Dead Or Alive ++, sha256 = d95855c7d8596a90f0b8ca1572568656
 
 #### Base script
 
-Running a complete episode with a random agent requires less than 20 python lines:
+Running a complete episode with a random agent requires about 10 python lines:
 
 ```python {linenos=inline}
  import diambra.arena
 
- env = diambra.arena.make("doapp")
-
- observation = env.reset()
+ env = diambra.arena.make("doapp", render_mode="human")
+ observation, info = env.reset(seed=42)
 
  while True:
      env.render()
 
      actions = env.action_space.sample()
+     observation, reward, terminated, truncated, info = env.step(actions)
 
-     observation, reward, done, info = env.step(actions)
-
-     if done:
-         observation = env.reset()
+     if terminated or truncated:
+         observation, info = env.reset()
          break
 
  env.close()
@@ -191,8 +183,8 @@ The `examples/` folder contains ready to use scripts representing the most impor
 - Single Player Environment
 - Multi Player Environment
 - Wrappers Options
-- Human Experience Recorder
-- Imitation Learning
+- Episode Recording
+- Episode Data Loader
 
 These examples show how to leverage both single and two players modes, how to set up environment wrappers specifying all their options, how to record human expert demonstrations and how to load them to apply imitation learning. They can be used as templates and starting points to explore all the features of the software package.
 
@@ -204,8 +196,8 @@ DIAMBRA Arena is built to maximize compatibility will all major Reinforcement Le
 
 Native interfaces, installed with the specific options listed below, are tested with the following versions:
 
-- Stable Baselines 3 | `pip install diambra-arena[stable-baselines3]` (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 1.6.1
-- Ray RLlib | `pip install diambra-arena[ray-rllib]` (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.0.0
+- Stable Baselines 3 | `pip install diambra-arena[stable-baselines3]` (<a href="https://stable-baselines3.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/DLR-RM/stable-baselines3" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines3/" target="_blank">Pypi</a>): 2.1.*
+- Ray RLlib | `pip install diambra-arena[ray-rllib]` (<a href="https://docs.ray.io/en/latest/index.html" target="_blank">Docs</a> - <a href="https://github.com/ray-project/ray" target="_blank">GitHub</a> - <a href="https://pypi.org/project/ray/" target="_blank">Pypi</a>): 2.7.*
 - Stable Baselines | `pip install diambra-arena[stable-baselines]` (<a href="https://stable-baselines.readthedocs.io/en/master/index.html" target="_blank">Docs</a> - <a href="https://github.com/hill-a/stable-baselines" target="_blank">GitHub</a> - <a href="https://pypi.org/project/stable-baselines/" target="_blank">Pypi</a>): 2.10.2
 
 ## References
