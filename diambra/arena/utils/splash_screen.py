@@ -1,11 +1,23 @@
 import os
 import tkinter as tk
 import screeninfo
+from screeninfo.common import ScreenInfoError, Monitor
+
 
 gif_file_path = os.path.join(os.path.dirname(__file__), ".splash_screen.gif")
 
 def get_monitor_from_coord(x, y):
-    monitors = screeninfo.get_monitors()
+    try:
+        monitors = screeninfo.get_monitors()
+        if not monitors:
+            raise ScreenInfoError("No monitors available")
+    except ScreenInfoError:
+        # Fallback to a dummy monitor if no monitors are available
+        width = 1024
+        height = 768
+        width_mm = 361
+        height_mm = 203
+        return Monitor(0, 0, width, height, width_mm, height_mm)
 
     for m in reversed(monitors):
         if m.x <= x <= m.width + m.x and m.y <= y <= m.height + m.y:
