@@ -10,7 +10,7 @@ def get_monitor_from_coord(x, y):
     try:
         monitors = screeninfo.get_monitors()
         if not monitors:
-            raise ScreenInfoError("No monitors available")
+            raise ScreenInfoError("No enumerators available")
     except ScreenInfoError:
         # Fallback to a dummy monitor if no monitors are available
         width = 1024
