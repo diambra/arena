@@ -136,4 +136,4 @@ def test_random_integration(game_id, n_players, action_space, no_action_probabil
                                      suffix + "opp_character", suffix + "action"]
 
     assert func(game_id, n_players, action_space, frame_shape, wrappers_settings,
-                no_action_probability, use_mock_env, mocker) == 0
+                no_action_probability, continue_games, use_mock_env, mocker) == 0
