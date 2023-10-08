@@ -54,6 +54,7 @@ class EnvironmentSettingsBase:
     disable_keyboard: bool = True
     disable_joystick: bool = True
     render_mode: Union[None, str] = None
+    splash_screen: bool = True
     rank: int = 0
     env_address: str = None
     grpc_timeout: int = 600
@@ -184,6 +185,7 @@ class EnvironmentSettingsBase:
         check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1])
         if self.render_mode is not None:
             check_val_in_list("render_mode", self.render_mode, ["human", "rgb_array"])
+        check_type("splash_screen", self.splash_screen, bool, admit_none=False)
         check_num_in_range("rank", self.rank, [0, MAX_VAL])
         check_type("env_address", self.env_address, str)
         check_num_in_range("grpc_timeout", self.grpc_timeout, [0, 3600])

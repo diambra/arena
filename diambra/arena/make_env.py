@@ -8,7 +8,7 @@ from typing import Union
 
 def make(game_id, env_settings: Union[EnvironmentSettings, EnvironmentSettingsMultiAgent]=EnvironmentSettings(),
          wrappers_settings: WrappersSettings=WrappersSettings(), episode_recording_settings: RecordingSettings=RecordingSettings(),
-         render_mode: str=None, rank: int=0, log_level=logging.INFO):
+         render_mode: str=None, rank: int=0, env_addresses=["localhost:50051"], log_level=logging.INFO):
     """
     Create a wrapped environment.
     :param seed: (int) the initial seed for RNG
@@ -24,20 +24,18 @@ def make(game_id, env_settings: Union[EnvironmentSettings, EnvironmentSettingsMu
     env_settings.render_mode = render_mode
 
     # Check if DIAMBRA_ENVS var present
-    env_addresses = os.getenv("DIAMBRA_ENVS", "").split()
-    if len(env_addresses) >= 1:  # If present
+    env_addresses_cli = os.getenv("DIAMBRA_ENVS", "").split()
+    if len(env_addresses_cli) >= 1:  # If present
         # Check if there are at least n env_addresses as the prescribed rank
-        if len(env_addresses) < rank + 1:
+        if len(env_addresses_cli) < rank + 1:
             raise Exception("Rank of env client is higher than the available env_addresses servers:",
-            "# of env servers: {}".format(len(env_addresses)),
+            "# of env servers: {}".format(len(env_addresses_cli)),
             "# rank of client: {} (0-based index)".format(rank))
+        env_addresses_list = env_addresses_cli
     else:  # If not present, set default value
-        if env_settings.env_address is None:
-            env_addresses = ["localhost:50051"]
-        else:
-            env_addresses = [env_settings.env_address]
+        env_addresses_list = env_addresses
 
-    env_settings.env_address = env_addresses[rank]
+    env_settings.env_address = env_addresses_list[rank]
     env_settings.rank = rank
 
     # Make environment

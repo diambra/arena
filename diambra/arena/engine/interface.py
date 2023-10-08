@@ -27,11 +27,6 @@ class DiambraEngine:
 
         self.logger.info("... done.")
 
-        # Splash Screen
-        if 'DISPLAY' in os.environ:
-            from ..utils.splash_screen import SplashScreen
-            SplashScreen()
-
     # Send env settings, retrieve env info and int variables list [pb low level]
     def env_init(self, env_settings_pb):
         try:

@@ -16,15 +16,23 @@ class DiambraGymBase(gym.Env):
     _frame = None
     reward_normalization_value = 1.0
     render_gui_started = False
+    render_mode = None
 
     def __init__(self, env_settings: Union[EnvironmentSettings, EnvironmentSettingsMultiAgent]):
         self.logger = logging.getLogger(__name__)
         super(DiambraGymBase, self).__init__()
 
         self.env_settings = env_settings
+        assert env_settings.render_mode is None or env_settings.render_mode in self.metadata["render_modes"]
+        self.render_mode = env_settings.render_mode
 
         # Launch DIAMBRA Engine
         self.arena_engine = DiambraEngine(env_settings.env_address, env_settings.grpc_timeout)
+
+        # Splash Screen
+        if 'DISPLAY' in os.environ and env_settings.splash_screen is True:
+            from .utils.splash_screen import SplashScreen
+            SplashScreen()
 
         # Send environment settings, retrieve environment info
         self.env_info = self.arena_engine.env_init(self.env_settings.get_pb_request(init=True))
@@ -120,7 +128,7 @@ class DiambraGymBase(gym.Env):
 
     # Rendering the environment
     def render(self, wait_key=1):
-        if self.env_settings.render_mode == "human" and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
+        if self.render_mode == "human" and (sys.platform.startswith('linux') is False or 'DISPLAY' in os.environ):
             try:
                 if (self.render_gui_started is False):
                     self.window_name = "[{}] DIAMBRA Arena - {} - ({})".format(
@@ -134,7 +142,7 @@ class DiambraGymBase(gym.Env):
                 return True
             except:
                 return False
-        elif self.env_settings.render_mode == "rgb_array":
+        elif self.render_mode == "rgb_array":
             return self._frame
 
     # Print observation details to the console
