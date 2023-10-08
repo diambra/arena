@@ -13,8 +13,9 @@ def reject_outliers(data):
     filtered = [e for e in data if (u - 2 * s < e < u + 2 * s)]
     return filtered
 
-def func(n_players, wrappers_settings, target_speed, mocker):
-    load_mocker(mocker)
+def func(game_id, n_players, wrappers_settings, use_mocker, mocker):
+    if use_mocker is True:
+        load_mocker(mocker)
     try:
         # Settings
         if (n_players == 1):
@@ -22,7 +23,10 @@ def func(n_players, wrappers_settings, target_speed, mocker):
         else:
             settings = EnvironmentSettingsMultiAgent()
 
-        env = diambra.arena.make("doapp", settings, wrappers_settings)
+        settings.step_ratio = 1
+        settings.frame_shape = (128, 128, 1)
+
+        env = diambra.arena.make(game_id, settings, wrappers_settings)
         observation, info = env.reset()
 
         n_step = 0
@@ -45,15 +49,7 @@ def func(n_players, wrappers_settings, target_speed, mocker):
 
         fps_val2 = reject_outliers(fps_val)
         avg_fps = np.mean(fps_val2)
-        print("Average speed = {} FPS, STD {} FPS".format(avg_fps, np.std(fps_val2)))
-
-        if abs(avg_fps - target_speed) > target_speed * 0.025:
-            # TODO: restore when using a stable platform for testing with consistent measurement
-            #if avg_fps < target_speed:
-            #    raise RuntimeError("Fps lower than expected: {} VS {}".format(avg_fps, target_speed))
-            #else:
-            #    warnings.warn(UserWarning("Fps higher than expected: {} VS {}".format(avg_fps, target_speed)))
-            warnings.warn(UserWarning("Fps different than expected: {} VS {}".format(avg_fps, target_speed)))
+        warnings.warn(UserWarning("Average speed = {} FPS, STD {} FPS".format(avg_fps, np.std(fps_val2))))
 
         return 0
     except Exception as e:
@@ -61,14 +57,18 @@ def func(n_players, wrappers_settings, target_speed, mocker):
         return 1
 
 n_players = [1, 2]
-target_speeds = [400, 300]
+game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
 
 @pytest.mark.parametrize("n_players", n_players)
-def test_speed_gym(n_players, mocker):
-    assert func(n_players, WrappersSettings(), target_speeds[0], mocker) == 0
+def test_speed_gym_mock(n_players, mocker):
+    use_mocker = True
+    game_id = "doapp"
+    assert func(game_id, n_players, WrappersSettings(), use_mocker, mocker) == 0
 
 @pytest.mark.parametrize("n_players", n_players)
-def test_speed_wrappers(n_players, mocker):
+def test_speed_wrappers_mock(n_players, mocker):
+    use_mocker = True
+    game_id = "doapp"
 
     # Env wrappers settings
     wrappers_settings = WrappersSettings()
@@ -90,4 +90,10 @@ def test_speed_wrappers(n_players, mocker):
     wrappers_settings.filter_keys = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
                                      suffix + "opp_character", suffix + "action"]
 
-    assert func(n_players, wrappers_settings, target_speeds[1], mocker) == 0
+    assert func(game_id, n_players, wrappers_settings, use_mocker, mocker) == 0
+
+@pytest.mark.parametrize("game_id", game_ids)
+@pytest.mark.parametrize("n_players", n_players)
+def test_speed_gym_integration(game_id, n_players, mocker):
+    use_mocker = False
+    assert func(game_id, n_players, WrappersSettings(), use_mocker, mocker) == 0

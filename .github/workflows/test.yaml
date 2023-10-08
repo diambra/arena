@@ -16,5 +16,5 @@ jobs:
       - run: pytest tests/test_wrappers_settings.py
       - run: pytest tests/test_recording_settings.py
       - run: pytest tests/test_examples.py
-      - run: pytest tests/test_speed.py
+      - run: pytest -k "test_speed_gym_mock or test_speed_wrappers_mock" tests/test_speed.py # Run only mocked tests
       - run: pytest -k "test_random_gym_mock or test_random_wrappers_mock" tests/test_random.py # Run only mocked tests
