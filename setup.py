@@ -23,7 +23,7 @@ extras = {
     "stable-baselines3": ["stable-baselines3[extra]~=2.1.0", "pyyaml"],
     "ray-rllib": ["ray[rllib]~=2.7.0", "tensorflow", "torch", "pyyaml"],
     "sheeprl": [
-        "sheeprl @ git+https://github.com/Eclectic-Sheep/sheeprl.git",
+        "sheeprl==0.4.6",
         "importlib-resources==6.1.0",
     ],
 }
