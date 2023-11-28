@@ -34,34 +34,33 @@ def make_sb3_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSett
 
     num_envs = len(env_addresses)
 
-    # Seed management
-    if seed is None:
-        seed = int(time.time())
-    env_settings.seed = seed
-
-    def _make_sb3_env(rank):
+    def _make_sb3_env(rank, seed):
+        # Seed management
+        if seed is None:
+            env_settings.seed = int(time.time()) + rank
+        else:
+            env_settings.seed = seed + rank
         def _init():
             env = diambra.arena.make(game_id, env_settings, wrappers_settings,
                                      episode_recording_settings, render_mode, rank=rank)
-            env.reset(seed=seed + rank)
 
             # Create log dir
             log_dir = os.path.join(log_dir_base, str(rank))
             os.makedirs(log_dir, exist_ok=True)
             env = Monitor(env, log_dir, allow_early_resets=allow_early_resets)
             return env
-        set_random_seed(seed)
+        set_random_seed(env_settings.seed + rank)
         return _init
 
     # If not wanting vectorized envs
     if no_vec and num_envs == 1:
-        env = _make_sb3_env(0)()
+        env = _make_sb3_env(0, seed)()
     else:
         # When using one environment, no need to start subprocesses
         if num_envs == 1 or not use_subprocess:
-            env = DummyVecEnv([_make_sb3_env(i + start_index) for i in range(num_envs)])
+            env = DummyVecEnv([_make_sb3_env(i + start_index, seed) for i in range(num_envs)])
         else:
-            env = SubprocVecEnv([_make_sb3_env(i + start_index) for i in range(num_envs)],
+            env = SubprocVecEnv([_make_sb3_env(i + start_index, seed) for i in range(num_envs)],
                                 start_method=start_method)
 
     return env, num_envs

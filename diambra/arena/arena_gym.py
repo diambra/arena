@@ -121,7 +121,7 @@ class DiambraGymBase(gym.Env):
     def reset(self, seed: int = None, options: Dict[str, Any] = None):
         if options is None:
             options = {}
-        options["seed"] = seed
+        options["seed"] = seed if seed is None else seed + self.env_settings.rank
         request = self.env_settings.update_episode_settings(options)
         response = self.arena_engine.reset(request.episode_settings)
         return self._get_obs(response), self._get_info(response)
