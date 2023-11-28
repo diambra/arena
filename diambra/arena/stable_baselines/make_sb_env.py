@@ -36,16 +36,16 @@ def make_sb_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSetti
 
     num_envs = len(env_addresses)
 
-    # Seed management
-    if seed is None:
-        seed = int(time.time())
-    env_settings.seed = seed
-
     # Add the conversion from gymnasium to gym
     old_gym_wrapper = [OldGymWrapper, {}]
     wrappers_settings.wrappers.insert(0, old_gym_wrapper)
 
-    def _make_sb_env(rank):
+    def _make_sb_env(rank, seed):
+        # Seed management
+        if seed is None:
+            env_settings.seed = int(time.time()) + rank
+        else:
+            env_settings.seed = seed + rank
         def _init():
             env = diambra.arena.make(game_id, env_settings, wrappers_settings,
                                      episode_recording_settings, render_mode, rank=rank)
@@ -53,18 +53,18 @@ def make_sb_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSetti
             env = Monitor(env, logger.get_dir() and os.path.join(logger.get_dir(), str(rank)),
                           allow_early_resets=allow_early_resets)
             return env
-        set_global_seeds(seed)
+        set_global_seeds(env_settings.seed + rank)
         return _init
 
     # If not wanting vectorized envs
     if no_vec and num_envs == 1:
-        env = _make_sb_env(0)()
+        env = _make_sb_env(0, seed)()
     else:
         # When using one environment, no need to start subprocesses
         if num_envs == 1 or not use_subprocess:
-            env = DummyVecEnv([_make_sb_env(i + start_index) for i in range(num_envs)])
+            env = DummyVecEnv([_make_sb_env(i + start_index, seed) for i in range(num_envs)])
         else:
-            env = SubprocVecEnv([_make_sb_env(i + start_index) for i in range(num_envs)],
+            env = SubprocVecEnv([_make_sb_env(i + start_index, seed) for i in range(num_envs)],
                                 start_method=start_method)
 
     return env, num_envs
