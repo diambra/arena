@@ -36,10 +36,9 @@ def make_sb3_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSett
 
     def _make_sb3_env(rank, seed):
         # Seed management
-        if seed is None:
-            env_settings.seed = int(time.time()) + rank
-        else:
-            env_settings.seed = seed + rank
+        env_settings.seed = int(time.time()) if seed is None else seed
+        env_settings.seed += rank
+
         def _init():
             env = diambra.arena.make(game_id, env_settings, wrappers_settings,
                                      episode_recording_settings, render_mode, rank=rank)
@@ -49,7 +48,7 @@ def make_sb3_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSett
             os.makedirs(log_dir, exist_ok=True)
             env = Monitor(env, log_dir, allow_early_resets=allow_early_resets)
             return env
-        set_random_seed(env_settings.seed + rank)
+        set_random_seed(env_settings.seed)
         return _init
 
     # If not wanting vectorized envs
