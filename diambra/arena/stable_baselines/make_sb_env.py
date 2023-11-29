@@ -19,9 +19,9 @@ def make_sb_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSetti
     """
     Create a wrapped, monitored VecEnv.
     :param game_id: (str) the game environment ID
-    :param env_settings: (dict) parameters for DIAMBRA Arena environment
-    :param wrappers_settings: (dict) parameters for environment wrapping function
-    :param episode_recording_settings: (dict) parameters for environment recording wrapping function
+    :param env_settings: (EnvironmentSettings) parameters for DIAMBRA Arena environment
+    :param wrappers_settings: (WrappersSettings) parameters for environment wrapping function
+    :param episode_recording_settings: (RecordingSettings) parameters for environment recording wrapping function
     :param start_index: (int) start rank index
     :param allow_early_resets: (bool) allows early reset of the environment
     :param start_method: (str) method used to start the subprocesses. See SubprocVecEnv doc for more information
@@ -42,10 +42,9 @@ def make_sb_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSetti
 
     def _make_sb_env(rank, seed):
         # Seed management
-        if seed is None:
-            env_settings.seed = int(time.time()) + rank
-        else:
-            env_settings.seed = seed + rank
+        env_settings.seed = int(time.time()) if seed is None else seed
+        env_settings.seed += rank
+
         def _init():
             env = diambra.arena.make(game_id, env_settings, wrappers_settings,
                                      episode_recording_settings, render_mode, rank=rank)
@@ -53,7 +52,7 @@ def make_sb_env(game_id: str, env_settings: EnvironmentSettings=EnvironmentSetti
             env = Monitor(env, logger.get_dir() and os.path.join(logger.get_dir(), str(rank)),
                           allow_early_resets=allow_early_resets)
             return env
-        set_global_seeds(env_settings.seed + rank)
+        set_global_seeds(env_settings.seed)
         return _init
 
     # If not wanting vectorized envs
