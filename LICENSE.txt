@@ -1,4 +1,4 @@
-© 2018-2023, DIAMBRA Inc., https://diambra.ai
+© 2018-2024, DIAMBRA Inc., https://diambra.ai
 
 Redistribution and use in source and binary forms, with or without modification, 
 are permitted provided that the following conditions are met:
