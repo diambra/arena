@@ -7,6 +7,7 @@ RUN apt-get -qy update && \
     apt-get -qy clean
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV HF_HOME=/tmp
 
 RUN pip install huggingface_hub
 
@@ -17,4 +18,4 @@ RUN --mount=target=/usr/src/arena,type=bind,source=. \
     pip install /tmp/arena[stable-baselines3] && \
     rm -rf /tmp/arena
 
-ENV HF_HOME=/tmp
+RUN pip install huggingface_hub
