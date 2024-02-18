@@ -5,9 +5,7 @@ import logging
 from diambra.engine import Client, model
 import grpc
 
-CONNECTION_FAILED_ERROR_TEXT = """DIAMBRA Arena failed to connect to the Engine Server.
- - If you are running a Python script, are you running with DIAMBRA CLI: `diambra run python script.py`?
- - If you are running a Python Notebook, have you started Jupyter Notebook with DIAMBRA CLI: `diambra run jupyter notebook`?
+CONNECTION_FAILED_ERROR_TEXT = """DIAMBRA Arena failed to connect to the Engine Server. Are you running it with DIAMBRA CLI: `diambra run python script.py`?
 
 See the docs (https://docs.diambra.ai) for additional details, or join DIAMBRA Discord Server (https://diambra.ai/discord) for support."""
 
@@ -32,12 +30,7 @@ class DiambraEngine:
         try:
             response = self.client.EnvInit(env_settings_pb)
         except:
-            try:
-                response = self.client.GetError(model.Empty())
-                exceptionMessage = "Received error message from engine: " + response.errorMessage
-                self.logger.error(exceptionMessage)
-            except:
-                raise Exception(CONNECTION_FAILED_ERROR_TEXT)
+            raise Exception(CONNECTION_FAILED_ERROR_TEXT)
 
         return response
 
