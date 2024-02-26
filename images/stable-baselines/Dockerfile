@@ -8,6 +8,8 @@ RUN apt-get -qy update && \
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
+RUN pip install huggingface_hub
+
 # Copy arena to tmp since bind-mount is read-only and pip doesn't support
 # out-of-tree builds.
 # Need to pin the specific version of tensorflow 1.15.0 due to
@@ -18,3 +20,5 @@ RUN --mount=target=/usr/src/arena,type=bind,source=. \
     pip install /tmp/arena[stable-baselines] && \
     pip install tensorflow==1.15.0 && \
     rm -rf /tmp/arena
+
+ENV HF_HOME=/tmp
