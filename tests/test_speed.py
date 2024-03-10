@@ -97,3 +97,30 @@ def test_speed_wrappers_mock(n_players, mocker):
 def test_speed_gym_integration(game_id, n_players, mocker):
     use_mocker = False
     assert func(game_id, n_players, WrappersSettings(), use_mocker, mocker) == 0
+
+@pytest.mark.parametrize("game_id", game_ids)
+@pytest.mark.parametrize("n_players", n_players)
+def test_speed_wrappers_integration(game_id, n_players, mocker):
+    use_mocker = False
+
+    # Env wrappers settings
+    wrappers_settings = WrappersSettings()
+    wrappers_settings.no_op_max = 0
+    wrappers_settings.repeat_action = 1
+    wrappers_settings.normalize_reward = True
+    wrappers_settings.clip_reward = False
+    wrappers_settings.stack_frames = 4
+    wrappers_settings.dilation = 1
+    wrappers_settings.add_last_action = True
+    wrappers_settings.stack_actions = 12
+    wrappers_settings.scale = True
+    wrappers_settings.role_relative = True
+    wrappers_settings.flatten = True
+
+    suffix = ""
+    if n_players == 2:
+        suffix = "agent_0_"
+    wrappers_settings.filter_keys = ["stage", "timer", suffix + "own_side", suffix + "opp_side",
+                                     suffix + "opp_character", suffix + "action"]
+
+    assert func(game_id, n_players, wrappers_settings, use_mocker, mocker) == 0
