@@ -4,6 +4,7 @@ on:
       - "v*.*.*"
     branches:
       - main
+      - fix-release
   pull_request: {}
 
 jobs:
