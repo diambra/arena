@@ -3,14 +3,6 @@ from pathlib import Path
 
 import setuptools
 
-try:
-    from pip import main as pipmain
-except ImportError:
-    from pip._internal import main as pipmain
-
-pipmain(["install", "setuptools"])
-pipmain(["install", "distro"])
-
 extras = {
     "core": [],
     "tests": ["pytest", "pytest-mock", "testresources"],
@@ -41,10 +33,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     license="Custom",
     install_requires=[
-        "pip>=21",
         'importlib-metadata<=4.12.0; python_version <= "3.7"',  # problem with gym for importlib-metadata==5.0.0 and python <=3.7
-        "setuptools",
-        "distro>=1",
         "gymnasium>=0.26.3",
         "inputs",
         "screeninfo",
