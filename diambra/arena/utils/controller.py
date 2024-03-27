@@ -71,7 +71,7 @@ class DiambraDevice(Thread):  # def class type thread
         # thread init class (don't forget this)
         Thread.__init__(self, daemon=True)
         self.logger = logging.getLogger(__name__)
-        self.logger.basicConfig(logging_level)
+        self.logger.setLevel(logging_level)
 
         self.stop_event = Event()
 
