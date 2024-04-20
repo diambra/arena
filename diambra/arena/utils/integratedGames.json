@@ -357,7 +357,7 @@
             "name": "Marvel VS Capcom",
             "id": "mvsc",
             "original_rom_name": "mvsc.zip",
-            "search_keywords": ["marvel vs capcom clash of super heroes", "marvel-vs.-capcom-clash-of-super-heroes", "5511", "wowroms"],
+            "search_keywords": ["marvel vs capcom clash of super heroes", "marvel-vs.-capcom-clash-of-super-heroes-euro-980123", "5511", "wowroms"],
             "notes": "Requires the QSound_HLE sound driver to be placed in the roms folder. Google `qsound_hle.zip` or `dl-1425.bin`",
             "nvram_save": "",
             "sha256": "6f63627cc37c554f74e8bf07b21730fa7f85511c7d5d07449850be98dde91da8",
@@ -420,5 +420,112 @@
             },
             "cfg": {"WP": "But1", "MP": "But2", "SP": "But3", "WK": "But4", "MK": "But5", "SK": "But6"}
         },
-
+    "xmvsf":
+        {
+            "name": "X-Men VS Street Fighter",
+            "id": "xmvsf",
+            "original_rom_name": "xmvsf.zip",
+            "search_keywords": ["x-men vs street fighter", "x-men-vs.-street-fighter-usa-961004", "8769", "wowroms"],
+            "notes": "Requires the QSound_HLE sound driver to be placed in the roms folder. Google `qsound_hle.zip` or `dl-1425.bin`",
+            "nvram_save": "",
+            "sha256": "833aa46af63a3ad87f69ce2bacd85a4445f35a50e3aff4f793f069b205b51c60",
+            "char_list": ["Akuma", "Magneto", "Juggernaut", "Dhalsim", "Mr. Bison",
+                          "Sabretooth", "Storm", "Chun-Li", "Zangief", "Gambit",
+                          "Rogue", "Cammy", "Charlie", "Wolverine", "Cyclops", "Ryu",
+                          "Ken", "Apocalypse", "Alpha Chun-Li"],
+            "char_forbidden_list": ["Apocalypse", "Alpha Chun-Li"],
+            "char_homonymy_map": {},
+            "difficulty": [1, 8, 2],
+            "difficulty_to_cluster_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Easy",
+                "4": "Easy",
+                "5": "Medium",
+                "6": "Medium",
+                "7": "Hard",
+                "8": "Hard"
+            },
+            "cluster_to_difficulty_map": {
+                "Easy": 4,
+                "Medium": 6,
+                "Hard": 8
+            },
+            "rounds_per_stage": 1,
+            "stages_per_game": 8,
+            "number_of_chars_per_round": 2,
+            "number_of_chars_to_select": 2,
+            "n_actions": [9, 10, 7],
+            "health": [0, 144],
+            "frame_shape": [224, 384, 3],
+            "ram_states": {
+                "common": {
+                    "stage": ["BOX", 1, 8],
+                    "timer": ["BOX", 0, 99]
+                },
+                "Px": {
+                    "side": ["BINARY", 0, 1],
+                    "wins": ["BOX", 0, 1],
+                    "character": ["DISCRETE", 0, 19],
+                    "character_1": ["DISCRETE", 0, 19],
+                    "character_2": ["DISCRETE", 0, 19],
+                    "health_1": ["BOX", 0, 144],
+                    "health_2": ["BOX", 0, 144],
+                    "active_character": ["BINARY", 0, 1],
+                    "super_bar": ["BOX", 0, 144],
+                    "super_count": ["BOX", 0, 3]
+                }
+            },
+            "cfg": {"WP": "But1", "MP": "But2", "SP": "But3", "WK": "But4", "MK": "But5", "SK": "But6"}
+        },
+    "soulclbr":
+        {
+            "name": "Soul Calibur",
+            "id": "soulclbr",
+            "original_rom_name": "soulclbr.zip",
+            "search_keywords": ["soul calibur", "soul-calibur", "106959", "wowroms"],
+            "notes": "",
+            "nvram_save": "at28c16",
+            "sha256": "a07a1a19995d582b56f2865783c5d7adb7acb9a6ad995a26fc7c4cfecd821817",
+            "char_list": ["Xianghua", "Yoshimitsu", "Lizard Man", "Siegfried",
+                          "Rock", "Seung Mina", "Edge Master", "Voldo",
+                          "Ivy", "Sophitia", "Arthur", "Kilik", "Hwang",
+                          "Maxi", "Nightmare", "Taki", "Astaroth", "Inferno"],
+            "char_forbidden_list": ["Inferno"],
+            "char_homonymy_map": {},
+            "outfits": [1, 2],
+            "difficulty": [1, 5, 3],
+            "difficulty_to_cluster_map": {
+                "1": "Easy",
+                "2": "Easy",
+                "3": "Easy",
+                "4": "Medium",
+                "5": "Hard"
+            },
+            "cluster_to_difficulty_map": {
+                "Easy": 3,
+                "Medium": 4,
+                "Hard": 5
+            },
+            "rounds_per_stage": 2,
+            "stages_per_game": 8,
+            "number_of_chars_per_round": 1,
+            "number_of_chars_to_select": 1,
+            "n_actions": [9, 10, 5],
+            "health": [0, 240],
+            "frame_shape": [240, 512, 3],
+            "ram_states": {
+                "common": {
+                    "stage": ["BOX", 1, 8],
+                    "timer": ["BOX", 0, 40]
+                },
+                "Px": {
+                    "side": ["BINARY", 0, 1],
+                    "wins": ["BOX", 0, 2],
+                    "character": ["DISCRETE", 0, 18],
+                    "health": ["BOX", 0, 240]
+                }
+            },
+            "cfg": {"HA": "But1", "VA": "But2", "K": "But3", "G": "But4"}
+        }
 }

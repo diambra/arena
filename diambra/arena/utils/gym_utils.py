@@ -97,18 +97,6 @@ def gym_obs_dict_space_to_standard_dict(observation_space_dict):
 
     return standard_dict
 
-# Utility to create a Gym compliant Dict Space from the InternalObsDict
-def standard_dict_to_gym_obs_dict(obsstandard_dict):
-
-    for k, v in obsstandard_dict.items():
-        if isinstance(v, dict):
-            obsstandard_dict[k] = standard_dict_to_gym_obs_dict(v)
-        else:
-            obsstandard_dict[k] = v
-
-    return spaces.Dict(obsstandard_dict)
-
-
 # Discrete to multidiscrete action conversion
 def discrete_to_multi_discrete_action(action, n_move_actions):
 
