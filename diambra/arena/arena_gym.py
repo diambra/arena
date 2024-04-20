@@ -155,6 +155,9 @@ class DiambraGymBase(gym.Env):
                 if key.startswith("character"):
                     char_idx = observation if type(observation) == int else np.where(observation == 1)[0][0]
                     print(string + ": {} / {}".format(observation, self.env_info.characters_info.char_list[char_idx]))
+                elif key == "partner":
+                    partner_idx = observation if type(observation) == int else np.where(observation == 1)[0][0]
+                    print(string + ": {} / {}".format(observation, self.env_info.characters_info.partner_list[partner_idx]))
                 else:
                     print(string + ": {}".format(observation))
             else:
