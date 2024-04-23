@@ -23,7 +23,7 @@ class EpisodeRecorder(gym.Wrapper):
 
         self.compression_parameters = [int(cv2.IMWRITE_JPEG_QUALITY), 80]
 
-        self.env.logger.info("Recording trajectories in \"{}\"".format(self.dataset_path))
+        self.unwrapped.logger.info("Recording trajectories in \"{}\"".format(self.dataset_path))
         os.makedirs(self.dataset_path, exist_ok=True)
 
     def reset(self, **kwargs):

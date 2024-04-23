@@ -175,7 +175,7 @@ def env_wrapping(env, wrappers_settings: WrappersSettings):
             warning_message += " X " + str(native_frame_size[1]) + "]\n"
             warning_message += "   \"frame_shape\" = [" + str(wrappers_settings.frame_shape[0])
             warning_message += " X " + str(wrappers_settings.frame_shape[1]) + "]"
-            env.logger.warning(warning_message)
+            env.unwrapped.logger.warning(warning_message)
 
         env = WarpFrame(env, wrappers_settings.frame_shape[:2])
 

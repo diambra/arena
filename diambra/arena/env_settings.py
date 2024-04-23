@@ -416,7 +416,7 @@ class WrappersSettings:
         check_num_in_range("normalization_factor", self.normalization_factor, [0.0, 1000000])
         check_type("clip_reward", self.clip_reward, bool, admit_none=False)
         check_type("no_attack_buttons_combinations", self.no_attack_buttons_combinations, bool, admit_none=False)
-        check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1, 3])
+        check_val_in_list("frame_shape[2]", self.frame_shape[2], [0, 1])
         check_num_in_range("frame_shape[0]", self.frame_shape[0], [0, MAX_FRAME_RES])
         check_num_in_range("frame_shape[1]", self.frame_shape[1], [0, MAX_FRAME_RES])
         if (min(self.frame_shape[0], self.frame_shape[1]) == 0 and

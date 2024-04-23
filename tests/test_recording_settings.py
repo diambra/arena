@@ -59,6 +59,7 @@ def test_settings_recording(game_id ,username, dataset_path, n_players, action_s
         settings = EnvironmentSettingsMultiAgent()
     settings.game_id = game_id
     settings.action_space = action_space
+    settings.splash_screen = False
     if n_players == 2:
         settings.action_space = (action_space, action_space)
 

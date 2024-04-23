@@ -14,15 +14,25 @@ default_args = {
     "log_output": False,
 }
 
+n_rounds_map = {
+    "doapp": 2,
+    "sfiii3n": 2,
+    "tektagt": 2,
+    "umk3": 2,
+    "samsh5sp": 2,
+    "kof98umh": 3,
+    "mvsc": 1,
+    "xmvsf": 1,
+    "soulclbr": 2,
+}
+
 def env_exec(settings, options_list, wrappers_settings, episode_recording_settings, args=default_args):
     try:
         wait_key = 1
         if args["interactive"] is True:
             wait_key = 0
 
-        n_rounds = 2
-        if settings.game_id == "kof98umh":
-            n_rounds = 3
+        n_rounds = n_rounds_map[settings.game_id]
 
         env = diambra.arena.make(settings.game_id, settings, wrappers_settings, episode_recording_settings)
 
@@ -48,7 +58,7 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
 
                 if settings.n_players == 1:
                     if no_action is True:
-                        actions = env.get_no_op_action()
+                        actions = env.unwrapped.get_no_op_action()
 
                     if settings.action_space == SpaceTypes.DISCRETE:
                         move_action, att_action = discrete_to_multi_discrete_action(actions, env.unwrapped.n_actions[0])
@@ -60,7 +70,7 @@ def env_exec(settings, options_list, wrappers_settings, episode_recording_settin
 
                 else:
                     if no_action is True:
-                        actions["agent_0"] = env.get_no_op_action()["agent_0"]
+                        actions["agent_0"] = env.unwrapped.get_no_op_action()["agent_0"]
 
                     for idx in range(settings.n_players):
                         if settings.action_space[idx] == SpaceTypes.DISCRETE:

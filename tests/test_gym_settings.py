@@ -29,7 +29,7 @@ def func(settings, mocker):
 
 games_dict = available_games(False)
 gym_settings_var_order = ["frame_shape", "step_ratio", "action_space", "difficulty", "continue_game",
-                          "tower", "role", "characters", "super_art", "fighting_style", "ultimate_style"]
+                          "tower", "role", "characters", "super_art", "fighting_style", "ultimate_style", "speed_mode"]
 
 ok_test_parameters = {
     "frame_shape": [(0, 0, 0), (0, 0, 1), (82, 82, 0), (82, 82, 1)],
@@ -43,6 +43,7 @@ ok_test_parameters = {
     "super_art": [None, 1, 3],
     "fighting_style": [None, 1, 3],
     "ultimate_style": [None, (2, 2, 2)],
+    "speed_mode": [None, 1, 2],
 }
 
 ko_test_parameters = {
@@ -57,6 +58,7 @@ ko_test_parameters = {
     "super_art": ["Random", 4, 0],
     "fighting_style": [False, 6, 0, "Random"],
     "ultimate_style": [(10, 0, 0), "string", (None, None, None), ("Random", "Random", "Random")],
+    "speed_mode": [False, 6, 0, "Random"],
 }
 
 def pytest_generate_tests(metafunc):
@@ -67,7 +69,7 @@ def pytest_generate_tests(metafunc):
 @pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("n_players", [1, 2])
 def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space, difficulty, continue_game,
-                      tower, role, characters, super_art, fighting_style, ultimate_style, expected, mocker):
+                      tower, role, characters, super_art, fighting_style, ultimate_style, speed_mode, expected, mocker):
 
     game_data = games_dict[game_id]
 
@@ -84,6 +86,7 @@ def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space,
     settings.frame_shape = frame_shape
     settings.step_ratio = step_ratio
     settings.action_space = (action_space, action_space)
+    settings.splash_screen = False
 
     settings.difficulty = difficulty
     settings.continue_game = continue_game
@@ -95,10 +98,11 @@ def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space,
     settings.super_art = (super_art, super_art)
     settings.fighting_style = (fighting_style, fighting_style)
     settings.ultimate_style = (ultimate_style, ultimate_style)
+    settings.speed_mode = (speed_mode, speed_mode)
 
     if n_players != 2:
         for key in ["action_space", "role", "characters" , "outfits",
-                    "super_art", "fighting_style", "ultimate_style"]:
+                    "super_art", "fighting_style", "ultimate_style", "speed_mode"]:
             setattr(settings, key, getattr(settings, key)[0])
 
     assert func(settings, mocker) == expected
