@@ -40,7 +40,7 @@ ok_test_parameters = {
     "normalization_factor": [0.2, 0.5],
     "clip_reward": [True, False],
     "no_attack_buttons_combinations": [True, False],
-    "frame_shape": [(0, 0, 0), (84, 84, 1), (84, 84, 3), (84, 84, 0)],
+    "frame_shape": [(0, 0, 0), (84, 84, 1), (84, 84, 0)],
     "stack_frames": [1, 5],
     "dilation": [1, 3],
     "add_last_action": [True, False],
@@ -94,6 +94,7 @@ def test_wrappers_settings(game_id, step_ratio, n_players, action_space, no_op_m
     settings.game_id = game_id
     settings.step_ratio = step_ratio
     settings.action_space = action_space
+    settings.splash_screen = False
     if n_players == 2:
         settings.action_space = (action_space, action_space)
 

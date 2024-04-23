@@ -4,6 +4,7 @@ import time
 import diambra.arena
 from diambra.arena import EnvironmentSettings, EnvironmentSettingsMultiAgent, WrappersSettings
 from diambra.arena.utils.engine_mock import load_mocker
+from diambra.arena.utils.gym_utils import available_games
 import numpy as np
 import warnings
 
@@ -25,6 +26,7 @@ def func(game_id, n_players, wrappers_settings, use_mocker, mocker):
 
         settings.step_ratio = 1
         settings.frame_shape = (128, 128, 1)
+        settings.splash_screen = False
 
         env = diambra.arena.make(game_id, settings, wrappers_settings)
         observation, info = env.reset()
@@ -57,7 +59,7 @@ def func(game_id, n_players, wrappers_settings, use_mocker, mocker):
         return 1
 
 n_players = [1, 2]
-game_ids = ["doapp", "sfiii3n", "tektagt", "umk3", "samsh5sp", "kof98umh"]
+games_dict = available_games(False)
 
 @pytest.mark.parametrize("n_players", n_players)
 def test_speed_gym_mock(n_players, mocker):
@@ -92,13 +94,13 @@ def test_speed_wrappers_mock(n_players, mocker):
 
     assert func(game_id, n_players, wrappers_settings, use_mocker, mocker) == 0
 
-@pytest.mark.parametrize("game_id", game_ids)
+@pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("n_players", n_players)
 def test_speed_gym_integration(game_id, n_players, mocker):
     use_mocker = False
     assert func(game_id, n_players, WrappersSettings(), use_mocker, mocker) == 0
 
-@pytest.mark.parametrize("game_id", game_ids)
+@pytest.mark.parametrize("game_id", list(games_dict.keys()))
 @pytest.mark.parametrize("n_players", n_players)
 def test_speed_wrappers_integration(game_id, n_players, mocker):
     use_mocker = False

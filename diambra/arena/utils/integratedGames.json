@@ -358,7 +358,7 @@
             "id": "mvsc",
             "original_rom_name": "mvsc.zip",
             "search_keywords": ["marvel vs capcom clash of super heroes", "marvel-vs.-capcom-clash-of-super-heroes-euro-980123", "5511", "wowroms"],
-            "notes": "Requires the QSound_HLE sound driver to be placed in the roms folder. Google `qsound_hle.zip` or `dl-1425.bin`",
+            "notes": "Requires the QSound_HLE sound driver to be placed in the roms folder. Search keywords: \"qsound_hle.zip\", \"dl-1425.bin\"",
             "nvram_save": "",
             "sha256": "6f63627cc37c554f74e8bf07b21730fa7f85511c7d5d07449850be98dde91da8",
             "char_list": ["Chun-Li", "Ryu", "Zangief", "Morrigan", "Captain Commando",
@@ -395,7 +395,7 @@
             "stages_per_game": 8,
             "number_of_chars_per_round": 2,
             "number_of_chars_to_select": 2,
-            "n_actions": [9, 10, 7],
+            "n_actions": [9, 19, 7],
             "health": [0, 144],
             "frame_shape": [224, 384, 3],
             "ram_states": {
@@ -426,7 +426,7 @@
             "id": "xmvsf",
             "original_rom_name": "xmvsf.zip",
             "search_keywords": ["x-men vs street fighter", "x-men-vs.-street-fighter-usa-961004", "8769", "wowroms"],
-            "notes": "Requires the QSound_HLE sound driver to be placed in the roms folder. Google `qsound_hle.zip` or `dl-1425.bin`",
+            "notes": "Requires the QSound_HLE sound driver to be placed in the roms folder. Search keywords: \"qsound_hle.zip\", \"dl-1425.bin\"",
             "nvram_save": "",
             "sha256": "833aa46af63a3ad87f69ce2bacd85a4445f35a50e3aff4f793f069b205b51c60",
             "char_list": ["Akuma", "Magneto", "Juggernaut", "Dhalsim", "Mr. Bison",
@@ -435,6 +435,7 @@
                           "Ken", "Apocalypse", "Alpha Chun-Li"],
             "char_forbidden_list": ["Apocalypse", "Alpha Chun-Li"],
             "char_homonymy_map": {},
+            "outfits": [1, 2],
             "difficulty": [1, 8, 2],
             "difficulty_to_cluster_map": {
                 "1": "Easy",
@@ -455,7 +456,7 @@
             "stages_per_game": 8,
             "number_of_chars_per_round": 2,
             "number_of_chars_to_select": 2,
-            "n_actions": [9, 10, 7],
+            "n_actions": [9, 18, 7],
             "health": [0, 144],
             "frame_shape": [224, 384, 3],
             "ram_states": {
@@ -511,7 +512,7 @@
             "stages_per_game": 8,
             "number_of_chars_per_round": 1,
             "number_of_chars_to_select": 1,
-            "n_actions": [9, 10, 5],
+            "n_actions": [9, 13, 5],
             "health": [0, 240],
             "frame_shape": [240, 512, 3],
             "ram_states": {
