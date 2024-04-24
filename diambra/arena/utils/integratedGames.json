@@ -406,15 +406,15 @@
                 "Px": {
                     "side": ["BINARY", 0, 1],
                     "wins": ["BOX", 0, 1],
-                    "character": ["DISCRETE", 0, 22],
-                    "character_1": ["DISCRETE", 0, 22],
-                    "character_2": ["DISCRETE", 0, 22],
+                    "character": ["DISCRETE", 0, 21],
+                    "character_1": ["DISCRETE", 0, 21],
+                    "character_2": ["DISCRETE", 0, 21],
                     "health_1": ["BOX", 0, 144],
                     "health_2": ["BOX", 0, 144],
                     "active_character": ["BINARY", 0, 1],
                     "super_bar": ["BOX", 0, 144],
                     "super_count": ["BOX", 0, 3],
-                    "partner": ["DISCRETE", 0, 22],
+                    "partner": ["DISCRETE", 0, 21],
                     "partner_attacks": ["BOX", 0, 9]
                 }
             },
@@ -467,9 +467,9 @@
                 "Px": {
                     "side": ["BINARY", 0, 1],
                     "wins": ["BOX", 0, 1],
-                    "character": ["DISCRETE", 0, 19],
-                    "character_1": ["DISCRETE", 0, 19],
-                    "character_2": ["DISCRETE", 0, 19],
+                    "character": ["DISCRETE", 0, 18],
+                    "character_1": ["DISCRETE", 0, 18],
+                    "character_2": ["DISCRETE", 0, 18],
                     "health_1": ["BOX", 0, 144],
                     "health_2": ["BOX", 0, 144],
                     "active_character": ["BINARY", 0, 1],
@@ -523,7 +523,7 @@
                 "Px": {
                     "side": ["BINARY", 0, 1],
                     "wins": ["BOX", 0, 2],
-                    "character": ["DISCRETE", 0, 18],
+                    "character": ["DISCRETE", 0, 17],
                     "health": ["BOX", 0, 240]
                 }
             },
