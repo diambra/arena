@@ -41,7 +41,7 @@ ok_test_parameters = {
     "role": [[Roles.P1, Roles.P2], [Roles.P2, Roles.P1], [None, None]],
     "characters": [[None, None], [None, "TBD"], ["TBD", "TBD"]],
     "super_art": [None, 1, 3],
-    "fighting_style": [None, 1, 3],
+    "fighting_style": [None, 1, 2, 3],
     "ultimate_style": [None, (2, 2, 2)],
     "speed_mode": [None, 1, 2],
 }
@@ -96,6 +96,8 @@ def test_gym_settings(game_id, n_players, frame_shape, step_ratio, action_space,
     settings.characters = (characters[0], characters[1])
     settings.outfits = (outfits, outfits)
     settings.super_art = (super_art, super_art)
+    if game_id != "kof98umh" and fighting_style == 3:
+        fighting_style = 2
     settings.fighting_style = (fighting_style, fighting_style)
     settings.ultimate_style = (ultimate_style, ultimate_style)
     settings.speed_mode = (speed_mode, speed_mode)
