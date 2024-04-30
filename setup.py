@@ -13,7 +13,7 @@ extras = {
         "pyyaml",
     ],
     "stable-baselines3": ["stable-baselines3[extra]~=2.1.0", "pyyaml"],
-    "ray-rllib": ["ray[rllib]~=2.7.0", "tensorflow", "torch", "pyyaml"],
+    "ray-rllib": ["ray[rllib]~=2.7.0", "torch", "pyyaml"],
     "sheeprl": [
         "sheeprl==0.5.5",
         "importlib-resources==6.1.0",
